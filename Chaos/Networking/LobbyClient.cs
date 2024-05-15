@@ -35,6 +35,8 @@ public sealed class LobbyClient : ConnectedClientBase, ILobbyClient
 
     public void SendConnectionInfo(uint serverTableCheckSum)
     {
+        Crypto.GenerateEncryptionParameters();
+
         var args = new ConnectionInfoArgs
         {
             Key = Encoding.ASCII.GetString(Crypto.Key),

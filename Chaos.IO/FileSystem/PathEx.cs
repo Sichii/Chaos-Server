@@ -1,4 +1,4 @@
-namespace Chaos.Common.Utilities;
+namespace Chaos.IO.FileSystem;
 
 /// <summary>
 ///     Provides utility methods for working with file system paths.
@@ -41,6 +41,9 @@ public static class PathEx
 
         if (string.IsNullOrEmpty(parentPath))
             throw new ArgumentNullException(nameof(parentPath));
+
+        path = Path.GetFullPath(path);
+        parentPath = Path.GetFullPath(parentPath);
 
         var pathParts = path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
         var parentPathParts = parentPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);

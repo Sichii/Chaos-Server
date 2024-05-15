@@ -16,7 +16,7 @@ public sealed class SpellDtoRepository : IEnumerable<SpellDto>
 
         foreach (var obj in spellTemplateCache)
         {
-            var mapped = mapper.Map<SpellDto>(obj);
+            var mapped = mapper.Map<SpellDto>(obj)!;
             stuff.Add(mapped);
         }
 

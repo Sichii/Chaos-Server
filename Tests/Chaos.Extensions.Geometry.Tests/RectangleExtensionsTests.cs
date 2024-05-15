@@ -395,29 +395,6 @@ public sealed class RectangleExtensionsTests
     }
 
     [Fact]
-    public void GetRandomPoint_WithPredicate_ReturnsPointMatchingPredicate()
-    {
-        // Arrange
-        var rect = new Rectangle(
-            0,
-            0,
-            10,
-            10);
-
-        // Act
-        var point = rect.GetRandomPoint(p => p is (> 5, > 5));
-
-        // Assert
-        point.X
-             .Should()
-             .BeGreaterThan(5);
-
-        point.Y
-             .Should()
-             .BeGreaterThan(5);
-    }
-
-    [Fact]
     public void Intersects_Should_Return_False_When_Rectangles_Do_Not_Intersect()
     {
         // Arrange

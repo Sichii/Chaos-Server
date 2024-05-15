@@ -118,9 +118,14 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
             case null:
                 break;
             case MailBox.BOARD_ID:
-                boardBase = client.Aisling.MailBox;
+            {
+                //if the "To" property is populated, we are sending mail to someone
+                //we want to return their mailbox
+                //otherwise, return our mailbox
+                boardBase = !string.IsNullOrEmpty(args.To) ? MailStore.Load(args.To) : client.Aisling.MailBox;
 
                 break;
+            }
             default:
             {
                 var key = BulletinBoardKeyMapper.GetKey(args.BoardId.Value);
@@ -414,10 +419,18 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                 aisling.MapInstance.AddAislingDirect(aisling, aisling);
                 client.SendEditableProfileRequest();
 
-                foreach (var channel in aisling.ChannelSettings)
+                foreach (var channel in aisling.ChannelSettings.ToList())
                 {
-                    ChannelService.JoinChannel(aisling, channel.ChannelName, true);
+                    //try to join channel
+                    //remove from channel if it fails
+                    if (!ChannelService.JoinChannel(aisling, channel.ChannelName, true))
+                    {
+                        aisling.ChannelSettings.Remove(channel);
 
+                        continue;
+                    }
+
+                    //set custom channel color if it exists
                     if (channel.MessageColor.HasValue)
                         ChannelService.SetChannelColor(aisling, channel.ChannelName, channel.MessageColor.Value);
                 }

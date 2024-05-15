@@ -1,7 +1,7 @@
 using System.Numerics;
 using System.Text.Json;
 using Chaos.Common.Abstractions;
-using Chaos.Common.Utilities;
+using Chaos.IO.FileSystem;
 
 namespace Chaos.Common.Identity;
 
@@ -67,7 +67,13 @@ public sealed class PersistentIdGenerator<T> : IIdGenerator<T> where T: INumber<
                 await timer.WaitForNextTickAsync();
 
                 if (ShouldSave)
-                    await FileEx.SafeWriteAllTextAsync($"{Name}.json", NextId.ToString()!);
+                {
+                    var path = $"{Name}.json";
+
+                    await path.SafeExecuteAsync(innerPath => FileEx.SafeWriteAllTextAsync(innerPath, NextId.ToString()!));
+
+                    ShouldSave = false;
+                }
             } catch
             {
                 //ignored

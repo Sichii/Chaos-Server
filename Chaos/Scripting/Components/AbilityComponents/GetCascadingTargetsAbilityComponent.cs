@@ -6,14 +6,14 @@ using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.Execution;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Components.AbilityComponents;
 
-public class GetCascadingTargetsComponent<TEntity> : IConditionalComponent where TEntity: MapEntity
+public struct GetCascadingTargetsAbilityComponent<TEntity> : IConditionalComponent where TEntity: MapEntity
 {
     /// <inheritdoc />
-    public virtual bool Execute(ActivationContext context, ComponentVars vars)
+    public bool Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<IGetCascadingTargetsComponentOptions>();
         var stage = vars.GetStage();

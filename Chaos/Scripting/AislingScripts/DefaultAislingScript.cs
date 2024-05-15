@@ -21,7 +21,6 @@ public class DefaultAislingScript : AislingScriptBase
     private readonly IStore<MailBox> MailStore;
     private readonly IIntervalTimer SleepAnimationTimer;
     private SocialStatus PreAfkSocialStatus { get; set; }
-    protected virtual BlindBehavior BlindBehavior { get; }
     protected virtual RelationshipBehavior RelationshipBehavior { get; }
     protected virtual RestrictionBehavior RestrictionBehavior { get; }
     protected virtual VisibilityBehavior VisibilityBehavior { get; }
@@ -35,7 +34,6 @@ public class DefaultAislingScript : AislingScriptBase
         RestrictionBehavior = new RestrictionBehavior();
         VisibilityBehavior = new VisibilityBehavior();
         RelationshipBehavior = new RelationshipBehavior();
-        BlindBehavior = new BlindBehavior();
         SleepAnimationTimer = new IntervalTimer(TimeSpan.FromSeconds(5), false);
         ClearOrangeBarTimer = new IntervalTimer(TimeSpan.FromSeconds(WorldOptions.Instance.ClearOrangeBarTimerSecs), false);
     }
@@ -96,9 +94,6 @@ public class DefaultAislingScript : AislingScriptBase
         //
         //yield return nationBoard;
     }
-
-    /// <inheritdoc />
-    public override bool IsBlind() => BlindBehavior.IsBlind(Subject);
 
     /// <inheritdoc />
     public override bool IsFriendlyTo(Creature creature) => RelationshipBehavior.IsFriendlyTo(Subject, creature);

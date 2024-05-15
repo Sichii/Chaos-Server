@@ -1,5 +1,3 @@
-using Chaos.Collections.Synchronized;
-
 namespace Chaos.IO.FileSystem;
 
 /// <summary>
@@ -7,30 +5,52 @@ namespace Chaos.IO.FileSystem;
 /// </summary>
 public static class DirectorySynchronizer
 {
-    internal static readonly SynchronizedHashSet<string> LockedDirectories;
+    internal static readonly HashSet<string> LockedPaths;
+    private static readonly object Sync = new();
 
-    static DirectorySynchronizer() => LockedDirectories = new SynchronizedHashSet<string>(comparer: StringComparer.OrdinalIgnoreCase);
+    static DirectorySynchronizer() => LockedPaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+    private static bool InnerTryAddPath(string innerPath)
+    {
+        //lock LockedPaths
+        lock (Sync)
+        {
+            if (LockedPaths.Any(lockedPath => PathEx.IsSubPathOf(innerPath, lockedPath)))
+                return false;
+
+            return LockedPaths.Add(innerPath);
+        }
+    }
+
+    private static void LockPath(string path) => SpinWait.SpinUntil(() => InnerTryAddPath(path));
+
+    private static async Task LockPathAsync(string path)
+    {
+        while (!InnerTryAddPath(path))
+            await Task.Yield();
+    }
 
     /// <summary>
     ///     Executes the specified function on the specified directory, ensuring that no other actions are being performed on
     ///     the directory
     /// </summary>
-    /// <param name="directory">
+    /// <param name="path">
     ///     The directory to lock during execution
     /// </param>
     /// <param name="action">
     ///     The function to execute
     /// </param>
-    public static void SafeExecute(this string directory, Action<string> action)
+    public static void SafeExecute(this string path, Action<string> action)
     {
-        SpinWait.SpinUntil(() => LockedDirectories.Add(directory));
+        LockPath(path);
 
         try
         {
-            action(directory);
+            action(path);
         } finally
         {
-            LockedDirectories.Remove(directory);
+            lock (Sync)
+                LockedPaths.Remove(path);
         }
     }
 
@@ -38,70 +58,71 @@ public static class DirectorySynchronizer
     ///     Executes the specified function on the specified directory, ensuring that no other actions are being performed on
     ///     the directory
     /// </summary>
-    /// <param name="directory">
+    /// <param name="path">
     ///     The directory to lock during execution
     /// </param>
     /// <param name="function">
     ///     The function to execute
     /// </param>
-    public static TResult SafeExecute<TResult>(this string directory, Func<string, TResult> function)
+    public static TResult SafeExecute<TResult>(this string path, Func<string, TResult> function)
     {
-        SpinWait.SpinUntil(() => LockedDirectories.Add(directory));
+        LockPath(path);
 
         try
         {
-            return function(directory);
+            return function(path);
         } finally
         {
-            LockedDirectories.Remove(directory);
+            lock (Sync)
+                LockedPaths.Remove(path);
         }
     }
 
     /// <summary>
-    ///     Asynchronously executes the specified function on the specified directory, ensuring that no other actions are being
-    ///     performed on the directory
+    ///     Asynchronously executes the specified function on the specified path, ensuring that no other actions are being
+    ///     performed on the path, or any sub-paths
     /// </summary>
-    /// <param name="directory">
-    ///     The directory to lock during execution
+    /// <param name="path">
+    ///     The path to lock during execution
     /// </param>
     /// <param name="function">
     ///     The function to execute
     /// </param>
-    public static async Task SafeExecuteAsync(this string directory, Func<string, Task> function)
+    public static async Task SafeExecuteAsync(this string path, Func<string, Task> function)
     {
-        while (!LockedDirectories.Add(directory))
-            await Task.Yield();
+        await LockPathAsync(path);
 
         try
         {
-            await function(directory);
+            await function(path);
         } finally
         {
-            LockedDirectories.Remove(directory);
+            lock (Sync)
+                LockedPaths.Remove(path);
         }
     }
 
     /// <summary>
-    ///     Asynchronously executes the specified function on the specified directory, ensuring that no other actions are being
-    ///     performed on the directory
+    ///     Asynchronously executes the specified function on the specified path, ensuring that no other actions are being
+    ///     performed on the path, or any sub-paths
     /// </summary>
-    /// <param name="directory">
-    ///     The directory to lock during execution
+    /// <param name="path">
+    ///     The path to lock during execution
     /// </param>
     /// <param name="function">
     ///     The function to execute
     /// </param>
-    public static async Task<T> SafeExecuteAsync<T>(this string directory, Func<string, Task<T>> function)
+    public static async Task<T> SafeExecuteAsync<T>(this string path, Func<string, Task<T>> function)
     {
-        while (!LockedDirectories.Add(directory))
-            await Task.Yield();
+        await LockPathAsync(path);
 
         try
         {
-            return await function(directory);
+            return await function(path);
         } finally
         {
-            LockedDirectories.Remove(directory);
+            lock (Sync)
+                LockedPaths.Remove(path);
         }
     }
 }

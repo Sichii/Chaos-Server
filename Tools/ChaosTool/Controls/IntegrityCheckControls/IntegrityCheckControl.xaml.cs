@@ -59,18 +59,23 @@ public sealed partial class IntegrityCheckControl
             var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var dialogListView = MainWindow.DialogTemplateListView;
-                    MainWindow.DialogsTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = dialogListView.Items
                                                  .OfType<DialogTemplateViewModel>()
                                                  .FirstOrDefault(obs => obs.TemplateKey.EqualsI(template.TemplateKey));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.DialogsTab.IsSelected = true;
                     dialogListView.ItemsView.SelectedItem = selected;
                     dialogListView.ItemsView.ScrollIntoView(selected);
                 });
@@ -164,18 +169,23 @@ public sealed partial class IntegrityCheckControl
             var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var itemListView = MainWindow.ItemTemplateListView;
-                    MainWindow.ItemsTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = itemListView.Items
                                                .OfType<ItemTemplateViewModel>()
                                                .FirstOrDefault(obs => obs.TemplateKey.EqualsI(template.TemplateKey));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.ItemsTab.IsSelected = true;
                     itemListView.ItemsView.SelectedItem = selected;
                     itemListView.ItemsView.ScrollIntoView(selected);
                 });
@@ -214,18 +224,23 @@ public sealed partial class IntegrityCheckControl
             var expectedKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var lootTableListView = MainWindow.LootTableListView;
-                    MainWindow.LootTablesTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = lootTableListView.Items
                                                     .OfType<LootTableViewModel>()
                                                     .FirstOrDefault(obs => obs.Key.EqualsI(template.Key));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.LootTablesTab.IsSelected = true;
                     lootTableListView.ItemsView.SelectedItem = selected;
                     lootTableListView.ItemsView.ScrollIntoView(selected);
                 });
@@ -249,18 +264,23 @@ public sealed partial class IntegrityCheckControl
             var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var mapListView = MainWindow.MapTemplateListView;
-                    MainWindow.MapTemplatesTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = mapListView.Items
                                               .OfType<MapTemplateViewModel>()
                                               .FirstOrDefault(obs => obs.TemplateKey.EqualsI(template.TemplateKey));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.MapTemplatesTab.IsSelected = true;
                     mapListView.ItemsView.SelectedItem = selected;
                     mapListView.ItemsView.ScrollIntoView(selected);
                 });
@@ -283,18 +303,23 @@ public sealed partial class IntegrityCheckControl
             var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var merchantListView = MainWindow.MerchantTemplateListView;
-                    MainWindow.MerchantTemplatesTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = merchantListView.Items
                                                    .OfType<MerchantTemplateViewModel>()
                                                    .FirstOrDefault(obs => obs.TemplateKey.EqualsI(template.TemplateKey));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.MerchantTemplatesTab.IsSelected = true;
                     merchantListView.ItemsView.SelectedItem = selected;
                     merchantListView.ItemsView.ScrollIntoView(selected);
                 });
@@ -335,18 +360,23 @@ public sealed partial class IntegrityCheckControl
             var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var monsterListView = MainWindow.MonsterTemplateListView;
-                    MainWindow.MonsterTemplatesTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = monsterListView.Items
                                                   .OfType<MonsterTemplateViewModel>()
                                                   .FirstOrDefault(obs => obs.TemplateKey.EqualsI(template.TemplateKey));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.MonsterTemplatesTab.IsSelected = true;
                     monsterListView.ItemsView.SelectedItem = selected;
                     monsterListView.ItemsView.ScrollIntoView(selected);
                 });
@@ -378,18 +408,23 @@ public sealed partial class IntegrityCheckControl
             var expectedTemplateKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var reactorTileListView = MainWindow.ReactorTileTemplateListView;
-                    MainWindow.ReactorTileTemplatesTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = reactorTileListView.Items
                                                       .OfType<ReactorTileTemplateViewModel>()
                                                       .FirstOrDefault(obs => obs.TemplateKey.EqualsI(template.TemplateKey));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.ReactorTileTemplatesTab.IsSelected = true;
                     reactorTileListView.ItemsView.SelectedItem = selected;
                     reactorTileListView.ItemsView.ScrollIntoView(selected);
                 });
@@ -410,18 +445,23 @@ public sealed partial class IntegrityCheckControl
             var learningRequirements = template.LearningRequirements;
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var skillListView = MainWindow.SkillTemplateListView;
-                    MainWindow.SkillsTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = skillListView.Items
                                                 .OfType<SkillTemplateViewModel>()
                                                 .FirstOrDefault(obs => obs.TemplateKey.EqualsI(template.TemplateKey));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.SkillsTab.IsSelected = true;
                     skillListView.ItemsView.SelectedItem = selected;
                     skillListView.ItemsView.ScrollIntoView(selected);
                 });
@@ -480,18 +520,23 @@ public sealed partial class IntegrityCheckControl
             var learningRequirements = template.LearningRequirements;
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var spellListView = MainWindow.SpellTemplateListView;
-                    MainWindow.SpellsTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = spellListView.Items
                                                 .OfType<SpellTemplateViewModel>()
                                                 .FirstOrDefault(obs => obs.TemplateKey.EqualsI(template.TemplateKey));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.SpellsTab.IsSelected = true;
                     spellListView.ItemsView.SelectedItem = selected;
                     spellListView.ItemsView.ScrollIntoView(selected);
                 });
@@ -535,18 +580,23 @@ public sealed partial class IntegrityCheckControl
             var expectedNodeKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var nodeListView = MainWindow.WorldMapNodeListView;
-                    MainWindow.WorldMapNodesTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = nodeListView.Items
                                                .OfType<WorldMapNodeViewModel>()
                                                .FirstOrDefault(obs => obs.NodeKey.EqualsI(node.NodeKey));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.WorldMapNodesTab.IsSelected = true;
                     nodeListView.ItemsView.SelectedItem = selected;
                     nodeListView.ItemsView.ScrollIntoView(selected);
                 });
@@ -585,18 +635,23 @@ public sealed partial class IntegrityCheckControl
             var expectdWorldMapKey = GetExpectedKey(wrapper);
 
             var handler = new RoutedEventHandler(
-                (_, _) =>
+                (sender, _) =>
                 {
                     var worldMapListView = MainWindow.WorldMapListView;
-                    MainWindow.WorldMapsTab.IsSelected = true;
+                    var button = (Button)sender;
 
                     var selected = worldMapListView.Items
                                                    .OfType<WorldMapViewModel>()
                                                    .FirstOrDefault(obs => obs.WorldMapKey.EqualsI(worldMap.WorldMapKey));
 
                     if (selected is null)
-                        throw new UnreachableException("We derived the selected item from the template, so it should exist.");
+                    {
+                        button.IsEnabled = false;
 
+                        return;
+                    }
+
+                    MainWindow.WorldMapsTab.IsSelected = true;
                     worldMapListView.ItemsView.SelectedItem = selected;
                     worldMapListView.ItemsView.ScrollIntoView(selected);
                 });

@@ -31,7 +31,6 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public int GamePoints { get; set; }
     public int Gold { get; set; }
     public virtual bool IsDead { get; set; }
-    public Status Status { get; set; }
     public Trackers Trackers { get; set; }
 
     public VisionType Vision { get; protected set; }
@@ -50,7 +49,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public abstract CreatureType Type { get; }
     public int EffectiveAssailIntervalMs => StatSheet.CalculateEffectiveAssailInterval(AssailIntervalMs);
     public virtual bool IsAlive => StatSheet.CurrentHp > 0;
-    public virtual bool IsBlind => Script.IsBlind();
+    public virtual bool IsBlind => Vision is not VisionType.Normal;
 
     protected Creature(
         string name,
@@ -295,7 +294,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var nextPoint = path.Pop();
         var direction = nextPoint.DirectionalRelationTo(this);
 
-        Walk(direction);
+        Walk(direction, pathOptions.IgnoreBlockingReactors);
     }
 
     public virtual void Say(string message) => ShowPublicMessage(PublicMessageType.Normal, message);

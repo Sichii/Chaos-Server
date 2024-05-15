@@ -8,6 +8,18 @@ public sealed class EquipmentObserver(Aisling aisling) : Abstractions.IObserver<
 {
     private readonly Aisling Aisling = aisling;
 
+    /// <inheritdoc />
+    public bool Equals(Abstractions.IObserver<Item>? other)
+    {
+        if (ReferenceEquals(null, other))
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return other is EquipmentObserver equipmentObserver && Aisling.Equals(equipmentObserver.Aisling);
+    }
+
     public void OnAdded(Item obj)
     {
         Aisling.Client.SendEquipment(obj);
@@ -40,4 +52,13 @@ public sealed class EquipmentObserver(Aisling aisling) : Abstractions.IObserver<
     {
         //uhhhhh nothing for now i guess
     }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || (obj is EquipmentObserver other && Equals(other));
+
+    /// <inheritdoc />
+    public override int GetHashCode() => HashCode.Combine(Aisling, typeof(EquipmentObserver));
+
+    public static bool operator ==(EquipmentObserver? left, EquipmentObserver? right) => Equals(left, right);
+    public static bool operator !=(EquipmentObserver? left, EquipmentObserver? right) => !Equals(left, right);
 }

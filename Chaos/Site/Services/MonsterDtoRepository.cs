@@ -13,8 +13,7 @@ public sealed class MonsterDtoRepository : IEnumerable<MonsterDto>
     {
         monsterTemplateCache.ForceLoad();
 
-        MonsterDtos = mapper.Map<IEnumerable<MonsterDto>>(monsterTemplateCache)
-                            .ToList();
+        MonsterDtos = mapper.Map<IEnumerable<MonsterDto>>(monsterTemplateCache)!.ToList();
     }
 
     /// <inheritdoc />

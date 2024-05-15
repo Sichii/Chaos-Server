@@ -21,7 +21,7 @@ public sealed class DirectorySynchronizerTests
 
         Thread.Sleep(50);
 
-        DirectorySynchronizer.LockedDirectories
+        DirectorySynchronizer.LockedPaths
                              .Should()
                              .Contain(DIRECTORY);
     }
@@ -81,7 +81,7 @@ public sealed class DirectorySynchronizerTests
                 await Task.Delay(500); // Simulate a long-running operation
             });
 
-        DirectorySynchronizer.LockedDirectories
+        DirectorySynchronizer.LockedPaths
                              .Should()
                              .Contain(DIRECTORY);
     }

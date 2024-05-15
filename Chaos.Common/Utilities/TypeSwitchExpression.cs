@@ -10,7 +10,10 @@ namespace Chaos.Common.Utilities;
 /// </typeparam>
 public class TypeSwitchExpression<TResult>
 {
-    private Func<TResult?> DefaultCase = () => throw new InvalidOperationException("No case was matched");
+    /// <summary>
+    ///     The default case if no other case is matched
+    /// </summary>
+    protected virtual Func<TResult?> DefaultCase { get; set; } = () => throw new InvalidOperationException("No case was matched");
 
     /// <summary>
     ///     The cases to switch on
@@ -111,7 +114,7 @@ public class TypeSwitchExpression<TResult>
     /// <returns>
     ///     A frozen, optimized version of the type switch that is meant to be reused
     /// </returns>
-    public TypeSwitchExpression<TResult> Freeze() => new FrozenTypeSwitchExpression<TResult>(Cases);
+    public TypeSwitchExpression<TResult> Freeze() => new FrozenTypeSwitchExpression<TResult>(this);
 
     /// <summary>
     ///     Executes the function associated with the specified type
@@ -142,9 +145,12 @@ public class TypeSwitchExpression<TResult>
     /// <typeparam name="T">
     ///     The return type of the switch expression
     /// </typeparam>
-    private sealed class FrozenTypeSwitchExpression<T>(IDictionary<Type, Func<T>> cases) : TypeSwitchExpression<T>
+    private sealed class FrozenTypeSwitchExpression<T>(TypeSwitchExpression<T> tse) : TypeSwitchExpression<T>
     {
         /// <inheritdoc />
-        protected override IDictionary<Type, Func<T>> Cases { get; } = cases.ToFrozenDictionary();
+        protected override Func<T?> DefaultCase { get; set; } = tse.DefaultCase;
+
+        /// <inheritdoc />
+        protected override FrozenDictionary<Type, Func<T>> Cases { get; } = tse.Cases.ToFrozenDictionary();
     }
 }

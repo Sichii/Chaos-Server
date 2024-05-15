@@ -7,7 +7,10 @@ namespace Chaos.Common.Utilities;
 /// </summary>
 public class TypeSwitch
 {
-    private Action DefaultCase = () => throw new InvalidOperationException("No case was matched");
+    /// <summary>
+    ///     The default case if no other case is matched
+    /// </summary>
+    protected virtual Action DefaultCase { get; set; } = () => throw new InvalidOperationException("No case was matched");
 
     /// <summary>
     ///     The cases to switch on
@@ -80,9 +83,12 @@ public class TypeSwitch
     ///     A helper class that simulates switch-case behavior on type objects. The cases are frozen and this object is meant
     ///     to be reused.
     /// </summary>
-    private class FrozenTypeSwitch(IDictionary<Type, Action> cases) : TypeSwitch
+    private class FrozenTypeSwitch(TypeSwitch ts) : TypeSwitch
     {
         /// <inheritdoc />
-        protected override IDictionary<Type, Action> Cases { get; } = cases.ToFrozenDictionary();
+        protected override Action DefaultCase { get; set; } = ts.DefaultCase;
+
+        /// <inheritdoc />
+        protected override FrozenDictionary<Type, Action> Cases { get; } = ts.Cases.ToFrozenDictionary();
     }
 }

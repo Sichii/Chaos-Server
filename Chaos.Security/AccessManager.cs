@@ -3,7 +3,6 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using Chaos.Common.Synchronization;
-using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
 using Chaos.IO.FileSystem;
 using Chaos.NLog.Logging.Definitions;

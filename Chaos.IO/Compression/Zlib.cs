@@ -1,5 +1,4 @@
 using System.IO.Compression;
-using Chaos.Extensions.Common;
 
 namespace Chaos.IO.Compression;
 
@@ -37,7 +36,7 @@ public static class Zlib
     {
         using var compressed = Compress(buffer);
 
-        buffer = compressed.ToSpan();
+        buffer = compressed.ToArray();
     }
 
     /// <summary>
@@ -85,7 +84,7 @@ public static class Zlib
     {
         using var decompressed = Decompress(buffer);
 
-        buffer = decompressed.ToSpan();
+        buffer = decompressed.ToArray();
     }
 
     /// <summary>

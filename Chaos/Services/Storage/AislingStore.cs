@@ -29,12 +29,24 @@ public sealed class AislingStore(
     private readonly AislingStoreOptions Options = options.Value;
 
     /// <inheritdoc />
+    public bool Exists(string key)
+        => ExistsAsync(key)
+           .GetAwaiter()
+           .GetResult();
+
+    /// <inheritdoc />
     public Task<bool> ExistsAsync(string key)
     {
         var directory = Path.Combine(Options.Directory, key.ToLower());
 
         return Task.FromResult(Directory.Exists(directory));
     }
+
+    /// <inheritdoc />
+    public Aisling Load(string key)
+        => LoadAsync(key)
+           .GetAwaiter()
+           .GetResult();
 
     public async Task<Aisling> LoadAsync(string name)
     {
@@ -55,8 +67,20 @@ public sealed class AislingStore(
     }
 
     /// <inheritdoc />
-    public Task RemoveAsync(string key)
+    public bool Remove(string key)
+        => RemoveAsync(key)
+           .GetAwaiter()
+           .GetResult();
+
+    /// <inheritdoc />
+    public Task<bool> RemoveAsync(string key)
         => throw new NotImplementedException("This would effectively delete the character. This is reserved for manual operations");
+
+    /// <inheritdoc />
+    public void Save(Aisling obj)
+        => SaveAsync(obj)
+           .GetAwaiter()
+           .GetResult();
 
     public async Task SaveAsync(Aisling aisling)
     {

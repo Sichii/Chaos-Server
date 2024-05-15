@@ -3,19 +3,19 @@ using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.ReactorTileScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Components.AbilityComponents;
 
 /// <summary>
 ///     A component that creates a cascade of effects
 /// </summary>
-public class CascadingComponent<TTileScript> : IComponent where TTileScript: ICascadingTileScript
+public struct CascadingAbilityComponent<TTileScript> : IComponent where TTileScript: ICascadingTileScript
 {
     /// <inheritdoc />
-    public virtual void Execute(ActivationContext context, ComponentVars vars)
+    public void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<ICascadingComponentOptions>();
         var targets = vars.GetTargets<MapEntity>();
@@ -26,6 +26,9 @@ public class CascadingComponent<TTileScript> : IComponent where TTileScript: ICa
 
         foreach (var point in cascadePoints)
         {
+            if (!context.TargetMap.IsWithinMap(point))
+                continue;
+
             var tile = options.ReactorTileFactory.Create(
                 context.TargetMap,
                 point,

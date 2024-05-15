@@ -4,7 +4,7 @@ using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
 
-namespace Chaos.Scripting.Components.Utilities;
+namespace Chaos.Scripting.Components.Execution;
 
 public sealed class ComponentExecutor(ActivationContext context, ComponentVars vars)
 {

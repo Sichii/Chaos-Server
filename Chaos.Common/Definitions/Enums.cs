@@ -18,16 +18,6 @@ public enum RandomizationType
 }
 
 [Flags]
-public enum Status : ulong
-{
-    None = 0,
-
-    Dead = 1
-
-    //add more statuses here, double each time
-}
-
-[Flags]
 public enum UserState : ulong
 {
     None = 0,

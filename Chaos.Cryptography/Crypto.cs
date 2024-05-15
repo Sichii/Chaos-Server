@@ -13,10 +13,10 @@ public sealed class Crypto : ICrypto
     private readonly IReadOnlyList<byte> KeySalts;
 
     /// <inheritdoc />
-    public byte[] Key { get; }
+    public byte[] Key { get; private set; }
 
     /// <inheritdoc />
-    public byte Seed { get; }
+    public byte Seed { get; private set; }
 
     private IReadOnlyList<byte> Salts => Tables.SALT_TABLE[Seed];
 
@@ -42,7 +42,7 @@ public sealed class Crypto : ICrypto
     {
         Seed = seed;
         Key = Encoding.ASCII.GetBytes(key);
-        KeySalts = string.IsNullOrEmpty(keySaltSeed) ? Array.Empty<byte>() : GenerateKeySalts(keySaltSeed);
+        KeySalts = string.IsNullOrEmpty(keySaltSeed) ? GenerateKeySalts("default") : GenerateKeySalts(keySaltSeed);
     }
 
     /// <summary>
@@ -121,6 +121,16 @@ public sealed class Crypto : ICrypto
             123 => EncryptionType.Normal,
             _   => EncryptionType.MD5
         };
+
+    /// <inheritdoc />
+    public void GenerateEncryptionParameters()
+    {
+        Seed = (byte)Random.Shared.Next(0, 10);
+
+        var a = (ushort)Random.Shared.Next(256, ushort.MaxValue);
+        var b = (byte)Random.Shared.Next(100, byte.MaxValue);
+        Key = GenerateKey(a, b);
+    }
 
     /// <summary>
     ///     Decrypts a packet that's been sent to a client

@@ -6,7 +6,7 @@ namespace Chaos.Storage.Abstractions;
 /// <typeparam name="T">
 ///     The type of the objects to be saved and loaded
 /// </typeparam>
-public interface IAsyncStore<T>
+public interface IAsyncStore<T> : IStore<T>
 {
     /// <summary>
     ///     Asynchronously checks if an object with the specified key exists, whether it is loaded or not
@@ -30,8 +30,15 @@ public interface IAsyncStore<T>
     /// <param name="key">
     /// </param>
     /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the key was found and removed, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
     /// </returns>
-    Task RemoveAsync(string key);
+    Task<bool> RemoveAsync(string key);
 
     /// <summary>
     ///     Asynchronously saves an object to the store

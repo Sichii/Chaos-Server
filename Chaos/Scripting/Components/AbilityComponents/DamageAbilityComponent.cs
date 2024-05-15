@@ -4,15 +4,15 @@ using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Components.AbilityComponents;
 
-public class DamageComponent : IComponent
+public struct DamageAbilityComponent : IComponent
 {
     /// <inheritdoc />
-    public virtual void Execute(ActivationContext context, ComponentVars vars)
+    public void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<IDamageComponentOptions>();
         var targets = vars.GetTargets<Creature>();
@@ -39,7 +39,7 @@ public class DamageComponent : IComponent
         }
     }
 
-    protected virtual int CalculateDamage(
+    private int CalculateDamage(
         Creature source,
         Creature target,
         int? baseDamage = null,

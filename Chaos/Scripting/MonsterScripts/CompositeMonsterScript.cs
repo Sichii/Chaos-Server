@@ -97,18 +97,6 @@ public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMons
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public virtual bool IsBlind()
-    {
-        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
-            if (script.IsBlind())
-                return true;
-
-        return false;
-    }
-
-    /// <summary>
-    ///     DO NOT EDIT THIS SCRIPT
-    /// </summary>
     public virtual bool IsFriendlyTo(Creature creature)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))

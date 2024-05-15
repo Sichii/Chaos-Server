@@ -18,7 +18,7 @@ public sealed class
 
         foreach (var sourceItem in source)
         {
-            var destItem = context.Mapper.Map<TDestination>(sourceItem);
+            var destItem = context.Mapper.Map<TDestination>(sourceItem)!;
             destination.Add(destItem);
         }
 
@@ -40,7 +40,7 @@ public sealed class
 
         foreach (var sourceItem in source)
         {
-            var destItem = context.Mapper.Map<TDestination>(sourceItem);
+            var destItem = context.Mapper.Map<TDestination>(sourceItem)!;
             destination.Add(destItem);
         }
 

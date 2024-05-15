@@ -67,8 +67,15 @@ ConfigureApp(app);
 
 await RunApp(app);
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+logger.WithTopics(Topics.Actions.Disconnect)
+      .LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
+
 //wait for everything to shut down
 await Task.Delay(5000);
+
+LogManager.Shutdown();
 
 return;
 
@@ -97,13 +104,9 @@ static async Task RunApp(WebApplication app)
     AppContext.Provider = app.Services;
 
     var serverCtx = app.Services.GetRequiredService<CancellationTokenSource>();
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
     await app.RunAsync(serverCtx.Token);
     await serverCtx.Token.WaitTillCanceled();
-
-    logger.WithTopics(Topics.Actions.Disconnect)
-          .LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
 }
 
 static bool IsSiteEnabled(IConfiguration config) => config.GetValue<bool>(ConfigKeys.Options.SiteOptions.EnableSite);

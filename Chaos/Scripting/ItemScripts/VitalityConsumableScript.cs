@@ -5,8 +5,8 @@ using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripting.Components;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.AbilityComponents;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.ApplyDamage;
 using Chaos.Scripting.FunctionalScripts.ApplyHealing;
@@ -15,12 +15,12 @@ using Chaos.Scripting.ItemScripts.Abstractions;
 namespace Chaos.Scripting.ItemScripts;
 
 public class VitalityConsumableScript : ConfigurableItemScriptBase,
-                                        AbilityComponent<Aisling>.IAbilityComponentOptions,
-                                        DamageComponent.IDamageComponentOptions,
-                                        HealComponent.IHealComponentOptions,
-                                        ManaDrainComponent.IManaDrainComponentOptions,
-                                        ManaReplenishComponent.IManaReplenishComponentOptions,
-                                        ConsumableComponent.IConsumableComponentOptions
+                                        GenericAbilityComponent<Aisling>.IAbilityComponentOptions,
+                                        DamageAbilityComponent.IDamageComponentOptions,
+                                        HealAbilityComponent.IHealComponentOptions,
+                                        ManaDrainAbilityComponent.IManaDrainComponentOptions,
+                                        ManaReplenishAbilityComponent.IManaReplenishComponentOptions,
+                                        ConsumableAbilityComponent.IConsumableComponentOptions
 
 {
     /// <inheritdoc />
@@ -38,16 +38,19 @@ public class VitalityConsumableScript : ConfigurableItemScriptBase,
     /// <inheritdoc />
     public override void OnUse(Aisling source)
         => new ComponentExecutor(source, source).WithOptions(this)
-                                                .ExecuteAndCheck<AbilityComponent<Aisling>>()
-                                                ?.Execute<DamageComponent>()
-                                                .Execute<HealComponent>()
-                                                .Execute<ManaDrainComponent>()
-                                                .Execute<ManaReplenishComponent>()
-                                                .Execute<ConsumableComponent>();
+                                                .ExecuteAndCheck<GenericAbilityComponent<Aisling>>()
+                                                ?.Execute<DamageAbilityComponent>()
+                                                .Execute<HealAbilityComponent>()
+                                                .Execute<ManaDrainAbilityComponent>()
+                                                .Execute<ManaReplenishAbilityComponent>()
+                                                .Execute<ConsumableAbilityComponent>();
 
     #region ScriptVars
     /// <inheritdoc />
     public AoeShape Shape { get; init; }
+
+    /// <inheritdoc />
+    public bool SingleTarget { get; init; }
 
     /// <inheritdoc />
     public TargetFilter Filter { get; init; }

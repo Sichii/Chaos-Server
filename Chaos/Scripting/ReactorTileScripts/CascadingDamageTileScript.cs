@@ -4,8 +4,8 @@ using Chaos.Models.Data;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripting.Components;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.AbilityComponents;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.ApplyDamage;
 using Chaos.Scripting.ReactorTileScripts.Abstractions;
@@ -16,10 +16,10 @@ namespace Chaos.Scripting.ReactorTileScripts;
 
 public sealed class CascadingDamageTileScript : ConfigurableReactorTileScriptBase,
                                                 ICascadingTileScript,
-                                                GetCascadingTargetsComponent<Creature>.IGetCascadingTargetsComponentOptions,
-                                                DamageComponent.IDamageComponentOptions,
-                                                SoundComponent.ISoundComponentOptions,
-                                                AnimationComponent.IAnimationComponentOptions
+                                                GetCascadingTargetsAbilityComponent<Creature>.IGetCascadingTargetsComponentOptions,
+                                                DamageAbilityComponent.IDamageComponentOptions,
+                                                SoundAbilityComponent.ISoundComponentOptions,
+                                                AnimationAbilityComponent.IAnimationComponentOptions
 {
     private readonly IIntervalTimer CascadeTimer;
     private readonly IIntervalTimer SoundTimer;
@@ -74,11 +74,11 @@ public sealed class CascadingDamageTileScript : ConfigurableReactorTileScriptBas
         //only execute if the cascade timer is elapsed
         if (CascadeTimer.IntervalElapsed)
         {
-            Executor.ExecuteAndCheck<GetCascadingTargetsComponent<Creature>>()
-                    ?.Execute<DamageComponent>()
-                    .Execute<AnimationComponent>()
+            Executor.ExecuteAndCheck<GetCascadingTargetsAbilityComponent<Creature>>()
+                    ?.Execute<DamageAbilityComponent>()
+                    .Execute<AnimationAbilityComponent>()
                     .Check(ShouldPlaySound)
-                    ?.Execute<SoundComponent>();
+                    ?.Execute<SoundAbilityComponent>();
 
             //if the sound timer is elapsed, the predicate above will play the sound
             //however, we still need to reset it

@@ -4,15 +4,15 @@ using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Components.AbilityComponents;
 
-public class HealComponent : IComponent
+public struct HealAbilityComponent : IComponent
 {
     /// <inheritdoc />
-    public virtual void Execute(ActivationContext context, ComponentVars vars)
+    public void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<IHealComponentOptions>();
         var targets = vars.GetTargets<Creature>();
@@ -38,7 +38,7 @@ public class HealComponent : IComponent
         }
     }
 
-    protected virtual int CalculateHeal(
+    private int CalculateHeal(
         Creature source,
         Creature target,
         int? baseHeal = null,

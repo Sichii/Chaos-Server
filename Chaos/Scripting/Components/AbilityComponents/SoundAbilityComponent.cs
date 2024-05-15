@@ -1,13 +1,13 @@
 using Chaos.Models.Data;
 using Chaos.Scripting.Components.Abstractions;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.Execution;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Components.AbilityComponents;
 
-public class SoundComponent : IComponent
+public struct SoundAbilityComponent : IComponent
 {
     /// <inheritdoc />
-    public virtual void Execute(ActivationContext context, ComponentVars vars)
+    public void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<ISoundComponentOptions>();
         var points = vars.GetPoints();

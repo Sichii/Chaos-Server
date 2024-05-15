@@ -15,7 +15,6 @@ public interface ICreatureScript : IScript, IDeltaUpdatable
     bool CanTurn();
     bool CanUseSkill(Skill skill);
     bool CanUseSpell(Spell spell);
-    bool IsBlind();
     bool IsFriendlyTo(Creature creature);
     bool IsHostileTo(Creature creature);
     void OnApproached(Creature source);

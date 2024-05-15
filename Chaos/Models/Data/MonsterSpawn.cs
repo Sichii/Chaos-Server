@@ -50,8 +50,6 @@ public sealed class MonsterSpawn : IDeltaUpdatable
         }
     }
 
-    private IPoint GenerateSpawnPoint() => MapInstance.Template.Bounds.GetRandomPoint(PointValidator);
-
     private bool PointValidator(Point point)
         => (SpawnArea is null || SpawnArea.Contains(point))
            && MapInstance.IsWalkable(point, MonsterTemplate.Type)
@@ -70,12 +68,13 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 
         for (var i = 0; i < spawnAmount; i++)
         {
-            var point = GenerateSpawnPoint();
+            if (!TryGenerateSpawnPoint(out var spawnPoint))
+                continue;
 
             var monster = MonsterFactory.Create(
                 MonsterTemplate.TemplateKey,
                 MapInstance,
-                point,
+                spawnPoint,
                 ExtraScriptKeys);
 
             FinalLootTable ??= ExtraLootTables.Any()
@@ -91,5 +90,15 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 
         foreach (var monster in monsters)
             monster.Script.OnSpawn();
+    }
+
+    private bool TryGenerateSpawnPoint([NotNullWhen(true)] out Point? spawnPoint)
+    {
+        spawnPoint = null;
+
+        if (MapInstance.Template.Bounds.TryGetRandomPoint(PointValidator, out spawnPoint))
+            return true;
+
+        return false;
     }
 }

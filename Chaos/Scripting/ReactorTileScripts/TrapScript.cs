@@ -6,8 +6,8 @@ using Chaos.Models.Data;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripting.Components;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.AbilityComponents;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.ApplyDamage;
 using Chaos.Scripting.ReactorTileScripts.Abstractions;
@@ -18,12 +18,12 @@ using Chaos.Time.Abstractions;
 namespace Chaos.Scripting.ReactorTileScripts;
 
 public class TrapScript : ConfigurableReactorTileScriptBase,
-                          GetTargetsComponent<Creature>.IGetTargetsComponentOptions,
-                          SoundComponent.ISoundComponentOptions,
-                          AnimationComponent.IAnimationComponentOptions,
-                          DamageComponent.IDamageComponentOptions,
-                          ManaDrainComponent.IManaDrainComponentOptions,
-                          ApplyEffectComponent.IApplyEffectComponentOptions
+                          GetTargetsAbilityComponent<Creature>.IGetTargetsComponentOptions,
+                          SoundAbilityComponent.ISoundComponentOptions,
+                          AnimationAbilityComponent.IAnimationComponentOptions,
+                          DamageAbilityComponent.IDamageComponentOptions,
+                          ManaDrainAbilityComponent.IManaDrainComponentOptions,
+                          ApplyEffectAbilityComponent.IApplyEffectComponentOptions
 {
     protected Creature Owner { get; set; }
     protected IIntervalTimer? Timer { get; set; }
@@ -57,12 +57,12 @@ public class TrapScript : ConfigurableReactorTileScriptBase,
             return;
 
         var executed = new ComponentExecutor(Owner, source).WithOptions(this)
-                                                           .ExecuteAndCheck<GetTargetsComponent<Creature>>()
-                                                           ?.Execute<SoundComponent>()
-                                                           .Execute<AnimationComponent>()
-                                                           .Execute<DamageComponent>()
-                                                           .Execute<ManaDrainComponent>()
-                                                           .Execute<ApplyEffectComponent>()
+                                                           .ExecuteAndCheck<GetTargetsAbilityComponent<Creature>>()
+                                                           ?.Execute<SoundAbilityComponent>()
+                                                           .Execute<AnimationAbilityComponent>()
+                                                           .Execute<DamageAbilityComponent>()
+                                                           .Execute<ManaDrainAbilityComponent>()
+                                                           .Execute<ApplyEffectAbilityComponent>()
                        != null;
 
         if (executed && MaxTriggers.HasValue)
@@ -95,6 +95,7 @@ public class TrapScript : ConfigurableReactorTileScriptBase,
     public IEffectFactory EffectFactory { get; init; }
     public IApplyDamageScript ApplyDamageScript { get; init; }
     public AoeShape Shape { get; init; }
+    public bool SingleTarget { get; init; }
     public BodyAnimation BodyAnimation { get; init; }
     public int Range { get; init; }
     public TargetFilter Filter { get; init; }

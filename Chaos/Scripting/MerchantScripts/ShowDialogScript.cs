@@ -1,13 +1,13 @@
 using Chaos.Models.Abstractions;
 using Chaos.Models.World;
-using Chaos.Scripting.Components;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.AbilityComponents;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.MerchantScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Scripting.MerchantScripts;
 
-public class ShowDialogScript : ConfigurableMerchantScriptBase, ShowDialogComponent.IShowDialogComponentOptions
+public class ShowDialogScript : ConfigurableMerchantScriptBase, ShowDialogAbilityComponent.IShowDialogComponentOptions
 {
     /// <inheritdoc />
     public ShowDialogScript(IDialogFactory dialogFactory, Merchant subject)
@@ -20,7 +20,7 @@ public class ShowDialogScript : ConfigurableMerchantScriptBase, ShowDialogCompon
     /// <inheritdoc />
     public override void OnClicked(Aisling source)
         => new ComponentExecutor(source, source).WithOptions(this)
-                                                .Execute<ShowDialogComponent>();
+                                                .Execute<ShowDialogAbilityComponent>();
 
     #region ScriptVars
     /// <inheritdoc />

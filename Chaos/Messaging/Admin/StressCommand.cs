@@ -30,8 +30,10 @@ public class StressCommand(IItemFactory itemFactory, IMonsterFactory monsterFact
 
                 for (var i = 0; i < amount; i++)
                 {
+                    if (!map.Template.Bounds.TryGetRandomPoint(pt => !map.IsWall(pt), out var point))
+                        continue;
+
                     var item = ItemFactory.Create("stick");
-                    var point = map.Template.Bounds.GetRandomPoint(pt => !map.IsWall(pt));
                     items.Add(new GroundItem(item, map, point));
                 }
 
@@ -51,7 +53,9 @@ public class StressCommand(IItemFactory itemFactory, IMonsterFactory monsterFact
 
                 for (var i = 0; i < amount; i++)
                 {
-                    var point = map.GetRandomWalkablePoint();
+                    if (!map.TryGetRandomWalkablePoint(out var point))
+                        continue;
+
                     var monster = MonsterFactory.Create("common_rat", map, point);
                     monster.AggroRange = 12;
                     monsters.Add(monster);

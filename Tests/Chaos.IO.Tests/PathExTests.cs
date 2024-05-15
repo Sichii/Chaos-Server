@@ -1,8 +1,8 @@
-using Chaos.Common.Utilities;
+using Chaos.IO.FileSystem;
 using FluentAssertions;
 using Xunit;
 
-namespace Chaos.Common.Tests;
+namespace Chaos.IO.Tests;
 
 public sealed class PathExTests
 {

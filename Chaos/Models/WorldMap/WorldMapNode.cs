@@ -1,14 +1,14 @@
 using Chaos.Collections;
-using Chaos.Common.Identity;
 using Chaos.Common.Utilities;
 using Chaos.Models.World;
+using Chaos.Services.Other;
 using Chaos.Storage.Abstractions;
 
 namespace Chaos.Models.WorldMap;
 
 public sealed record WorldMapNode
 {
-    private static readonly KeyMapper<ushort> KeyMapper = new(new SequentialIdGenerator<ushort>());
+    private static readonly KeyMapper<ushort> KeyMapper = new WorldMapNodeKeyMapper();
     private readonly ISimpleCache SimpleCache;
     public Location Destination { get; init; }
     public string NodeKey { get; init; }

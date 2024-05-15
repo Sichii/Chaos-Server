@@ -33,7 +33,8 @@ public class Items(ItemDtoRepository itemDtoRepository, QueryService queryServic
                                                     filter = propType is { IsValueType: true, IsEnum: false }
                                                         ? "agNumberColumnFilter"
                                                         : "agTextColumnFilter",
-                                                    pinned = identifier ? "left" : null
+                                                    pinned = identifier ? "left" : null,
+                                                    autoHeight = true
                                                 };
                                             });
 

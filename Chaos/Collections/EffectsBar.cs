@@ -34,7 +34,6 @@ public sealed class EffectsBar : IEffectsBar
         using var @lock = Sync.Enter();
 
         effect.Subject = Affected;
-        effect.Source = source;
 
         if (effect.ShouldApply(source, Affected))
         {

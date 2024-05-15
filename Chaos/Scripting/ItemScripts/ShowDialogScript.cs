@@ -1,14 +1,14 @@
 using Chaos.Models.Abstractions;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
-using Chaos.Scripting.Components;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.AbilityComponents;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.ItemScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 
 namespace Chaos.Scripting.ItemScripts;
 
-public class ShowDialogScript : ConfigurableItemScriptBase, ShowDialogComponent.IShowDialogComponentOptions
+public class ShowDialogScript : ConfigurableItemScriptBase, ShowDialogAbilityComponent.IShowDialogComponentOptions
 {
     /// <inheritdoc />
     public ShowDialogScript(Item subject, IDialogFactory dialogFactory)
@@ -21,7 +21,7 @@ public class ShowDialogScript : ConfigurableItemScriptBase, ShowDialogComponent.
     /// <inheritdoc />
     public override void OnUse(Aisling source)
         => new ComponentExecutor(source, source).WithOptions(this)
-                                                .Execute<ShowDialogComponent>();
+                                                .Execute<ShowDialogAbilityComponent>();
 
     #region ScriptVars
     public string? DialogKey { get; init; }

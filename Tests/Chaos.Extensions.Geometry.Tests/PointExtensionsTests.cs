@@ -865,6 +865,70 @@ public sealed class PointExtensionsTests
                                 .Select(pts => new Point(pts[0], pts[1])));
     }
 
+    [Theory]
+    [InlineData(
+        Direction.Down,
+        2,
+        3,
+        3,
+        2,
+        2,
+        2,
+        1,
+        2,
+        2,
+        1)]
+    [InlineData(
+        Direction.Left,
+        1,
+        2,
+        2,
+        1,
+        2,
+        2,
+        2,
+        3,
+        3,
+        2)]
+    [InlineData(
+        Direction.Up,
+        2,
+        1,
+        1,
+        2,
+        2,
+        2,
+        3,
+        2,
+        2,
+        3)]
+    [InlineData(
+        Direction.Right,
+        3,
+        2,
+        2,
+        3,
+        2,
+        2,
+        2,
+        1,
+        1,
+        2)]
+    public void WithConsistentDirectionBias_Should_Order_Points_Correctly(Direction direction, params int[] expectedOrder)
+    {
+        // Arrange
+        var points = expectedOrder.Chunk(2)
+                                  .Select(pts => new Point(pts[0], pts[1]))
+                                  .ToList();
+
+        // Act
+        var result = points.WithConsistentDirectionBias(direction);
+
+        // Assert
+        result.Should()
+              .ContainInOrder(points);
+    }
+
     //@formatter:off
     [Theory]
     [InlineData(Direction.Down, 1, 2, 2, 1, 3, 0)]             // Sort points by Y in ascending order (Up)

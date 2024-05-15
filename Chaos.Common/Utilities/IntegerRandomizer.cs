@@ -56,6 +56,7 @@ public static class IntegerRandomizer
     ///         default
     ///     </c>
     /// </returns>
+    [ExcludeFromCodeCoverage(Justification = "Tested by PickRandomWeightedSingleOrDefault<T>(ICollection<KeyValuePair<T, int>>)")]
     public static T? PickRandomWeightedSingleOrDefault<T>(this IEnumerable<T> choices, int commonWeight)
         => choices.Select(x => new KeyValuePair<T, int>(x, commonWeight))
                   .ToList()

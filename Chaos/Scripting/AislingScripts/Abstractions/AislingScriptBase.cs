@@ -49,9 +49,6 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
     public virtual IEnumerable<BoardBase> GetBoardList() { yield break; }
 
     /// <inheritdoc />
-    public virtual bool IsBlind() => false;
-
-    /// <inheritdoc />
     public virtual bool IsFriendlyTo(Creature creature) => false;
 
     /// <inheritdoc />

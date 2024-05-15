@@ -5,12 +5,13 @@ using Chaos.Common.Abstractions;
 namespace Chaos.Common.Utilities;
 
 /// <summary>
-///     A utility class for mapping string keys to numeric ids
+///     A utility class for mapping string keys to numeric ids. Class is abstract because an instance should be created for
+///     each purpose.
 /// </summary>
 /// <typeparam name="T">
 ///     The numeric type to map the keys to
 /// </typeparam>
-public class KeyMapper<T> where T: INumber<T>
+public abstract class KeyMapper<T> where T: INumber<T>
 {
     /// <summary>
     ///     The id generator used to generate ids for keys
@@ -28,17 +29,32 @@ public class KeyMapper<T> where T: INumber<T>
     /// <param name="idGenerator">
     ///     The id generator to use
     /// </param>
-    public KeyMapper(IIdGenerator<T> idGenerator)
+    protected KeyMapper(IIdGenerator<T> idGenerator)
     {
         IdGenerator = idGenerator;
         Map = new ConcurrentDictionary<string, T>();
     }
 
     /// <summary>
-    ///     Maps the specified key to a unique id. If the key is already mapped, the existing id is returned.
+    ///     Gets or maps the specified key to a unique id. If the key is already mapped, the existing id is returned.
     /// </summary>
     /// <param name="key">
     ///     The key to map
     /// </param>
     public T GetId(string key) => Map.GetOrAdd(key, static (_, idGenerator) => idGenerator.NextId, IdGenerator);
+
+    /// <summary>
+    ///     Gets the key associated with the specified id
+    /// </summary>
+    /// <param name="id">
+    ///     An already mapped id
+    /// </param>
+    public string? GetKey(T id)
+    {
+        foreach ((var key, var value) in Map)
+            if (value == id)
+                return key;
+
+        return null;
+    }
 }

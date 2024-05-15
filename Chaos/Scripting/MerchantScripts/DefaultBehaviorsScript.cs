@@ -8,7 +8,6 @@ namespace Chaos.Scripting.MerchantScripts;
 
 public class DefaultBehaviorsScript : MerchantScriptBase
 {
-    protected virtual BlindBehavior BlindBehavior { get; }
     protected virtual RelationshipBehavior RelationshipBehavior { get; }
     protected virtual RestrictionBehavior RestrictionBehavior { get; }
     protected virtual VisibilityBehavior VisibilityBehavior { get; }
@@ -20,7 +19,6 @@ public class DefaultBehaviorsScript : MerchantScriptBase
         VisibilityBehavior = new VisibilityBehavior();
         RestrictionBehavior = new RestrictionBehavior();
         RelationshipBehavior = new RelationshipBehavior();
-        BlindBehavior = new BlindBehavior();
     }
 
     public override bool CanMove() => RestrictionBehavior.CanMove(Subject);
@@ -36,9 +34,6 @@ public class DefaultBehaviorsScript : MerchantScriptBase
 
     /// <inheritdoc />
     public override bool CanUseSpell(Spell spell) => RestrictionBehavior.CanUseSpell(Subject, spell);
-
-    /// <inheritdoc />
-    public override bool IsBlind() => BlindBehavior.IsBlind(Subject);
 
     /// <inheritdoc />
     public override bool IsFriendlyTo(Creature creature) => RelationshipBehavior.IsFriendlyTo(Subject, creature);

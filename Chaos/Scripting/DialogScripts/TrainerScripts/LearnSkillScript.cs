@@ -1,3 +1,4 @@
+using Chaos.Extensions.Common;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.Menu;
@@ -64,7 +65,7 @@ public class LearnSkillScript : DialogScriptBase
     private void OnDisplayingAccepted(Aisling source)
     {
         if (!TryFetchArgs<string>(out var skillName)
-            || !SkillTeacherSource.TryGetSkill(skillName, out var skill)
+            || !TryGetSkill(skillName, source, out var skill)
             || source.SkillBook.Contains(skillName))
         {
             Subject.ReplyToUnknownInput(source);
@@ -138,7 +139,7 @@ public class LearnSkillScript : DialogScriptBase
     private void OnDisplayingRequirements(Aisling source)
     {
         if (!TryFetchArgs<string>(out var skillName)
-            || !SkillTeacherSource.TryGetSkill(skillName, out var skill)
+            || !TryGetSkill(skillName, source, out var skill)
             || source.SkillBook.Contains(skillName))
         {
             Subject.ReplyToUnknownInput(source);
@@ -152,6 +153,19 @@ public class LearnSkillScript : DialogScriptBase
                                            .ToString();
 
         Subject.InjectTextParameters(skill.Template.Description ?? string.Empty, learningRequirementsStr ?? string.Empty);
+    }
+
+    private bool TryGetSkill(string skillName, Aisling source, [MaybeNullWhen(false)] out Skill skill)
+    {
+        //name matches
+        //source has the skill's class
+        //adv class matches if there is one
+        skill = SkillTeacherSource.SkillsToTeach.FirstOrDefault(
+            skill => skill.Template.Name.EqualsI(skillName)
+                     && source.HasClass(skill.Template.Class!.Value)
+                     && (!skill.Template.AdvClass.HasValue || (source.UserStatSheet.AdvClass == skill.Template.AdvClass.Value)));
+
+        return skill != null;
     }
 
     public bool ValidateAndTakeRequirements(Aisling source, Dialog dialog, Skill skillToLearn)

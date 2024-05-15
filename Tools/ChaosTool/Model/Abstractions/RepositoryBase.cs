@@ -5,6 +5,7 @@ using Chaos.Collections.Synchronized;
 using Chaos.Extensions.Common;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Abstractions.Definitions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
 
 namespace ChaosTool.Model.Abstractions;
@@ -21,9 +22,11 @@ public abstract class RepositoryBase<T>(IEntityRepository entityRepository, IOpt
         => Options?.Directory ?? throw new InvalidOperationException("If using a different options type, override this method");
 
     /// <inheritdoc />
+    [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
+    [MustDisposeResource]
     public IEnumerator<T> GetEnumerator()
         => Objects.Select(wrapped => wrapped.Object)
                   .GetEnumerator();

@@ -2,20 +2,20 @@ using System.Collections.Immutable;
 using Chaos.Definitions;
 using Chaos.Models.Data;
 using Chaos.Scripting.Components.Abstractions;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Scripting.EffectScripts.HideEffects;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Components.AbilityComponents;
 
-public class BreaksHideComponent : IComponent
+public struct BreaksHideAbilityComponent : IComponent
 {
-    private readonly ImmutableList<string> HideEffects = ImmutableList.Create(
+    private static readonly ImmutableList<string> HideEffects = ImmutableList.Create(
         EffectBase.GetEffectKey(typeof(HideEffect)),
         EffectBase.GetEffectKey(typeof(TrueHideEffect)));
 
     /// <inheritdoc />
-    public virtual void Execute(ActivationContext context, ComponentVars vars)
+    public void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<IBreaksHideComponentOptions>();
 

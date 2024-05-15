@@ -13,8 +13,7 @@ public sealed class SkillDtoRepository : IEnumerable<SkillDto>
     {
         skillTemplateCache.ForceLoad();
 
-        SkillDtos = mapper.Map<IEnumerable<SkillDto>>(skillTemplateCache)
-                          .ToList();
+        SkillDtos = mapper.Map<IEnumerable<SkillDto>>(skillTemplateCache)!.ToList();
     }
 
     /// <inheritdoc />

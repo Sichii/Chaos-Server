@@ -581,7 +581,7 @@ public static class PointExtensions
     {
         ArgumentNullException.ThrowIfNull(points);
 
-        if (direction == Direction.Invalid)
+        if (direction is Direction.Invalid or Direction.All)
             throw new ArgumentOutOfRangeException(nameof(direction));
 
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
@@ -590,9 +590,9 @@ public static class PointExtensions
             Direction.Up => points.OrderBy(p => p.Y)
                                   .ThenBy(p => p.X),
             Direction.Right => points.OrderByDescending(p => p.X)
-                                     .ThenBy(p => p.Y),
+                                     .ThenByDescending(p => p.Y),
             Direction.Down => points.OrderByDescending(p => p.Y)
-                                    .ThenBy(p => p.X),
+                                    .ThenByDescending(p => p.X),
             Direction.Left => points.OrderBy(p => p.X)
                                     .ThenBy(p => p.Y),
             _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
@@ -610,7 +610,7 @@ public static class PointExtensions
     {
         ArgumentNullException.ThrowIfNull(points);
 
-        if (direction == Direction.Invalid)
+        if (direction is Direction.Invalid or Direction.All)
             throw new ArgumentOutOfRangeException(nameof(direction));
 
         // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault

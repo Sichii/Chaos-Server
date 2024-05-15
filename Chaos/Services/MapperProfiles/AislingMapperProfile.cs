@@ -149,7 +149,7 @@ public sealed class AislingMapperProfile(
                 obj.UserStatSheet.EffectiveAc,
                 WorldOptions.Instance.MinimumAislingAc,
                 WorldOptions.Instance.MaximumAislingAc),
-            Blind = obj.Script.IsBlind(),
+            Blind = obj.IsBlind,
             Con = obj.UserStatSheet.EffectiveCon,
             CurrentHp = (uint)Math.Clamp(obj.UserStatSheet.CurrentHp, 0, int.MaxValue),
             CurrentMp = (uint)Math.Clamp(obj.UserStatSheet.CurrentMp, 0, int.MaxValue),

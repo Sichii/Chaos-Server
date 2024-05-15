@@ -8,6 +8,20 @@ public sealed class ExchangeObserver(Aisling owner, Aisling other) : Abstraction
     private readonly Aisling Other = other;
     private readonly Aisling Owner = owner;
 
+    /// <inheritdoc />
+    public bool Equals(Abstractions.IObserver<Item>? other)
+    {
+        if (ReferenceEquals(null, other))
+            return false;
+
+        if (ReferenceEquals(this, other))
+            return true;
+
+        return other is ExchangeObserver equipmentObserver
+               && Other.Equals(equipmentObserver.Other)
+               && Owner.Equals(equipmentObserver.Owner);
+    }
+
     public void OnAdded(Item obj)
     {
         Owner.Client.SendExchangeAddItem(false, obj.Slot, obj);
@@ -24,4 +38,13 @@ public sealed class ExchangeObserver(Aisling owner, Aisling other) : Abstraction
         Owner.Client.SendExchangeAddItem(false, obj.Slot, obj);
         Other.Client.SendExchangeAddItem(true, obj.Slot, obj);
     }
+
+    /// <inheritdoc />
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || (obj is ExchangeObserver other && Equals(other));
+
+    /// <inheritdoc />
+    public override int GetHashCode() => HashCode.Combine(Other, Owner, typeof(ExchangeObserver));
+
+    public static bool operator ==(ExchangeObserver? left, ExchangeObserver? right) => Equals(left, right);
+    public static bool operator !=(ExchangeObserver? left, ExchangeObserver? right) => !Equals(left, right);
 }

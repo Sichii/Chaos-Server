@@ -30,6 +30,7 @@
         <None Update="appsettings.logging.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Remove="PersistentIdUInt64.json.bak"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Messaging.Abstractions\Chaos.Messaging.Abstractions.csproj"/>
@@ -48,7 +49,6 @@
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="AutoMapper.Collection"/>
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection"/>
         <PackageReference Include="Humanizer"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"/>
         <PackageReference Include="NLog.Web.AspNetCore"/>

@@ -4,16 +4,16 @@ using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripting.Components;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.AbilityComponents;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.SkillScripts.Abstractions;
 
 namespace Chaos.Scripting.SkillScripts;
 
 public class HealScript : ConfigurableSkillScriptBase,
-                          AbilityComponent<Creature>.IAbilityComponentOptions,
-                          HealComponent.IHealComponentOptions
+                          GenericAbilityComponent<Creature>.IAbilityComponentOptions,
+                          HealAbilityComponent.IHealComponentOptions
 {
     public HealScript(Skill subject)
         : base(subject)
@@ -25,12 +25,15 @@ public class HealScript : ConfigurableSkillScriptBase,
     /// <inheritdoc />
     public override void OnUse(ActivationContext context)
         => new ComponentExecutor(context).WithOptions(this)
-                                         .ExecuteAndCheck<AbilityComponent<Creature>>()
-                                         ?.Execute<HealComponent>();
+                                         .ExecuteAndCheck<GenericAbilityComponent<Creature>>()
+                                         ?.Execute<HealAbilityComponent>();
 
     #region ScriptVars
     /// <inheritdoc />
     public AoeShape Shape { get; init; }
+
+    /// <inheritdoc />
+    public bool SingleTarget { get; init; }
 
     /// <inheritdoc />
     public TargetFilter Filter { get; init; }

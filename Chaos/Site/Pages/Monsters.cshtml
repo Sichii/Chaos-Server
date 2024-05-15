@@ -18,12 +18,9 @@
     <script src="~/Site/wwwroot/Styles/chaos-api.js"></script>
     <script>
         const columnDefs = @Html.Raw(Monsters.ColumnDefsJson);
-    
+
         // AG Grid initialization and configuration
         const gridOptions = {
-            autoSizeStrategy: {
-                type: 'fitCellContents'
-            },
             rowModelType: 'infinite',
             defaultColDef: {
                 sortable: true,
@@ -53,7 +50,6 @@
         };
 
         const MonstersGridElement = document.querySelector('#MonsterGrid');
-        let grid = agGrid.createGrid(MonstersGridElement, gridOptions);
-        
+        const grid = agGrid.createGrid(MonstersGridElement, gridOptions);
     </script>
 }

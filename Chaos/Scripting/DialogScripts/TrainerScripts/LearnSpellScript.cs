@@ -1,3 +1,4 @@
+using Chaos.Extensions.Common;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.Menu;
@@ -64,7 +65,7 @@ public class LearnSpellScript : DialogScriptBase
     private void OnDisplayingAccepted(Aisling source)
     {
         if (!TryFetchArgs<string>(out var spellName)
-            || !SpellTeacherSource.TryGetSpell(spellName, out var spell)
+            || !TryGetSpell(spellName, source, out var spell)
             || source.SpellBook.Contains(spellName))
         {
             Subject.ReplyToUnknownInput(source);
@@ -112,7 +113,7 @@ public class LearnSpellScript : DialogScriptBase
 
     private void OnDisplayingInitial(Aisling source)
     {
-        Subject.Spells = new List<Spell>();
+        Subject.Spells = [];
 
         foreach (var spell in SpellTeacherSource.SpellsToTeach)
         {
@@ -138,7 +139,7 @@ public class LearnSpellScript : DialogScriptBase
     private void OnDisplayingRequirements(Aisling source)
     {
         if (!TryFetchArgs<string>(out var spellName)
-            || !SpellTeacherSource.TryGetSpell(spellName, out var spell)
+            || !TryGetSpell(spellName, source, out var spell)
             || source.SpellBook.Contains(spellName))
         {
             Subject.ReplyToUnknownInput(source);
@@ -152,6 +153,19 @@ public class LearnSpellScript : DialogScriptBase
                                            .ToString();
 
         Subject.InjectTextParameters(spell.Template.Description ?? string.Empty, learningRequirementsStr ?? string.Empty);
+    }
+
+    private bool TryGetSpell(string spellName, Aisling source, [MaybeNullWhen(false)] out Spell spell)
+    {
+        //name matches
+        //source has the spell's class
+        //adv class matches if there is one
+        spell = SpellTeacherSource.SpellsToTeach.FirstOrDefault(
+            spell => spell.Template.Name.EqualsI(spellName)
+                     && source.HasClass(spell.Template.Class!.Value)
+                     && (!spell.Template.AdvClass.HasValue || (source.UserStatSheet.AdvClass == spell.Template.AdvClass.Value)));
+
+        return spell != null;
     }
 
     public bool ValidateAndTakeRequirements(Aisling source, Dialog dialog, Spell spellToLearn)

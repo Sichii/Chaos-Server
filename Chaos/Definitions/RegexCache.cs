@@ -45,7 +45,7 @@ public static partial class RegexCache
     [GeneratedRegex("^Take (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex DepositRegex4();
 
-    [GeneratedRegex(@"^Take (?<amount>\w+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex(@"^Take (?<amount>\d+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex DepositRegex5();
 
     [GeneratedRegex(@"^Take my (?:(?<amount>\d+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
@@ -60,7 +60,7 @@ public static partial class RegexCache
     [GeneratedRegex("^I (?:will )?sell (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex SellItemRegex1();
 
-    [GeneratedRegex(@"^I (?:will )?sell (?<amount>\w+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex(@"^I (?:will )?sell (?<amount>\d+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex SellItemRegex2();
 
     [GeneratedRegex(@"^I (?:will )?sell (?:(?<amount>\d+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
@@ -69,16 +69,16 @@ public static partial class RegexCache
     [GeneratedRegex("^I (?:will )?withdraw (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex WithdrawRegex1();
 
-    [GeneratedRegex(@"^I (?:will )?withdraw (?<amount>\w+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex(@"^I (?:will )?withdraw (?<amount>\d+) of my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex WithdrawRegex2();
 
-    [GeneratedRegex(@"^I (?:will )?withdraw (?:(?<amount>\w+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex(@"^I (?:will )?withdraw (?:(?<amount>\d+) )?(?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex WithdrawRegex3();
 
     [GeneratedRegex("^Give (?:me )?(?<amount>all) my (?<thing>.+) back", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex WithdrawRegex4();
 
-    [GeneratedRegex(@"^Give (?:me )?(?<amount>\w+) of my (?<thing>.+) back", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+    [GeneratedRegex(@"^Give (?:me )?(?<amount>\d+) of my (?<thing>.+) back", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex WithdrawRegex5();
 
     [GeneratedRegex(@"^Give (?:me )?my (?:(?<amount>\d+) )?(?<thing>.+) back", RegexOptions.IgnoreCase | RegexOptions.Compiled)]

@@ -45,6 +45,15 @@ public sealed class DirectionExtensionsTests
             Direction.Right,
             Direction.Down
         })]
+    [InlineData(
+        Direction.All,
+        new[]
+        {
+            Direction.Up,
+            Direction.Right,
+            Direction.Down,
+            Direction.Left
+        })]
     public void AsEnumerable_ShouldReturnAllDirectionsInClockwiseOrder(Direction startDirection, Direction[] expectedDirections)
     {
         // Act

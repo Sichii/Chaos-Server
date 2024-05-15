@@ -18,8 +18,6 @@ public abstract class EffectBase : IEffect
         set => Elapsed = Duration - value;
     }
 
-    public Creature? Source { get; set; } = null!;
-
     public Creature Subject { get; set; } = null!;
     public abstract byte Icon { get; }
     public abstract string Name { get; }
@@ -27,8 +25,7 @@ public abstract class EffectBase : IEffect
     /// <inheritdoc />
     public string ScriptKey { get; }
 
-    protected Aisling? AislingSource => Source as Aisling;
-    protected Aisling? AislingSubject => Subject as Aisling;
+    public Aisling? AislingSubject => Subject as Aisling;
 
     protected EffectBase() => ScriptKey = GetEffectKey(GetType());
 
@@ -48,9 +45,12 @@ public abstract class EffectBase : IEffect
     /// <inheritdoc />
     public virtual bool ShouldApply(Creature source, Creature target)
     {
-        if (target.Effects.Contains(Name) || target.Effects.Any(effect => effect.Icon == Icon))
+        var conflictingEffect = target.Effects.FirstOrDefault(e => e.Name.EqualsI(Name) || (e.Icon == Icon));
+
+        if (conflictingEffect is not null)
         {
-            AislingSubject?.SendOrangeBarMessage($"You are already affected by {Name}.");
+            if (source is Aisling aisling)
+                aisling.SendActiveMessage($"Target is already affected by {conflictingEffect.Name}.");
 
             return false;
         }

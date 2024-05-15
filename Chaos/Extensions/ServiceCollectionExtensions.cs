@@ -216,7 +216,7 @@ public static class ServiceCollectionExtensions
 
         //add aisling store with backup service
         services.AddOptionsFromConfig<AislingStoreOptions>(ConfigKeys.Options.Key);
-        services.AddSingleton<IAsyncStore<Aisling>, AislingStore>();
+        services.AddSingleton<IAsyncStore<Aisling>, IStore<Aisling>, AislingStore>();
         services.AddHostedService<DirectoryBackupService<AislingStoreOptions>>();
         services.ConfigureOptions<DirectoryBoundOptionsConfigurer<AislingStoreOptions>>();
 

@@ -39,5 +39,5 @@ public static class AutoMapperEx
         return destination;
     }
 
-    public static TDestination MapTo<TDestination>(this object source) => Mapper.Map<TDestination>(source);
+    public static TDestination MapTo<TDestination>(this object source) => Mapper.Map<TDestination>(source)!;
 }

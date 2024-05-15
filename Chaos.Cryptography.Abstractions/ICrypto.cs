@@ -38,6 +38,11 @@ public interface ICrypto
     void EncryptDialog(ref Span<byte> buffer);
 
     /// <summary>
+    ///     Generates and sets randomized encryption parameters (Seed/Key)
+    /// </summary>
+    void GenerateEncryptionParameters();
+
+    /// <summary>
     ///     Generates a random encryption key from the given values
     /// </summary>
     byte[] GenerateKey(ushort a, byte b);

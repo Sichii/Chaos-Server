@@ -5,8 +5,8 @@ using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
-using Chaos.Scripting.Components;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.AbilityComponents;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.ApplyDamage;
 using Chaos.Scripting.ReactorTileScripts;
@@ -16,9 +16,9 @@ using Chaos.Services.Factories.Abstractions;
 namespace Chaos.Scripting.SpellScripts;
 
 public class CascadingDamageScript : ConfigurableSpellScriptBase,
-                                     AbilityComponent<Creature>.IAbilityComponentOptions,
-                                     DamageComponent.IDamageComponentOptions,
-                                     CascadingComponent<CascadingDamageTileScript>.ICascadingComponentOptions
+                                     GenericAbilityComponent<Creature>.IAbilityComponentOptions,
+                                     DamageAbilityComponent.IDamageComponentOptions,
+                                     CascadingAbilityComponent<CascadingDamageTileScript>.ICascadingComponentOptions
 {
     /// <inheritdoc />
     public CascadingDamageScript(Spell subject, IReactorTileFactory reactorTileFactory)
@@ -33,9 +33,9 @@ public class CascadingDamageScript : ConfigurableSpellScriptBase,
     /// <inheritdoc />
     public override void OnUse(SpellContext context)
         => new ComponentExecutor(context).WithOptions(this)
-                                         .ExecuteAndCheck<AbilityComponent<Creature>>()
-                                         ?.Execute<DamageComponent>()
-                                         .Execute<CascadingComponent<CascadingDamageTileScript>>();
+                                         .ExecuteAndCheck<GenericAbilityComponent<Creature>>()
+                                         ?.Execute<DamageAbilityComponent>()
+                                         .Execute<CascadingAbilityComponent<CascadingDamageTileScript>>();
 
     #region ScriptVars
     /// <inheritdoc />
@@ -46,6 +46,9 @@ public class CascadingDamageScript : ConfigurableSpellScriptBase,
 
     /// <inheritdoc />
     public AoeShape Shape { get; init; }
+
+    /// <inheritdoc />
+    public bool SingleTarget { get; init; }
 
     /// <inheritdoc />
     public TargetFilter Filter { get; init; }

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 
@@ -114,26 +115,6 @@ public static class RectangleExtensions
         => new(rect.Left + Random.Shared.Next(rect.Width), rect.Top + Random.Shared.Next(rect.Height));
 
     /// <summary>
-    ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
-    /// </summary>
-    /// <param name="rect">
-    ///     The rect to use as bounds
-    /// </param>
-    /// <param name="predicate">
-    ///     A predicate the point must match
-    /// </param>
-    public static Point GetRandomPoint(this IRectangle rect, Func<Point, bool> predicate)
-    {
-        while (true)
-        {
-            var randomPoint = rect.GetRandomPoint();
-
-            if (predicate(randomPoint))
-                return randomPoint;
-        }
-    }
-
-    /// <summary>
     ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> intersects another
     ///     <see cref="Chaos.Geometry.Abstractions.IRectangle" />
     /// </summary>
@@ -159,5 +140,47 @@ public static class RectangleExtensions
         ArgumentNullException.ThrowIfNull(other);
 
         return !((rect.Bottom < other.Top) || (rect.Left > other.Right) || (rect.Right < other.Left) || (rect.Top > other.Bottom));
+    }
+
+    /// <summary>
+    ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
+    /// </summary>
+    /// <param name="rect">
+    ///     The rect to use as bounds
+    /// </param>
+    /// <param name="predicate">
+    ///     A predicate the point must match
+    /// </param>
+    /// <param name="point">
+    ///     A random point that matches the given predicate
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if a random point was found that matches the predicate, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    public static bool TryGetRandomPoint(this IRectangle rect, Func<Point, bool> predicate, [NotNullWhen(true)] out Point? point)
+    {
+        point = null;
+
+        if (!rect.GetPoints()
+                 .Any(predicate))
+            return false;
+
+        while (true)
+        {
+            var randomPoint = rect.GetRandomPoint();
+
+            if (predicate(randomPoint))
+            {
+                point = randomPoint;
+
+                return true;
+            }
+        }
     }
 }

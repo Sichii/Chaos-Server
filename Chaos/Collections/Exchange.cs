@@ -99,6 +99,13 @@ public sealed class Exchange
             return;
         }
 
+        if (item.Template.NoTrade)
+        {
+            aisling.SendActiveMessage($"{item.DisplayName} is no-trade");
+
+            return;
+        }
+
         if (!otherUser.CanCarry(
                 userItems.Prepend(item)
                          .ToArray()))
@@ -145,6 +152,13 @@ public sealed class Exchange
         if (item.Template.AccountBound)
         {
             aisling.SendActiveMessage($"{item.DisplayName} is account bound");
+
+            return;
+        }
+
+        if (item.Template.NoTrade)
+        {
+            aisling.SendActiveMessage($"{item.DisplayName} is no-trade");
 
             return;
         }

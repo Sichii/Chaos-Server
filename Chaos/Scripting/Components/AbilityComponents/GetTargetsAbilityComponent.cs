@@ -7,14 +7,14 @@ using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.Execution;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Components.AbilityComponents;
 
-public class GetTargetsComponent<TEntity> : IConditionalComponent where TEntity: MapEntity
+public struct GetTargetsAbilityComponent<TEntity> : IConditionalComponent where TEntity: MapEntity
 {
     /// <inheritdoc />
-    public virtual bool Execute(ActivationContext context, ComponentVars vars)
+    public bool Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<IGetTargetsComponentOptions>();
         var direction = context.TargetCreature?.Direction ?? context.Target.DirectionalRelationTo(context.Source);
@@ -36,10 +36,22 @@ public class GetTargetsComponent<TEntity> : IConditionalComponent where TEntity:
                                 .WithFilter(context.Source, options.Filter)
                                 .ToList();
 
+        if (options.SingleTarget && (targetEntities.Count > 1))
+        {
+            if (context.TargetCreature is TEntity entity && targetEntities.Contains(entity))
+                targetEntities = [entity];
+            else
+                targetEntities =
+                [
+                    targetEntities.OrderBy(e => e.Creation)
+                                  .First()
+                ];
+        }
+
         vars.SetPoints(targetPoints);
         vars.SetTargets(targetEntities);
 
-        return !options.MustHaveTargets || targetEntities.Any();
+        return !options.MustHaveTargets || (targetEntities.Count != 0);
     }
 
     public interface IGetTargetsComponentOptions
@@ -49,5 +61,6 @@ public class GetTargetsComponent<TEntity> : IConditionalComponent where TEntity:
         bool MustHaveTargets { get; init; }
         int Range { get; init; }
         AoeShape Shape { get; init; }
+        bool SingleTarget { get; init; }
     }
 }

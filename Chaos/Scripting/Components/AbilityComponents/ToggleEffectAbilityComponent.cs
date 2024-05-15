@@ -1,14 +1,16 @@
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.Abstractions;
+using Chaos.Scripting.Components.Execution;
+using Chaos.Services.Factories.Abstractions;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Components.AbilityComponents;
 
 // ReSharper disable once ClassCanBeSealed.Global
-public class ToggleEffectComponent : ApplyEffectComponent
+public struct ToggleEffectAbilityComponent : IComponent
 {
     /// <inheritdoc />
-    public override void Execute(ActivationContext context, ComponentVars vars)
+    public void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<IToggleEffectComponentOptions>();
 
@@ -35,5 +37,10 @@ public class ToggleEffectComponent : ApplyEffectComponent
             }
     }
 
-    public interface IToggleEffectComponentOptions : IApplyEffectComponentOptions { }
+    public interface IToggleEffectComponentOptions
+    {
+        TimeSpan? EffectDurationOverride { get; init; }
+        IEffectFactory EffectFactory { get; init; }
+        string? EffectKey { get; init; }
+    }
 }

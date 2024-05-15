@@ -1,6 +1,6 @@
 using System.Numerics;
 using Chaos.Common.Abstractions;
-using Chaos.Common.Utilities;
+using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -19,7 +19,7 @@ public sealed class KeyMapperTests
         idGeneratorMock.Setup(g => g.NextId)
                        .Returns(() => new BigInteger(sequence++));
 
-        var mapper = new KeyMapper<BigInteger>(idGeneratorMock.Object);
+        var mapper = new MockKeyMapper<BigInteger>(idGeneratorMock.Object);
 
         // Act
         var _ = mapper.GetId("key1");
@@ -39,7 +39,7 @@ public sealed class KeyMapperTests
         idGeneratorMock.Setup(g => g.NextId)
                        .Returns(() => new BigInteger(sequence++));
 
-        var mapper = new KeyMapper<BigInteger>(idGeneratorMock.Object);
+        var mapper = new MockKeyMapper<BigInteger>(idGeneratorMock.Object);
 
         // Act
         var id1 = mapper.GetId("key1");
@@ -60,7 +60,7 @@ public sealed class KeyMapperTests
         idGeneratorMock.Setup(g => g.NextId)
                        .Returns(() => new BigInteger(sequence++));
 
-        var mapper = new KeyMapper<BigInteger>(idGeneratorMock.Object);
+        var mapper = new MockKeyMapper<BigInteger>(idGeneratorMock.Object);
 
         // Act
         var id1 = mapper.GetId("key1");

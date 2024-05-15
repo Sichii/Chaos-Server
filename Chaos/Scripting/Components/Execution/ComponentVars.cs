@@ -2,7 +2,7 @@ using Chaos.Collections.Common;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.World.Abstractions;
 
-namespace Chaos.Scripting.Components.Utilities;
+namespace Chaos.Scripting.Components.Execution;
 
 public class ComponentVars : StaticVars
 {

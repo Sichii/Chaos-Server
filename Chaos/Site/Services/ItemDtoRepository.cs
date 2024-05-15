@@ -13,8 +13,7 @@ public sealed class ItemDtoRepository : IEnumerable<ItemDto>
     {
         itemTemplateCache.ForceLoad();
 
-        ItemDtos = mapper.Map<IEnumerable<ItemDto>>(itemTemplateCache)
-                         .ToList();
+        ItemDtos = mapper.Map<IEnumerable<ItemDto>>(itemTemplateCache)!.ToList();
     }
 
     /// <inheritdoc />

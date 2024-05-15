@@ -4,12 +4,12 @@ using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
-using Chaos.Scripting.Components.Utilities;
+using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 
-namespace Chaos.Scripting.Components;
+namespace Chaos.Scripting.Components.AbilityComponents;
 
-public class ManaBasedDamageComponent : IComponent
+public struct ManaBasedDamageAbilityComponent : IComponent
 {
     /// <inheritdoc />
     public void Execute(ActivationContext context, ComponentVars vars)
@@ -31,7 +31,7 @@ public class ManaBasedDamageComponent : IComponent
                 options.Element);
     }
 
-    protected virtual int CalculateDamage(ActivationContext context, IManaBasedDamageComponentOptions options)
+    private int CalculateDamage(ActivationContext context, IManaBasedDamageComponentOptions options)
     {
         var baseDamage = options.BaseDamage ?? 0;
         var manaDamage = 0;

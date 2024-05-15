@@ -33,7 +33,8 @@ public class Skills(SkillDtoRepository skillDtoRepository, QueryService querySer
                                                      filter = propType is { IsValueType: true, IsEnum: false }
                                                          ? "agNumberColumnFilter"
                                                          : "agTextColumnFilter",
-                                                     pinned = identifier ? "left" : null
+                                                     pinned = identifier ? "left" : null,
+                                                     autoHeight = true
                                                  };
                                              });
 

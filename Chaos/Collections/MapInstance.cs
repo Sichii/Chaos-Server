@@ -274,9 +274,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 15) where T: MapEntity
         => Objects.WithinRange<T>(point, range);
 
-    public IPoint GetRandomWalkablePoint(CreatureType creatureType = CreatureType.Normal)
-        => Template.Bounds.GetRandomPoint(pt => IsWalkable(pt, creatureType));
-
     private void HandleSharding(Aisling aisling, IPoint point)
     {
         switch (ShardingOptions!.ShardingType)
@@ -780,6 +777,14 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public void Stop() => MapInstanceCtx.Cancel();
 
     public bool TryGetEntity<T>(uint id, [MaybeNullWhen(false)] out T obj) => Objects.TryGetValue(id, out obj);
+
+    public bool TryGetRandomWalkablePoint([NotNullWhen(true)] out Point? point, CreatureType creatureType = CreatureType.Normal)
+    {
+        if (!Template.Bounds.TryGetRandomPoint(pt => IsWalkable(pt, creatureType), out point))
+            return false;
+
+        return true;
+    }
 
     public async Task UpdateMapAsync(TimeSpan delta)
     {

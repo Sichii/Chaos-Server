@@ -33,9 +33,6 @@ public abstract class ConfigurableMerchantScriptBase : ConfigurableScriptBase<Me
     public virtual bool CanUseSpell(Spell spell) => true;
 
     /// <inheritdoc />
-    public virtual bool IsBlind() => false;
-
-    /// <inheritdoc />
     public virtual bool IsFriendlyTo(Creature creature) => false;
 
     /// <inheritdoc />
