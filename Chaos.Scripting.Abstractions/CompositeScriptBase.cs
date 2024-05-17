@@ -50,7 +50,12 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
                 case T tScript:
                     return tScript;
                 case ICompositeScript<TScript> composite:
-                    return composite.GetScript<T>();
+                    var ret = composite.GetScript<T>();
+
+                    if (ret is not null)
+                        return ret;
+
+                    break;
             }
 
         return default;

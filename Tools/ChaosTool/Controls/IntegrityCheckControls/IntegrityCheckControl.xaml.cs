@@ -705,41 +705,53 @@ public sealed partial class IntegrityCheckControl
 
     private void ReBuildIndexes()
     {
-        MapInstanceIndex = JsonContext.MapInstances.ToFrozenDictionary(mi => mi.Instance.InstanceId, StringComparer.OrdinalIgnoreCase);
-        MapTemplateIndex = JsonContext.MapTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
-        MerchantTemplateIndex = JsonContext.MerchantTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
-        MonsterTemplateIndex = JsonContext.MonsterTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
-        ItemTemplateIndex = JsonContext.ItemTemplates.ToFrozenDictionary(it => it.TemplateKey, StringComparer.OrdinalIgnoreCase);
-        SkillTemplateIndex = JsonContext.SkillTemplates.ToFrozenDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
-        SpellTemplateIndex = JsonContext.SpellTemplates.ToFrozenDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
-        DialogTemplateIndex = JsonContext.DialogTemplates.ToFrozenDictionary(dt => dt.TemplateKey, StringComparer.OrdinalIgnoreCase);
-        LootTableIndex = JsonContext.LootTables.ToFrozenDictionary(lt => lt.Key, StringComparer.OrdinalIgnoreCase);
-        WorldMapNodeIndex = JsonContext.WorldMapNodes.ToFrozenDictionary(wmn => wmn.NodeKey, StringComparer.OrdinalIgnoreCase);
-        WorldMapIndex = JsonContext.WorldMaps.ToFrozenDictionary(wm => wm.WorldMapKey, StringComparer.OrdinalIgnoreCase);
+        try
+        {
+            MapInstanceIndex = JsonContext.MapInstances.ToFrozenDictionary(mi => mi.Instance.InstanceId, StringComparer.OrdinalIgnoreCase);
+            MapTemplateIndex = JsonContext.MapTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
 
-        ReactorTileTemplateIndex = JsonContext.ReactorTileTemplates.ToFrozenDictionary(
-            rt => rt.TemplateKey,
-            StringComparer.OrdinalIgnoreCase);
+            MerchantTemplateIndex
+                = JsonContext.MerchantTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+            MonsterTemplateIndex = JsonContext.MonsterTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+            ItemTemplateIndex = JsonContext.ItemTemplates.ToFrozenDictionary(it => it.TemplateKey, StringComparer.OrdinalIgnoreCase);
+            SkillTemplateIndex = JsonContext.SkillTemplates.ToFrozenDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
+            SpellTemplateIndex = JsonContext.SpellTemplates.ToFrozenDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
+            DialogTemplateIndex = JsonContext.DialogTemplates.ToFrozenDictionary(dt => dt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+            LootTableIndex = JsonContext.LootTables.ToFrozenDictionary(lt => lt.Key, StringComparer.OrdinalIgnoreCase);
+            WorldMapNodeIndex = JsonContext.WorldMapNodes.ToFrozenDictionary(wmn => wmn.NodeKey, StringComparer.OrdinalIgnoreCase);
+            WorldMapIndex = JsonContext.WorldMaps.ToFrozenDictionary(wm => wm.WorldMapKey, StringComparer.OrdinalIgnoreCase);
 
-        BuyableItemsIndex = JsonContext.MerchantTemplates
-                                       .SelectMany(mt => mt.ItemsForSale.Select(i => i.ItemTemplateKey))
-                                       .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+            ReactorTileTemplateIndex = JsonContext.ReactorTileTemplates.ToFrozenDictionary(
+                rt => rt.TemplateKey,
+                StringComparer.OrdinalIgnoreCase);
 
-        SellableItemsIndex = JsonContext.MerchantTemplates
-                                        .SelectMany(mt => mt.ItemsToBuy)
-                                        .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
-
-        LearnableSkillsIndex = JsonContext.MerchantTemplates
-                                          .SelectMany(mt => mt.SkillsToTeach)
-                                          .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
-
-        LearnableSpellsIndex = JsonContext.MerchantTemplates
-                                          .SelectMany(mt => mt.SpellsToTeach)
-                                          .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
-
-        InUseMapTemplateIndex = JsonContext.MapInstances
-                                           .Select(mi => mi.Instance.TemplateKey)
+            BuyableItemsIndex = JsonContext.MerchantTemplates
+                                           .SelectMany(mt => mt.ItemsForSale.Select(i => i.ItemTemplateKey))
                                            .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+
+            SellableItemsIndex = JsonContext.MerchantTemplates
+                                            .SelectMany(mt => mt.ItemsToBuy)
+                                            .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+
+            LearnableSkillsIndex = JsonContext.MerchantTemplates
+                                              .SelectMany(mt => mt.SkillsToTeach)
+                                              .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+
+            LearnableSpellsIndex = JsonContext.MerchantTemplates
+                                              .SelectMany(mt => mt.SpellsToTeach)
+                                              .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+
+            InUseMapTemplateIndex = JsonContext.MapInstances
+                                               .Select(mi => mi.Instance.TemplateKey)
+                                               .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            MessageBox.Show(
+                ex.Message,
+                "Error",
+                MessageBoxButton.OK,
+                MessageBoxImage.Error);
+        }
     }
     #endregion
 

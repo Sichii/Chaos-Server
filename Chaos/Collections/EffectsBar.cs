@@ -21,7 +21,7 @@ public sealed class EffectsBar : IEffectsBar
         Affected = affected;
         AffectedAisling = Affected as Aisling;
         Sync = new AutoReleasingMonitor();
-        effects ??= Enumerable.Empty<IEffect>();
+        effects ??= [];
 
         Effects = new Dictionary<string, IEffect>(StringComparer.OrdinalIgnoreCase);
 
