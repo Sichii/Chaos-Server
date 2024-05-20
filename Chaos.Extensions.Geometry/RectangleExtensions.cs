@@ -66,6 +66,106 @@ public static class RectangleExtensions
     }
 
     /// <summary>
+    ///     Given a start and end point, generates a maze inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
+    /// </summary>
+    /// <param name="rect">
+    ///     The rect that represents the bounds of the maze
+    /// </param>
+    /// <param name="start">
+    ///     The start point of the maze
+    /// </param>
+    /// <param name="end">
+    ///     The end point of the maze
+    /// </param>
+    /// <returns>
+    /// </returns>
+    public static IEnumerable<Point> GenerateMaze(this IRectangle rect, IPoint start, IPoint end)
+    {
+        //neighbor pattern
+        List<(int, int)> pattern =
+        [
+            (0, 1),
+            (1, 0),
+            (0, -1),
+            (-1, 0)
+        ];
+
+        var height = rect.Height;
+        var width = rect.Width;
+        var startNode = Point.From(start);
+        var endNode = Point.From(end);
+        var maze = new bool[width, height];
+        var discoveryQueue = new Stack<Point>();
+
+        //initialize maze full of walls
+        for (var x = 0; x < maze.GetLength(0); x++)
+            for (var y = 0; y < maze.GetLength(1); y++)
+                maze[x, y] = true;
+
+        //start wtih startNode
+        //startNode is not a wall
+        discoveryQueue.Push(startNode);
+        maze[startNode.X, startNode.Y] = false;
+
+        //carve out the maze
+        while (discoveryQueue.Count > 0)
+        {
+            //get current node
+            var current = discoveryQueue.Peek();
+            var carved = false;
+
+            //shuffle neighbor pattern so we get a random direction
+            ShuffleInPlace(pattern);
+
+            //for each direction in the pattern
+            foreach ((var dx, var dy) in pattern)
+            {
+                //get a point 2 spaces in the direction
+                var target = new Point(current.X + dx * 2, current.Y + dy * 2);
+
+                //if the target is out of bounds or already carved, skip
+                if (!rect.Contains(target) || !maze[target.X, target.Y])
+                    continue;
+
+                //carve out the wall between the current node and the target
+                //carve out the target node
+                maze[current.X + dx, current.Y + dy] = false;
+                maze[target.X, target.Y] = false;
+
+                //push the target node onto the stack
+                discoveryQueue.Push(target);
+                carved = true;
+
+                //don't look at any more of these neighbors
+                break;
+            }
+
+            //since we carved, pop the node we peeked
+            if (!carved)
+                discoveryQueue.Pop();
+        }
+
+        //end node is not a wall
+        maze[endNode.X, endNode.Y] = false;
+
+        //yield all walls in the maze
+        foreach (var point in rect.GetPoints())
+            if (maze[point.X, point.Y])
+                yield return point;
+
+        yield break;
+
+        static void ShuffleInPlace<T>(IList<T> arr)
+        {
+            for (var i = arr.Count - 1; i > 0; i--)
+            {
+                var j = Random.Shared.Next(i + 1);
+                (arr[i], arr[j]) = (arr[j], arr[i]);
+            }
+        }
+    }
+
+    /// <summary>
     ///     Lazily generates points along the outline of the rectangle. The points will be in the order the vertices are
     ///     listed.
     /// </summary>

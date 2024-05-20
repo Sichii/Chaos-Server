@@ -140,6 +140,40 @@ public sealed class RectangleExtensionsTests
     }
 
     [Fact]
+    public void GenerateMaze_Should_GeneratePerfectMaze()
+    {
+        var rect = new Rectangle(
+            0,
+            0,
+            25,
+            25);
+
+        var start = new Point(12, 24);
+        var end = new Point(12, 0);
+
+        var mazeWalls = rect.GenerateMaze(start, end)
+                            .ToList();
+
+        var walkablePoints = rect.GetPoints()
+                                 .Except(mazeWalls)
+                                 .ToList();
+
+        walkablePoints.Should()
+                      .Contain(start);
+
+        walkablePoints.Should()
+                      .Contain(end);
+
+        walkablePoints.FloodFill(start)
+                      .Should()
+                      .Contain(end);
+
+        walkablePoints.FloodFill(end)
+                      .Should()
+                      .Contain(start);
+    }
+
+    [Fact]
     public void GetOutline_Should_Return_Correct_Outline_Points_For_Rectangle()
     {
         // Arrange
