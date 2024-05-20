@@ -20,7 +20,7 @@
         xmlns:worldMapControls="clr-namespace:ChaosTool.Controls.WorldMapControls"
         mc:Ignorable="d"
         Title="Chaos Tool"
-        MaxWidth="1400"
+        MaxWidth="1300"
         MaxHeight="800"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         Background="{DynamicResource MaterialDesignPaper}"
@@ -28,8 +28,8 @@
         TextElement.FontSize="14"
         FontFamily="{materialDesign:MaterialDesignFont}"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
-    <Grid HorizontalAlignment="Center"
-          VerticalAlignment="Center">
+    <Grid HorizontalAlignment="Left"
+          VerticalAlignment="Top">
         <TabControl HorizontalContentAlignment="Left">
             <TabItem Header="Items"
                      Name="ItemsTab"
@@ -142,7 +142,7 @@
                             Margin="10"
                             Content="➤"
                             Click="OnRunClicked"
-                            Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                            Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}" />
                     <Button Grid.Row="0"
                             Height="Auto"
                             Width="Auto"
@@ -151,7 +151,7 @@
                             Margin="100,10,10,10"
                             Content="Reload"
                             Click="OnClickedReload"
-                            Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                            Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}" />
                     <ScrollViewer Grid.Row="1"
                                   VerticalScrollBarVisibility="Auto"
                                   HorizontalScrollBarVisibility="Auto"

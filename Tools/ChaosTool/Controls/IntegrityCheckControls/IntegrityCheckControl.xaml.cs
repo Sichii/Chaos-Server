@@ -673,7 +673,7 @@ public sealed partial class IntegrityCheckControl
                 var button = new Button
                 {
                     Content = violation,
-                    Style = Application.Current.Resources["MaterialDesignFlatAccentBgButton"] as Style,
+                    Style = Application.Current.Resources["MaterialDesignFlatSecondaryMidBgButton"] as Style,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Top,
                     Margin = new Thickness(

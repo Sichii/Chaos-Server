@@ -27,7 +27,7 @@
                 VerticalAlignment="Top"
                 Margin="10"
                 Content="Perform Integrity Check"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}" />
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}" />
 
         <ScrollViewer Grid.Row="1">
             <ItemsControl Name="IntegrityViolationsControl"

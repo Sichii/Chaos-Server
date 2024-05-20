@@ -391,7 +391,7 @@
                   HorizontalAlignment="Left"
                   Margin="10,293,0,0"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  Style="{StaticResource MaterialDesignSwitchSecondaryToggleButton}"
                   IsChecked="{Binding AccountBound}" />
         <TextBox Grid.Column="1"
                  x:Name="BuyCostTbox"
@@ -459,7 +459,7 @@
                   HorizontalAlignment="Left"
                   Margin="10,533,0,0"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  Style="{StaticResource MaterialDesignSwitchSecondaryToggleButton}"
                   IsChecked="{Binding RequiresMaster}" />
         <TextBox Grid.Column="2"
                  x:Name="AtkSpeedPctTbox"
@@ -635,21 +635,21 @@
                   HorizontalAlignment="Left"
                   Margin="10,173,0,0"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  Style="{StaticResource MaterialDesignSwitchSecondaryToggleButton}"
                   IsChecked="{Binding IsDyeable}" />
         <CheckBox Grid.Column="3"
                   x:Name="IsModifiableCbox"
                   HorizontalAlignment="Left"
                   Margin="10,203,0,0"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  Style="{StaticResource MaterialDesignSwitchSecondaryToggleButton}"
                   IsChecked="{Binding IsModifiable}" />
         <CheckBox Grid.Column="3"
                   x:Name="NoTradeCbox"
                   HorizontalAlignment="Left"
                   Margin="10,233,0,0"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  Style="{StaticResource MaterialDesignSwitchSecondaryToggleButton}"
                   IsChecked="{Binding NoTrade}" />
         <TextBox Grid.Column="3"
                  x:Name="CategoryTbox"
@@ -724,7 +724,7 @@
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                     Click="DeleteScriptKeyBtn_Click" />
                         </Grid>
                     </DataTemplate>
@@ -738,7 +738,7 @@
                     MaxWidth="20"
                     MaxHeight="20"
                     Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                     Click="AddScriptKeyBtn_Click" />
         </Grid>
         <!-- #endregion -->
@@ -750,7 +750,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,200,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="DeleteBtn_OnClick" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
@@ -759,7 +759,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,100,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="RevertBtn_Click" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
@@ -768,7 +768,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,10,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="SaveBtn_Click" />
         <materialDesign:Snackbar x:Name="Snackbar"
                                  Grid.RowSpan="99"

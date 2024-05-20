@@ -46,7 +46,7 @@
                     Name="AddBtn"
                     Content="Add"
                     Margin="10"
-                    Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                    Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                     Click="AddButton_Click" />
         </Grid>
 

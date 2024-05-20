@@ -243,7 +243,7 @@
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                     Click="DeleteScriptKeyBtn_Click" />
                         </Grid>
                     </DataTemplate>
@@ -257,7 +257,7 @@
                     MaxWidth="20"
                     MaxHeight="20"
                     Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                     Click="AddScriptKeyBtn_Click" />
         </Grid>
 
@@ -324,7 +324,7 @@
                                         MaxWidth="20"
                                         Margin="0, 0, -8, 2"
                                         Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                         Click="DeleteItemForSaleBtn_Click" />
                                 <TextBox Grid.Row="1"
                                          MaxLines="1"
@@ -349,7 +349,7 @@
                         MaxWidth="20"
                         MaxHeight="20"
                         Margin="5"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                         Click="AddItemForSaleBtn_Click" />
             </Grid>
 
@@ -399,7 +399,7 @@
                                         MaxWidth="20"
                                         Margin="0, 0, -8, 2"
                                         Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                         Click="DeleteItemToBuyBtn_Click" />
                             </Grid>
                         </DataTemplate>
@@ -413,7 +413,7 @@
                         MaxWidth="20"
                         MaxHeight="20"
                         Margin="5"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                         Click="AddItemToBuyBtn_Click" />
             </Grid>
         </Grid>
@@ -472,7 +472,7 @@
                                         MaxWidth="20"
                                         Margin="0, 0, -8, 2"
                                         Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                         Click="DeleteSkillToTeachBtn_Click" />
                             </Grid>
                         </DataTemplate>
@@ -486,7 +486,7 @@
                         MaxWidth="20"
                         MaxHeight="20"
                         Margin="5"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                         Click="AddSkillToTeachBtn_Click" />
             </Grid>
 
@@ -537,7 +537,7 @@
                                         MaxWidth="20"
                                         Margin="0, 0, -8, 2"
                                         Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                         Click="DeleteSpellToTeachBtn_Click" />
                             </Grid>
                         </DataTemplate>
@@ -551,7 +551,7 @@
                         MaxWidth="20"
                         MaxHeight="20"
                         Margin="5"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                         Click="AddSpellToTeachBtn_Click" />
             </Grid>
         </Grid>
@@ -564,7 +564,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,200,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="DeleteBtn_OnClick" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
@@ -573,7 +573,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,100,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="RevertBtn_Click" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
@@ -582,7 +582,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,10,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="SaveBtn_Click" />
         <materialDesign:Snackbar Name="Snackbar"
                                  Grid.RowSpan="99"

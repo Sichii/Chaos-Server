@@ -251,7 +251,7 @@
                   HorizontalAlignment="Left"
                   Margin="10,293,0,0"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  Style="{StaticResource MaterialDesignSwitchSecondaryToggleButton}"
                   IsChecked="{Binding RequiresMaster}" />
         <TextBox Grid.Column="1"
                  Name="RequiredGoldTbox"
@@ -336,14 +336,14 @@
                   HorizontalAlignment="Left"
                   Margin="10,143,0,0"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  Style="{StaticResource MaterialDesignSwitchSecondaryToggleButton}"
                   IsChecked="{Binding IsAssail}" />
         <CheckBox Grid.Column="2"
                   Name="LevelsUpCbox"
                   HorizontalAlignment="Left"
                   Margin="10,83,0,0"
                   VerticalAlignment="Top"
-                  Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                  Style="{StaticResource MaterialDesignSwitchSecondaryToggleButton}"
                   IsChecked="{Binding LevelsUp}" />
         <TextBox Grid.Column="2"
                  Name="MaxLevelTbox"
@@ -412,7 +412,7 @@
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                     Click="DeleteItemRequirementBtn_Click" />
                             <TextBox Grid.Row="1"
                                      MaxLines="1"
@@ -437,7 +437,7 @@
                     MaxWidth="20"
                     MaxHeight="20"
                     Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                     Click="AddItemRequirementBtn_Click" />
         </Grid>
         <Grid Grid.Column="3"
@@ -496,7 +496,7 @@
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                     Click="DeleteSpellTemplateKeyBtn_Click" />
                             <TextBox Grid.Row="1"
                                      MaxLines="1"
@@ -521,7 +521,7 @@
                     MaxWidth="20"
                     MaxHeight="20"
                     Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                     Click="AddSpellTemplateKeyBtn_Click" />
         </Grid>
         <Grid Grid.Column="3"
@@ -572,7 +572,7 @@
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                     Click="DeleteScriptKeyBtn_Click" />
                         </Grid>
                     </DataTemplate>
@@ -586,7 +586,7 @@
                     MaxWidth="20"
                     MaxHeight="20"
                     Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                     Click="AddScriptKeyBtn_Click" />
         </Grid>
         <Grid Grid.Column="3"
@@ -645,7 +645,7 @@
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                     Click="DeleteSkillTemplateKeyBtn_Click" />
                             <TextBox Grid.Row="1"
                                      MaxLines="1"
@@ -670,7 +670,7 @@
                     MaxWidth="20"
                     MaxHeight="20"
                     Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                     Click="AddSkillTemplateKeyBtn_Click" />
         </Grid>
         <!-- #endregion -->
@@ -682,7 +682,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,200,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="DeleteBtn_OnClick" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
@@ -691,7 +691,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,100,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="RevertBtn_Click" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
@@ -700,7 +700,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,10,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="SaveBtn_Click" />
         <materialDesign:Snackbar Name="Snackbar"
                                  Grid.RowSpan="99"

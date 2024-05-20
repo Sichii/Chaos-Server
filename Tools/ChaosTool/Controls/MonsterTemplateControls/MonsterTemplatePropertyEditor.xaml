@@ -461,7 +461,7 @@
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                     Click="DeleteLootTableKeyBtn_OnClick" />
                         </Grid>
                     </DataTemplate>
@@ -475,7 +475,7 @@
                     MaxWidth="20"
                     MaxHeight="20"
                     Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                     Click="AddLootTableKeyBtn_OnClick" />
         </Grid>
 
@@ -679,7 +679,7 @@
                                         MaxWidth="20"
                                         Margin="0, 0, -8, 2"
                                         Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                         Click="DeleteScriptKeyBtn_Click" />
                             </Grid>
                         </DataTemplate>
@@ -693,7 +693,7 @@
                         MaxWidth="20"
                         MaxHeight="20"
                         Margin="5"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                         Click="AddScriptKeyBtn_Click" />
             </Grid>
             <Grid Grid.Row="1"
@@ -743,7 +743,7 @@
                                         MaxWidth="20"
                                         Margin="0, 0, -8, 2"
                                         Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                         Click="DeleteSpellTemplateKeyBtn_OnClick" />
                             </Grid>
                         </DataTemplate>
@@ -757,7 +757,7 @@
                         MaxWidth="20"
                         MaxHeight="20"
                         Margin="5"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                         Click="AddSpellTemplateKeyBtn_OnClick" />
             </Grid>
 
@@ -808,7 +808,7 @@
                                         MaxWidth="20"
                                         Margin="0, 0, -8, 2"
                                         Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                         Click="DeleteSkillTemplateKeyBtn_OnClick" />
                             </Grid>
                         </DataTemplate>
@@ -822,7 +822,7 @@
                         MaxWidth="20"
                         MaxHeight="20"
                         Margin="5"
-                        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                        Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                         Click="AddSkillTemplateKeyBtn_OnClick" />
             </Grid>
         </Grid>
@@ -835,7 +835,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,200,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="DeleteBtn_OnClick" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
@@ -844,7 +844,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,100,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="RevertBtn_Click" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
@@ -853,7 +853,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,10,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="SaveBtn_Click" />
         <materialDesign:Snackbar Name="Snackbar"
                                  Grid.RowSpan="99"

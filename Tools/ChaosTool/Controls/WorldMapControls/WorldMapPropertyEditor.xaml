@@ -136,7 +136,7 @@
                                     MaxWidth="20"
                                     Margin="0, 0, -8, 2"
                                     Content="{materialDesign:PackIcon Kind=CloseBold}"
-                                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                                     Click="DeleteNodeKeyBtn_Click" />
                         </Grid>
                     </DataTemplate>
@@ -150,7 +150,7 @@
                     MaxWidth="20"
                     MaxHeight="20"
                     Margin="5"
-                    Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+                    Style="{StaticResource MaterialDesignFloatingActionMiniSecondaryButton}"
                     Click="AddNodeKeyBtn_Click" />
         </Grid>
         <!-- #endregion -->
@@ -162,7 +162,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,200,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="DeleteBtn_OnClick" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
@@ -171,7 +171,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,100,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="RevertBtn_Click" />
         <Button Grid.Row="1"
                 Grid.ColumnSpan="99"
@@ -180,7 +180,7 @@
                 HorizontalAlignment="Right"
                 Margin="0,0,10,10"
                 VerticalAlignment="Bottom"
-                Style="{StaticResource MaterialDesignFlatAccentBgButton}"
+                Style="{StaticResource MaterialDesignFlatSecondaryMidBgButton}"
                 Click="SaveBtn_Click" />
         <materialDesign:Snackbar Name="Snackbar"
                                  Grid.RowSpan="99"
