@@ -106,20 +106,20 @@ public sealed class Exchange
             return;
         }
 
-        if (!otherUser.CanCarry(
-                userItems.Prepend(item)
-                         .ToArray()))
-        {
-            aisling.SendActiveMessage($"{otherUser.Name} is unable to carry that");
-            otherUser.SendActiveMessage("You are unable to carry more");
-
-            return;
-        }
-
         if (item.Template.Stackable)
             aisling.Client.SendExchangeRequestAmount(item.Slot);
         else
         {
+            if (!otherUser.CanCarry(
+                    userItems.Prepend(item)
+                             .ToArray()))
+            {
+                aisling.SendActiveMessage($"{otherUser.Name} is unable to carry that");
+                otherUser.SendActiveMessage("You are unable to carry more");
+
+                return;
+            }
+
             aisling.Inventory.Remove(slot);
             userItems.TryAddToNextSlot(item);
 
