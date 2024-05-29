@@ -102,7 +102,6 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         var pathEndings = Paths.Select(Path.GetFileNameWithoutExtension);
 
         foreach (var pathEnding in pathEndings)
-        {
             try
             {
                 Get(pathEnding!);
@@ -110,7 +109,6 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
             {
                 //ignored
             }
-        }
     }
 
     /// <inheritdoc />
