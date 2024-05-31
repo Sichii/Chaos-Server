@@ -246,8 +246,11 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
     public IEnumerable<T> WithinRange<T>(IPoint point, int range = 15) where T: MapEntity
     {
-        var area = Math.Ceiling(Math.Pow(range * 2 + 1, 2) / 2);
-        var avgEntitiesPerTile = Math.Max(0.33, EntityLookup.Count / (float)WalkableArea);
+        //we arent looking in a square, we're looking in a diamond that fits into a square
+        //that diamond has 1/2 the area of the square it fits into
+        //the area of the square is (range * 2 + 1)^2
+        var searchArea = Math.Pow(range * 2 + 1, 2) / 2;
+        var avgEntitiesPerTile = EntityLookup.Count / (float)WalkableArea;
         int entityCount;
         var tType = typeof(T);
 
@@ -262,14 +265,26 @@ public sealed class MapEntityCollection : IDeltaUpdatable
             entityCount = GroundEntities.Count;
         else if (tType.IsAssignableTo(typeof(ReactorTile)))
             entityCount = Reactors.Count;
+        else if (tType.IsAssignableTo(typeof(Door)))
+            entityCount = Doors.Count;
+        else if (tType.IsAssignableTo(typeof(Creature)))
+            entityCount = Aislings.Count + Monsters.Count + Merchants.Count;
+        else if (tType.IsAssignableFrom(typeof(NamedEntity)))
+            entityCount = Aislings.Count + Monsters.Count + Merchants.Count + GroundEntities.Count;
         else if (tType.IsAssignableFrom(typeof(VisibleEntity)))
-            entityCount = EntityLookup.Count;
+            entityCount = Aislings.Count + Monsters.Count + Merchants.Count + GroundEntities.Count + Doors.Count;
         else
-            entityCount = 1;
+            entityCount = EntityLookup.Count;
+
+        //the avg number of entities we can expect to search when searching by area
+        var areaSearchAvgEntityCount = searchArea * avgEntitiesPerTile;
+
+        //the amortized cost of searching by area (there is a base cost associated with enumerating the hashsets that contain the entities)
+        var estimatedAmortizedCost = searchArea / 2f + areaSearchAvgEntityCount;
 
         //if we can expect to search significantly fewer entities by searching points
         //then search by point lookup
-        if ((10 + area * avgEntitiesPerTile) < entityCount)
+        if (estimatedAmortizedCost < entityCount)
             foreach (var pt in point.SpiralSearch(range))
             {
                 if (!Bounds.Contains(pt))

@@ -1,4 +1,5 @@
 using System.Text;
+using Chaos.IO.Exceptions;
 
 namespace Chaos.IO.FileSystem;
 
@@ -7,6 +8,130 @@ namespace Chaos.IO.FileSystem;
 /// </summary>
 public static class FileEx
 {
+    /// <summary>
+    ///     Safely opens a file for reading and performs the specified action
+    /// </summary>
+    /// <param name="path">
+    ///     The path to open for reading
+    /// </param>
+    /// <param name="func">
+    ///     The func to perform on the stream
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type to return from the func provided
+    /// </typeparam>
+    /// <exception cref="IOException">
+    ///     Failed to deserialize object from file, temp file, or backup file. See inner exception for details.
+    /// </exception>
+    public static T SafeOpenRead<T>(string path, Func<FileStream, T> func)
+    {
+        var dir = Path.GetDirectoryName(path)!;
+        var fileName = Path.GetFileNameWithoutExtension(path);
+        var tempPath = Path.Combine(dir, fileName + ".temp");
+        var backPath = Path.Combine(dir, fileName + ".bak");
+
+        var pathsToTry = new[]
+        {
+            path,
+            tempPath,
+            backPath
+        };
+        List<Exception> exceptions = [];
+
+        foreach (var pathToTry in pathsToTry)
+            try
+            {
+                using var stream = File.Open(
+                    pathToTry,
+                    new FileStreamOptions
+                    {
+                        Access = FileAccess.Read,
+                        Mode = FileMode.Open,
+                        Options = FileOptions.SequentialScan,
+                        Share = FileShare.ReadWrite
+                    });
+
+                var ret = func(stream);
+
+                return ret;
+            } catch (FileNotFoundException e)
+            {
+                exceptions.Add(e);
+            } catch (RetryableException e)
+            {
+                exceptions.Add(e);
+            } catch (Exception e)
+            {
+                exceptions.Add(e);
+
+                break;
+            }
+
+        throw new AggregateException("Failed to read file, temp file, or backup file. See inner exceptions for details.", exceptions);
+    }
+
+    /// <summary>
+    ///     Safely opens a file for reading and performs the specified action
+    /// </summary>
+    /// <param name="path">
+    ///     The path to open for reading
+    /// </param>
+    /// <param name="func">
+    ///     The func to perform on the stream
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type to return from the func provided
+    /// </typeparam>
+    /// <exception cref="IOException">
+    ///     Failed to deserialize object from file, temp file, or backup file. See inner exception for details.
+    /// </exception>
+    public static async Task<T> SafeOpenReadAsync<T>(string path, Func<FileStream, Task<T>> func)
+    {
+        var dir = Path.GetDirectoryName(path)!;
+        var fileName = Path.GetFileNameWithoutExtension(path);
+        var tempPath = Path.Combine(dir, fileName + ".temp");
+        var backPath = Path.Combine(dir, fileName + ".bak");
+
+        var pathsToTry = new[]
+        {
+            path,
+            tempPath,
+            backPath
+        };
+        List<Exception> exceptions = [];
+
+        foreach (var pathToTry in pathsToTry)
+            try
+            {
+                await using var stream = File.Open(
+                    pathToTry,
+                    new FileStreamOptions
+                    {
+                        Access = FileAccess.Read,
+                        Mode = FileMode.Open,
+                        Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
+                        Share = FileShare.ReadWrite
+                    });
+
+                var ret = await func(stream);
+
+                return ret;
+            } catch (FileNotFoundException e)
+            {
+                exceptions.Add(e);
+            } catch (RetryableException re)
+            {
+                exceptions.Add(re);
+            } catch (Exception e)
+            {
+                exceptions.Add(e);
+
+                break;
+            }
+
+        throw new AggregateException("Failed to read file, temp file, or backup file. See inner exceptions for details.", exceptions);
+    }
+
     /// <summary>
     ///     Writes all text to a file. Corruption will not occur if the write fails.
     /// </summary>
