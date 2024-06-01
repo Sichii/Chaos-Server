@@ -41,7 +41,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public BodyColor BodyColor { get; set; }
     public BodySprite BodySprite { get; set; }
     public SynchronizedHashSet<ChannelSettings> ChannelSettings { get; init; }
-    public IWorldClient Client { get; set; }
+    public IChaosWorldClient Client { get; set; }
     public IEquipment Equipment { get; private set; }
     public int FaceSprite { get; set; }
     public Gender Gender { get; set; }

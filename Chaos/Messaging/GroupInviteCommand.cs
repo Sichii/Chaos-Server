@@ -8,9 +8,9 @@ using Chaos.Services.Other.Abstractions;
 namespace Chaos.Messaging;
 
 [Command("invite", false, "<targetName>")]
-public class GroupInviteCommand(IClientRegistry<IWorldClient> clientRegistry, IGroupService groupService) : ICommand<Aisling>
+public class GroupInviteCommand(IClientRegistry<IChaosWorldClient> clientRegistry, IGroupService groupService) : ICommand<Aisling>
 {
-    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
+    private readonly IClientRegistry<IChaosWorldClient> ClientRegistry = clientRegistry;
     private readonly IGroupService GroupService = groupService;
 
     /// <inheritdoc />
@@ -21,7 +21,7 @@ public class GroupInviteCommand(IClientRegistry<IWorldClient> clientRegistry, IG
 
         var targetClient = ClientRegistry.FirstOrDefault(c => c.Aisling.Name.EqualsI(targetName));
 
-        if ((targetClient == null) || targetClient.Aisling.IsAdmin)
+        if ((targetClient == null) || (source.IsAdmin != targetClient.Aisling.IsAdmin))
         {
             source.SendOrangeBarMessage($"{targetName} can not be found");
 

@@ -9,6 +9,15 @@ public sealed class FifoAutoReleasingSemaphoreSlim
 {
     private readonly FifoSemaphoreSlim Root;
 
+    /// <summary>
+    ///     The name of the semaphore. Defaults to null (unnamed)
+    /// </summary>
+    public string? Name
+    {
+        get => Root.Name;
+        set => Root.Name = value;
+    }
+
     /// <inheritdoc cref="FifoSemaphoreSlim.CurrentCount" />
     public int CurrentCount => Root.CurrentCount;
 
@@ -21,7 +30,11 @@ public sealed class FifoAutoReleasingSemaphoreSlim
     /// <param name="maxCount">
     ///     The max count of the semaphore
     /// </param>
-    public FifoAutoReleasingSemaphoreSlim(int initialCount, int maxCount) => Root = new FifoSemaphoreSlim(initialCount, maxCount);
+    /// <param name="name">
+    ///     The name of the semaphore. Defaults to null. (unnamed)
+    /// </param>
+    public FifoAutoReleasingSemaphoreSlim(int initialCount, int maxCount, string? name = null)
+        => Root = new FifoSemaphoreSlim(initialCount, maxCount, name);
 
     /// <summary>
     ///     Releases the internal <see cref="Chaos.Common.Synchronization.FifoSemaphoreSlim" />.

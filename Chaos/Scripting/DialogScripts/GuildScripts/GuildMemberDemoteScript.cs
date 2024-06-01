@@ -17,7 +17,7 @@ public class GuildMemberDemoteScript : GuildScriptBase
     /// <inheritdoc />
     public GuildMemberDemoteScript(
         Dialog subject,
-        IClientRegistry<IWorldClient> clientRegistry,
+        IClientRegistry<IChaosWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
         ILogger<GuildMemberDemoteScript> logger)

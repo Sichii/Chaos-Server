@@ -15,7 +15,7 @@ public class GuildMemberRosterScript : GuildScriptBase
     /// <inheritdoc />
     public GuildMemberRosterScript(
         Dialog subject,
-        IClientRegistry<IWorldClient> clientRegistry,
+        IClientRegistry<IChaosWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
         ILogger<GuildMemberRosterScript> logger)

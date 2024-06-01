@@ -15,7 +15,7 @@ public class GuildRankModifyScript : GuildScriptBase
     /// <inheritdoc />
     public GuildRankModifyScript(
         Dialog subject,
-        IClientRegistry<IWorldClient> clientRegistry,
+        IClientRegistry<IChaosWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
         ILogger<GuildRankModifyScript> logger)

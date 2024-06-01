@@ -10,7 +10,7 @@ namespace Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 
 public abstract class GuildScriptBase : DialogScriptBase
 {
-    protected IClientRegistry<IWorldClient> ClientRegistry { get; }
+    protected IClientRegistry<IChaosWorldClient> ClientRegistry { get; }
     protected IFactory<Guild> GuildFactory { get; }
     protected IStore<Guild> GuildStore { get; }
     protected ILogger Logger { get; }
@@ -18,7 +18,7 @@ public abstract class GuildScriptBase : DialogScriptBase
     /// <inheritdoc />
     protected GuildScriptBase(
         Dialog subject,
-        IClientRegistry<IWorldClient> clientRegistry,
+        IClientRegistry<IChaosWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
         ILogger logger)

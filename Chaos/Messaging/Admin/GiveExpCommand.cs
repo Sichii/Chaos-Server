@@ -9,9 +9,9 @@ using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 namespace Chaos.Messaging.Admin;
 
 [Command("giveExp", helpText: "<amount|targetName>")]
-public class GiveExpCommand(IClientRegistry<IWorldClient> clientRegistry) : ICommand<Aisling>
+public class GiveExpCommand(IClientRegistry<IChaosWorldClient> clientRegistry) : ICommand<Aisling>
 {
-    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
+    private readonly IClientRegistry<IChaosWorldClient> ClientRegistry = clientRegistry;
     private readonly IExperienceDistributionScript ExperienceDistributionScript = DefaultExperienceDistributionScript.Create();
 
     /// <inheritdoc />

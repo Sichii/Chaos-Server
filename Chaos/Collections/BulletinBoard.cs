@@ -268,7 +268,7 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         if (Script.AllowedToHighlight(aisling))
             aisling.Client.SendAttributes(StatUpdateType.GameMasterB);
 
-        aisling.Client.SendBoard(this, startPostId);
+        aisling.Client.SendDisplayBoard(this, startPostId);
 
         //if (Script.AllowedToHighlight(aisling))
         //  aisling.Client.SendAttributes(StatUpdateType.None);

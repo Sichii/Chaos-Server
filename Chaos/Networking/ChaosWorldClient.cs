@@ -28,20 +28,20 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Networking;
 
-public sealed class WorldClient : ConnectedClientBase, IWorldClient
+public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
 {
     private readonly ITypeMapper Mapper;
-    private readonly IWorldServer<IWorldClient> Server;
+    private readonly IWorldServer<IChaosWorldClient> Server;
     public Aisling Aisling { get; set; } = null!;
 
-    public WorldClient(
+    public ChaosWorldClient(
         Socket socket,
         IOptions<ChaosOptions> chaosOptions,
         ITypeMapper mapper,
         ICrypto crypto,
-        IWorldServer<IWorldClient> server,
+        IWorldServer<IChaosWorldClient> server,
         IPacketSerializer packetSerializer,
-        ILogger<WorldClient> logger)
+        ILogger<ChaosWorldClient> logger)
         : base(
             socket,
             crypto,
@@ -95,19 +95,6 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
         var args = Mapper.Map<AttributesArgs>(Aisling);
 
         args.StatUpdateType |= statUpdateType;
-        Send(args);
-    }
-
-    /// <inheritdoc />
-    public void SendBoard(BoardBase boardBase, short? startPostId = null)
-    {
-        var args = new DisplayBoardArgs
-        {
-            Type = boardBase is MailBox ? BoardOrResponseType.MailBoard : BoardOrResponseType.PublicBoard,
-            Board = Mapper.Map<BoardInfo>(boardBase),
-            StartPostId = startPostId
-        };
-
         Send(args);
     }
 
@@ -250,6 +237,19 @@ public sealed class WorldClient : ConnectedClientBase, IWorldClient
                     args.IsHidden = true;
             }
         }
+
+        Send(args);
+    }
+
+    /// <inheritdoc />
+    public void SendDisplayBoard(BoardBase boardBase, short? startPostId = null)
+    {
+        var args = new DisplayBoardArgs
+        {
+            Type = boardBase is MailBox ? BoardOrResponseType.MailBoard : BoardOrResponseType.PublicBoard,
+            Board = Mapper.Map<BoardInfo>(boardBase),
+            StartPostId = startPostId
+        };
 
         Send(args);
     }

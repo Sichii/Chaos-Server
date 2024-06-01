@@ -14,7 +14,7 @@ using Chaos.Services.Storage.Abstractions;
 
 namespace Chaos.Networking.Abstractions;
 
-public interface IWorldClient : IConnectedClient
+public interface IChaosWorldClient : IConnectedClient
 {
     Aisling Aisling { get; set; }
     void SendAddItemToPane(Item item);
@@ -22,7 +22,6 @@ public interface IWorldClient : IConnectedClient
     void SendAddSpellToPane(Spell spell);
     void SendAnimation(Animation animation);
     void SendAttributes(StatUpdateType statUpdateType);
-    void SendBoard(BoardBase boardBase, short? startPostId = null);
     void SendBoardList(IEnumerable<BoardBase> boards);
     void SendBoardResponse(BoardOrResponseType responseType, string message, bool success);
 
@@ -38,6 +37,7 @@ public interface IWorldClient : IConnectedClient
     void SendCreatureTurn(uint id, Direction direction);
     void SendCreatureWalk(uint id, Point startPoint, Direction direction);
     void SendDisplayAisling(Aisling aisling, bool ignoreObservability = false);
+    void SendDisplayBoard(BoardBase boardBase, short? startPostId = null);
     void SendDisplayDialog(Dialog dialog);
     void SendDisplayGroupInvite(GroupRequestType groupRequestType, string fromName);
     void SendDisplayPublicMessage(uint id, PublicMessageType publicMessageType, string message);

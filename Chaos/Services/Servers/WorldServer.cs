@@ -32,13 +32,13 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
 
-public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldClient>
+public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IChaosWorldClient>
 {
     private readonly IAsyncStore<Aisling> AislingStore;
     private readonly BulletinBoardKeyMapper BulletinBoardKeyMapper;
     private readonly IStore<BulletinBoard> BulletinBoardStore;
     private readonly IChannelService ChannelService;
-    private readonly IFactory<IWorldClient> ClientFactory;
+    private readonly IFactory<IChaosWorldClient> ClientFactory;
     private readonly ICommandInterceptor<Aisling> CommandInterceptor;
     private readonly IGroupService GroupService;
     private readonly IStore<MailBox> MailStore;
@@ -51,8 +51,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                          .Where(player => player != null!);
 
     public WorldServer(
-        IClientRegistry<IWorldClient> clientRegistry,
-        IFactory<IWorldClient> clientFactory,
+        IClientRegistry<IChaosWorldClient> clientRegistry,
+        IFactory<IChaosWorldClient> clientFactory,
         IAsyncStore<Aisling> aislingStore,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
@@ -93,13 +93,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     #endregion
 
     #region OnHandlers
-    public ValueTask OnBeginChant(IWorldClient client, in Packet packet)
+    public ValueTask OnBeginChant(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<BeginChantArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnBeginChant);
 
-        static ValueTask InnerOnBeginChant(IWorldClient localClient, BeginChantArgs localArgs)
+        static ValueTask InnerOnBeginChant(IChaosWorldClient localClient, BeginChantArgs localArgs)
         {
             localClient.Aisling.UserState |= UserState.IsChanting;
             localClient.Aisling.ChantTimer.Start(localArgs.CastLineCount);
@@ -109,7 +109,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     }
 
     #region Board Request
-    private bool TryGetBoard(IWorldClient client, BoardInteractionArgs args, [MaybeNullWhen(false)] out BoardBase boardBase)
+    private bool TryGetBoard(IChaosWorldClient client, BoardInteractionArgs args, [MaybeNullWhen(false)] out BoardBase boardBase)
     {
         boardBase = null;
 
@@ -154,13 +154,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     }
     #endregion
 
-    public ValueTask OnBoardInteraction(IWorldClient client, in Packet packet)
+    public ValueTask OnBoardInteraction(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<BoardInteractionArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnBoardInteraction);
 
-        ValueTask InnerOnBoardInteraction(IWorldClient localClient, BoardInteractionArgs localArgs)
+        ValueTask InnerOnBoardInteraction(IChaosWorldClient localClient, BoardInteractionArgs localArgs)
         {
             switch (localArgs.BoardRequestType)
             {
@@ -274,13 +274,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnChant(IWorldClient client, in Packet packet)
+    public ValueTask OnChant(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ChantArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnChant);
 
-        static ValueTask InnerOnChant(IWorldClient localClient, ChantArgs localArgs)
+        static ValueTask InnerOnChant(IChaosWorldClient localClient, ChantArgs localArgs)
         {
             var message = localArgs.ChantMessage;
 
@@ -293,13 +293,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnClick(IWorldClient client, in Packet packet)
+    public ValueTask OnClick(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ClickArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnClick);
 
-        ValueTask InnerOnClick(IWorldClient localClient, ClickArgs localArgs)
+        ValueTask InnerOnClick(IChaosWorldClient localClient, ClickArgs localArgs)
         {
             if (localArgs.TargetId.HasValue)
             {
@@ -323,13 +323,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnClientRedirected(IWorldClient client, in Packet packet)
+    public ValueTask OnClientRedirected(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ClientRedirectedArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnClientRedirected);
 
-        ValueTask InnerOnClientRedirected(IWorldClient localClient, ClientRedirectedArgs localArgs)
+        ValueTask InnerOnClientRedirected(IChaosWorldClient localClient, ClientRedirectedArgs localArgs)
         {
             if (!RedirectManager.TryGetRemove(localArgs.Id, out var redirect))
             {
@@ -395,7 +395,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public async ValueTask LoadAislingAsync(IWorldClient client, IRedirect redirect)
+    public async ValueTask LoadAislingAsync(IChaosWorldClient client, IRedirect redirect)
     {
         try
         {
@@ -435,6 +435,8 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
                         ChannelService.SetChannelColor(aisling, channel.ChannelName, channel.MessageColor.Value);
                 }
 
+                client.ReceiveSync.Name = $"WorldClient {client.RemoteIp} {aisling.Name}";
+
                 Logger.WithTopics(
                           Topics.Servers.WorldServer,
                           Topics.Entities.Aisling,
@@ -473,13 +475,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnClientWalk(IWorldClient client, in Packet packet)
+    public ValueTask OnClientWalk(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ClientWalkArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnClientWalk);
 
-        static ValueTask InnerOnClientWalk(IWorldClient localClient, ClientWalkArgs localArgs)
+        static ValueTask InnerOnClientWalk(IChaosWorldClient localClient, ClientWalkArgs localArgs)
         {
             //if player is in a world map, dont allow them to walk
             if (localClient.Aisling.ActiveObject.TryGet<WorldMap>() != null)
@@ -493,13 +495,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnDialogInteraction(IWorldClient client, in Packet packet)
+    public ValueTask OnDialogInteraction(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<DialogInteractionArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnDialogInteraction);
 
-        ValueTask InnerOnDialogInteraction(IWorldClient localClient, DialogInteractionArgs localArgs)
+        ValueTask InnerOnDialogInteraction(IChaosWorldClient localClient, DialogInteractionArgs localArgs)
         {
             var dialog = localClient.Aisling.ActiveDialog.Get();
 
@@ -545,13 +547,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnEmote(IWorldClient client, in Packet packet)
+    public ValueTask OnEmote(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<EmoteArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnEmote);
 
-        ValueTask InnerOnEmote(IWorldClient localClient, EmoteArgs localArgs)
+        ValueTask InnerOnEmote(IChaosWorldClient localClient, EmoteArgs localArgs)
         {
             if ((int)localArgs.BodyAnimation <= 44)
                 client.Aisling.AnimateBody(localArgs.BodyAnimation, 100);
@@ -560,13 +562,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnDisplayEntityRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnDisplayEntityRequest(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<DisplayEntityRequestArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnDisplayEntityRequest);
 
-        ValueTask InnerOnDisplayEntityRequest(IWorldClient localClient, DisplayEntityRequestArgs localArgs)
+        ValueTask InnerOnDisplayEntityRequest(IChaosWorldClient localClient, DisplayEntityRequestArgs localArgs)
         {
             var aisling = localClient.Aisling;
             var mapInstance = aisling.MapInstance;
@@ -584,13 +586,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnExchangeInteraction(IWorldClient client, in Packet packet)
+    public ValueTask OnExchangeInteraction(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ExchangeInteractionArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnExchangeInteraction);
 
-        ValueTask InnerOnExchangeInteraction(IWorldClient localClient, ExchangeInteractionArgs localArgs)
+        ValueTask InnerOnExchangeInteraction(IChaosWorldClient localClient, ExchangeInteractionArgs localArgs)
         {
             var exchange = localClient.Aisling.ActiveObject.TryGet<Exchange>();
 
@@ -644,13 +646,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnExitRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnExitRequest(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ExitRequestArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnExitRequest);
 
-        ValueTask InnerOnExitRequest(IWorldClient localClient, ExitRequestArgs localArgs)
+        ValueTask InnerOnExitRequest(IChaosWorldClient localClient, ExitRequestArgs localArgs)
         {
             if (localArgs.IsRequest)
                 localClient.SendExitResponse();
@@ -680,13 +682,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnGoldDrop(IWorldClient client, in Packet packet)
+    public ValueTask OnGoldDrop(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<GoldDropArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnGoldDrop);
 
-        ValueTask InnerOnGoldDrop(IWorldClient localClient, GoldDropArgs localArgs)
+        ValueTask InnerOnGoldDrop(IChaosWorldClient localClient, GoldDropArgs localArgs)
         {
             var map = localClient.Aisling.MapInstance;
 
@@ -702,13 +704,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnGoldDroppedOnCreature(IWorldClient client, in Packet packet)
+    public ValueTask OnGoldDroppedOnCreature(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<GoldDroppedOnCreatureArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnGoldDroppedOnCreature);
 
-        ValueTask InnerOnGoldDroppedOnCreature(IWorldClient localClient, GoldDroppedOnCreatureArgs localArgs)
+        ValueTask InnerOnGoldDroppedOnCreature(IChaosWorldClient localClient, GoldDroppedOnCreatureArgs localArgs)
         {
             var map = localClient.Aisling.MapInstance;
 
@@ -727,13 +729,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnGroupInvite(IWorldClient client, in Packet packet)
+    public ValueTask OnGroupInvite(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<GroupInviteArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnGroupInvite);
 
-        ValueTask InnerOnGroupInvite(IWorldClient localClient, GroupInviteArgs localArgs)
+        ValueTask InnerOnGroupInvite(IChaosWorldClient localClient, GroupInviteArgs localArgs)
         {
             var target = Aislings.FirstOrDefault(user => user.Name.EqualsI(localArgs.TargetName));
 
@@ -786,13 +788,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnIgnore(IWorldClient client, in Packet packet)
+    public ValueTask OnIgnore(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<IgnoreArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnIgnore);
 
-        static ValueTask InnerOnIgnore(IWorldClient localClient, IgnoreArgs localArgs)
+        static ValueTask InnerOnIgnore(IChaosWorldClient localClient, IgnoreArgs localArgs)
         {
             switch (localArgs.IgnoreType)
             {
@@ -818,13 +820,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnItemDrop(IWorldClient client, in Packet packet)
+    public ValueTask OnItemDrop(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ItemDropArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnItemDrop);
 
-        static ValueTask InnerOnItemDrop(IWorldClient localClient, ItemDropArgs localArgs)
+        static ValueTask InnerOnItemDrop(IChaosWorldClient localClient, ItemDropArgs localArgs)
         {
             localClient.Aisling.TryDrop(
                 localArgs.DestinationPoint,
@@ -836,13 +838,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnItemDroppedOnCreature(IWorldClient client, in Packet packet)
+    public ValueTask OnItemDroppedOnCreature(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ItemDroppedOnCreatureArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnItemDroppedOnCreature);
 
-        ValueTask InnerOnItemDroppedOnCreature(IWorldClient localClient, ItemDroppedOnCreatureArgs localArgs)
+        ValueTask InnerOnItemDroppedOnCreature(IChaosWorldClient localClient, ItemDroppedOnCreatureArgs localArgs)
         {
             var map = localClient.Aisling.MapInstance;
 
@@ -864,11 +866,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnMapDataRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnMapDataRequest(IChaosWorldClient client, in Packet packet)
     {
         return ExecuteHandler(client, InnerOnMapDataRequest);
 
-        static ValueTask InnerOnMapDataRequest(IWorldClient localClient)
+        static ValueTask InnerOnMapDataRequest(IChaosWorldClient localClient)
         {
             localClient.SendMapData();
 
@@ -876,13 +878,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnMetaDataRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnMetaDataRequest(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<MetaDataRequestArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnMetaDataRequest);
 
-        ValueTask InnerOnMetaDataRequest(IWorldClient localClient, MetaDataRequestArgs localArgs)
+        ValueTask InnerOnMetaDataRequest(IChaosWorldClient localClient, MetaDataRequestArgs localArgs)
         {
             switch (localArgs.MetaDataRequestType)
             {
@@ -902,13 +904,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnPickup(IWorldClient client, in Packet packet)
+    public ValueTask OnPickup(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<PickupArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnPickup);
 
-        ValueTask InnerOnPickup(IWorldClient localClient, PickupArgs localArgs)
+        ValueTask InnerOnPickup(IChaosWorldClient localClient, PickupArgs localArgs)
         {
             var map = localClient.Aisling.MapInstance;
 
@@ -943,13 +945,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnEditableProfile(IWorldClient client, in Packet packet)
+    public ValueTask OnEditableProfile(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<EditableProfileArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnEditableProfile);
 
-        static ValueTask InnerOnEditableProfile(IWorldClient localClient, EditableProfileArgs localArgs)
+        static ValueTask InnerOnEditableProfile(IChaosWorldClient localClient, EditableProfileArgs localArgs)
         {
             localClient.Aisling.Portrait = localArgs.PortraitData;
             localClient.Aisling.ProfileText = localArgs.ProfileMessage;
@@ -958,11 +960,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnSelfProfileRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnSelfProfileRequest(IChaosWorldClient client, in Packet packet)
     {
         return ExecuteHandler(client, InnerOnProfileRequest);
 
-        static ValueTask InnerOnProfileRequest(IWorldClient localClient)
+        static ValueTask InnerOnProfileRequest(IChaosWorldClient localClient)
         {
             localClient.SendSelfProfile();
 
@@ -970,13 +972,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnPublicMessage(IWorldClient client, in Packet packet)
+    public ValueTask OnPublicMessage(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<PublicMessageArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnPublicMessage);
 
-        async ValueTask InnerOnPublicMessage(IWorldClient localClient, PublicMessageArgs localArgs)
+        async ValueTask InnerOnPublicMessage(IChaosWorldClient localClient, PublicMessageArgs localArgs)
         {
             if (CommandInterceptor.IsCommand(localArgs.Message))
             {
@@ -999,13 +1001,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnMenuInteraction(IWorldClient client, in Packet packet)
+    public ValueTask OnMenuInteraction(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<MenuInteractionArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnMenuInteraction);
 
-        ValueTask InnerOnMenuInteraction(IWorldClient localClient, MenuInteractionArgs localArgs)
+        ValueTask InnerOnMenuInteraction(IChaosWorldClient localClient, MenuInteractionArgs localArgs)
         {
             var dialog = localClient.Aisling.ActiveDialog.Get();
 
@@ -1042,13 +1044,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnRaiseStat(IWorldClient client, in Packet packet)
+    public ValueTask OnRaiseStat(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<RaiseStatArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnRaiseStat);
 
-        static ValueTask InnerOnRaiseStat(IWorldClient localClient, RaiseStatArgs localArgs)
+        static ValueTask InnerOnRaiseStat(IChaosWorldClient localClient, RaiseStatArgs localArgs)
         {
             if (localClient.Aisling.UserStatSheet.UnspentPoints > 0)
                 if (localClient.Aisling.UserStatSheet.IncrementStat(localArgs.Stat))
@@ -1061,11 +1063,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnRefreshRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnRefreshRequest(IChaosWorldClient client, in Packet packet)
     {
         return ExecuteHandler(client, InnerOnRefreshRequest);
 
-        static ValueTask InnerOnRefreshRequest(IWorldClient localClient)
+        static ValueTask InnerOnRefreshRequest(IChaosWorldClient localClient)
         {
             localClient.Aisling.Refresh();
 
@@ -1073,13 +1075,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnSocialStatus(IWorldClient client, in Packet packet)
+    public ValueTask OnSocialStatus(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<SocialStatusArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnSocialStatus);
 
-        static ValueTask InnerOnSocialStatus(IWorldClient localClient, SocialStatusArgs localArgs)
+        static ValueTask InnerOnSocialStatus(IChaosWorldClient localClient, SocialStatusArgs localArgs)
         {
             localClient.Aisling.Options.SocialStatus = localArgs.SocialStatus;
 
@@ -1087,11 +1089,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnSpacebar(IWorldClient client, in Packet packet)
+    public ValueTask OnSpacebar(IChaosWorldClient client, in Packet packet)
     {
         return ExecuteHandler(client, InnerOnSpacebar);
 
-        static ValueTask InnerOnSpacebar(IWorldClient localClient)
+        static ValueTask InnerOnSpacebar(IChaosWorldClient localClient)
         {
             localClient.SendCancelCasting();
 
@@ -1103,13 +1105,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnSwapSlot(IWorldClient client, in Packet packet)
+    public ValueTask OnSwapSlot(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<SwapSlotArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnSwapSlot);
 
-        static ValueTask InnerOnSwapSlot(IWorldClient localClient, SwapSlotArgs localArgs)
+        static ValueTask InnerOnSwapSlot(IChaosWorldClient localClient, SwapSlotArgs localArgs)
         {
             switch (localArgs.PanelType)
             {
@@ -1135,11 +1137,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnToggleGroup(IWorldClient client, in Packet packet)
+    public ValueTask OnToggleGroup(IChaosWorldClient client, in Packet packet)
     {
         return ExecuteHandler(client, InnerOnToggleGroup);
 
-        static ValueTask InnerOnToggleGroup(IWorldClient localClient)
+        static ValueTask InnerOnToggleGroup(IChaosWorldClient localClient)
         {
             //don't need to send the updated option, because they arent currently looking at it
             localClient.Aisling.Options.ToggleGroup();
@@ -1153,13 +1155,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnTurn(IWorldClient client, in Packet packet)
+    public ValueTask OnTurn(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<TurnArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnTurn);
 
-        static ValueTask InnerOnTurn(IWorldClient localClient, TurnArgs localArgs)
+        static ValueTask InnerOnTurn(IChaosWorldClient localClient, TurnArgs localArgs)
         {
             localClient.Aisling.Turn(localArgs.Direction);
 
@@ -1167,13 +1169,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnUnequip(IWorldClient client, in Packet packet)
+    public ValueTask OnUnequip(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<UnequipArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnUnequip);
 
-        static ValueTask InnerOnUnequip(IWorldClient localClient, UnequipArgs localArgs)
+        static ValueTask InnerOnUnequip(IChaosWorldClient localClient, UnequipArgs localArgs)
         {
             localClient.Aisling.UnEquip(localArgs.EquipmentSlot);
 
@@ -1181,13 +1183,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnItemUse(IWorldClient client, in Packet packet)
+    public ValueTask OnItemUse(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ItemUseArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnItemUse);
 
-        static ValueTask InnerOnItemUse(IWorldClient localClient, ItemUseArgs localArgs)
+        static ValueTask InnerOnItemUse(IChaosWorldClient localClient, ItemUseArgs localArgs)
         {
             var exchange = localClient.Aisling.ActiveObject.TryGet<Exchange>();
 
@@ -1204,13 +1206,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnOptionToggle(IWorldClient client, in Packet packet)
+    public ValueTask OnOptionToggle(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<OptionToggleArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnOptionToggle);
 
-        static ValueTask InnerOnOptionToggle(IWorldClient localClient, OptionToggleArgs localArgs)
+        static ValueTask InnerOnOptionToggle(IChaosWorldClient localClient, OptionToggleArgs localArgs)
         {
             if (localArgs.UserOption == UserOption.Request)
             {
@@ -1226,13 +1228,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnSkillUse(IWorldClient client, in Packet packet)
+    public ValueTask OnSkillUse(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<SkillUseArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnSkillUse);
 
-        static ValueTask InnerOnSkillUse(IWorldClient localClient, SkillUseArgs localArgs)
+        static ValueTask InnerOnSkillUse(IChaosWorldClient localClient, SkillUseArgs localArgs)
         {
             localClient.Aisling.TryUseSkill(localArgs.SourceSlot);
 
@@ -1240,13 +1242,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnSpellUse(IWorldClient client, in Packet packet)
+    public ValueTask OnSpellUse(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<SpellUseArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnSpellUse);
 
-        ValueTask InnerOnSpellUse(IWorldClient localClient, SpellUseArgs localArgs)
+        ValueTask InnerOnSpellUse(IChaosWorldClient localClient, SpellUseArgs localArgs)
         {
             if (localClient.Aisling.SpellBook.TryGetObject(localArgs.SourceSlot, out var spell))
             {
@@ -1310,13 +1312,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnWhisper(IWorldClient client, in Packet packet)
+    public ValueTask OnWhisper(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<WhisperArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnWhisper);
 
-        ValueTask InnerOnWhisper(IWorldClient localClient, WhisperArgs localArgs)
+        ValueTask InnerOnWhisper(IChaosWorldClient localClient, WhisperArgs localArgs)
         {
             var fromAisling = localClient.Aisling;
 
@@ -1424,11 +1426,11 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnWorldListRequest(IWorldClient client, in Packet packet)
+    public ValueTask OnWorldListRequest(IChaosWorldClient client, in Packet packet)
     {
         return ExecuteHandler(client, InnerOnWorldListRequest);
 
-        ValueTask InnerOnWorldListRequest(IWorldClient localClient)
+        ValueTask InnerOnWorldListRequest(IChaosWorldClient localClient)
         {
             localClient.SendWorldList(Aislings.ToList());
 
@@ -1436,13 +1438,13 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public ValueTask OnWorldMapClick(IWorldClient client, in Packet packet)
+    public ValueTask OnWorldMapClick(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<WorldMapClickArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnWorldMapClick);
 
-        static ValueTask InnerOnWorldMapClick(IWorldClient localClient, WorldMapClickArgs localArgs)
+        static ValueTask InnerOnWorldMapClick(IChaosWorldClient localClient, WorldMapClickArgs localArgs)
         {
             var worldMap = localClient.Aisling.ActiveObject.TryGet<WorldMap>();
 
@@ -1461,7 +1463,10 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
     #endregion
 
     #region Connection / Handler
-    public override async ValueTask ExecuteHandler<TArgs>(IWorldClient client, TArgs args, Func<IWorldClient, TArgs, ValueTask> action)
+    public override async ValueTask ExecuteHandler<TArgs>(
+        IChaosWorldClient client,
+        TArgs args,
+        Func<IChaosWorldClient, TArgs, ValueTask> action)
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = client.Aisling?.MapInstance;
@@ -1508,7 +1513,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public override async ValueTask ExecuteHandler(IWorldClient client, Func<IWorldClient, ValueTask> action)
+    public override async ValueTask ExecuteHandler(IChaosWorldClient client, Func<IChaosWorldClient, ValueTask> action)
     {
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = client.Aisling?.MapInstance;
@@ -1551,7 +1556,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         }
     }
 
-    public override ValueTask HandlePacketAsync(IWorldClient client, in Packet packet)
+    public override ValueTask HandlePacketAsync(IChaosWorldClient client, in Packet packet)
     {
         var opCode = packet.OpCode;
         var handler = ClientHandlers[opCode];
@@ -1662,7 +1667,7 @@ public sealed class WorldServer : ServerBase<IWorldClient>, IWorldServer<IWorldC
         //we dont need to Task.Run this because it's async void
         //when async void reaches async code, control returns to the caller and the method is not awaited
 
-        var client = (IWorldClient)sender!;
+        var client = (IChaosWorldClient)sender!;
         var aisling = client.Aisling;
 
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract

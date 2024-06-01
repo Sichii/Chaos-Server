@@ -15,7 +15,7 @@ public class GuildLeaveScript : GuildScriptBase
     /// <inheritdoc />
     public GuildLeaveScript(
         Dialog subject,
-        IClientRegistry<IWorldClient> clientRegistry,
+        IClientRegistry<IChaosWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
         ILogger<GuildLeaveScript> logger)

@@ -6,11 +6,11 @@ using Chaos.TypeMapper.Abstractions;
 
 namespace Chaos.Services.MapperProfiles;
 
-public class GuildMapperProfile(IChannelService channelService, IClientRegistry<IWorldClient> clientRegistry)
+public class GuildMapperProfile(IChannelService channelService, IClientRegistry<IChaosWorldClient> clientRegistry)
     : IMapperProfile<Guild, GuildSchema>, IMapperProfile<GuildRank, GuildRankSchema>
 {
     private readonly IChannelService ChannelService = channelService;
-    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
+    private readonly IClientRegistry<IChaosWorldClient> ClientRegistry = clientRegistry;
 
     /// <inheritdoc />
     public Guild Map(GuildSchema obj)

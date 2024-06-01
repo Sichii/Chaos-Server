@@ -110,7 +110,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
         PacketSerializer = packetSerializer;
         ClientHandlers = new ClientHandler?[byte.MaxValue];
         Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        Sync = new FifoAutoReleasingSemaphoreSlim(1, 1);
+        Sync = new FifoAutoReleasingSemaphoreSlim(1, 1, $"{GetType().Name}");
         IndexHandlers();
     }
 

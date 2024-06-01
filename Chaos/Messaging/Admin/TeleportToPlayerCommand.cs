@@ -7,9 +7,9 @@ using Chaos.Networking.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("tpto", helpText: "<targetName>")]
-public class TeleportToPlayerCommand(IClientRegistry<IWorldClient> clientRegistry) : ICommand<Aisling>
+public class TeleportToPlayerCommand(IClientRegistry<IChaosWorldClient> clientRegistry) : ICommand<Aisling>
 {
-    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
+    private readonly IClientRegistry<IChaosWorldClient> ClientRegistry = clientRegistry;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

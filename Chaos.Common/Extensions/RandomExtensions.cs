@@ -43,48 +43,63 @@ public static class RandomExtensions
         switch (zero)
         {
             case byte:
+            {
                 var minByte = byte.CreateChecked(min);
                 var maxByte = byte.CreateChecked(max);
 
                 return T.CreateChecked(random.Next(minByte, maxByte));
+            }
             case sbyte:
+            {
                 var minSByte = sbyte.CreateChecked(min);
                 var maxSByte = sbyte.CreateChecked(max);
 
                 return T.CreateChecked(random.Next(minSByte, maxSByte));
+            }
             case short:
+            {
                 var minShort = short.CreateChecked(min);
                 var maxShort = short.CreateChecked(max);
 
                 return T.CreateChecked(random.Next(minShort, maxShort));
+            }
             case ushort:
+            {
                 var minUShort = ushort.CreateChecked(min);
                 var maxUShort = ushort.CreateChecked(max);
 
                 return T.CreateChecked(random.Next(minUShort, maxUShort));
+            }
             case int:
+            {
                 var minInt = int.CreateChecked(min);
                 var maxInt = int.CreateChecked(max);
 
                 return T.CreateChecked(random.Next(minInt, maxInt));
+            }
             case uint:
+            {
                 var minUInt = uint.CreateChecked(min);
                 var maxUInt = uint.CreateChecked(max);
 
                 return T.CreateChecked(random.NextInt64(minUInt, maxUInt));
+            }
             case long:
+            {
                 var minLong = long.CreateChecked(min);
                 var maxLong = long.CreateChecked(max);
 
                 return T.CreateChecked(random.NextInt64(minLong, maxLong));
+            }
             case ulong:
+            {
                 //there is no "bigger datatype" so we gotta do some tricks
                 //move the random values down into the range of long
-                var minULong = (long)(ulong.CreateChecked(min) - long.MaxValue);
-                var maxULong = (long)(ulong.CreateChecked(max) - long.MaxValue);
+                var minLong = (long)(ulong.CreateChecked(min) - long.MaxValue);
+                var maxLong = (long)(ulong.CreateChecked(max) - long.MaxValue);
 
                 //generate random long
-                var randomLong = random.NextInt64(minULong, maxULong);
+                var randomLong = random.NextInt64(minLong, maxLong);
 
                 //if the random long is negative, return long.MaxValue - Math.Abs(randomLong)
                 //this is the equivalent of "randomLong + long.MaxValue" which is not otherwise possible due to long/ulong overflow
@@ -92,7 +107,9 @@ public static class RandomExtensions
                     return T.CreateChecked(long.MaxValue - (ulong)Math.Abs(randomLong));
 
                 return T.CreateChecked(long.MaxValue + (ulong)randomLong);
+            }
             case decimal:
+            {
                 var minDecimal = decimal.CreateChecked(min);
                 var maxDecimal = decimal.CreateChecked(max);
                 var dbl = random.NextDouble();
@@ -105,7 +122,9 @@ public static class RandomExtensions
                             1.0d,
                             Convert.ToDouble(minDecimal),
                             Convert.ToDouble(maxDecimal))));
+            }
             case float:
+            {
                 var minFloat = float.CreateChecked(min);
                 var maxFloat = float.CreateChecked(max);
 
@@ -116,7 +135,9 @@ public static class RandomExtensions
                         1.0f,
                         minFloat,
                         maxFloat));
+            }
             case double:
+            {
                 var minDouble = double.CreateChecked(min);
                 var maxDouble = double.CreateChecked(max);
 
@@ -127,6 +148,7 @@ public static class RandomExtensions
                         1.0d,
                         minDouble,
                         maxDouble));
+            }
             default:
                 throw new ArgumentOutOfRangeException(nameof(T));
         }

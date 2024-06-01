@@ -24,12 +24,12 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
 
-public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginClient>
+public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IChaosLoginClient>
 {
     private readonly IAccessManager AccessManager;
     private readonly IAsyncStore<Aisling> AislingStore;
     private readonly ISimpleCacheProvider CacheProvider;
-    private readonly IFactory<ILoginClient> ClientFactory;
+    private readonly IFactory<IChaosLoginClient> ClientFactory;
     private readonly IFactory<MailBox> MailBoxFactory;
     private readonly IStore<MailBox> MailStore;
     private readonly IMetaDataStore MetaDataStore;
@@ -39,8 +39,8 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
     public LoginServer(
         IAsyncStore<Aisling> aislingStore,
-        IClientRegistry<ILoginClient> clientRegistry,
-        IFactory<ILoginClient> clientFactory,
+        IClientRegistry<IChaosLoginClient> clientRegistry,
+        IFactory<IChaosLoginClient> clientFactory,
         ISimpleCacheProvider cacheProvider,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
@@ -72,13 +72,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     }
 
     #region OnHandlers
-    public ValueTask OnClientRedirected(ILoginClient client, in Packet packet)
+    public ValueTask OnClientRedirected(IChaosLoginClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ClientRedirectedArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnClientRedirect);
 
-        ValueTask InnerOnClientRedirect(ILoginClient localClient, ClientRedirectedArgs localArgs)
+        ValueTask InnerOnClientRedirect(IChaosLoginClient localClient, ClientRedirectedArgs localArgs)
         {
             var reservedRedirect
                 = Options.ReservedRedirects.FirstOrDefault(rr => (rr.Id == localArgs.Id) && rr.Name.EqualsI(localArgs.Name));
@@ -119,13 +119,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         }
     }
 
-    public ValueTask OnCreateCharFinalize(ILoginClient client, in Packet packet)
+    public ValueTask OnCreateCharFinalize(IChaosLoginClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<CreateCharFinalizeArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnCreateCharFinalize);
 
-        async ValueTask InnerOnCreateCharFinalize(ILoginClient localClient, CreateCharFinalizeArgs localArgs)
+        async ValueTask InnerOnCreateCharFinalize(IChaosLoginClient localClient, CreateCharFinalizeArgs localArgs)
         {
             if (CreateCharRequests.TryGetValue(localClient.Id, out var requestArgs))
             {
@@ -155,13 +155,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         }
     }
 
-    public ValueTask OnCreateCharInitial(ILoginClient client, in Packet packet)
+    public ValueTask OnCreateCharInitial(IChaosLoginClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<CreateCharInitialArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnCreateCharInitial);
 
-        async ValueTask InnerOnCreateCharInitial(ILoginClient localClient, CreateCharInitialArgs localArgs)
+        async ValueTask InnerOnCreateCharInitial(IChaosLoginClient localClient, CreateCharInitialArgs localArgs)
         {
             var result = await AccessManager.SaveNewCredentialsAsync(localClient.RemoteIp, localArgs.Name, localArgs.Password);
 
@@ -180,11 +180,11 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         }
     }
 
-    public ValueTask OnHomepageRequest(ILoginClient client, in Packet packet)
+    public ValueTask OnHomepageRequest(IChaosLoginClient client, in Packet packet)
     {
         return ExecuteHandler(client, InnerOnHomepageRequest);
 
-        static ValueTask InnerOnHomepageRequest(ILoginClient localClient)
+        static ValueTask InnerOnHomepageRequest(IChaosLoginClient localClient)
         {
             localClient.SendLoginControl(LoginControlsType.Homepage, "https://www.darkages.com");
 
@@ -192,13 +192,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         }
     }
 
-    public ValueTask OnLogin(ILoginClient client, in Packet packet)
+    public ValueTask OnLogin(IChaosLoginClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<LoginArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnLogin);
 
-        async ValueTask InnerOnLogin(ILoginClient localClient, LoginArgs localArgs)
+        async ValueTask InnerOnLogin(IChaosLoginClient localClient, LoginArgs localArgs)
         {
             var result = await AccessManager.ValidateCredentialsAsync(localClient.RemoteIp, localArgs.Name, localArgs.Password);
 
@@ -239,13 +239,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         }
     }
 
-    public ValueTask OnMetaDataRequest(ILoginClient client, in Packet packet)
+    public ValueTask OnMetaDataRequest(IChaosLoginClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<MetaDataRequestArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnMetaDataRequest);
 
-        ValueTask InnerOnMetaDataRequest(ILoginClient localClient, MetaDataRequestArgs localArgs)
+        ValueTask InnerOnMetaDataRequest(IChaosLoginClient localClient, MetaDataRequestArgs localArgs)
         {
             localClient.SendMetaData(localArgs.MetaDataRequestType, MetaDataStore, localArgs.Name);
 
@@ -253,11 +253,11 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         }
     }
 
-    public ValueTask OnNoticeRequest(ILoginClient client, in Packet packet)
+    public ValueTask OnNoticeRequest(IChaosLoginClient client, in Packet packet)
     {
         return ExecuteHandler(client, InnerOnNoticeRequest);
 
-        ValueTask InnerOnNoticeRequest(ILoginClient localClient)
+        ValueTask InnerOnNoticeRequest(IChaosLoginClient localClient)
         {
             localClient.SendLoginNotice(true, Notice);
 
@@ -265,13 +265,13 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
         }
     }
 
-    public ValueTask OnPasswordChange(ILoginClient client, in Packet packet)
+    public ValueTask OnPasswordChange(IChaosLoginClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<PasswordChangeArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnPasswordChange);
 
-        async ValueTask InnerOnPasswordChange(ILoginClient localClient, PasswordChangeArgs localArgs)
+        async ValueTask InnerOnPasswordChange(IChaosLoginClient localClient, PasswordChangeArgs localArgs)
         {
             var result = await AccessManager.ChangePasswordAsync(
                 localClient.RemoteIp,
@@ -311,7 +311,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
     #endregion
 
     #region Connection / Handler
-    public override ValueTask HandlePacketAsync(ILoginClient client, in Packet packet)
+    public override ValueTask HandlePacketAsync(IChaosLoginClient client, in Packet packet)
     {
         var opCode = packet.OpCode;
         var handler = ClientHandlers[opCode];
@@ -416,7 +416,7 @@ public sealed class LoginServer : ServerBase<ILoginClient>, ILoginServer<ILoginC
 
     private void OnDisconnect(object? sender, EventArgs e)
     {
-        var client = (ILoginClient)sender!;
+        var client = (IChaosLoginClient)sender!;
         ClientRegistry.TryRemove(client.Id, out _);
     }
 

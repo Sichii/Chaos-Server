@@ -33,6 +33,7 @@ public sealed class ItemDto
     public int? MaxStacks { get; set; }
     public int? Mp { get; set; }
     public required string Name { get; set; }
+    public bool NoTrade { get; set; }
     public DisplayColor? PantsColor { get; set; }
     public bool RequiresMaster { get; set; }
     public int? SellValue { get; set; }

@@ -8,9 +8,9 @@ using Chaos.Utilities;
 namespace Chaos.Messaging.Admin;
 
 [Command("chaos", helpText: "<message> <mins>")]
-public class ChaosCommand(IServiceProvider serviceProvider, IClientRegistry<IWorldClient> clientRegistry) : ICommand<Aisling>
+public class ChaosCommand(IServiceProvider serviceProvider, IClientRegistry<IChaosWorldClient> clientRegistry) : ICommand<Aisling>
 {
-    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
+    private readonly IClientRegistry<IChaosWorldClient> ClientRegistry = clientRegistry;
     private readonly IServiceProvider ServiceProvider = serviceProvider;
 
     /// <inheritdoc />

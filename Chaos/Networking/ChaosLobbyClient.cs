@@ -12,17 +12,17 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Networking;
 
-public sealed class LobbyClient : ConnectedClientBase, ILobbyClient
+public sealed class ChaosLobbyClient : LobbyClientBase, IChaosLobbyClient
 {
-    private readonly ILobbyServer<ILobbyClient> Server;
+    private readonly ILobbyServer<IChaosLobbyClient> Server;
 
-    public LobbyClient(
+    public ChaosLobbyClient(
         Socket socket,
         IOptions<ChaosOptions> chaosOptions,
         ICrypto crypto,
-        ILobbyServer<ILobbyClient> server,
+        ILobbyServer<IChaosLobbyClient> server,
         IPacketSerializer packetSerializer,
-        ILogger<LobbyClient> logger)
+        ILogger<ChaosLobbyClient> logger)
         : base(
             socket,
             crypto,

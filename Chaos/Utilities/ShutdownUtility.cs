@@ -25,7 +25,7 @@ public static class ShutdownUtility
         if (ShutdownTask != null)
             throw new InvalidOperationException("Shutdown already in progress");
 
-        var clientRegistry = serviceProvider.GetRequiredService<IClientRegistry<IWorldClient>>();
+        var clientRegistry = serviceProvider.GetRequiredService<IClientRegistry<IChaosWorldClient>>();
         var serverCancellationTokenSource = serviceProvider.GetRequiredService<CancellationTokenSource>();
 
         CancellationTokenSource = new CancellationTokenSource();
@@ -37,14 +37,14 @@ public static class ShutdownUtility
             CancellationTokenSource.Token);
     }
 
-    private static void SendMessage(IEnumerable<IWorldClient> clients, string message)
+    private static void SendMessage(IEnumerable<IChaosWorldClient> clients, string message)
     {
         foreach (var client in clients)
             client.SendServerMessage(ServerMessageType.ActiveMessage, message);
     }
 
     private static async Task ShutdownAsync(
-        IClientRegistry<IWorldClient> clients,
+        IClientRegistry<IChaosWorldClient> clients,
         int mins,
         CancellationTokenSource serverCancellationTokenSource,
         CancellationToken cancellationToken)

@@ -1,6 +1,6 @@
 namespace Chaos.Networking.Abstractions;
 
-public interface ILobbyClient : IConnectedClient
+public interface IChaosLobbyClient : IConnectedClient
 {
     void SendConnectionInfo(uint serverTableCheckSum);
     void SendServerTableResponse(IServerTable serverTable);

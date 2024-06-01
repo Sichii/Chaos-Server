@@ -134,18 +134,18 @@ public static class ServiceCollectionExtensions
 
     public static void AddLobbyServer(this IServiceCollection services)
     {
-        services.AddSingleton<IClientRegistry<ILobbyClient>, ClientRegistry<ILobbyClient>>();
+        services.AddSingleton<IClientRegistry<IChaosLobbyClient>, ClientRegistry<IChaosLobbyClient>>();
 
         services.AddOptionsFromConfig<LobbyOptions>(ConfigKeys.Options.Key);
-        services.AddSingleton<ILobbyServer<ILobbyClient>, IHostedService, LobbyServer>();
+        services.AddSingleton<ILobbyServer<IChaosLobbyClient>, IHostedService, LobbyServer>();
     }
 
     public static void AddLoginserver(this IServiceCollection services)
     {
-        services.AddSingleton<IClientRegistry<ILoginClient>, ClientRegistry<ILoginClient>>();
+        services.AddSingleton<IClientRegistry<IChaosLoginClient>, ClientRegistry<IChaosLoginClient>>();
 
         services.AddOptionsFromConfig<LoginOptions>(ConfigKeys.Options.Key);
-        services.AddSingleton<ILoginServer<ILoginClient>, IHostedService, LoginServer>();
+        services.AddSingleton<ILoginServer<IChaosLoginClient>, IHostedService, LoginServer>();
     }
 
     public static void AddScripting(this IServiceCollection services)
@@ -275,9 +275,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IEffectFactory, EffectFactory>();
 
         services.AddSimpleFactory<Guild>(typeof(string), typeof(string));
-        services.AddSimpleFactory<ILobbyClient, LobbyClient>(typeof(Socket));
-        services.AddSimpleFactory<ILoginClient, LoginClient>(typeof(Socket));
-        services.AddSimpleFactory<IWorldClient, WorldClient>(typeof(Socket));
+        services.AddSimpleFactory<IChaosLobbyClient, ChaosLobbyClient>(typeof(Socket));
+        services.AddSimpleFactory<IChaosLoginClient, ChaosLoginClient>(typeof(Socket));
+        services.AddSimpleFactory<IChaosWorldClient, ChaosWorldClient>(typeof(Socket));
         services.AddSimpleFactory<Exchange>(typeof(Aisling), typeof(Aisling));
         services.AddSimpleFactory<MailBox>(typeof(string));
     }
@@ -285,10 +285,10 @@ public static class ServiceCollectionExtensions
     public static void AddWorldServer(this IServiceCollection services)
     {
         services.AddSingleton<IGroupService, GroupService>();
-        services.AddSingleton<IClientRegistry<IWorldClient>, WorldClientRegistry>();
+        services.AddSingleton<IClientRegistry<IChaosWorldClient>, WorldClientRegistry>();
 
         services.AddOptionsFromConfig<WorldOptions>(ConfigKeys.Options.Key);
-        services.AddSingleton<IWorldServer<IWorldClient>, IHostedService, WorldServer>();
+        services.AddSingleton<IWorldServer<IChaosWorldClient>, IHostedService, WorldServer>();
     }
 
     public static void ConfigureSite(this WebApplicationBuilder builder)

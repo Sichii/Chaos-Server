@@ -8,10 +8,10 @@ using Chaos.Security.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("adminban", helpText: "<name>")]
-public class AdminBanCommand(IClientRegistry<IWorldClient> clientRegistry, IAccessManager accessManager) : ICommand<Aisling>
+public class AdminBanCommand(IClientRegistry<IChaosWorldClient> clientRegistry, IAccessManager accessManager) : ICommand<Aisling>
 {
     private readonly IAccessManager AccessManager = accessManager;
-    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
+    private readonly IClientRegistry<IChaosWorldClient> ClientRegistry = clientRegistry;
 
     /// <inheritdoc />
     public async ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

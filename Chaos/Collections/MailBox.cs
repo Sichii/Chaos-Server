@@ -208,7 +208,7 @@ public sealed class MailBox : BoardBase
             return;
         }
 
-        aisling.Client.SendBoard(this, startPostId);
+        aisling.Client.SendDisplayBoard(this, startPostId);
     }
 
     /// <inheritdoc />

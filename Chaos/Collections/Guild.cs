@@ -12,7 +12,7 @@ namespace Chaos.Collections;
 public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
 {
     private readonly IChannelService ChannelService;
-    private readonly IClientRegistry<IWorldClient> ClientRegistry;
+    private readonly IClientRegistry<IChaosWorldClient> ClientRegistry;
     private readonly List<GuildRank> GuildHierarchy;
     private readonly AutoReleasingMonitor Sync;
     public string ChannelName { get; }
@@ -23,7 +23,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
         string name,
         string guid,
         IChannelService channelService,
-        IClientRegistry<IWorldClient> clientRegistry)
+        IClientRegistry<IChaosWorldClient> clientRegistry)
     {
         Name = name;
         Guid = guid;

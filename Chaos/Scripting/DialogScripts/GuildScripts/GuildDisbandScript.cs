@@ -15,7 +15,7 @@ public class GuildDisbandScript : GuildScriptBase
     /// <inheritdoc />
     public GuildDisbandScript(
         Dialog subject,
-        IClientRegistry<IWorldClient> clientRegistry,
+        IClientRegistry<IChaosWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
         ILogger<GuildDisbandScript> logger)

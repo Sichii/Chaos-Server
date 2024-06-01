@@ -33,7 +33,7 @@ public sealed class GuildRank
 
     public void AddMember(string memberName) => MemberNames.Add(memberName);
 
-    public void ChangeRankName(string newName, IEnumerable<IWorldClient> clientRegistry)
+    public void ChangeRankName(string newName, IEnumerable<IChaosWorldClient> clientRegistry)
     {
         Name = newName;
 
@@ -43,7 +43,7 @@ public sealed class GuildRank
 
     public IEnumerable<string> GetMemberNames() => MemberNames;
 
-    public IEnumerable<Aisling> GetOnlineMembers(IEnumerable<IWorldClient> clientRegistry)
+    public IEnumerable<Aisling> GetOnlineMembers(IEnumerable<IChaosWorldClient> clientRegistry)
         => clientRegistry.Where(cli => MemberNames.Contains(cli.Aisling.Name))
                          .Select(cli => cli.Aisling);
 

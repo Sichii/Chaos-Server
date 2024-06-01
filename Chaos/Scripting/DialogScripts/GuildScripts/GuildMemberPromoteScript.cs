@@ -17,7 +17,7 @@ public class GuildMemberPromoteScript : GuildScriptBase
     /// <inheritdoc />
     public GuildMemberPromoteScript(
         Dialog subject,
-        IClientRegistry<IWorldClient> clientRegistry,
+        IClientRegistry<IChaosWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
         ILogger<GuildMemberPromoteScript> logger)

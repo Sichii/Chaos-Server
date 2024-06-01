@@ -10,6 +10,11 @@ public sealed class FifoSemaphoreSlim
     private readonly SemaphoreSlim Sync;
     private readonly ConcurrentQueue<TaskCompletionSource<bool>> TaskQueue = new();
 
+    /// <summary>
+    ///     The name of the semaphore. Defaults to null (unnamed)
+    /// </summary>
+    public string? Name { get; set; }
+
     /// <inheritdoc cref="SemaphoreSlim.CurrentCount" />
     public int CurrentCount => Sync.CurrentCount;
 
@@ -22,7 +27,14 @@ public sealed class FifoSemaphoreSlim
     /// <param name="maxCount">
     ///     The max count of the semaphore
     /// </param>
-    public FifoSemaphoreSlim(int initialCount, int maxCount) => Sync = new SemaphoreSlim(initialCount, maxCount);
+    /// <param name="name">
+    ///     The name of the semaphore. Defaults to null (unnamed)
+    /// </param>
+    public FifoSemaphoreSlim(int initialCount, int maxCount, string? name = null)
+    {
+        Sync = new SemaphoreSlim(initialCount, maxCount);
+        Name = name;
+    }
 
     /// <summary>
     ///     Attempts to enter the semaphore. Sets the result on the next tcs in the queue, freeing the awaiter of the awaiter

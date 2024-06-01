@@ -16,7 +16,7 @@ public class GuildMemberAdmitScript : GuildScriptBase
     /// <inheritdoc />
     public GuildMemberAdmitScript(
         Dialog subject,
-        IClientRegistry<IWorldClient> clientRegistry,
+        IClientRegistry<IChaosWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
         ILogger<GuildMemberAdmitScript> logger)

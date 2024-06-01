@@ -13,7 +13,7 @@ public class GuildManagementScript : GuildScriptBase
     /// <inheritdoc />
     public GuildManagementScript(
         Dialog subject,
-        IClientRegistry<IWorldClient> clientRegistry,
+        IClientRegistry<IChaosWorldClient> clientRegistry,
         IStore<Guild> guildStore,
         IFactory<Guild> guildFactory,
         ILogger<GuildManagementScript> logger)

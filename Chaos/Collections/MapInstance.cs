@@ -33,6 +33,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     private readonly IIntervalTimer HandleShardLimitersTimer;
     private readonly ILogger<MapInstance> Logger;
     private readonly MapEntityCollection Objects;
+    private readonly ConcurrentQueue<Action> ProcessingQueue;
     private readonly CancellationToken ServerShutdownToken;
     private readonly IShardGenerator ShardGenerator;
     private readonly ISimpleCache SimpleCache;
@@ -79,6 +80,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         Logger = logger;
         ServerShutdownToken = serverCtx.Token;
         SimpleCache = simpleCache;
+        ProcessingQueue = new ConcurrentQueue<Action>();
 
         var walkableArea = template.Height * template.Width
                            - template.Tiles
@@ -93,7 +95,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         MapInstanceCtx = CancellationTokenSource.CreateLinkedTokenSource(ServerShutdownToken);
         MonsterSpawns = new List<MonsterSpawn>();
-        Sync = new FifoAutoReleasingSemaphoreSlim(1, 1);
+        Sync = new FifoAutoReleasingSemaphoreSlim(1, 1, $"MapInstance {InstanceId}");
         Template = template;
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
         Shards = new ConcurrentDictionary<string, MapInstance>(StringComparer.OrdinalIgnoreCase);
@@ -133,6 +135,16 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
             if (HandleShardLimitersTimer.IntervalElapsed)
                 HandleShardLimiters();
+
+            while (ProcessingQueue.TryDequeue(out var action))
+                try
+                {
+                    action();
+                } catch (Exception e)
+                {
+                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+                          .LogError(e, "Failed to process action in map {@MapInstance}", this);
+                }
         } catch (Exception e)
         {
             Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
@@ -212,6 +224,14 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         shard.AddAislingDirect(aisling, point);
     }
+
+    /// <summary>
+    ///     Use this to queue up actions that need to be performed within the map's synchronization.
+    /// </summary>
+    /// <param name="action">
+    ///     The action to perform within the map's synchronization
+    /// </param>
+    public void BeginInvoke(Action action) => ProcessingQueue.Enqueue(action);
 
     public void Click(uint id, Aisling source)
     {
@@ -596,6 +616,38 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     nearbyAisling.Client.SendVisibleEntities(visibleEntity);
 
                 Helpers.HandleApproach(creature, nearbyCreature);
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Only use this if you reeeaaalllly know what you are doing
+    /// </summary>
+    /// <param name="action">
+    ///     The action to perform within the map's synchronization
+    /// </param>
+    /// <returns>
+    ///     A task that will return when the action has completed.
+    /// </returns>
+    public Task InvokeAsync(Action action)
+    {
+        var tcs = new TaskCompletionSource();
+
+        ProcessingQueue.Enqueue(DoActionWithNotify);
+
+        return tcs.Task;
+
+        void DoActionWithNotify()
+        {
+            try
+            {
+                action();
+            } catch (Exception e)
+            {
+                tcs.TrySetException(e);
+            } finally
+            {
+                tcs.TrySetResult();
             }
         }
     }

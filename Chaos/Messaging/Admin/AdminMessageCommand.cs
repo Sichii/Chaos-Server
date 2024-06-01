@@ -8,9 +8,9 @@ using Chaos.Networking.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("adminmessage", helpText: "<message>")]
-public class AdminMessageCommand(IClientRegistry<IWorldClient> clientRegistry) : ICommand<Aisling>
+public class AdminMessageCommand(IClientRegistry<IChaosWorldClient> clientRegistry) : ICommand<Aisling>
 {
-    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
+    private readonly IClientRegistry<IChaosWorldClient> ClientRegistry = clientRegistry;
 
     /// <inheritdoc />
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

@@ -14,18 +14,18 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Networking;
 
-public sealed class LoginClient : ConnectedClientBase, ILoginClient
+public sealed class ChaosLoginClient : LoginClientBase, IChaosLoginClient
 {
     private readonly ITypeMapper Mapper;
-    private readonly ILoginServer<ILoginClient> Server;
+    private readonly ILoginServer<IChaosLoginClient> Server;
 
-    public LoginClient(
+    public ChaosLoginClient(
         Socket socket,
         IOptions<ChaosOptions> chaosOptions,
         ICrypto crypto,
-        ILoginServer<ILoginClient> server,
+        ILoginServer<IChaosLoginClient> server,
         IPacketSerializer packetSerializer,
-        ILogger<LoginClient> logger,
+        ILogger<ChaosLoginClient> logger,
         ITypeMapper mapper)
         : base(
             socket,

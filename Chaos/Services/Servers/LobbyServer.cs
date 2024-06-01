@@ -18,15 +18,15 @@ using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Servers;
 
-public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyClient>
+public sealed class LobbyServer : ServerBase<IChaosLobbyClient>, ILobbyServer<IChaosLobbyClient>
 {
-    private readonly IFactory<ILobbyClient> ClientFactory;
+    private readonly IFactory<IChaosLobbyClient> ClientFactory;
     private readonly ServerTable ServerTable;
     private new LobbyOptions Options { get; }
 
     public LobbyServer(
-        IClientRegistry<ILobbyClient> clientRegistry,
-        IFactory<ILobbyClient> clientFactory,
+        IClientRegistry<IChaosLobbyClient> clientRegistry,
+        IFactory<IChaosLobbyClient> clientFactory,
         IRedirectManager redirectManager,
         IPacketSerializer packetSerializer,
         IOptions<LobbyOptions> options,
@@ -46,13 +46,13 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
     }
 
     #region OnHandlers
-    public ValueTask OnVersion(ILobbyClient client, in Packet packet)
+    public ValueTask OnVersion(IChaosLobbyClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<VersionArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnVersion);
 
-        ValueTask InnerOnVersion(ILobbyClient localClient, VersionArgs localArgs)
+        ValueTask InnerOnVersion(IChaosLobbyClient localClient, VersionArgs localArgs)
         {
             if (localArgs.Version != 741)
                 return default;
@@ -63,13 +63,13 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
         }
     }
 
-    public ValueTask OnServerTableRequest(ILobbyClient client, in Packet packet)
+    public ValueTask OnServerTableRequest(IChaosLobbyClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ServerTableRequestArgs>(in packet);
 
         return ExecuteHandler(client, args, InnerOnServerTableRequest);
 
-        ValueTask InnerOnServerTableRequest(ILobbyClient localClient, ServerTableRequestArgs localArgs)
+        ValueTask InnerOnServerTableRequest(IChaosLobbyClient localClient, ServerTableRequestArgs localArgs)
         {
             switch (localArgs.ServerTableRequestType)
             {
@@ -107,7 +107,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
     #endregion
 
     #region Connection / Handler
-    public override ValueTask HandlePacketAsync(ILobbyClient client, in Packet packet)
+    public override ValueTask HandlePacketAsync(IChaosLobbyClient client, in Packet packet)
     {
         var opCode = packet.OpCode;
         var handler = ClientHandlers[opCode];
@@ -175,7 +175,7 @@ public sealed class LobbyServer : ServerBase<ILobbyClient>, ILobbyServer<ILobbyC
 
     private void OnDisconnect(object? sender, EventArgs e)
     {
-        var client = (ILobbyClient)sender!;
+        var client = (IChaosLobbyClient)sender!;
         ClientRegistry.TryRemove(client.Id, out _);
     }
     #endregion

@@ -8,9 +8,9 @@ using Chaos.Networking.Abstractions;
 namespace Chaos.Messaging.Admin;
 
 [Command("revive", helpText: "<targetName>")]
-public class ReviveCommand(IClientRegistry<IWorldClient> clientRegistry) : ICommand<Aisling>
+public class ReviveCommand(IClientRegistry<IChaosWorldClient> clientRegistry) : ICommand<Aisling>
 {
-    private readonly IClientRegistry<IWorldClient> ClientRegistry = clientRegistry;
+    private readonly IClientRegistry<IChaosWorldClient> ClientRegistry = clientRegistry;
 
     /// <inheritdoc />
     public async ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)

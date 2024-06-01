@@ -82,7 +82,6 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         ILogger<SocketClientBase> logger)
     {
         Id = SequentialIdGenerator<uint>.Shared.NextId;
-        ReceiveSync = new FifoSemaphoreSlim(1, 1);
         Socket = socket;
         Crypto = crypto;
 
@@ -92,6 +91,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Logger = logger;
         PacketSerializer = packetSerializer;
         RemoteIp = (Socket.RemoteEndPoint as IPEndPoint)?.Address ?? IPAddress.None;
+        ReceiveSync = new FifoSemaphoreSlim(1, 1, $"{GetType().Name} {RemoteIp} (Socket)");
 
         var initialArgs = Enumerable.Range(0, 5)
                                     .Select(_ => CreateArgs());

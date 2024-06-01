@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Chaos.Site.Extensions;
 using Chaos.Site.Models;
 using Chaos.Site.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -15,29 +16,7 @@ public class Items(ItemDtoRepository itemDtoRepository, QueryService queryServic
 
     static Items()
     {
-        var columnDefs = typeof(ItemDto).GetProperties()
-                                        .Select(
-                                            prop =>
-                                            {
-                                                var propType = prop.PropertyType;
-
-                                                if (Nullable.GetUnderlyingType(propType) is { } underlyingType)
-                                                    propType = underlyingType;
-
-                                                var identifier = prop.Name == nameof(ItemDto.Name);
-
-                                                return new
-                                                {
-                                                    headerName = prop.Name,
-                                                    field = prop.Name.ToLower(),
-                                                    filter = propType is { IsValueType: true, IsEnum: false }
-                                                        ? "agNumberColumnFilter"
-                                                        : "agTextColumnFilter",
-                                                    pinned = identifier ? "left" : null,
-                                                    autoHeight = true
-                                                };
-                                            });
-
+        var columnDefs = typeof(ItemDto).GetAgGridProperties(nameof(ItemDto.Name));
         ColumnDefsJson = JsonSerializer.Serialize(columnDefs);
     }
 

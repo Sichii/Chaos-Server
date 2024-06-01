@@ -41,10 +41,12 @@ public static class ComplexSynchronizationHelper
 
         var now = DateTime.UtcNow;
         var attemptSignature = new int[synchronizers.Length];
+        var attempts = 0;
 
         while (DateTime.UtcNow.Subtract(now) < overallTimeout)
         {
             var disposables = await Task.WhenAll(synchronizers.Select(async sync => await sync.WaitAsync(individualTimeout)));
+            attempts++;
 
             if (disposables.Any(disposable => disposable is null))
                 for (var i = 0; i < disposables.Length; i++)
@@ -60,8 +62,10 @@ public static class ComplexSynchronizationHelper
                 return new CompositePolyDisposable(disposables!);
         }
 
-        var attempts = attemptSignature.Sum();
-        var signature = string.Join(", ", attemptSignature);
+        var signature = string.Join(
+            ", ",
+            synchronizers.Zip(attemptSignature)
+                         .Select(set => $"{set.First.Name}: {set.Second}"));
 
         throw new TimeoutException(
             $"The timeout period elapsed. The helper was unable to acquire all semaphores in the alotted time. (Attempts: {attempts
