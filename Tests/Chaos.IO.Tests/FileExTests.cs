@@ -35,8 +35,8 @@ public sealed class FileExTests
         var guid = Guid.NewGuid()
                        .ToString();
         var path = $"{guid}.txt";
-        var tempPath = $"{guid}.temp";
-        var bakPath = $"{guid}.bak";
+        var tempPath = $"{guid}.txt.temp";
+        var bakPath = $"{guid}.txt.bak";
         var content = "Temp file content";
         File.WriteAllText(path, content);
         File.WriteAllText(bakPath, content);
@@ -49,7 +49,7 @@ public sealed class FileExTests
                 var fileName = Path.GetFileName(stream.Name);
 
                 if (fileName == path)
-                    throw new RetryableException();
+                    throw new RetryableException("");
 
                 if (fileName == tempPath)
                     return false;
@@ -73,7 +73,7 @@ public sealed class FileExTests
         var guid = Guid.NewGuid()
                        .ToString();
         var path = $"{guid}.txt";
-        var backPath = $"{guid}.bak";
+        var backPath = $"{guid}.txt.bak";
         var content = "Backup file content";
         File.WriteAllText(backPath, content);
 
@@ -130,7 +130,7 @@ public sealed class FileExTests
         var guid = Guid.NewGuid()
                        .ToString();
         var path = $"{guid}.txt";
-        var tempPath = $"{guid}.temp";
+        var tempPath = $"{guid}.txt.temp";
         var content = "Temp file content";
         File.WriteAllText(tempPath, content);
 
@@ -195,8 +195,8 @@ public sealed class FileExTests
         var guid = Guid.NewGuid()
                        .ToString();
         var path = $"{guid}.txt";
-        var tempPath = $"{guid}.temp";
-        var bakPath = $"{guid}.bak";
+        var tempPath = $"{guid}.txt.temp";
+        var bakPath = $"{guid}.txt.bak";
         var content = "Temp file content";
         await File.WriteAllTextAsync(path, content);
         await File.WriteAllTextAsync(bakPath, content);
@@ -209,7 +209,7 @@ public sealed class FileExTests
                 var fileName = Path.GetFileName(stream.Name);
 
                 if (fileName == path)
-                    throw new RetryableException();
+                    throw new RetryableException("");
 
                 if (fileName == tempPath)
                     return Task.FromResult(false);
@@ -233,7 +233,7 @@ public sealed class FileExTests
         var guid = Guid.NewGuid()
                        .ToString();
         var path = $"{guid}.txt";
-        var backPath = $"{guid}.bak";
+        var backPath = $"{guid}.txt.bak";
         var content = "Backup file content";
         await File.WriteAllTextAsync(backPath, content);
 
@@ -290,7 +290,7 @@ public sealed class FileExTests
         var guid = Guid.NewGuid()
                        .ToString();
         var path = $"{guid}.txt";
-        var tempPath = $"{guid}.temp";
+        var tempPath = $"{guid}.txt.temp";
         var content = "Temp file content";
         await File.WriteAllTextAsync(tempPath, content);
 
