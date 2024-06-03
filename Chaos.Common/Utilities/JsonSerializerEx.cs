@@ -34,8 +34,15 @@ public static class JsonSerializerEx
             {
                 //corrupted files will not be valid json
                 //we can try loading a backup for corrupted files
-                if (!JsonValidator.IsValidJson(stream))
-                    throw new RetryableException();
+                //corrupted files will not be valid json
+                //we can try loading a backup for corrupted files
+                try
+                {
+                    JsonValidator.EnsureValidJson(stream);
+                } catch (Exception e)
+                {
+                    throw new RetryableException("Stream content is not valid json.", e);
+                }
 
                 return JsonSerializer.Deserialize<T>(stream, options);
             });
@@ -62,8 +69,15 @@ public static class JsonSerializerEx
             {
                 //corrupted files will not be valid json
                 //we can try loading a backup for corrupted files
-                if (!JsonValidator.IsValidJson(stream))
-                    throw new RetryableException();
+                //corrupted files will not be valid json
+                //we can try loading a backup for corrupted files
+                try
+                {
+                    JsonValidator.EnsureValidJson(stream);
+                } catch (Exception e)
+                {
+                    throw new RetryableException("Stream content is not valid json.", e);
+                }
 
                 return await JsonSerializer.DeserializeAsync<T>(stream, options);
             });

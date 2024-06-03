@@ -26,7 +26,7 @@ public static class FileEx
     public static T SafeOpenRead<T>(string path, Func<FileStream, T> func)
     {
         var dir = Path.GetDirectoryName(path)!;
-        var fileName = Path.GetFileNameWithoutExtension(path);
+        var fileName = Path.GetFileName(path);
         var tempPath = Path.Combine(dir, fileName + ".temp");
         var backPath = Path.Combine(dir, fileName + ".bak");
 
@@ -88,7 +88,7 @@ public static class FileEx
     public static async Task<T> SafeOpenReadAsync<T>(string path, Func<FileStream, Task<T>> func)
     {
         var dir = Path.GetDirectoryName(path)!;
-        var fileName = Path.GetFileNameWithoutExtension(path);
+        var fileName = Path.GetFileName(path);
         var tempPath = Path.Combine(dir, fileName + ".temp");
         var backPath = Path.Combine(dir, fileName + ".bak");
 

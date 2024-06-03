@@ -22,37 +22,24 @@ public static class JsonValidator
     ///         false
     ///     </c>
     /// </returns>
-    public static bool IsValidJson(Stream jsonStream)
+    public static void EnsureValidJson(Stream jsonStream)
     {
         var position = jsonStream.Position;
-        Span<byte> buffer = stackalloc byte[4096];
-        var state = new JsonReaderState();
+        var buffer = new byte[jsonStream.Length];
+
+        _ = jsonStream.Read(buffer);
 
         try
         {
-            int bytesRead;
+            var jsonReader = new Utf8JsonReader(buffer);
 
-            while ((bytesRead = jsonStream.Read(buffer)) > 0)
+            while (jsonReader.Read())
             {
-                var jsonReader = new Utf8JsonReader(buffer[..bytesRead], bytesRead < buffer.Length, state);
-
-                while (jsonReader.Read())
-                {
-                    // Intentionally empty loop to read through the entire JSON
-                }
-
-                // Save the state for the next iteration
-                state = jsonReader.CurrentState;
+                // Intentionally empty loop to read through the entire JSON
             }
-
-            jsonStream.Position = position;
-
-            return true;
-        } catch (JsonException)
+        } finally
         {
             jsonStream.Position = position;
-
-            return false;
         }
     }
 }
