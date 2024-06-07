@@ -22,6 +22,11 @@ public sealed record UserStatSheetSchema : StatSheetSchema
     public BaseClass BaseClass { get; set; }
 
     /// <summary>
+    ///     Whether or not the aisling is a master
+    /// </summary>
+    public bool Master { get; set; }
+
+    /// <summary>
     ///     The aisling's max weight
     /// </summary>
     public int MaxWeight { get; set; }
