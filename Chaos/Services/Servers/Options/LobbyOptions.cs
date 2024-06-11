@@ -7,5 +7,5 @@ public sealed record LobbyOptions : ServerOptions
     /// <inheritdoc />
     public override string HostName { get; set; } = string.Empty;
 
-    public LoginServerInfo[] Servers { get; set; } = Array.Empty<LoginServerInfo>();
+    public LoginServerInfo[] Servers { get; set; } = [];
 }

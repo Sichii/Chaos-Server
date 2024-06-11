@@ -1,6 +1,6 @@
 using Chaos.MetaData.Abstractions;
 
-namespace Chaos.MetaData.ItemMetadata;
+namespace Chaos.MetaData.ItemMetaData;
 
 /// <summary>
 ///     Represents a compressible collection of <see cref="ItemMetaNode" />s

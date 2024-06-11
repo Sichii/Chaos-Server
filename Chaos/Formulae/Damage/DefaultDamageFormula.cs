@@ -8,6 +8,8 @@ using Chaos.Scripting.SkillScripts.Abstractions;
 using Chaos.Scripting.SpellScripts.Abstractions;
 using Chaos.Services.Servers.Options;
 
+// ReSharper disable UseCollectionExpression
+
 namespace Chaos.Formulae.Damage;
 
 public class DefaultDamageFormula : IDamageFormula

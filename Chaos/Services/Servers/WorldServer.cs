@@ -414,7 +414,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 aisling.MailBox = MailStore.Load(aisling.Name);
                 aisling.BeginObserving();
                 client.SendAttributes(StatUpdateType.Full);
-                client.SendLightLevel(LightLevel.Lightest);
+                client.SendLightLevel(aisling.MapInstance.CurrentLightLevel);
                 client.SendUserId();
                 aisling.MapInstance.AddAislingDirect(aisling, aisling);
                 client.SendEditableProfileRequest();

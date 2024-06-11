@@ -2,9 +2,10 @@ using System.Collections.Frozen;
 using Chaos.Common.Definitions;
 using Chaos.MetaData.Abstractions;
 using Chaos.MetaData.ClassMetaData;
-using Chaos.MetaData.EventMetadata;
-using Chaos.MetaData.ItemMetadata;
-using Chaos.MetaData.MundaneMetadata;
+using Chaos.MetaData.EventMetaData;
+using Chaos.MetaData.ItemMetaData;
+using Chaos.MetaData.LightMetaData;
+using Chaos.MetaData.MundaneMetaData;
 using Chaos.MetaData.NationMetaData;
 using Chaos.Models.Templates;
 using Chaos.Models.Templates.Abstractions;
@@ -14,6 +15,7 @@ using Chaos.Schemas.MetaData;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
 
 namespace Chaos.Services.Storage;
@@ -24,9 +26,9 @@ public class MetaDataStore : IMetaDataStore
     private readonly IEntityRepository EntityRepository;
 
     private readonly ILogger<MetaDataStore> Logger;
-
-    private readonly FrozenDictionary<string, IMetaDataDescriptor> MetaData;
     private readonly MetaDataStoreOptions Options;
+
+    private FrozenDictionary<string, IMetaDataDescriptor> MetaData = null!;
 
     public MetaDataStore(
         ISimpleCacheProvider cacheProvider,
@@ -39,8 +41,7 @@ public class MetaDataStore : IMetaDataStore
         CacheProvider = cacheProvider;
         EntityRepository = entityRepository;
 
-        MetaData = LoadMetaData()
-            .ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
+        LoadMetaData();
     }
 
     /// <inheritdoc />
@@ -50,9 +51,11 @@ public class MetaDataStore : IMetaDataStore
             : throw new KeyNotFoundException($"MetaData with name \"{name}\" not found in cache");
 
     /// <inheritdoc />
+    [MustDisposeResource]
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
+    [MustDisposeResource]
     public IEnumerator<IMetaDataDescriptor> GetEnumerator() => ((IEnumerable<IMetaDataDescriptor>)MetaData.Values).GetEnumerator();
 
     protected virtual IEnumerable<IMetaDataDescriptor> LoadAbilityMetaData()
@@ -170,39 +173,13 @@ public class MetaDataStore : IMetaDataStore
         var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
                                   .WithMetrics();
 
-        var eventMetas = LoadMetaFromPath<EventMetaSchema>(Options.EventMetaPath);
-        var eventMetaNodes = new EventMetaNodeCollection();
+        var nodes = LoadMetaFromPath<EventMetaNode, EventMetaSchema>(Options.EventMetaPath);
+        var metaNodeCollection = new EventMetaNodeCollection();
 
-        foreach (var eventMeta in eventMetas)
-        {
-            string? classStr = null;
-            string? circlesStr = null;
-            var page = eventMeta.PageOverride;
+        foreach (var node in nodes)
+            metaNodeCollection.AddNode(node);
 
-            if (eventMeta.QualifyingClasses is { Count: > 0 })
-                classStr = string.Join("", eventMeta.QualifyingClasses.Select(c => (int)c));
-
-            if (eventMeta.QualifyingCircles is { Count: > 0 })
-            {
-                circlesStr = string.Join("", eventMeta.QualifyingCircles!.Select(c => (int)c));
-                page ??= (int)eventMeta.QualifyingCircles!.Min();
-            }
-
-            var node = new EventMetaNode(eventMeta.Title, page ?? 1)
-            {
-                Id = eventMeta.Id,
-                QualifyingClasses = classStr,
-                QualifyingCircles = circlesStr,
-                Rewards = eventMeta.Rewards,
-                PrerequisiteEventId = eventMeta.PrerequisiteEventId,
-                Summary = eventMeta.Summary,
-                Result = eventMeta.Result
-            };
-
-            eventMetaNodes.AddNode(node);
-        }
-
-        foreach (var eventMetaData in eventMetaNodes.Split())
+        foreach (var eventMetaData in metaNodeCollection.Split())
             yield return eventMetaData;
 
         metricsLogger.LogDebug("Event metadata generated");
@@ -279,7 +256,40 @@ public class MetaDataStore : IMetaDataStore
         metricsLogger.LogDebug("Item metadata generated");
     }
 
-    public IDictionary<string, IMetaDataDescriptor> LoadMetaData()
+    protected virtual IMetaDataDescriptor LoadLightMetaData()
+    {
+        Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+              .LogDebug("Generating light metadata...");
+
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
+                                  .WithMetrics();
+
+        var nodes = LoadMetaFromPath<LightPropertyMetaNode, LightMetaSchema>(Options.LightMetaPath);
+        var lightMetaData = new LightMetaData();
+
+        foreach (var node in nodes)
+            lightMetaData.AddNode(node);
+
+        var mapTemplates = CacheProvider.GetCache<MapTemplate>();
+        mapTemplates.ForceLoad();
+
+        foreach (var mapTemplate in mapTemplates)
+        {
+            if (string.IsNullOrEmpty(mapTemplate.LightType))
+                continue;
+
+            var node = new MapLightMetaNode(mapTemplate.MapId, mapTemplate.LightType);
+            lightMetaData.AddNode(node);
+        }
+
+        lightMetaData.Compress();
+
+        metricsLogger.LogDebug("Light metadata generated");
+
+        return lightMetaData;
+    }
+
+    public void LoadMetaData()
     {
         Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
               .LogDebug("Generating metadata in parallel...");
@@ -287,42 +297,47 @@ public class MetaDataStore : IMetaDataStore
         var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
                                   .WithMetrics();
 
-        var ret = new ConcurrentDictionary<string, IMetaDataDescriptor>();
+        var metaDataDictionary = new ConcurrentDictionary<string, IMetaDataDescriptor>();
 
         //load metadata in parallel
         Parallel.Invoke(
             () =>
             {
                 foreach (var metaData in LoadAbilityMetaData())
-                    ret.TryAdd(metaData.Name, metaData);
+                    metaDataDictionary.TryAdd(metaData.Name, metaData);
             },
             () =>
             {
                 foreach (var metaData in LoadEventMetaData())
-                    ret.TryAdd(metaData.Name, metaData);
+                    metaDataDictionary.TryAdd(metaData.Name, metaData);
             },
             () =>
             {
                 foreach (var metaData in LoadItemMetaData())
-                    ret.TryAdd(metaData.Name, metaData);
+                    metaDataDictionary.TryAdd(metaData.Name, metaData);
             },
             () =>
             {
                 var metaData = LoadMundaneIllustrationMeta();
-                ret.TryAdd(metaData.Name, metaData);
+                metaDataDictionary.TryAdd(metaData.Name, metaData);
             },
             () =>
             {
                 var metaData = LoadNationDescriptionMetaData();
-                ret.TryAdd(metaData.Name, metaData);
+                metaDataDictionary.TryAdd(metaData.Name, metaData);
+            },
+            () =>
+            {
+                var metaData = LoadLightMetaData();
+                metaDataDictionary.TryAdd(metaData.Name, metaData);
             });
 
         metricsLogger.LogInformation("Metadata generated");
 
-        return ret;
+        MetaData = metaDataDictionary.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
     }
 
-    protected virtual IEnumerable<T> LoadMetaFromPath<T>(string path)
+    protected virtual IEnumerable<T> LoadMetaFromPath<T, TSchema>(string path)
     {
         var typeName = typeof(T).Name;
 
@@ -331,7 +346,7 @@ public class MetaDataStore : IMetaDataStore
             Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
                   .LogWarning("Metadata path is empty, no {@TypeName} will be generated", typeName);
 
-            return Enumerable.Empty<T>();
+            return [];
         }
 
         var metaDir = Path.GetDirectoryName(path);
@@ -344,10 +359,10 @@ public class MetaDataStore : IMetaDataStore
             Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
                   .LogWarning("File not found at path {@MetaPath}, no {@TypeName} will be generated", path, typeName);
 
-            return Enumerable.Empty<T>();
+            return [];
         }
 
-        return EntityRepository.LoadMany<T>(path);
+        return EntityRepository.LoadAndMapMany<T, TSchema>(path);
     }
 
     protected virtual IMetaDataDescriptor LoadMundaneIllustrationMeta()
@@ -358,14 +373,11 @@ public class MetaDataStore : IMetaDataStore
         var metricsLogger = Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Create, Topics.Actions.Processing)
                                   .WithMetrics();
 
-        var mundaneIllustrationMetas = LoadMetaFromPath<MundaneIllustrationMetaSchema>(Options.MundaneIllustrationMetaPath);
+        var nodes = LoadMetaFromPath<MundaneIllustrationMetaNode, MundaneIllustrationMetaSchema>(Options.MundaneIllustrationMetaPath);
         var metaData = new MundaneIllustrationMetaData();
 
-        foreach (var mundaneIllustrationMeta in mundaneIllustrationMetas)
-        {
-            var node = new MundaneIllustrationMetaNode(mundaneIllustrationMeta.Name, mundaneIllustrationMeta.ImageName);
+        foreach (var node in nodes)
             metaData.AddNode(node);
-        }
 
         metaData.Compress();
 

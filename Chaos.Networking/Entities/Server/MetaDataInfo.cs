@@ -14,7 +14,7 @@ public sealed record MetaDataInfo
     /// <summary>
     ///     The data of the metadata
     /// </summary>
-    public byte[] Data { get; set; } = Array.Empty<byte>();
+    public byte[] Data { get; set; } = [];
 
     /// <summary>
     ///     The name of the metadata

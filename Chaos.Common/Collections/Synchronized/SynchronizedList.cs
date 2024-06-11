@@ -61,8 +61,8 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
     public SynchronizedList(IEnumerable<T>? items = null)
     {
         Sync = new AutoReleasingMonitor();
-        items ??= Enumerable.Empty<T>();
-        List = new List<T>(items);
+        items ??= [];
+        List = [..items];
     }
 
     /// <inheritdoc cref="ICollection{T}.Add" />

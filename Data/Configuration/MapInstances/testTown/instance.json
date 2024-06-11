@@ -1,8 +1,9 @@
 {
-  "flags": "Rain",
-  "instanceId": "testTown",
-  "music": 1,
-  "name": "Test Town",
-  "scriptKeys": [],
-  "templateKey": "3043"
+    "flags": "Rain",
+    "instanceId": "testTown",
+    "music": 1,
+    "name": "Test Town",
+    "scriptKeys": [],
+    "templateKey": "3043",
+    "autoDayNightCycle": true
 }

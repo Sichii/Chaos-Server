@@ -11,6 +11,11 @@ public sealed class MetaDataStoreOptions : IDirectoryBound
     public string EventMetaPath { get; set; } = null!;
 
     /// <summary>
+    ///     The path to the light meta file
+    /// </summary>
+    public string LightMetaPath { get; set; } = null!;
+
+    /// <summary>
     ///     The path to the mundane illustration meta file
     /// </summary>
     public string MundaneIllustrationMetaPath { get; set; } = null!;
@@ -23,6 +28,7 @@ public sealed class MetaDataStoreOptions : IDirectoryBound
     public void UseBaseDirectory(string baseDirectory)
     {
         EventMetaPath = Path.Combine(baseDirectory, EventMetaPath);
+        LightMetaPath = Path.Combine(baseDirectory, LightMetaPath);
         MundaneIllustrationMetaPath = Path.Combine(baseDirectory, MundaneIllustrationMetaPath);
     }
 }

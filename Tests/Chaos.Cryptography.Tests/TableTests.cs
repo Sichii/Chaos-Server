@@ -23,7 +23,7 @@ public sealed class TableTests
             table[i] = value;
         }
 
-        return table.ToImmutableArray();
+        return [..table];
     }
 
     public static ImmutableArray<uint> GenerateTable32()
@@ -43,7 +43,7 @@ public sealed class TableTests
             table[i] = value;
         }
 
-        return table.ToImmutableArray();
+        return [..table];
     }
 
     [Fact]

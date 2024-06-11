@@ -1,14 +1,14 @@
 ﻿using System.Collections.Immutable;
 
+// ReSharper disable UseCollectionExpression
+//@formatter:off
+
 namespace Chaos.Cryptography;
 
-/// <summary>
-///     Holds CheckSum and KeySalt tables.
-/// </summary>
+/// <summary>///     Holds CheckSum and KeySalt tables./// </summary>
 public static class Tables
 {
-    //@formatter:off
-    /// <summary>///     ///     ///     ///     ///     ///     16-bit CRC table (CRC-16/CCITT-FALSE) (0x1021)////////////////// </summary>
+    /// <summary>///     16-bit CRC table (CRC-16/CCITT-FALSE) (0x1021)/// </summary>
     public static readonly ImmutableArray<ushort> TABLE16 = new ushort[]
     {
         0, 4129, 8258, 12387, 16516, 20645, 24774, 28903, 33032, 37161, 41290, 45419, 49548, 53677, 57806, 61935, 4657, 528, 12915,
@@ -28,7 +28,7 @@ public static class Tables
         16050, 3793, 7920
     }.ToImmutableArray();
 
-    /// <summary>///     ///     ///     ///     ///     ///     32-bit CRC table (CRC-32/adler) (0xEDB88320)////////////////// </summary>
+    /// <summary>///     32-bit CRC table (CRC-32/adler) (0xEDB88320)/// </summary>
     public static readonly ImmutableArray<uint> TABLE32 = new[]
     {
         0U, 1996959894U, 3993919788U, 2567524794U, 124634137U, 1886057615U, 3915621685U, 2657392035U, 249268274U, 2044508324U,
@@ -204,6 +204,4 @@ public static class Tables
             155, 155, 155, 155, 134, 134, 134, 134, 134, 134, 134, 134, 111, 111, 111, 111, 111, 111, 111, 111, 86, 86, 86, 86,
             86, 86, 86, 86, 59, 59, 59, 59, 59, 59, 59, 59, 30, 30, 30, 30, 30, 30, 30, 30
         }.ToImmutableArray()
-    }.ToImmutableArray();
-    //@formatter:on
-}
+    }.ToImmutableArray();}

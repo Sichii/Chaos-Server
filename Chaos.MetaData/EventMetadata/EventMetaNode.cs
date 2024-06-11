@@ -1,7 +1,7 @@
 using Chaos.IO.Memory;
 using Chaos.MetaData.Abstractions;
 
-namespace Chaos.MetaData.EventMetadata;
+namespace Chaos.MetaData.EventMetaData;
 
 /// <summary>
 ///     A node that stores metadata about an event

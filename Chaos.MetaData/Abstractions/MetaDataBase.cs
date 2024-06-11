@@ -27,7 +27,7 @@ public abstract class MetaDataBase<TNode> : MetaNodeCollection<TNode>, IMetaData
     protected MetaDataBase(string name)
     {
         Name = name;
-        Data = Array.Empty<byte>();
+        Data = [];
     }
 
     /// <inheritdoc />

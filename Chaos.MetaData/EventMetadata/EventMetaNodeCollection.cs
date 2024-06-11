@@ -1,6 +1,6 @@
 using Chaos.MetaData.Abstractions;
 
-namespace Chaos.MetaData.EventMetadata;
+namespace Chaos.MetaData.EventMetaData;
 
 /// <summary>
 ///     Represents a collection of <see cref="EventMetaNode" /> that can be split into sub-sequences

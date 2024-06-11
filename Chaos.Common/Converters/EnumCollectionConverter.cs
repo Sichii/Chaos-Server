@@ -27,7 +27,7 @@ public sealed class EnumCollectionConverter : JsonConverter<EnumCollection>
                                                  return a.GetTypes();
                                              } catch
                                              {
-                                                 return Enumerable.Empty<Type>();
+                                                 return [];
                                              }
                                          })
                                      .Where(asmType => asmType.IsEnum && asmType is { IsInterface: false, IsAbstract: false })

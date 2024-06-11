@@ -13,7 +13,7 @@ public sealed class Bank : IEnumerable<Item>
 
     public Bank(IEnumerable<Item>? items = null)
     {
-        items ??= Enumerable.Empty<Item>();
+        items ??= [];
         Sync = new AutoReleasingMonitor();
         Items = items.ToDictionary(item => item.DisplayName, StringComparer.OrdinalIgnoreCase);
         ItemCloner = null!;

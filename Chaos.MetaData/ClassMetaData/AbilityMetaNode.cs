@@ -127,19 +127,19 @@ public sealed record AbilityMetaNode(string Name, bool IsSkill, BaseClass Class)
     public BaseClass Class { get; } = Class;
 
     /// <summary>
+    ///     The name of the ability
+    /// </summary>
+    public string Id { get; } = Name;
+
+    /// <summary>
     ///     Whether or not the ability is a skill
     /// </summary>
     public bool IsSkill { get; } = IsSkill;
 
-    /// <summary>
-    ///     The name of the ability
-    /// </summary>
-    public string Name { get; } = Name;
-
     /// <inheritdoc />
     public void Serialize(ref SpanWriter writer)
     {
-        writer.WriteString8(Name);
+        writer.WriteString8(Id);
         writer.WriteInt16(6);
 
         writer.WriteString16($"{Level}/{Convert.ToByte(RequiresMaster)}/{AbilityLevel}");

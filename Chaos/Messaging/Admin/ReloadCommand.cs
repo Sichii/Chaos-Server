@@ -184,6 +184,24 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                     });
 
                 break;
+            case "metadata":
+                _ = Task.Run(
+                    async () =>
+                    {
+                        try
+                        {
+                            await ServiceProvider.ReloadMetaDataAsync(Logger);
+                            aisling.SendOrangeBarMessage("Metadata reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload metadata");
+
+                            Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Reload)
+                                  .LogError(e, "Failed to reload metadata");
+                        }
+                    });
+
+                break;
         }
 
         return default;

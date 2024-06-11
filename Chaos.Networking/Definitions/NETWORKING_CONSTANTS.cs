@@ -21,7 +21,8 @@ public static class NETWORKING_CONSTANTS
     /// <summary>
     ///     The order in which equipment slots are sent to the client
     /// </summary>
-    public static readonly ImmutableArray<EquipmentSlot> PROFILE_EQUIPMENTSLOT_ORDER = ImmutableArray.Create(
+    public static readonly ImmutableArray<EquipmentSlot> PROFILE_EQUIPMENTSLOT_ORDER =
+    [
         EquipmentSlot.Weapon,
         EquipmentSlot.Armor,
         EquipmentSlot.Shield,
@@ -39,5 +40,6 @@ public static class NETWORKING_CONSTANTS
         EquipmentSlot.Overcoat,
         EquipmentSlot.OverHelm,
         EquipmentSlot.Accessory2,
-        EquipmentSlot.Accessory3);
+        EquipmentSlot.Accessory3
+    ];
 }

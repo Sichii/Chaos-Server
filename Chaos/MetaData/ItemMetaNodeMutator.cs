@@ -1,5 +1,5 @@
 using Chaos.MetaData.Abstractions;
-using Chaos.MetaData.ItemMetadata;
+using Chaos.MetaData.ItemMetaData;
 using Chaos.Models.Templates;
 
 namespace Chaos.MetaData;

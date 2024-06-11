@@ -39,7 +39,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
 
-        DocViewModel = new ObservableCollection<DocumentViewModel>();
+        DocViewModel = [];
         Items.ItemsSource = DocViewModel;
 
         Loaded += MainWindow_Loaded;
@@ -65,7 +65,7 @@ public partial class MainWindow : Window
                                                          return asm.GetTypes();
                                                      } catch
                                                      {
-                                                         return Enumerable.Empty<Type>();
+                                                         return [];
                                                      }
                                                  })
                                              .Select(t => t.Namespace)
@@ -221,7 +221,7 @@ public partial class MainWindow : Window
                 return base.GetSolutionAnalyzerReferences();
             }
 
-            return Enumerable.Empty<AnalyzerReference>();
+            return [];
         }
     }
 }

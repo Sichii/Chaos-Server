@@ -27,6 +27,7 @@ namespace Chaos.Collections;
 public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 {
     private readonly IAsyncStore<Aisling> AislingStore;
+    private readonly IIntervalTimer DayNightCycleTimer;
     private readonly DeltaMonitor DeltaMonitor;
     private readonly DeltaTime DeltaTime;
     private readonly PeriodicTimer DeltaTimer;
@@ -37,7 +38,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     private readonly CancellationToken ServerShutdownToken;
     private readonly IShardGenerator ShardGenerator;
     private readonly ISimpleCache SimpleCache;
+    public bool AutoDayNightCycle { get; set; }
     public string? BaseInstanceId { get; set; }
+    public LightLevel CurrentLightLevel { get; set; } = LightLevel.Lightest_A;
     public MapFlags Flags { get; set; }
     public string InstanceId { get; init; }
     public int? MaximumLevel { get; set; }
@@ -102,6 +105,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         ShardLimiterTimers = new ConcurrentDictionary<Aisling, IIntervalTimer>();
         ShardGenerator = shardGenerator;
         HandleShardLimitersTimer = new IntervalTimer(TimeSpan.FromSeconds(1));
+        DayNightCycleTimer = new IntervalTimer(TimeSpan.FromSeconds(1));
         var delta = 1000.0 / WorldOptions.Instance.UpdatesPerSecond;
         DeltaTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(delta));
         DeltaTime = new DeltaTime();
@@ -129,12 +133,26 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
             Script.Update(delta);
             HandleShardLimitersTimer.Update(delta);
+            DayNightCycleTimer.Update(delta);
 
             foreach (var timer in ShardLimiterTimers.Values)
                 timer.Update(delta);
 
             if (HandleShardLimitersTimer.IntervalElapsed)
                 HandleShardLimiters();
+
+            if (AutoDayNightCycle && DayNightCycleTimer.IntervalElapsed)
+            {
+                var lightLevel = GameTime.Now.TimeOfDay;
+
+                if (CurrentLightLevel != lightLevel)
+                {
+                    CurrentLightLevel = lightLevel;
+
+                    foreach (var aisling in Objects.Values<Aisling>())
+                        aisling.Client.SendLightLevel(CurrentLightLevel);
+                }
+            }
 
             while (ProcessingQueue.TryDequeue(out var action))
                 try

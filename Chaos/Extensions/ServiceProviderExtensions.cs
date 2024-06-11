@@ -11,6 +11,8 @@ using Chaos.NLog.Logging.Extensions;
 using Chaos.Schemas.Aisling;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Other.Abstractions;
+using Chaos.Services.Storage;
+using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 
@@ -283,6 +285,15 @@ public static class ServiceProviderExtensions
 
             mapInstance.AddObjects(merchantsToAdd);
         }
+    }
+
+    public static Task ReloadMetaDataAsync(this IServiceProvider provider, ILogger logger)
+    {
+        var metaDataStore = (MetaDataStore)provider.GetRequiredService<IMetaDataStore>();
+
+        metaDataStore.LoadMetaData();
+
+        return Task.CompletedTask;
     }
 
     public static async Task ReloadMonstersAsync(this IServiceProvider provider, ILogger logger)

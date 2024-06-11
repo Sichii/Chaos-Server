@@ -57,12 +57,12 @@ public sealed class AccessManagerOptions : IDirectoryBound
     /// <summary>
     ///     A list of phrases/words that a username can not contains
     /// </summary>
-    public string[] PhraseFilter { get; set; } = Array.Empty<string>();
+    public string[] PhraseFilter { get; set; } = [];
 
     /// <summary>
     ///     A list of usernames that are not allowed to be used
     /// </summary>
-    public string[] ReservedUsernames { get; set; } = Array.Empty<string>();
+    public string[] ReservedUsernames { get; set; } = [];
 
     /// <summary>
     ///     A regular expression used to validate that a username only contains valid characters

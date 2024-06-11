@@ -1114,14 +1114,29 @@ public enum GroupRequestType : byte
     RemoveGroupBox = 6
 }
 
+/// <summary>
+///     Feel free to rename these to align with whatever you have configured in your light metadata.
+/// </summary>
+/// <remarks>
+///     You can have all 12 values be in sequence of darkest to lightest (or vice versa), but this will constrain you to
+///     only having 1 light type per map. Alternatively, you could 2 different light types defined here, 6 values for each,
+///     which would allow you to define 2 different light types per map without needing to restart the server. Each set of
+///     6 values would both be defined under the same light type in the metadata.
+/// </remarks>
 public enum LightLevel : byte
 {
-    Darkest = 0,
-    Darker = 1,
-    Dark = 2,
-    Light = 3,
-    Lighter = 4,
-    Lightest = 5
+    Darkest_A = 0,
+    Darker_A = 1,
+    Dark_A = 2,
+    Light_A = 3,
+    Lighter_A = 4,
+    Lightest_A = 5,
+    Darkest_B = 6,
+    Darker_B = 7,
+    Dark_B = 8,
+    Light_B = 9,
+    Lighter_B = 10,
+    Lightest_B = 11
 }
 
 [Flags]

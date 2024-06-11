@@ -145,7 +145,7 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         Send(args);
     }
 
-    public void SendCancelCasting()
+    public override void SendCancelCasting()
     {
         var args = new CancelCastingArgs();
 
@@ -321,7 +321,7 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
             Send(args);
     }
 
-    public void SendEditableProfileRequest()
+    public override void SendEditableProfileRequest()
     {
         var args = new EditableProfileRequestArgs();
 
@@ -481,14 +481,14 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         Send(args);
     }
 
-    public void SendMapChangeComplete()
+    public override void SendMapChangeComplete()
     {
         var args = new MapChangeCompleteArgs();
 
         Send(args);
     }
 
-    public void SendMapChangePending()
+    public override void SendMapChangePending()
     {
         var args = new MapChangePendingArgs();
 
@@ -520,7 +520,7 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         Send(args);
     }
 
-    public void SendMapLoadComplete()
+    public override void SendMapLoadComplete()
     {
         var args = new MapLoadCompleteArgs();
 
@@ -598,7 +598,7 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         Send(args);
     }
 
-    public void SendRefreshResponse()
+    public override void SendRefreshResponse()
     {
         var args = new RefreshResponseArgs();
 

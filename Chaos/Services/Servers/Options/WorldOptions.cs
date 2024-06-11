@@ -14,7 +14,7 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     public int ClearOrangeBarTimerSecs { get; set; }
 
     /// <inheritdoc />
-    public required ChannelSettings[] DefaultChannels { get; set; } = Array.Empty<ChannelSettings>();
+    public required ChannelSettings[] DefaultChannels { get; set; } = [];
 
     /// <inheritdoc />
     public required int DropRange { get; init; }

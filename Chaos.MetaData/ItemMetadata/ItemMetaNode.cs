@@ -2,7 +2,7 @@ using Chaos.Common.Definitions;
 using Chaos.IO.Memory;
 using Chaos.MetaData.Abstractions;
 
-namespace Chaos.MetaData.ItemMetadata;
+namespace Chaos.MetaData.ItemMetaData;
 
 /// <summary>
 ///     A node that stores metadata about an item

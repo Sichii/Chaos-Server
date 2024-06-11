@@ -10,6 +10,11 @@ namespace Chaos.Schemas.Content;
 public sealed record MapInstanceSchema
 {
     /// <summary>
+    ///     Whether the map will experience day/night cycles automatically
+    /// </summary>
+    public bool AutoDayNightCycle { get; set; }
+
+    /// <summary>
     ///     A flag, or combination of flags that should affect the map
     ///     <br />
     ///     You can combine multiple flags by separating them with commas

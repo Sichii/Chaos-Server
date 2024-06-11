@@ -8,7 +8,7 @@ public sealed class ChannelServiceOptions
     /// <summary>
     ///     A collection of phrases that can not be used as part of a channel name
     /// </summary>
-    public required string[] BlacklistedChannelNamePhrases { get; init; } = Array.Empty<string>();
+    public required string[] BlacklistedChannelNamePhrases { get; init; } = [];
 
     /// <summary>
     ///     The prefix used to identify channels
@@ -28,5 +28,5 @@ public sealed class ChannelServiceOptions
     /// <summary>
     ///     A collection of reserved channel names. Generally these should be the default channels.
     /// </summary>
-    public required string[] ReservedChannelNames { get; init; } = Array.Empty<string>();
+    public required string[] ReservedChannelNames { get; init; } = [];
 }

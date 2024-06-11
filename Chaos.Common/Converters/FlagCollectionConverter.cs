@@ -27,7 +27,7 @@ public sealed class FlagCollectionConverter : JsonConverter<FlagCollection>
                                                  return a.GetTypes();
                                              } catch
                                              {
-                                                 return Enumerable.Empty<Type>();
+                                                 return [];
                                              }
                                          })
                                      .Where(asmType => asmType.IsEnum && asmType is { IsInterface: false, IsAbstract: false })

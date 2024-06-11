@@ -199,9 +199,9 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     {
         //initialize all the things
         UserStatSheet = new UserStatSheet();
-        Titles = new TitleList();
+        Titles = [];
         Options = new UserOptions();
-        IgnoreList = new IgnoreList();
+        IgnoreList = [];
         Legend = new Collections.Legend();
         Bank = new Bank();
         Equipment = new Equipment();
@@ -212,7 +212,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         ActiveObject = new InterlockedObject<object>();
         ActiveDialog = new InterlockedObject<Dialog>();
         ChantTimer = new ChantTimer(WorldOptions.Instance.MaxChantTimeBurdenMs);
-        Portrait = Array.Empty<byte>();
+        Portrait = [];
         ProfileText = string.Empty;
         ActionThrottle = new ResettingCounter(WorldOptions.Instance.MaxActionsPerSecond);
         SpellThrottle = new ResettingCounter(WorldOptions.Instance.MaxSpellsPerSecond);
@@ -221,7 +221,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         WalkCounter = new ResettingCounter(4, 2);
         TurnThrottle = new ResettingCounter(3);
         AssailIntervalMs = WorldOptions.Instance.AislingAssailIntervalMs;
-        ChannelSettings = new SynchronizedHashSet<ChannelSettings>();
+        ChannelSettings = [];
         DialogHistory = new Stack<Dialog>();
 
         Trackers = new AislingTrackers

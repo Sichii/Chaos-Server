@@ -10,6 +10,7 @@ public sealed class MapTemplateViewModel : SchemaViewModelBase<MapTemplateSchema
     private byte _height;
     private string _templateKey = string.Empty;
     private byte _width;
+    private string? _lightType;
 
     public byte Height
     {
@@ -27,6 +28,12 @@ public sealed class MapTemplateViewModel : SchemaViewModelBase<MapTemplateSchema
     {
         get => _width;
         set => SetField(ref _width, value);
+    }
+
+    public string? LightType
+    {
+        get => _lightType;
+        set => SetField(ref _lightType, value);
     }
 
     public ObservingCollection<BindableString> ScriptKeys { get; } = [];

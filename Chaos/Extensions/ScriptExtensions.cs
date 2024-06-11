@@ -60,7 +60,7 @@ public static class ScriptExtensions
         if (script is ICompositeScript compositeScript)
             return compositeScript.GetScripts<TScript>();
 
-        return Enumerable.Empty<TScript>();
+        return [];
     }
 
     public static bool Is<TScript>(this IScript script) where TScript: IScript

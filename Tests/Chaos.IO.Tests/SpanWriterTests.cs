@@ -77,7 +77,7 @@ public sealed class SpanWriterTests
         var writer = new SpanWriter(Encoding, ref span);
 
         // Act
-        writer.WriteBytes(Array.Empty<byte>());
+        writer.WriteBytes([]);
 
         // Assert
         buffer[0]
@@ -131,7 +131,7 @@ public sealed class SpanWriterTests
         var writer = new SpanWriter(Encoding, ref span);
 
         // Act
-        writer.WriteData16(Array.Empty<byte>());
+        writer.WriteData16([]);
 
         // Assert
         buffer.Should()
@@ -185,7 +185,7 @@ public sealed class SpanWriterTests
         var writer = new SpanWriter(Encoding, ref span);
 
         // Act
-        writer.WriteData8(Array.Empty<byte>());
+        writer.WriteData8([]);
 
         // Assert
         buffer.Should()

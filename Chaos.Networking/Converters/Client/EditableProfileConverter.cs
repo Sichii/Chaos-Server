@@ -22,7 +22,7 @@ public sealed class EditableProfileConverter : PacketConverterBase<EditableProfi
         if (totalLength == 0)
             return new EditableProfileArgs
             {
-                PortraitData = Array.Empty<byte>(),
+                PortraitData = [],
                 ProfileMessage = string.Empty
             };
 

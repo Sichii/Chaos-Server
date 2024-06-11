@@ -1,7 +1,7 @@
 using Chaos.IO.Memory;
 using Chaos.MetaData.Abstractions;
 
-namespace Chaos.MetaData.MundaneMetadata;
+namespace Chaos.MetaData.MundaneMetaData;
 
 /// <summary>
 ///     A metadata node that represents a mundane illustration.

@@ -1,0 +1,123 @@
+[
+    {
+        "lightTypeName": "default",
+        "enumValue": 0,
+        "startHour": 0,
+        "endHour": 1,
+        "alpha": 18,
+        "red": 6,
+        "green": 11,
+        "blue": 60
+    },
+    {
+        "lightTypeName": "default",
+        "enumValue": 1,
+        "startHour": 2,
+        "endHour": 3,
+        "alpha": 20,
+        "red": 27,
+        "green": 1,
+        "blue": 59
+    },
+    {
+        "lightTypeName": "default",
+        "enumValue": 2,
+        "startHour": 4,
+        "endHour": 5,
+        "alpha": 23,
+        "red": 100,
+        "green": 10,
+        "blue": 100
+    },
+    {
+        "lightTypeName": "default",
+        "enumValue": 3,
+        "startHour": 6,
+        "endHour": 7,
+        "alpha": 26,
+        "red": 170,
+        "green": 36,
+        "blue": 50
+    },
+    {
+        "lightTypeName": "default",
+        "enumValue": 4,
+        "startHour": 8,
+        "endHour": 9,
+        "alpha": 32,
+        "red": 0,
+        "green": 0,
+        "blue": 255
+    },
+    {
+        "lightTypeName": "default",
+        "enumValue": 5,
+        "startHour": 10,
+        "endHour": 11,
+        "alpha": 32,
+        "red": 0,
+        "green": 0,
+        "blue": 255
+    },
+
+    {
+        "lightTypeName": "bloodmoon",
+        "enumValue": 0,
+        "startHour": 0,
+        "endHour": 1,
+        "alpha": 16,
+        "red": 139,
+        "green": 0,
+        "blue": 0
+    },
+    {
+        "lightTypeName": "bloodmoon",
+        "enumValue": 1,
+        "startHour": 2,
+        "endHour": 3,
+        "alpha": 20,
+        "red": 139,
+        "green": 0,
+        "blue": 0
+    },
+    {
+        "lightTypeName": "bloodmoon",
+        "enumValue": 2,
+        "startHour": 4,
+        "endHour": 5,
+        "alpha": 24,
+        "red": 139,
+        "green": 0,
+        "blue": 0
+    },
+    {
+        "lightTypeName": "bloodmoon",
+        "enumValue": 3,
+        "startHour": 6,
+        "endHour": 7,
+        "alpha": 28,
+        "red": 139,
+        "green": 0,
+        "blue": 0
+    },
+    {
+        "lightTypeName": "bloodmoon",
+        "enumValue": 4,
+        "startHour": 8,
+        "endHour": 9,
+        "alpha": 32,
+        "red": 139,
+        "green": 0,
+        "blue": 0
+    },
+    {
+        "lightTypeName": "bloodmoon",
+        "enumValue": 5,
+        "startHour": 10,
+        "endHour": 11,
+        "alpha": 32,
+        "red": 139,
+        "green": 0,
+        "blue": 0
+    }
+]

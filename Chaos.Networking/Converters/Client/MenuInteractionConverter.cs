@@ -55,7 +55,7 @@ public sealed class MenuInteractionConverter : PacketConverterBase<MenuInteracti
         if (args.Slot.HasValue)
             writer.WriteByte(args.Slot.Value);
         else
-            foreach (var arg in args.Args?.TakeLast(2) ?? Enumerable.Empty<string>())
+            foreach (var arg in args.Args?.TakeLast(2) ?? [])
                 writer.WriteString8(arg);
     }
 }

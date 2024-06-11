@@ -14,6 +14,8 @@ public sealed record MapTemplate : ITemplate, IScripted
     public Dictionary<IPoint, DoorTemplate> Doors { get; set; } = new(PointEqualityComparer.Instance);
     public required byte Height { get; set; }
 
+    public string? LightType { get; set; }
+
     /// <inheritdoc />
     public required ISet<string> ScriptKeys { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

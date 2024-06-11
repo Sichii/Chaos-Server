@@ -40,7 +40,7 @@ public sealed class ChannelService : IChannelService
             throw new InvalidOperationException($"{channelName} is not a valid channel name");
 
         if (!Channels.TryGetValue(channelName, out var channelDetails))
-            return Enumerable.Empty<IChannelSubscriber>();
+            return [];
 
         return channelDetails.Subscribers.Values.Select(subDetails => subDetails.Subscriber);
     }

@@ -4,7 +4,7 @@ using Chaos.Extensions.Common;
 namespace Chaos.Collections;
 
 public sealed class TitleList(IEnumerable<string>? items = null)
-    : SynchronizedList<string>(items?.Distinct(StringComparer.OrdinalIgnoreCase) ?? Enumerable.Empty<string>())
+    : SynchronizedList<string>(items?.Distinct(StringComparer.OrdinalIgnoreCase) ?? [])
 {
     /// <inheritdoc />
     public override void Add(string item)

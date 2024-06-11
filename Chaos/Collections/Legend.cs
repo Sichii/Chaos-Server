@@ -9,7 +9,7 @@ public sealed class Legend : IEnumerable<LegendMark>
 
     public Legend(IEnumerable<LegendMark>? marks = null)
     {
-        marks ??= Enumerable.Empty<LegendMark>();
+        marks ??= [];
         Marks = new ConcurrentDictionary<string, LegendMark>(marks.ToDictionary(mark => mark.Key), StringComparer.OrdinalIgnoreCase);
     }
 

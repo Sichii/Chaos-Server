@@ -1,6 +1,6 @@
 using Chaos.MetaData.Abstractions;
 
-namespace Chaos.MetaData.ItemMetadata;
+namespace Chaos.MetaData.ItemMetaData;
 
 /// <summary>
 ///     Represents a collection of <see cref="ItemMetaNode" /> that can be split into sub-sequences

@@ -1,4 +1,4 @@
-using Chaos.MetaData.ItemMetadata;
+using Chaos.MetaData.ItemMetaData;
 using Chaos.Models.Templates;
 
 namespace Chaos.Scripting.ItemScripts.Abstractions;

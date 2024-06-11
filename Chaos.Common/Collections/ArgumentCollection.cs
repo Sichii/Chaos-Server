@@ -33,7 +33,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// </param>
     public ArgumentCollection(IEnumerable<string>? arguments, string? delimiter = null)
     {
-        arguments ??= Enumerable.Empty<string>();
+        arguments ??= [];
 
         if (!string.IsNullOrEmpty(delimiter))
             arguments = arguments.SelectMany(str => str.Split(delimiter))
@@ -51,7 +51,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// </param>
     public ArgumentCollection(string argumentStr)
     {
-        Arguments = new List<string>();
+        Arguments = [];
 
         foreach (var match in RegexCache.COMMAND_SPLIT_REGEX
                                         .Matches(argumentStr)
@@ -82,7 +82,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
     /// <summary>
     ///     Creates an empty <see cref="ArgumentCollection" />
     /// </summary>
-    public ArgumentCollection() => Arguments = new List<string>();
+    public ArgumentCollection() => Arguments = [];
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

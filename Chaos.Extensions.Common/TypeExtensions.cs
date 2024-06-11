@@ -170,7 +170,7 @@ public static class TypeExtensions
                                                  return a.GetTypes();
                                              } catch
                                              {
-                                                 return Enumerable.Empty<Type>();
+                                                 return [];
                                              }
                                          })
                                      .Where(asmType => asmType is { IsInterface: false, IsAbstract: false });

@@ -17,5 +17,5 @@ public sealed record ForceClientPacketArgs : IPacketSerializable
     /// <summary>
     ///     The data of the packet the server is forcing the client to send back to it
     /// </summary>
-    public byte[] Data { get; set; } = Array.Empty<byte>();
+    public byte[] Data { get; set; } = [];
 }

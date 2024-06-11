@@ -5,7 +5,7 @@ using Chaos.IO.Compression;
 using Chaos.IO.Memory;
 using Chaos.MetaData.Abstractions;
 
-namespace Chaos.MetaData.EventMetadata;
+namespace Chaos.MetaData.EventMetaData;
 
 /// <summary>
 ///     Represents a compressible collection of <see cref="EventMetaNode" />

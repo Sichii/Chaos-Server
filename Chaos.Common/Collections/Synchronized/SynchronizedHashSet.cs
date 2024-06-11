@@ -36,7 +36,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     public SynchronizedHashSet(IEnumerable<T>? items = null, IEqualityComparer<T>? comparer = null)
     {
         Sync = new AutoReleasingMonitor();
-        items ??= Enumerable.Empty<T>();
+        items ??= [];
         comparer ??= EqualityComparer<T>.Default;
 
         Set = new HashSet<T>(items, comparer);

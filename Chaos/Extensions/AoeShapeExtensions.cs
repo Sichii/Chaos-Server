@@ -21,7 +21,7 @@ public static class AoeShapeExtensions
         switch (aoeShape)
         {
             case AoeShape.None:
-                points = Enumerable.Empty<Point>();
+                points = [];
 
                 break;
             case AoeShape.Front:
@@ -77,7 +77,7 @@ public static class AoeShapeExtensions
             switch (shape)
             {
                 case AoeShape.None:
-                    return Enumerable.Empty<IPoint>();
+                    return [];
                 case AoeShape.AllAround:
                 case AoeShape.Front:
                 case AoeShape.FrontalDiamond:

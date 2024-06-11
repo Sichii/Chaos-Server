@@ -62,7 +62,7 @@ public sealed record OtherProfileArgs : IPacketSerializable
     /// <summary>
     ///     The raw data of the character's portrait
     /// </summary>
-    public byte[] Portrait { get; set; } = Array.Empty<byte>();
+    public byte[] Portrait { get; set; } = [];
 
     /// <summary>
     ///     The character's profile text

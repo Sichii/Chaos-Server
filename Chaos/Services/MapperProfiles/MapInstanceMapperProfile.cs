@@ -67,7 +67,8 @@ public sealed class MapInstanceMapperProfile(
             Music = obj.Music,
             MinimumLevel = obj.MinimumLevel,
             MaximumLevel = obj.MaximumLevel,
-            ShardingOptions = obj.ShardingOptions == null ? null : Mapper.Map<ShardingOptions>(obj.ShardingOptions)
+            ShardingOptions = obj.ShardingOptions == null ? null : Mapper.Map<ShardingOptions>(obj.ShardingOptions),
+            AutoDayNightCycle = obj.AutoDayNightCycle
         };
 
         foreach (var doorTemplate in template.Doors.Values)
@@ -93,7 +94,8 @@ public sealed class MapInstanceMapperProfile(
                 obj.Height),
             TemplateKey = obj.TemplateKey,
             ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
-            Tiles = new Tile[obj.Width, obj.Height]
+            Tiles = new Tile[obj.Width, obj.Height],
+            LightType = obj.LightType
         };
 
     public MapTemplateSchema Map(MapTemplate obj) => throw new NotImplementedException();

@@ -14,6 +14,11 @@ public sealed record MapTemplateSchema
     public byte Height { get; set; }
 
     /// <summary>
+    ///     Default null. If specified, this is the type of light used for day/night cycle on this map
+    /// </summary>
+    public string? LightType { get; set; }
+
+    /// <summary>
     ///     A collection of names of map scripts to attach to this map by default
     /// </summary>
     public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();

@@ -28,6 +28,7 @@ public sealed partial class MapTemplatePropertyEditor
         ScriptKeysLbl.ToolTip = Helpers.GetPropertyDocs<MapTemplateSchema>(nameof(MapTemplateSchema.ScriptKeys));
         HeightLbl.ToolTip = Helpers.GetPropertyDocs<MapTemplateSchema>(nameof(MapTemplateSchema.Height));
         WidthLbl.ToolTip = Helpers.GetPropertyDocs<MapTemplateSchema>(nameof(MapTemplateSchema.Width));
+        LightTypeLbl.ToolTip = Helpers.GetPropertyDocs<MapTemplateSchema>(nameof(MapTemplateSchema.LightType));
     }
 
     #region Buttons

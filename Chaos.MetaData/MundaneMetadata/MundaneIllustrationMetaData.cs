@@ -1,6 +1,6 @@
 using Chaos.MetaData.Abstractions;
 
-namespace Chaos.MetaData.MundaneMetadata;
+namespace Chaos.MetaData.MundaneMetaData;
 
 /// <summary>
 ///     Represents a compressible collection of <see cref="MundaneIllustrationMetaNode" />s

@@ -45,12 +45,12 @@ public readonly struct GameTime : IComparable, IComparable<GameTime>, IEquatable
     public LightLevel TimeOfDay
         => Hour switch
         {
-            >= 10 and <= 14 => LightLevel.Lightest,
-            >= 8 and <= 16  => LightLevel.Lighter,
-            >= 6 and <= 18  => LightLevel.Light,
-            >= 4 and <= 20  => LightLevel.Dark,
-            >= 2 and <= 22  => LightLevel.Darker,
-            _               => LightLevel.Darkest
+            >= 10 and <= 17 => LightLevel.Lightest_A,
+            >= 9 and <= 18  => LightLevel.Lighter_A,
+            >= 8 and <= 19  => LightLevel.Light_A,
+            >= 7 and <= 20  => LightLevel.Dark_A,
+            >= 6 and <= 21  => LightLevel.Darker_A,
+            _               => LightLevel.Darkest_A
         };
 
     /// <summary>
