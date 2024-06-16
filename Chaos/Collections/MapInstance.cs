@@ -20,7 +20,6 @@ using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
-using Chaos.Utilities;
 
 namespace Chaos.Collections;
 
@@ -172,6 +171,50 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void AddAislingDirect(Aisling aisling, IPoint point) => InnerAddObject(aisling, point);
 
+    public void AddEntities<T>(ICollection<T> visibleObjects) where T: VisibleEntity
+    {
+        if (visibleObjects.Any(obj => obj is Aisling))
+            throw new InvalidOperationException($"Do not call @{nameof(AddEntities)} with aislings.");
+
+        if (visibleObjects.Count == 0)
+            return;
+
+        //set map instance of all incoming objects
+        foreach (var visibleObj in visibleObjects)
+        {
+            visibleObj.MapInstance = this;
+            Objects.Add(visibleObj.Id, visibleObj);
+
+            if (visibleObj is Creature creature)
+                Script.OnEntered(creature);
+        }
+
+        var incomingEntities = visibleObjects.ToHashSet<VisibleEntity>();
+
+        //update the viewport of any creature within range of the new objects
+        foreach (var creature in GetEntities<Creature>())
+        {
+            //incoming entities need full viewport updates so that they can see existing entities
+            if (incomingEntities.Contains(creature))
+            {
+                creature.UpdateViewPort();
+
+                continue;
+            }
+
+            //entities that were already on the map only need to be updated with the incoming entities
+            //and only if there even are any incoming entities within their viewport
+            var withinRange = visibleObjects.ThatAreWithinRange(creature)
+                                            .OfType<VisibleEntity>()
+                                            .ToHashSet();
+
+            //non-aislings only cause partial viewport updates because they do not have shared vision requirements (due to lanterns)
+            //this method should never be called with aislings
+            if (withinRange.Count != 0)
+                creature.UpdateViewPort(withinRange);
+        }
+    }
+
     public void AddEntity(VisibleEntity visibleEntity, IPoint point)
     {
         //shards cant shard, shardtype none means no sharding, non-aisling cant create shards
@@ -182,50 +225,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             InnerAddObject(visibleEntity, point);
         else
             HandleSharding(aisling, point);
-    }
-
-    public void AddObjects<T>(ICollection<T> visibleObjects) where T: VisibleEntity
-    {
-        if (visibleObjects.Count == 0)
-            return;
-
-        foreach (var visibleObj in visibleObjects)
-        {
-            visibleObj.MapInstance = this;
-            Objects.Add(visibleObj.Id, visibleObj);
-
-            if (visibleObj is Creature creature)
-                Script.OnEntered(creature);
-        }
-
-        var type = typeof(T);
-        var cType = typeof(Creature);
-        var meType = typeof(Merchant);
-        var moType = typeof(Monster);
-
-        //if ICollection<T> could possibly contain creatures, we need to handle them.
-        if ((type == meType) || (type == moType) || type.IsAssignableFrom(cType))
-            foreach (var creature in Objects.Values<Creature>())
-            {
-                var objectsInRange = visibleObjects.ThatAreWithinRange(creature)
-                                                   .ToList();
-
-                if (!objectsInRange.Any())
-                    continue;
-
-                if (creature is Aisling aisling)
-                    aisling.Client.SendVisibleEntities(objectsInRange);
-
-                foreach (var nearbyCreature in objectsInRange.OfType<Creature>())
-                    Helpers.HandleApproach(creature, nearbyCreature);
-            }
-        else //otherwise just send stuff to the aislings that can see them
-            foreach (var aisling in Objects.Values<Aisling>())
-            {
-                var objsToSend = visibleObjects.ThatAreWithinRange(aisling);
-
-                aisling.Client.SendVisibleEntities(objsToSend);
-            }
     }
 
     public void AddSpawner(MonsterSpawn monsterSpawn)
@@ -585,57 +584,39 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         Objects.Add(visibleEntity.Id, visibleEntity);
 
         if (visibleEntity is Creature c)
+        {
             Script.OnEntered(c);
 
-        if (visibleEntity is Aisling aisling)
-        {
-            (var aislings, var doors, var otherVisibles) = Objects.WithinRange<VisibleEntity>(point)
-                                                                  .PartitionBySendType();
-
-            aisling.Client.SendMapChangePending();
-            aisling.Client.SendMapInfo();
-            aisling.Client.SendLocation();
-
-            foreach (var nearbyUser in aislings)
+            if (visibleEntity is Aisling aisling)
             {
-                if (nearbyUser.Equals(aisling))
-                    continue;
+                aisling.Client.SendMapChangePending();
+                aisling.Client.SendMapInfo();
+                aisling.Client.SendLocation();
 
-                nearbyUser.Client.SendDisplayAisling(aisling);
-                aisling.Client.SendDisplayAisling(nearbyUser);
-            }
+                //incoming entity needs full viewport updates so that they can see existing entities
+                aisling.UpdateViewPort();
 
-            aisling.Client.SendVisibleEntities(otherVisibles);
-            aisling.Client.SendDoors(doors);
-            aisling.Client.SendMapChangeComplete();
-            aisling.Client.SendSound(Music, true);
-            aisling.Client.SendMapLoadComplete();
-            aisling.Client.SendDisplayAisling(aisling);
-
-            foreach (var otherCreature in otherVisibles.OfType<Creature>())
-                Helpers.HandleApproach(aisling, otherCreature);
-        } else
-        {
-            //fast path for non creatures
-            if (visibleEntity is not Creature creature)
-            {
-                foreach (var nearbyAisling in Objects.WithinRange<Aisling>(visibleEntity))
-                    nearbyAisling.Client.SendVisibleEntities(visibleEntity);
-
-                return;
-            }
-
-            foreach (var nearbyCreature in Objects.WithinRange<Creature>(creature))
-            {
-                if (nearbyCreature.Equals(creature))
-                    continue;
-
-                if (nearbyCreature is Aisling nearbyAisling)
-                    nearbyAisling.Client.SendVisibleEntities(visibleEntity);
-
-                Helpers.HandleApproach(creature, nearbyCreature);
-            }
+                aisling.Client.SendMapChangeComplete();
+                aisling.Client.SendSound(Music, true);
+                aisling.Client.SendMapLoadComplete();
+                aisling.Client.SendDisplayAisling(aisling);
+            } else //incoming entity needs full viewport updates so that they can see existing entities
+                c.UpdateViewPort();
         }
+
+        //if an aisling is being added to the map
+        //and the creature is an aisling
+        //do a full viewport update
+        //otherwise just do a partial update
+        foreach (var creature in GetEntitiesWithinRange<Creature>(point))
+            if (creature.Equals(visibleEntity))
+
+                // ReSharper disable once RedundantJumpStatement
+                continue;
+            else if (visibleEntity is Aisling && creature is Aisling)
+                creature.UpdateViewPort();
+            else
+                creature.UpdateViewPort([visibleEntity]);
     }
 
     /// <summary>
@@ -673,6 +654,15 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public bool IsBlockingReactor(IPoint point)
         => Objects.AtPoint<ReactorTile>(point)
                   .Any(reactor => reactor.ShouldBlockPathfinding);
+
+    public bool IsInSharedLanternVision(VisibleEntity entity)
+    {
+        if (!Flags.HasFlag(MapFlags.Darkness))
+            return true;
+
+        return GetEntitiesWithinRange<Aisling>(entity, 5)
+            .Any(aisling => aisling.Illuminates(entity));
+    }
 
     public bool IsReactor(IPoint point)
         => Objects.AtPoint<ReactorTile>(point)
@@ -779,16 +769,24 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         if (!Objects.Remove(mapEntity.Id))
             return false;
 
-        if (mapEntity is VisibleEntity visibleObject)
-            foreach (var aisling in Objects.WithinRange<Aisling>(visibleObject))
-                aisling.Client.SendRemoveEntity(visibleObject.Id);
-
-        if (mapEntity is Creature creature)
+        switch (mapEntity)
         {
-            Script.OnExited(creature);
+            case Aisling:
+                UpdateNearbyViewPorts(mapEntity);
 
-            foreach (var nearbyCreature in Objects.WithinRange<Creature>(creature))
-                Helpers.HandleDeparture(creature, nearbyCreature);
+                break;
+
+            //non-aislings only cause partial viewport updates because they do not have shared vision requirements (due to lanterns)
+            case VisibleEntity ve:
+                UpdateNearbyViewPorts(mapEntity, [ve]);
+
+                break;
+        }
+
+        if (mapEntity is Creature c)
+        {
+            c.HandleMapDeparture();
+            Script.OnExited(c);
         }
 
         return true;
@@ -873,5 +871,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         var elapsed = Stopwatch.GetElapsedTime(start);
         DeltaMonitor.DigestDelta(elapsed);
+    }
+
+    public void UpdateNearbyViewPorts(IPoint point, HashSet<VisibleEntity>? partialUpdateEntities = null)
+    {
+        foreach (var creature in GetEntitiesWithinRange<Creature>(point))
+            creature.UpdateViewPort(partialUpdateEntities);
     }
 }

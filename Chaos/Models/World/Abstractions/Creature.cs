@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
@@ -20,7 +21,6 @@ using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.NaturalRegeneration;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
-using Chaos.Utilities;
 
 namespace Chaos.Models.World.Abstractions;
 
@@ -34,7 +34,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public Trackers Trackers { get; set; }
 
     public VisionType Vision { get; protected set; }
-    public Dictionary<uint, DateTime> ApproachTime { get; }
+    public Dictionary<VisibleEntity, DateTime> ApproachTime { get; }
     public abstract int AssailIntervalMs { get; }
     public abstract ILogger Logger { get; }
     public IIntervalTimer RegenTimer { get; }
@@ -65,7 +65,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Direction = Direction.Down;
         Effects = new EffectsBar(this);
         RegenTimer = new RegenTimer(this, DefaultNaturalRegenerationScript.Create());
-        ApproachTime = new Dictionary<uint, DateTime>();
+        ApproachTime = new Dictionary<VisibleEntity, DateTime>();
         Trackers = new Trackers();
     }
 
@@ -104,11 +104,15 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                 sound);
     }
 
-    public virtual bool CanObserve(VisibleEntity entity)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual bool CanObserve(VisibleEntity entity, bool fullCheck = false)
     {
         //can always see yourself
         if (entity.Equals(this))
             return true;
+
+        if (!fullCheck)
+            return ApproachTime.ContainsKey(entity);
 
         if (Vision == VisionType.TrueBlind)
             return false;
@@ -202,15 +206,25 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             pathOptions);
     }
 
+    public virtual void HandleMapDeparture()
+    {
+        foreach (var entity in ApproachTime.Keys)
+            OnDeparture(entity, true);
+    }
+
     public virtual bool IsFriendlyTo(Creature other) => Script.IsFriendlyTo(other);
 
     public virtual bool IsHostileTo(Creature other) => Script.IsHostileTo(other);
 
-    public virtual void OnApproached(Creature creature)
+    public virtual void OnApproached(VisibleEntity entity, bool refresh = false)
     {
-        ApproachTime.TryAdd(creature.Id, DateTime.UtcNow);
+        if (Equals(entity))
+            return;
 
-        Script.OnApproached(creature);
+        ApproachTime.TryAdd(entity, DateTime.UtcNow);
+
+        if (!refresh && entity is Creature c)
+            Script.OnApproached(c);
     }
 
     public override void OnClicked(Aisling source)
@@ -222,11 +236,15 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Script.OnClicked(source);
     }
 
-    public virtual void OnDeparture(Creature creature)
+    public virtual void OnDeparture(VisibleEntity entity, bool refresh = false)
     {
-        ApproachTime.Remove(creature.Id);
+        if (Equals(entity))
+            return;
 
-        Script.OnDeparture(creature);
+        ApproachTime.Remove(entity);
+
+        if (!refresh && entity is Creature c)
+            Script.OnDeparture(c);
     }
 
     public virtual void OnGoldDroppedOn(Aisling source, int amount)
@@ -305,32 +323,13 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (Visibility == newVisibilityType)
             return;
 
-        var creaturesInRange = MapInstance.GetEntitiesWithinRange<Creature>(this)
-                                          .ToList();
-
-        var canObserveBefore = new List<Creature>();
-
-        foreach (var creature in creaturesInRange)
-            if (creature.CanObserve(this))
-                canObserveBefore.Add(creature);
-
-        Hide();
-
         Visibility = newVisibilityType;
 
+        foreach (var creature in MapInstance.GetEntitiesWithinRange<Creature>(this))
+            if (!creature.Equals(this))
+                creature.UpdateViewPort([this]);
+
         Display();
-
-        var canObserveAfter = new List<Creature>();
-
-        foreach (var creature in creaturesInRange)
-            if (creature.CanObserve(this))
-                canObserveAfter.Add(creature);
-
-        foreach (var creature in canObserveBefore.Except(canObserveAfter))
-            creature.OnDeparture(this);
-
-        foreach (var creature in canObserveAfter.Except(canObserveBefore))
-            creature.OnApproached(this);
     }
 
     public virtual void SetVision(VisionType visionType) => Vision = visionType;
@@ -392,64 +391,69 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             creature.Script.OnPublicMessage(this, message);
     }
 
-    public void TraverseMap(
+    /// <summary>
+    ///     Attempts to move this entity from its current map to the destination map
+    /// </summary>
+    /// <remarks>
+    ///     This method does not use the MapInstance.BeginInvoke api due to not knowing who the caller is. The caller could be
+    ///     from another map, which would require entrancy into this entity's map synchronization, but there is no way of
+    ///     knowing where the caller is from. In order for this to be safe, it has to make no assumptions and deal with every
+    ///     requirement itself.
+    /// </remarks>
+    public virtual void TraverseMap(
         MapInstance destinationMap,
         IPoint destinationPoint,
         bool ignoreSharding = false,
         bool fromWolrdMap = false,
         Func<Task>? onTraverse = null)
-        =>
+        => Task.Run(
+            async () =>
+            {
+                var currentMap = MapInstance;
 
-            //run a task that will await entrancy into the destination map
-            //once synchronized, the creature will be added to the map
-            Task.Run(
-                async () =>
+                var aisling = this as Aisling;
+
+                if (aisling is not null)
+                    await aisling.Client.ReceiveSync.WaitAsync();
+
+                try
                 {
-                    var currentMap = MapInstance;
+                    await using var sync = await ComplexSynchronizationHelper.WaitAsync(
+                        TimeSpan.FromMilliseconds(500),
+                        TimeSpan.FromMilliseconds(3),
+                        currentMap.Sync,
+                        destinationMap.Sync);
 
-                    var aisling = this as Aisling;
+                    if (!fromWolrdMap && !currentMap.RemoveEntity(this))
+                        return;
 
-                    if (aisling is not null)
-                        await aisling.Client.ReceiveSync.WaitAsync();
+                    if (currentMap.InstanceId != destinationMap.InstanceId)
+                        Trackers.LastMapInstanceId = currentMap.InstanceId;
 
-                    try
-                    {
-                        await using var sync = await ComplexSynchronizationHelper.WaitAsync(
-                            TimeSpan.FromMilliseconds(500),
-                            TimeSpan.FromMilliseconds(3),
-                            currentMap.Sync,
-                            destinationMap.Sync);
+                    if (aisling is not null && ignoreSharding)
+                        destinationMap.AddAislingDirect(aisling, destinationPoint);
+                    else
+                        destinationMap.AddEntity(this, destinationPoint);
 
-                        if (!fromWolrdMap && !currentMap.RemoveEntity(this))
-                            return;
-
-                        if (currentMap.InstanceId != destinationMap.InstanceId)
-                            Trackers.LastMapInstanceId = currentMap.InstanceId;
-
-                        if (aisling is not null && ignoreSharding)
-                            destinationMap.AddAislingDirect(aisling, destinationPoint);
-                        else
-                            destinationMap.AddEntity(this, destinationPoint);
-
-                        if (onTraverse is not null)
-                            await onTraverse();
-                    } catch (Exception e)
-                    {
-                        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.Creature, Topics.Actions.Traverse)
-                              .WithProperty(this)
-                              .WithProperty(currentMap)
-                              .WithProperty(destinationMap)
-                              .LogError(
-                                  e,
-                                  "Exception thrown while creature {@CreatureName} attempted to traverse from map {@FromMapInstanceId} to map {@ToMapInstanceId}",
-                                  Name,
-                                  currentMap.InstanceId,
-                                  destinationMap.InstanceId);
-                    } finally
-                    {
-                        aisling?.Client.ReceiveSync.Release();
-                    }
-                });
+                    if (onTraverse is not null)
+                        await onTraverse();
+                } catch (Exception e)
+                {
+                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.Creature, Topics.Actions.Traverse)
+                          .WithProperty(this)
+                          .WithProperty(currentMap)
+                          .WithProperty(destinationMap)
+                          .LogError(
+                              e,
+                              "Exception thrown while creature {@CreatureName} attempted to traverse from map {@FromMapInstanceId} to map {@ToMapInstanceId}",
+                              Name,
+                              currentMap.InstanceId,
+                              destinationMap.InstanceId);
+                } finally
+                {
+                    aisling?.Client.ReceiveSync.Release();
+                }
+            });
 
     public virtual bool TryDrop(IPoint point, IEnumerable<Item> items, [MaybeNullWhen(false)] out GroundItem[] groundItems)
     {
@@ -459,7 +463,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (!groundItems.Any())
             return false;
 
-        MapInstance.AddObjects(groundItems);
+        MapInstance.AddEntities(groundItems);
 
         var reactors = MapInstance.GetDistinctReactorsAtPoint(point)
                                   .ToList();
@@ -573,6 +577,30 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Trackers.LastTurn = DateTime.UtcNow;
     }
 
+    public virtual void UpdateViewPort(HashSet<VisibleEntity>? partialUpdateEntities = null, bool refresh = false)
+    {
+        //if entitiestoCheck is not null, only do a partial viewport update
+        var previouslyObservable = partialUpdateEntities is null
+            ? ApproachTime.Keys.ToHashSet()
+            : partialUpdateEntities.Where(entity => ApproachTime.ContainsKey(entity))
+                                   .ToHashSet();
+
+        var currentlyObservable = partialUpdateEntities is null
+            ? MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
+                         .ThatAreObservedBy(this, true)
+                         .ToHashSet()
+            : MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
+                         .Where(partialUpdateEntities.Contains)
+                         .ThatAreObservedBy(this, true)
+                         .ToHashSet();
+
+        foreach (var entity in previouslyObservable.Except(currentlyObservable))
+            OnDeparture(entity, refresh);
+
+        foreach (var entity in currentlyObservable.Except(previouslyObservable))
+            OnApproached(entity, refresh);
+    }
+
     public virtual void Walk(Direction direction, bool? ignoreBlockingReactors = null)
     {
         ignoreBlockingReactors ??= Type == CreatureType.Aisling;
@@ -588,34 +616,29 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (!MapInstance.IsWalkable(endPoint, Type, ignoreBlockingReactors))
             return;
 
-        var visibleBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
-                                       .ToList();
-
         SetLocation(endPoint);
         Trackers.LastWalk = DateTime.UtcNow;
         Trackers.LastPosition = startPosition;
 
-        var visibleAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
-                                      .ToList();
+        var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint, 16)
+                                           .ThatAreWithinRange(
+                                               points:
+                                               [
+                                                   startPoint,
+                                                   endPoint
+                                               ])
+                                           .ToList();
 
-        foreach (var creature in visibleBefore.Except(visibleAfter))
-        {
-            if (creature is Aisling aisling)
-                HideFrom(aisling);
+        //non-aislings only cause partial viewport updates because they do not have shared vision requirements (due to lanterns)
+        foreach (var creature in creaturesToUpdate)
+            creature.UpdateViewPort([this]);
 
-            Helpers.HandleDeparture(creature, this);
-        }
+        var aislingsThatWatchedUsWalk = creaturesToUpdate.OfType<Aisling>()
+                                                         .ThatCanObserve(this)
+                                                         .ThatAreWithinRange(startPoint)
+                                                         .ThatAreWithinRange(endPoint);
 
-        foreach (var creature in visibleAfter.Except(visibleBefore))
-        {
-            if (creature is Aisling aisling)
-                ShowTo(aisling);
-
-            Helpers.HandleApproach(creature, this);
-        }
-
-        foreach (var aisling in visibleAfter.Intersect(visibleBefore)
-                                            .OfType<Aisling>())
+        foreach (var aisling in aislingsThatWatchedUsWalk)
             aisling.Client.SendCreatureWalk(Id, startPoint, Direction);
 
         foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
@@ -651,25 +674,14 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     /// <inheritdoc />
     public override void WarpTo(IPoint destinationPoint)
     {
-        Hide();
-
-        var creaturesBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
-                                         .ToList();
-
         var startPosition = Location.From(this);
-        SetLocation(destinationPoint);
+
+        base.WarpTo(destinationPoint);
         Trackers.LastPosition = startPosition;
 
-        var creaturesAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
-                                        .ToList();
-
-        foreach (var creature in creaturesBefore.Except(creaturesAfter))
-            Helpers.HandleDeparture(creature, this);
-
-        foreach (var creature in creaturesAfter.Except(creaturesBefore))
-            Helpers.HandleApproach(creature, this);
-
-        Display();
+        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
+                                           .ToList())
+            reactor.OnWalkedOn(this);
     }
 
     public virtual bool WillCollideWith(Creature other) => Type.WillCollideWith(other);

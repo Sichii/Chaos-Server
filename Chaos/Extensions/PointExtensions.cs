@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Chaos.Collections;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
@@ -20,6 +21,7 @@ public static class PointExtensions
                                .Any(pt => mapInstance.IsWall(pt)));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool WithinRange(this IPoint point, IPoint other, int distance = 15)
     {
         ArgumentNullException.ThrowIfNull(point);

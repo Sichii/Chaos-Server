@@ -90,7 +90,7 @@ static void AddConfiguration(WebApplicationBuilder builder)
            #if DEBUG
            .AddJsonFile("appsettings.local.json", false, true);
     #else
-           .AddJsonFile("appsettings.prod.json", false, true);
+           .AddJsonFile("appsettings.local.json", false, true);
     #endif
 
     var useSeq = builder.Configuration.GetValue<bool>(ConfigKeys.Logging.UseSeq);

@@ -280,7 +280,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         var areaSearchAvgEntityCount = searchArea * avgEntitiesPerTile;
 
         //the amortized cost of searching by area (there is a base cost associated with enumerating the hashsets that contain the entities)
-        var estimatedAmortizedCost = searchArea / 2f + areaSearchAvgEntityCount;
+        var estimatedAmortizedCost = searchArea + areaSearchAvgEntityCount;
 
         //if we can expect to search significantly fewer entities by searching points
         //then search by point lookup

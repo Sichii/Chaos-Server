@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Chaos.Geometry.Abstractions;
 
 namespace Chaos.Extensions.Geometry;
@@ -31,6 +32,7 @@ public static class LocationExtensions
     ///         false
     ///     </c>
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool OnSameMapAs(this ILocation location, ILocation other)
         => location.Map.Equals(other.Map, StringComparison.OrdinalIgnoreCase);
 }

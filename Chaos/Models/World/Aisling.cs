@@ -29,7 +29,6 @@ using Chaos.Services.Servers.Options;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
 using Chaos.TypeMapper.Abstractions;
-using Chaos.Utilities;
 
 namespace Chaos.Models.World;
 
@@ -53,7 +52,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public IgnoreList IgnoreList { get; init; }
     public IInventory Inventory { get; private set; }
     public bool IsAdmin { get; set; }
-    public LanternSize LanternSize { get; set; }
+    public LanternSize LanternSize { get; private set; }
     public Collections.Legend Legend { get; private set; }
     public MailBox MailBox { get; set; } = null!;
     public Nation Nation { get; set; }
@@ -346,15 +345,25 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public bool CanCarry(params (Item Item, int Count)[] hypotheticalItems) => CanCarry(hypotheticalItems.AsEnumerable());
 
     /// <inheritdoc />
-    public override bool CanObserve(VisibleEntity entity)
+    public override bool CanObserve(VisibleEntity entity, bool fullCheck = false)
     {
-        if (IsAdmin)
+        /*if (IsAdmin)
+            return true;*/
+
+        //can always see yourself
+        if (entity.Equals(this))
             return true;
+
+        if (!fullCheck)
+            return ApproachTime.ContainsKey(entity);
+
+        if ((entity.DistanceFrom(this) > 1) && !MapInstance.IsInSharedLanternVision(entity))
+            return false;
 
         if (Vision == VisionType.TrueBlind)
             return false;
 
-        return base.CanObserve(entity);
+        return base.CanObserve(entity, fullCheck);
     }
 
     public override bool CanSee(VisibleEntity entity)
@@ -420,6 +429,14 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
     }
 
+    public int GetLanternRadius()
+        => LanternSize switch
+        {
+            LanternSize.Small => 3,
+            LanternSize.Large => 5,
+            _                 => throw new ArgumentOutOfRangeException()
+        };
+
     public void GiveItemOrSendToBank(Item item)
     {
         var items = item.FixStacks(ItemCloner);
@@ -456,6 +473,20 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                BaseClass.Diacht => true,
                _                => UserStatSheet.BaseClass == @class
            };
+
+    public bool Illuminates(VisibleEntity entity)
+    {
+        if (!MapInstance.Flags.HasFlag(MapFlags.Darkness))
+            return true;
+
+        if (LanternSize is LanternSize.None)
+            return false;
+
+        var radius = GetLanternRadius();
+        var distance = Math.Ceiling(entity.EuclideanDistanceFrom(this));
+
+        return distance <= radius;
+    }
 
     public void Initialize(
         string name,
@@ -533,25 +564,13 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         if (!forceRefresh && !ShouldRefresh)
             return;
 
-        (var aislings, var doors, var otherVisibles) = MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
-                                                                  .PartitionBySendType();
-
         Trackers.LastRefresh = now;
         Client.SendMapInfo();
         Client.SendLocation();
         Client.SendAttributes(StatUpdateType.Full);
 
-        foreach (var nearbyAisling in aislings)
-        {
-            if (nearbyAisling.Equals(this))
-                continue;
+        UpdateViewPort(null, true);
 
-            nearbyAisling.Client.SendDisplayAisling(this);
-            Client.SendDisplayAisling(nearbyAisling);
-        }
-
-        Client.SendVisibleEntities(otherVisibles);
-        Client.SendDoors(doors);
         Client.SendMapLoadComplete();
         Client.SendDisplayAisling(this);
         Client.SendRefreshResponse();
@@ -578,6 +597,14 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         else
             foreach (var msg in message.Chunk(CONSTANTS.MAX_MESSAGE_LINE_LENGTH))
                 Client.SendServerMessage(serverMessageType, new string(msg));
+    }
+
+    public void SetLanternSize(LanternSize lanternSize)
+    {
+        LanternSize = lanternSize;
+
+        MapInstance.UpdateNearbyViewPorts(this);
+        Display();
     }
 
     public override void SetVision(VisionType visionType)
@@ -1054,6 +1081,81 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         base.Update(delta);
     }
 
+    /// <inheritdoc />
+    public override void UpdateViewPort(HashSet<VisibleEntity>? partialUpdateEntities = null, bool refresh = false)
+    {
+        Dictionary<VisibleEntity, DateTime>? stashedApproachTime = null;
+
+        if (refresh)
+        {
+            stashedApproachTime = ApproachTime.ToDictionary();
+            ApproachTime.Clear();
+        }
+
+        //if entitiestoCheck is not null, only do a partial viewport update
+        var previouslyObservable = partialUpdateEntities is null
+            ? ApproachTime.Keys.ToHashSet()
+            : partialUpdateEntities.Where(entity => ApproachTime.ContainsKey(entity))
+                                   .ToHashSet();
+
+        var currentlyObservable = partialUpdateEntities is null
+            ? MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
+                         .ThatAreObservedBy(this, true)
+                         .ToHashSet()
+            : MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
+                         .Where(partialUpdateEntities.Contains)
+                         .ThatAreObservedBy(this, true)
+                         .ToHashSet();
+
+        var entitiesToSend = new List<VisibleEntity>();
+        var doorsToSend = new HashSet<Door>();
+
+        foreach (var entity in previouslyObservable.Except(currentlyObservable))
+        {
+            if (entity.Equals(this))
+                continue;
+
+            entity.HideFrom(this);
+            OnDeparture(entity, refresh);
+        }
+
+        foreach (var entity in currentlyObservable.Except(previouslyObservable))
+        {
+            if (entity.Equals(this))
+                continue;
+
+            switch (entity)
+            {
+                case Aisling:
+                    entity.ShowTo(this);
+
+                    break;
+                case Door door:
+                    doorsToSend.AddRange(door.GetCluster());
+
+                    break;
+                default:
+                    entitiesToSend.Add(entity);
+
+                    break;
+            }
+
+            OnApproached(entity, refresh);
+        }
+
+        Client.SendVisibleEntities(entitiesToSend);
+        Client.SendDoors(doorsToSend);
+
+        if (refresh && stashedApproachTime is not null)
+        {
+            var intersectingKeys = stashedApproachTime.Keys.Where(key => ApproachTime.ContainsKey(key));
+            var intersectingKeysWithOriginalValues = intersectingKeys.Select(key => KeyValuePair.Create(key, stashedApproachTime[key]));
+
+            ApproachTime.Clear();
+            ApproachTime.AddRange(intersectingKeysWithOriginalValues);
+        }
+    }
+
     public override void Walk(Direction direction, bool? ignoreBlockingReactors = null)
     {
         ignoreBlockingReactors ??= true;
@@ -1089,76 +1191,31 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             return;
         }
 
-        var objsBeforeWalk = MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
-                                        .PartitionBySendType();
-
         SetLocation(endPoint);
         Trackers.LastWalk = DateTime.UtcNow;
         Trackers.LastPosition = startPosition;
 
-        var objsAfterWalk = MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
-                                       .PartitionBySendType();
+        var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint, 16)
+                                           .ThatAreWithinRange(
+                                               points:
+                                               [
+                                                   startPoint,
+                                                   endPoint
+                                               ])
+                                           .ToList();
 
-        //for each aisling that just left view range
-        //if they were able to see eachother
-        //remove eachother from eachother's view
-        foreach (var aisling in objsBeforeWalk.Aislings.Except(objsAfterWalk.Aislings))
-        {
-            if (CanObserve(aisling))
-                aisling.HideFrom(this);
+        foreach (var creature in creaturesToUpdate)
+            if (creature is Aisling)
+                creature.UpdateViewPort();
+            else
+                creature.UpdateViewPort([this]);
 
-            if (aisling.CanObserve(this))
-                HideFrom(aisling);
-        }
+        var aislingsThatWatchedUsWalk = creaturesToUpdate.ThatAreWithinRange(startPoint)
+                                                         .ThatAreWithinRange(endPoint)
+                                                         .ThatCanObserve(this)
+                                                         .OfType<Aisling>();
 
-        //for each other object that just left view range
-        //if they were able to see eachother
-        //remove eachother from eachother's view
-        foreach (var visible in objsBeforeWalk.OtherVisibles.Except(objsAfterWalk.OtherVisibles))
-        {
-            if (CanObserve(visible))
-                visible.HideFrom(this);
-
-            //handle departure
-            if (visible is Creature creature)
-                Helpers.HandleDeparture(creature, this);
-        }
-
-        //for each aisling that came into view
-        //if they are able to see eachother
-        //show eachother to eachother
-        foreach (var aisling in objsAfterWalk.Aislings.Except(objsBeforeWalk.Aislings))
-        {
-            aisling.ShowTo(this);
-
-            ShowTo(aisling);
-        }
-
-        //handle approach
-        foreach (var visible in objsAfterWalk.OtherVisibles.Except(objsBeforeWalk.OtherVisibles))
-            if (visible is Creature creature)
-                Helpers.HandleApproach(creature, this);
-
-        //send all doors that arent nearby
-        //this will result in sending doors multiple times but we have to do this because
-        //the client ignores doors greater than 12 spaces away
-        //if a client viewport is offset due to walking issues, it could ignore doors we send specifically at a 12 space distance
-        var doors = objsAfterWalk.Doors.Where(door => door.DistanceFrom(this) >= 10);
-
-        //objsAfterWalk.Doors.Except(objsBeforeWalk.Doors, PointEqualityComparer.Instance)
-        //             .Cast<Door>();
-
-        //send any doors that came into view
-        Client.SendDoors(doors);
-
-        //send any other visible objs that came into view that we're able to see
-        Client.SendVisibleEntities(objsAfterWalk.OtherVisibles.Except(objsBeforeWalk.OtherVisibles));
-
-        var aislingsToUpdate = objsBeforeWalk.Aislings
-                                             .Intersect(objsAfterWalk.Aislings)
-                                             .ThatCanObserve(this);
-
-        foreach (var aisling in aislingsToUpdate)
+        foreach (var aisling in aislingsThatWatchedUsWalk)
             if (!aisling.Equals(this))
                 aisling.Client.SendCreatureWalk(Id, startPoint, direction);
 
@@ -1180,24 +1237,32 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     /// <inheritdoc />
     public override void WarpTo(IPoint destinationPoint)
     {
-        Hide();
-
-        var creaturesBefore = MapInstance.GetEntitiesWithinRange<Creature>(this)
-                                         .ToList();
-
-        var startPosition = Location.From(this);
+        var startPoint = Location.From(this);
         SetLocation(destinationPoint);
-        Trackers.LastPosition = startPosition;
+        Trackers.LastPosition = startPoint;
 
-        var creaturesAfter = MapInstance.GetEntitiesWithinRange<Creature>(this)
-                                        .ToList();
+        var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint)
+                                           .Union(MapInstance.GetEntitiesWithinRange<Creature>(destinationPoint))
+                                           .ToList();
 
-        foreach (var creature in creaturesBefore.Except(creaturesAfter))
-            Helpers.HandleDeparture(creature, this);
+        foreach (var creature in creaturesToUpdate)
+            if (creature is Aisling)
+                creature.UpdateViewPort();
+            else
+                creature.UpdateViewPort([this]);
 
-        foreach (var creature in creaturesAfter.Except(creaturesBefore))
-            Helpers.HandleApproach(creature, this);
+        var aislingsThatWatchedUsWarp = creaturesToUpdate.ThatAreWithinRange(startPoint)
+                                                         .ThatAreWithinRange(destinationPoint)
+                                                         .ThatCanObserve(this)
+                                                         .OfType<Aisling>();
 
+        foreach (var aisling in aislingsThatWatchedUsWarp)
+        {
+            HideFrom(aisling);
+            ShowTo(aisling);
+        }
+
+        //refresh will activate reactors, don't double up
         Refresh(true);
     }
 }

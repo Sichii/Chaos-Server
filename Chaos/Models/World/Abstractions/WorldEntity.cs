@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Chaos.Common.Identity;
 
 namespace Chaos.Models.World.Abstractions;
@@ -33,7 +34,8 @@ public abstract class WorldEntity : IEquatable<WorldEntity>
         return Equals((WorldEntity)obj);
     }
 
-    public override int GetHashCode() => Id.GetHashCode();
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public override int GetHashCode() => (int)Id;
 
     private sealed class IdEqualityComparer : IEqualityComparer<WorldEntity>
     {

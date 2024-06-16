@@ -283,7 +283,7 @@ public static class ServiceProviderExtensions
                               mapInstance.InstanceId);
                 }
 
-            mapInstance.AddObjects(merchantsToAdd);
+            mapInstance.AddEntities(merchantsToAdd);
         }
     }
 
@@ -341,7 +341,7 @@ public static class ServiceProviderExtensions
                               mapInstance.InstanceId);
                 }
 
-            mapInstance.AddObjects(monstersToAdd);
+            mapInstance.AddEntities(monstersToAdd);
         }
     }
 

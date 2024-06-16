@@ -110,15 +110,15 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
             ApproachTime[key] = DateTime.UtcNow;
     }
 
-    public void ResetAggro(uint id)
+    public void ResetAggro(Creature creature)
     {
-        if (Target?.Id == id)
+        if (Target?.Equals(creature) ?? false)
             Target = null;
 
-        AggroList.Remove(id, out _);
+        AggroList.Remove(creature.Id, out _);
 
-        if (ApproachTime.TryGetValue(id, out _))
-            ApproachTime[id] = DateTime.UtcNow;
+        if (ApproachTime.TryGetValue(creature, out _))
+            ApproachTime[creature] = DateTime.UtcNow;
     }
 
     /// <inheritdoc />

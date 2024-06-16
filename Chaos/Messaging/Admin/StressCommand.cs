@@ -37,7 +37,7 @@ public class StressCommand(IItemFactory itemFactory, IMonsterFactory monsterFact
                     items.Add(new GroundItem(item, map, point));
                 }
 
-                map.AddObjects(items);
+                map.AddEntities(items);
 
                 source.SendOrangeBarMessage($"{amount} stick(s) spawned on the ground");
 
@@ -61,7 +61,7 @@ public class StressCommand(IItemFactory itemFactory, IMonsterFactory monsterFact
                     monsters.Add(monster);
                 }
 
-                map.AddObjects(monsters);
+                map.AddEntities(monsters);
 
                 source.SendOrangeBarMessage($"{amount} rat(s) spawned");
 

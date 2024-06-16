@@ -4,7 +4,6 @@ using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Definitions;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Networking;
 using Chaos.Geometry.Abstractions.Definitions;
@@ -209,16 +208,13 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         Send(args);
     }
 
-    public void SendDisplayAisling(Aisling aisling, bool ignoreObservability = false)
+    public void SendDisplayAisling(Aisling aisling)
     {
         var args = Mapper.Map<DisplayAislingArgs>(aisling);
 
         //we can always see ourselves, and we're never hostile to ourself
         if (!Aisling.Equals(aisling))
         {
-            if (!ignoreObservability && !Aisling.CanObserve(aisling))
-                return;
-
             if (Aisling.IsHostileTo(aisling))
                 args.NameTagStyle = NameTagStyle.Hostile;
             else if (Aisling.IsFriendlyTo(aisling))
@@ -306,18 +302,15 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         Send(args);
     }
 
-    public void SendDoors(IEnumerable<Door> doors, bool ignoreObservability = false)
+    public void SendDoors(IEnumerable<Door> doors)
     {
-        if (!ignoreObservability)
-            doors = doors.ThatAreObservedBy(Aisling);
-
         var args = new DoorArgs
         {
             Doors = Mapper.MapMany<DoorInfo>(doors)
                           .ToList()
         };
 
-        if (args.Doors.Any())
+        if (args.Doors.Count != 0)
             Send(args);
     }
 
@@ -695,11 +688,8 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         Send(args);
     }
 
-    public void SendVisibleEntities(IEnumerable<VisibleEntity> objects, bool ignoreObservability = false)
+    public void SendVisibleEntities(IEnumerable<VisibleEntity> objects)
     {
-        if (!ignoreObservability)
-            objects = objects.ThatAreObservedBy(Aisling);
-
         //split this into chunks so as not to crash the client
         foreach (var chunk in objects.OrderBy(o => o.Creation)
                                      .Chunk(5000))

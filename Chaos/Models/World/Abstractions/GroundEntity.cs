@@ -1,5 +1,4 @@
 using Chaos.Collections;
-using Chaos.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
 using Chaos.Services.Servers.Options;
@@ -38,25 +37,6 @@ public abstract class GroundEntity : NamedEntity
 
         Owners = aislings.Select(aisling => aisling.Name)
                          .ToHashSet(StringComparer.OrdinalIgnoreCase);
-    }
-
-    /// <inheritdoc />
-    public override void SetVisibility(VisibilityType newVisibilityType)
-    {
-        if (Visibility != newVisibilityType)
-        {
-            var stack = MapInstance.GetEntitiesAtPoint<GroundEntity>(this)
-                                   .OrderBy(entity => entity.Creation)
-                                   .ToList();
-
-            foreach (var entity in stack)
-                entity.Hide();
-
-            Visibility = newVisibilityType;
-
-            foreach (var entity in stack)
-                entity.Display();
-        }
     }
 
     public override void Update(TimeSpan delta)

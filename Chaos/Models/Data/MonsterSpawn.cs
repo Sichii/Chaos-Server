@@ -86,7 +86,7 @@ public sealed class MonsterSpawn : IDeltaUpdatable
             monsters.Add(monster);
         }
 
-        MapInstance.AddObjects(monsters);
+        MapInstance.AddEntities(monsters);
 
         foreach (var monster in monsters)
             monster.Script.OnSpawn();

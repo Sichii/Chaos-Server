@@ -36,13 +36,13 @@ public interface IChaosWorldClient : IConnectedClient
     void SendCooldown(PanelEntityBase panelEntityBase);
     void SendCreatureTurn(uint id, Direction direction);
     void SendCreatureWalk(uint id, Point startPoint, Direction direction);
-    void SendDisplayAisling(Aisling aisling, bool ignoreObservability = false);
+    void SendDisplayAisling(Aisling aisling);
     void SendDisplayBoard(BoardBase boardBase, short? startPostId = null);
     void SendDisplayDialog(Dialog dialog);
     void SendDisplayGroupInvite(GroupRequestType groupRequestType, string fromName);
     void SendDisplayPublicMessage(uint id, PublicMessageType publicMessageType, string message);
     void SendDisplayUnequip(EquipmentSlot equipmentSlot);
-    void SendDoors(IEnumerable<Door> doors, bool ignoreObservability = false);
+    void SendDoors(IEnumerable<Door> doors);
     void SendEditableProfileRequest();
     void SendEffect(EffectColor effectColor, byte effectIcon);
     void SendEquipment(Item item);
@@ -83,7 +83,7 @@ public interface IChaosWorldClient : IConnectedClient
     void SendServerMessage(ServerMessageType serverMessageType, string message);
     void SendSound(byte sound, bool isMusic);
     void SendUserId();
-    void SendVisibleEntities(IEnumerable<VisibleEntity> objects, bool ignoreObservability = false);
+    void SendVisibleEntities(IEnumerable<VisibleEntity> objects);
     void SendWorldList(IEnumerable<Aisling> users);
     void SendWorldMap(WorldMap worldMap);
 }

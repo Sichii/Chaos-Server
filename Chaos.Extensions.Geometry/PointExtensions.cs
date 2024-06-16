@@ -1,4 +1,5 @@
-﻿using Chaos.Geometry;
+﻿using System.Runtime.CompilerServices;
+using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Geometry.EqualityComparers;
@@ -154,6 +155,7 @@ public static class PointExtensions
     /// <returns>
     ///     The distance between the two given points without moving diagonally
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int DistanceFrom<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
                                                                                         where TPoint2: IPoint
     {
@@ -176,6 +178,7 @@ public static class PointExtensions
     /// <returns>
     ///     The distance between the two given points allowing diagonal movement
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float EuclideanDistanceFrom<TPoint>(this TPoint point, TPoint other) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);

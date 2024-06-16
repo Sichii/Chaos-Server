@@ -16,13 +16,15 @@ public abstract class VisibleEntity(ushort sprite, MapInstance mapInstance, IPoi
 
     public void Display()
     {
-        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this))
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                           .ThatCanObserve(this))
             ShowTo(aisling);
     }
 
     public void Hide()
     {
-        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this))
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                           .ThatCanObserve(this))
             if (!aisling.Equals(this))
                 HideFrom(aisling);
     }
@@ -33,10 +35,10 @@ public abstract class VisibleEntity(ushort sprite, MapInstance mapInstance, IPoi
     {
         if (Visibility != newVisibilityType)
         {
-            Hide();
-
             Visibility = newVisibilityType;
+            MapInstance.UpdateNearbyViewPorts(this);
 
+            //update display for all ppl that can still see you
             Display();
         }
     }
@@ -51,8 +53,26 @@ public abstract class VisibleEntity(ushort sprite, MapInstance mapInstance, IPoi
 
     public override void WarpTo(IPoint destinationPoint)
     {
-        Hide();
+        var startPoint = Point.From(this);
         SetLocation(destinationPoint);
-        Display();
+
+        var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint)
+                                           .Union(MapInstance.GetEntitiesWithinRange<Creature>(destinationPoint))
+                                           .ToList();
+
+        //non-aislings only cause partial viewport updates because they do not have shared vision requirements (due to lanterns)
+        foreach (var creature in creaturesToUpdate)
+            creature.UpdateViewPort([this]);
+
+        var aislingsThatWatchedUsWarp = creaturesToUpdate.ThatAreWithinRange(startPoint)
+                                                         .ThatAreWithinRange(destinationPoint)
+                                                         .ThatCanObserve(this)
+                                                         .OfType<Aisling>();
+
+        foreach (var aisling in aislingsThatWatchedUsWarp)
+        {
+            HideFrom(aisling);
+            ShowTo(aisling);
+        }
     }
 }
