@@ -831,6 +831,13 @@ public enum PanelType : byte
     Equipment = 3
 }
 
+public enum PageType : byte
+{
+    Page1,
+    Page2,
+    Page3
+}
+
 /// <summary>
 ///     A byte representing the type of a merchant menu. Used by ServerOpCode.Menu
 /// </summary>

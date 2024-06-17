@@ -4,21 +4,8 @@ using Chaos.Models.Panel;
 
 namespace Chaos.Collections;
 
-public sealed class SpellBook : PanelBase<Spell>
+public sealed class SpellBook : KnowledgeBookBase<Spell>
 {
     public SpellBook(IEnumerable<Spell>? spells = null)
-        : base(
-            PanelType.SpellBook,
-            90,
-            [
-                0,
-                36,
-                72
-            ])
-    {
-        spells ??= Array.Empty<Spell>();
-
-        foreach (var spell in spells)
-            Objects[spell.Slot] = spell;
-    }
+        : base(PanelType.SpellBook, spells) { }
 }

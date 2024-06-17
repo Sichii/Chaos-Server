@@ -44,13 +44,13 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
 
     protected ICollection<Observers.Abstractions.IObserver<T>> Observers { get; }
 
-    public PanelType PaneType { get; }
+    public PanelType PanelType { get; }
     protected AutoReleasingMonitor Sync { get; }
     protected int TotalSlots { get; }
 
     protected PanelBase(PanelType panelType, int length, byte[] invalidSlots)
     {
-        PaneType = panelType;
+        PanelType = panelType;
         Length = length;
         Objects = new T[Length];
         InvalidSlots = invalidSlots;

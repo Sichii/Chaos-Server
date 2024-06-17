@@ -7,7 +7,7 @@ public interface IPanel<T> : IEnumerable<T>, IDeltaUpdatable
 {
     int AvailableSlots { get; }
     bool IsFull { get; }
-    PanelType PaneType { get; }
+    PanelType PanelType { get; }
     void AddObserver(Observers.Abstractions.IObserver<T> observer);
     bool Contains(T obj);
     bool Contains(byte slot);

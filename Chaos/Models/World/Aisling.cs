@@ -60,8 +60,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public byte[] Portrait { get; set; }
     public string ProfileText { get; set; }
     public RestPosition RestPosition { get; set; }
-    public IPanel<Skill> SkillBook { get; private set; }
-    public IPanel<Spell> SpellBook { get; private set; }
+    public IKnowledgeBook<Skill> SkillBook { get; private set; }
+    public IKnowledgeBook<Spell> SpellBook { get; private set; }
     public TitleList Titles { get; init; }
 
     public new AislingTrackers Trackers
