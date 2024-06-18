@@ -697,61 +697,212 @@ public sealed partial class IntegrityCheckControl
     {
         await JsonContext.LoadingTask;
 
-        ReBuildIndexes();
+        if (!await ReBuildIndexes()
+                .ConfigureAwait(false))
+            return;
 
         await DetectIntegrityViolationsAsync()
             .ConfigureAwait(false);
     }
 
-    private void ReBuildIndexes()
+    private async Task<bool> ReBuildIndexes()
     {
+        var ret = true;
+
         try
         {
             MapInstanceIndex = JsonContext.MapInstances.ToFrozenDictionary(mi => mi.Instance.InstanceId, StringComparer.OrdinalIgnoreCase);
-            MapTemplateIndex = JsonContext.MapTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("MapInstanceIndex", ex);
 
+            ret = false;
+        }
+
+        try
+        {
+            MapTemplateIndex = JsonContext.MapTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("MapTemplateIndex", ex);
+
+            ret = false;
+        }
+
+        try
+        {
             MerchantTemplateIndex
                 = JsonContext.MerchantTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
-            MonsterTemplateIndex = JsonContext.MonsterTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
-            ItemTemplateIndex = JsonContext.ItemTemplates.ToFrozenDictionary(it => it.TemplateKey, StringComparer.OrdinalIgnoreCase);
-            SkillTemplateIndex = JsonContext.SkillTemplates.ToFrozenDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
-            SpellTemplateIndex = JsonContext.SpellTemplates.ToFrozenDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
-            DialogTemplateIndex = JsonContext.DialogTemplates.ToFrozenDictionary(dt => dt.TemplateKey, StringComparer.OrdinalIgnoreCase);
-            LootTableIndex = JsonContext.LootTables.ToFrozenDictionary(lt => lt.Key, StringComparer.OrdinalIgnoreCase);
-            WorldMapNodeIndex = JsonContext.WorldMapNodes.ToFrozenDictionary(wmn => wmn.NodeKey, StringComparer.OrdinalIgnoreCase);
-            WorldMapIndex = JsonContext.WorldMaps.ToFrozenDictionary(wm => wm.WorldMapKey, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("MerchantTemplateIndex", ex);
 
+            ret = false;
+        }
+
+        try
+        {
+            MonsterTemplateIndex = JsonContext.MonsterTemplates.ToFrozenDictionary(mt => mt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("MonsterTemplateIndex", ex);
+
+            ret = false;
+        }
+
+        try
+        {
+            ItemTemplateIndex = JsonContext.ItemTemplates.ToFrozenDictionary(it => it.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("ItemTemplateIndex", ex);
+
+            ret = false;
+        }
+
+        try
+        {
+            SkillTemplateIndex = JsonContext.SkillTemplates.ToFrozenDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("SkillTemplateIndex", ex);
+
+            ret = false;
+        }
+
+        try
+        {
+            SpellTemplateIndex = JsonContext.SpellTemplates.ToFrozenDictionary(st => st.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("SpellTemplateIndex", ex);
+
+            ret = false;
+        }
+
+        try
+        {
+            DialogTemplateIndex = JsonContext.DialogTemplates.ToFrozenDictionary(dt => dt.TemplateKey, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("DialogTemplateIndex", ex);
+
+            ret = false;
+        }
+
+        try
+        {
+            LootTableIndex = JsonContext.LootTables.ToFrozenDictionary(lt => lt.Key, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("LootTableIndex", ex);
+
+            ret = false;
+        }
+
+        try
+        {
+            WorldMapNodeIndex = JsonContext.WorldMapNodes.ToFrozenDictionary(wmn => wmn.NodeKey, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("WorldMapNodeIndex", ex);
+
+            ret = false;
+        }
+
+        try
+        {
+            WorldMapIndex = JsonContext.WorldMaps.ToFrozenDictionary(wm => wm.WorldMapKey, StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("WorldMapIndex", ex);
+
+            ret = false;
+        }
+
+        try
+        {
             ReactorTileTemplateIndex = JsonContext.ReactorTileTemplates.ToFrozenDictionary(
                 rt => rt.TemplateKey,
                 StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("ReactorTileTemplateIndex", ex);
 
+            ret = false;
+        }
+
+        try
+        {
             BuyableItemsIndex = JsonContext.MerchantTemplates
                                            .SelectMany(mt => mt.ItemsForSale.Select(i => i.ItemTemplateKey))
                                            .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("BuyableItemsIndex", ex);
 
+            ret = false;
+        }
+
+        try
+        {
             SellableItemsIndex = JsonContext.MerchantTemplates
                                             .SelectMany(mt => mt.ItemsToBuy)
                                             .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("SellableItemsIndex", ex);
 
+            ret = false;
+        }
+
+        try
+        {
             LearnableSkillsIndex = JsonContext.MerchantTemplates
                                               .SelectMany(mt => mt.SkillsToTeach)
                                               .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("LearnableSkillsIndex", ex);
 
+            ret = false;
+        }
+
+        try
+        {
             LearnableSpellsIndex = JsonContext.MerchantTemplates
                                               .SelectMany(mt => mt.SpellsToTeach)
                                               .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
+        } catch (Exception ex)
+        {
+            await AddRebuildFailureViolationAsync("LearnableSpellsIndex", ex);
 
+            ret = false;
+        }
+
+        try
+        {
             InUseMapTemplateIndex = JsonContext.MapInstances
                                                .Select(mi => mi.Instance.TemplateKey)
                                                .ToFrozenSet(StringComparer.OrdinalIgnoreCase);
         } catch (Exception ex)
         {
-            MessageBox.Show(
-                ex.Message,
-                "Error",
-                MessageBoxButton.OK,
-                MessageBoxImage.Error);
+            await AddRebuildFailureViolationAsync("InUseMapTemplateIndex", ex);
+
+            ret = false;
         }
+
+        return ret;
+
+        Task AddRebuildFailureViolationAsync(string indexName, Exception ex)
+            => AddViolationAsync(
+                $"Unable to build {indexName}.)",
+                (_, _) => MessageBox.Show(
+                    ex.Message,
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error),
+                true);
     }
     #endregion
 
