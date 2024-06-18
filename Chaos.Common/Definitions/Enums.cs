@@ -1147,7 +1147,7 @@ public enum LightLevel : byte
 }
 
 [Flags]
-public enum MapFlags : ulong
+public enum MapFlags : byte
 {
     None = 0,
     Snow = 1,
