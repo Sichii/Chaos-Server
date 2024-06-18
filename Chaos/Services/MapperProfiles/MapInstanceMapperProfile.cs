@@ -63,13 +63,14 @@ public sealed class MapInstanceMapperProfile(
             LoggerFactory.CreateLogger<MapInstance>(),
             obj.ScriptKeys)
         {
-            Flags = obj.Flags,
             Music = obj.Music,
             MinimumLevel = obj.MinimumLevel,
             MaximumLevel = obj.MaximumLevel,
             ShardingOptions = obj.ShardingOptions == null ? null : Mapper.Map<ShardingOptions>(obj.ShardingOptions),
             AutoDayNightCycle = obj.AutoDayNightCycle
         };
+
+        mapInstance.Flags |= obj.Flags;
 
         foreach (var doorTemplate in template.Doors.Values)
         {

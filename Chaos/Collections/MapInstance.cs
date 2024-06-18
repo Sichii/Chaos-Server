@@ -169,7 +169,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         }
     }
 
-    public void AddAislingDirect(Aisling aisling, IPoint point) => InnerAddObject(aisling, point);
+    public void AddAislingDirect(Aisling aisling, IPoint point) => InnerAddEntity(aisling, point);
 
     public void AddEntities<T>(ICollection<T> visibleObjects) where T: VisibleEntity
     {
@@ -222,7 +222,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             || (ShardingOptions == null)
             || (ShardingOptions.ShardingType == ShardingType.None)
             || visibleEntity is not Aisling aisling)
-            InnerAddObject(visibleEntity, point);
+            InnerAddEntity(visibleEntity, point);
         else
             HandleSharding(aisling, point);
     }
@@ -316,7 +316,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         switch (ShardingOptions!.ShardingType)
         {
             case ShardingType.None:
-                InnerAddObject(aisling, point);
+                InnerAddEntity(aisling, point);
 
                 break;
             case ShardingType.PlayerLimit:
@@ -356,7 +356,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                         if (playerCount < ShardingOptions.Limit)
                         {
-                            instance.InnerAddObject(aisling, point);
+                            instance.InnerAddEntity(aisling, point);
 
                             return;
                         }
@@ -401,7 +401,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                         if (groupCount < ShardingOptions.Limit)
                         {
                             //add this player to that instance and return
-                            instance.InnerAddObject(aisling, point);
+                            instance.InnerAddEntity(aisling, point);
 
                             return;
                         }
@@ -578,7 +578,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         }
     }
 
-    private void InnerAddObject(VisibleEntity visibleEntity, IPoint point)
+    private void InnerAddEntity(VisibleEntity visibleEntity, IPoint point)
     {
         visibleEntity.SetLocation(this, point);
         Objects.Add(visibleEntity.Id, visibleEntity);
@@ -586,6 +586,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         if (visibleEntity is Creature c)
         {
             if (visibleEntity is Aisling aisling)
+
             {
                 aisling.Client.SendMapChangePending();
                 aisling.Client.SendMapInfo();
@@ -602,6 +603,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 aisling.Client.SendSound(Music, true);
                 aisling.Client.SendMapLoadComplete();
                 aisling.Client.SendDisplayAisling(aisling);
+                aisling.Client.SendLightLevel(CurrentLightLevel);
             } else //incoming entity needs full viewport updates so that they can see existing entities
             {
                 Script.OnEntered(c);

@@ -574,6 +574,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         Client.SendMapLoadComplete();
         Client.SendDisplayAisling(this);
         Client.SendRefreshResponse();
+        Client.SendLightLevel(MapInstance.CurrentLightLevel);
 
         foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
                                            .ToList())
