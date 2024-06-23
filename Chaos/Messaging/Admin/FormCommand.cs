@@ -13,16 +13,12 @@ public class FormCommand : ICommand<Aisling>
         if (!args.TryGetNext<ushort>(out var formNumber))
         {
             if (source.Sprite != 0)
-            {
-                source.Sprite = 0;
-                source.Refresh(true);
-            }
+                source.SetSprite(0);
 
             return default;
         }
 
-        source.Sprite = formNumber;
-        source.Refresh(true);
+        source.SetSprite(formNumber);
 
         return default;
     }

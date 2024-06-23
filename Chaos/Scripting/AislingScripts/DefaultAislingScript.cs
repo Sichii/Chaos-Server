@@ -106,6 +106,7 @@ public class DefaultAislingScript : AislingScriptBase
     {
         Subject.IsDead = true;
         Subject.Refresh(true);
+        Subject.Display();
     }
 
     /// <inheritdoc />
