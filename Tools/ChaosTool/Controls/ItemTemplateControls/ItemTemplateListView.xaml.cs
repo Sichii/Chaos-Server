@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using Chaos.Extensions.Common;
 using ChaosTool.Controls.Abstractions;
 using ChaosTool.ViewModel;
-using MaterialDesignExtensions.Controls;
+using TextBox = System.Windows.Controls.TextBox;
 using TOOL_CONSTANTS = ChaosTool.Definitions.CONSTANTS;
 
 namespace ChaosTool.Controls.ItemTemplateControls;
@@ -52,32 +53,28 @@ public sealed class ItemTemplateListView : ViewModelListView
         Items.AddRange(mapped);
     }
 
-    protected override async void AddButton_Click(object sender, RoutedEventArgs e)
+    protected override void AddButton_Click(object sender, RoutedEventArgs e)
     {
         var baseDir = JsonContext.ItemTemplates.RootDirectory;
         var fullBaseDir = Path.GetFullPath(baseDir);
 
-        var result = await OpenDirectoryDialog.ShowDialogAsync(
-            DialogHost,
-            new OpenDirectoryDialogArguments
-            {
-                CurrentDirectory = fullBaseDir,
-                CreateNewDirectoryEnabled = true
-            });
+        using var folderBrowserDialog = new FolderBrowserDialog();
+        folderBrowserDialog.InitialDirectory = fullBaseDir;
+        folderBrowserDialog.ShowNewFolderButton = true;
 
-        if (result is null || result.Canceled)
-            return;
-
-        var path = Path.Combine(result.Directory, TOOL_CONSTANTS.TEMP_FILE_NAME);
-
-        var viewModel = new ItemTemplateViewModel
+        if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
         {
-            OriginalPath = path,
-            Path = path
-        };
+            var path = Path.Combine(folderBrowserDialog.SelectedPath, TOOL_CONSTANTS.TEMP_FILE_NAME);
 
-        Items.Add(viewModel);
-        ItemsView.SelectedItem = viewModel;
+            var viewModel = new ItemTemplateViewModel
+            {
+                OriginalPath = path,
+                Path = path
+            };
+
+            Items.Add(viewModel);
+            ItemsView.SelectedItem = viewModel;
+        }
     }
     #endregion
 }
