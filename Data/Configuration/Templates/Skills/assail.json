@@ -1,19 +1,13 @@
 {
     "isAssail": true,
     "learningRequirements": {
-        "itemRequirements": [
-            {
-                "amountRequired": 20,
-                "itemTemplateKey": "apple"
-            }
-        ],
-        "class": "peasant",
-        "requiredGold": 5000,
+        "itemRequirements": [],
+        "requiredGold": 0,
         "requiredStats": {
             "con": 1,
             "dex": 1,
             "int": 1,
-            "str": 2,
+            "str": 1,
             "wis": 1
         },
         "prerequisiteSkills": [],
@@ -22,6 +16,7 @@
     "description": "A basic attack that deals a small amount of damage to an enemy immediately in front of you.",
     "level": 1,
     "name": "Assail",
+    "class": "peasant",
     "panelSprite": 1,
     "scriptKeys": ["damage"],
     "scriptVars": {

@@ -1,0 +1,9 @@
+[
+    {
+      "blackList": [],
+      "direction": "Right",
+      "extraScriptKeys": [],
+      "merchantTemplateKey": "shambler",
+      "spawnPoint": "(5, 5)"
+    }
+]

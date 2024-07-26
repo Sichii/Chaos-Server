@@ -6,7 +6,7 @@
   "scriptKeys": [],
   "shardingOptions": {
     "exitLocation": "testTown:(1, 13)",
-    "limit": 1,
+    "limit": 99,
     "shardingType": "AbsolutePlayerLimit"
   },
   "templateKey": "5219"

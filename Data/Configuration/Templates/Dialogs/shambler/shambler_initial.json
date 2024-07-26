@@ -1,0 +1,13 @@
+{
+  "options": [
+    {
+      "dialogKey": "shambler_secondary",
+      "optionText": "I died and need your help"
+    }
+  ],
+  "scriptKeys": [],
+  "scriptVars": {},
+  "templateKey": "shambler_initial",
+  "text": "Well, well, what do we have here? Another lost soul, teetering on the edge of oblivion. Tell me, mortal, what brings you to my domain?",
+  "type": "Menu"
+}

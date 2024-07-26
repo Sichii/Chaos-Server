@@ -6,11 +6,11 @@ namespace Chaos.Scripting.Behaviors;
 
 public class RestrictionBehavior
 {
-    public virtual bool CanMove(Creature creature) => creature.IsAlive;
+    public virtual bool CanMove(Creature creature) => !creature.Effects.Contains("skulled");
 
     public virtual bool CanTalk(Creature creature) => creature.IsAlive;
 
-    public virtual bool CanTurn(Creature creature) => creature.IsAlive;
+    public virtual bool CanTurn(Creature creature) => !creature.Effects.Contains("skulled");
 
     public virtual bool CanUseItem(Aisling aisling, Item item) => aisling.IsAlive;
 

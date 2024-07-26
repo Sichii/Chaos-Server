@@ -13,7 +13,7 @@
     "skillTemplateKeys": ["Assail"],
     "spellIntervalMs": 10000,
     "spellTemplateKeys": [],
-    "sprite": 7,
+    "sprite": 243,
     "statSheet": {
         "level": 1,
         "ac": 50,

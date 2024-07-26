@@ -2,7 +2,7 @@
     "buyCost": 1000,
     "category": "1h wep",
     "color": "Default",
-    "displaySprite": 104,
+    "displaySprite": 1,
     "equipmentType": "Weapon",
     "gender": "Unisex",
     "isModifiable": true,

@@ -79,3 +79,5 @@ public class NotSoBadCurseEffect : EffectBase,
         return execution is not null;
     }
 }
+
+

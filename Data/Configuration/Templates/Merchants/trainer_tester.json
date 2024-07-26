@@ -11,7 +11,7 @@
         }
     },
     "skillsToTeach": ["assail", "ambush"],
-    "spellsToTeach": ["fire_breath", "healies", "regrowth", "needle_trap"],
+    "spellsToTeach": ["fire_breath", "healies", "regrowth", "needle_trap", "not_so_bad_curse"],
     "sprite": 37,
     "templateKey": "trainer_tester"
 }

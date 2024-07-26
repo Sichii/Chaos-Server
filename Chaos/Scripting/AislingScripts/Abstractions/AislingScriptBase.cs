@@ -65,6 +65,9 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
 
     /// <inheritdoc />
     public virtual void OnDeath() { }
+    
+    /// <inheritdoc />
+    public virtual void OnSkull() { }
 
     /// <inheritdoc />
     public virtual void OnDeparture(Creature source) { }

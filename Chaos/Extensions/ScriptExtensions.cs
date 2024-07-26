@@ -1,6 +1,7 @@
 using Chaos.Common.Comparers;
 using Chaos.Extensions.Common;
 using Chaos.Scripting.Abstractions;
+using Chaos.Storage.Abstractions;
 
 namespace Chaos.Extensions;
 
@@ -84,5 +85,10 @@ public static class ScriptExtensions
 
         if (scripted.Script is ICompositeScript composite)
             composite.Remove(scriptToRemove);
+    }
+    
+    public static ISimpleCache GetCacheProvider(this IScript script) 
+    {
+        return AppContext.CacheProvider;
     }
 }

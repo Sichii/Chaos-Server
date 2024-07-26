@@ -2,7 +2,7 @@
   "learningRequirements": {
     "itemRequirements": [
       {
-        "amountRequired": 16,
+        "amountRequired": 1,
         "itemTemplateKey": "apple"
       }
     ],
@@ -12,15 +12,15 @@
       "dex": 1,
       "int": 1,
       "str": 1,
-      "wis": 2
+      "wis": 1
     },
     "prerequisiteSkills": [],
     "prerequisiteSpells": []
   },
   "spellType": "Targeted",
-  "class": "Priest",
+  "class": "Peasant",
   "description": "Applies a minor curse effect to your target that does absolutely nothing.",
-  "level": 10,
+  "level": 1,
   "name": "Not So Bad Curse",
   "panelSprite": 5,
   "scriptKeys": [

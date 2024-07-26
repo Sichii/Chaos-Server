@@ -1,12 +1,23 @@
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
+using Chaos.Definitions;
+using Chaos.Extensions;
 using Chaos.Formulae;
+using Chaos.Geometry.Abstractions;
+using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.AislingScripts.Abstractions;
 using Chaos.Scripting.Behaviors;
+using Chaos.Scripting.Components.AbilityComponents;
+using Chaos.Scripting.Components.Execution;
+using Chaos.Scripting.EffectScripts;
+using Chaos.Scripting.ReactorTileScripts;
+using Chaos.Scripting.SpellScripts;
+using Chaos.Services.Factories;
+using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.Time;
@@ -20,13 +31,15 @@ public class DefaultAislingScript : AislingScriptBase
     private readonly IIntervalTimer ClearOrangeBarTimer;
     private readonly IStore<MailBox> MailStore;
     private readonly IIntervalTimer SleepAnimationTimer;
+    private readonly IEffectFactory EffectFactory;
+
     private SocialStatus PreAfkSocialStatus { get; set; }
     protected virtual RelationshipBehavior RelationshipBehavior { get; }
     protected virtual RestrictionBehavior RestrictionBehavior { get; }
     protected virtual VisibilityBehavior VisibilityBehavior { get; }
 
     /// <inheritdoc />
-    public DefaultAislingScript(Aisling subject, IStore<MailBox> mailStore, IStore<BulletinBoard> boardStore)
+    public DefaultAislingScript(Aisling subject, IStore<MailBox> mailStore, IStore<BulletinBoard> boardStore, IEffectFactory effectFactory)
         : base(subject)
     {
         MailStore = mailStore;
@@ -36,6 +49,7 @@ public class DefaultAislingScript : AislingScriptBase
         RelationshipBehavior = new RelationshipBehavior();
         SleepAnimationTimer = new IntervalTimer(TimeSpan.FromSeconds(5), false);
         ClearOrangeBarTimer = new IntervalTimer(TimeSpan.FromSeconds(WorldOptions.Instance.ClearOrangeBarTimerSecs), false);
+        EffectFactory = effectFactory;
     }
 
     /// <inheritdoc />
@@ -100,13 +114,21 @@ public class DefaultAislingScript : AislingScriptBase
 
     /// <inheritdoc />
     public override bool IsHostileTo(Creature creature) => RelationshipBehavior.IsHostileTo(Subject, creature);
+    
 
+    public void OnUse()
+        => new ComponentExecutor(null!, Subject).WithOptions(this)
+            .ExecuteAndCheck<GenericAbilityComponent<Creature>>()
+            ?.Execute<ApplyEffectAbilityComponent>();
+    
     /// <inheritdoc />
-    public override void OnDeath()
+    public override void OnDeath() 
     {
-        Subject.IsDead = true;
-        Subject.Refresh(true);
-        Subject.Display();
+        new ApplyNonSpellEffect(EffectFactory)
+        {
+            Subject = Subject,
+            EffectKey = "skulled",
+        }.OnApplied();
     }
 
     /// <inheritdoc />

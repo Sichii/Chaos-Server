@@ -1,0 +1,22 @@
+{
+  "buyCost": 100,
+  "category": "misc",
+  "color": "Default",
+  "isModifiable": false,
+  "maxStacks": 1,
+  "sellValue": 500,
+  "weight": 1,
+  "description": "A shiny red apple. Looks edible!",
+  "name": "Apple",
+  "panelSprite": 3298,
+  "scriptKeys": [
+    "vitalityConsumable"
+  ],
+  "scriptVars": {
+    "vitalityConsumable": {
+      "baseHeal": 100,
+      "filter": "selfOnly, aliveOnly"
+    }
+  },
+  "templateKey": "enchantWeapon"
+}

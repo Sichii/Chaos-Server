@@ -47,15 +47,12 @@ public abstract class EffectBase : IEffect
     {
         var conflictingEffect = target.Effects.FirstOrDefault(e => e.Name.EqualsI(Name) || (e.Icon == Icon));
 
-        if (conflictingEffect is not null)
-        {
-            if (source is Aisling aisling)
-                aisling.SendActiveMessage($"Target is already affected by {conflictingEffect.Name}.");
+        if (conflictingEffect is null) return true;
+        if (source is Aisling aisling)
+            aisling.SendActiveMessage($"Target is already affected by {conflictingEffect.Name}.");
 
-            return false;
-        }
+        return false;
 
-        return true;
     }
 
     public virtual void Update(TimeSpan delta)
@@ -64,11 +61,9 @@ public abstract class EffectBase : IEffect
 
         var currentColor = this.GetColor();
 
-        if (Color != currentColor)
-        {
-            Color = currentColor;
-            AislingSubject?.Client.SendEffect(Color, Icon);
-        }
+        if (Color == currentColor) return;
+        Color = currentColor;
+        AislingSubject?.Client.SendEffect(Color, Icon);
     }
 
     public static string GetEffectKey(Type type) => type.Name.ReplaceI("effect", string.Empty);

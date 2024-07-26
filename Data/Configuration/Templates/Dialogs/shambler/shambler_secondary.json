@@ -1,0 +1,13 @@
+{
+  "options": [
+    {
+      "dialogKey": "shambler_tertiary",
+      "optionText": "Very well"
+    }
+  ],
+  "scriptKeys": [],
+  "scriptVars": {},
+  "templateKey": "shambler_secondary",
+  "text": "Very well. But it's going to cost you a small part of your soul. Do you accept?",
+  "type": "Menu"
+}

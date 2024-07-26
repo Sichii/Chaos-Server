@@ -25,6 +25,7 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.AislingScripts.Abstractions;
 using Chaos.Scripting.BulletinBoardScripts.Abstractions;
 using Chaos.Scripting.DialogScripts.Abstractions;
+using Chaos.Scripting.EffectScripts;
 using Chaos.Scripting.FunctionalScripts;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.ItemScripts.Abstractions;
@@ -271,7 +272,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IMonsterFactory, MonsterFactory>();
         services.AddTransient<IMerchantFactory, MerchantFactory>();
         services.AddTransient<IDialogFactory, DialogFactory>();
-
+        
         services.AddSingleton<IEffectFactory, EffectFactory>();
 
         services.AddSimpleFactory<Guild>(typeof(string), typeof(string));
