@@ -741,7 +741,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     ///     Moves an entity within the point lookup of the master object collection. DO NOT USE THIS UNLESS YOU KNOW WHAT YOU
     ///     ARE DOING.
     /// </summary>
-    public void MoveEntity(MapEntity entity, Point oldPoint) => Objects.MoveEntity(entity, oldPoint);
+    public void MoveEntity(MapEntity entity, Point newPoint) => Objects.MoveEntity(entity, newPoint);
 
     public void PlayMusic(byte music)
     {

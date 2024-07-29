@@ -64,10 +64,9 @@ RegisterStructuredLoggingTransformations();
 var app = builder.Build();
 
 ConfigureApp(app);
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 await RunApp(app);
-
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 logger.WithTopics(Topics.Actions.Disconnect)
       .LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
@@ -75,6 +74,7 @@ logger.WithTopics(Topics.Actions.Disconnect)
 //wait for everything to shut down
 await Task.Delay(5000);
 
+//flush logger
 LogManager.Shutdown();
 
 return;
@@ -89,8 +89,8 @@ static void AddConfiguration(WebApplicationBuilder builder)
            .AddJsonFile("appsettings.logging.json", false, true)
            #if DEBUG
            .AddJsonFile("appsettings.local.json", false, true);
-    #else
-           .AddJsonFile("appsettings.prod.json", false, true);
+           #else
+           .AddJsonFile("appsettings.local.json", false, true);
     #endif
 
     var useSeq = builder.Configuration.GetValue<bool>(ConfigKeys.Logging.UseSeq);

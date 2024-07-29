@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 
@@ -95,6 +96,7 @@ public static class CircleExtensions
     /// <exception cref="System.ArgumentNullException">
     ///     other
     /// </exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Contains<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
@@ -129,6 +131,7 @@ public static class CircleExtensions
     /// <exception cref="System.ArgumentNullException">
     ///     point
     /// </exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Contains<TCircle, TPoint>(this TCircle circle, TPoint point) where TCircle: ICircle
                                                                                     where TPoint: IPoint
     {
@@ -158,6 +161,7 @@ public static class CircleExtensions
     /// <exception cref="System.ArgumentNullException">
     ///     other
     /// </exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float EdgeDistanceFrom<TCircle, TPoint>(this TCircle circle, TPoint other) where TCircle: ICircle
         where TPoint: IPoint
     {
@@ -187,6 +191,7 @@ public static class CircleExtensions
     /// <exception cref="System.ArgumentNullException">
     ///     other
     /// </exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float EdgeToEdgeDistanceFrom<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
@@ -362,12 +367,43 @@ public static class CircleExtensions
     /// <exception cref="System.ArgumentNullException">
     ///     other
     /// </exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Intersects<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return circle.Center.EuclideanDistanceFrom(other.Center) <= (circle.Radius + other.Radius);
+        return circle.Center.DistanceFrom(other.Center) <= (circle.Radius + other.Radius);
+    }
+
+    /// <summary>
+    ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> intersects a
+    /// </summary>
+    /// <param name="rect">
+    ///     A rectangle
+    /// </param>
+    /// <param name="circle">
+    ///     A circle
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the rectangle intersects the circle at any point, or if either fully contains the other, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Intersects(this ICircle circle, IRectangle rect)
+    {
+        ArgumentNullException.ThrowIfNull(rect);
+        ArgumentNullException.ThrowIfNull(circle);
+
+        var closestX = Math.Clamp(circle.Center.X, rect.Left, rect.Right);
+        var closestY = Math.Clamp(circle.Center.Y, rect.Top, rect.Bottom);
+
+        return new Point(closestX, closestY).DistanceFrom(circle.Center) <= circle.Radius;
     }
 }

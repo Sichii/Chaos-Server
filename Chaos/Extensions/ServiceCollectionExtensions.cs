@@ -1,4 +1,5 @@
 using System.Net.Sockets;
+using System.Reflection;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -93,7 +94,17 @@ public static class ServiceCollectionExtensions
         services.ConfigureOptions<OptionsConfigurer>();
         services.ConfigureOptions<OptionsValidator>();
 
-        services.AddOptionsFromConfig<ChaosOptions>(ConfigKeys.Options.Key);
+        services.AddOptionsFromConfig<ChaosOptions>(ConfigKeys.Options.Key)
+                .PostConfigure(
+                    o =>
+                    {
+                        var assemblyPath = Assembly.GetExecutingAssembly()
+                                                   .Location;
+                        var assemblyDirectory = Path.GetDirectoryName(assemblyPath)!;
+                        var relative = Path.Combine(assemblyDirectory, o.StagingDirectory);
+                        var absolute = Path.GetFullPath(relative);
+                        o.StagingDirectory = absolute;
+                    });
         services.AddOptionsFromConfig<SiteOptions>(ConfigKeys.Options.Key);
 
         services.AddSingleton<IStagingDirectory, ChaosOptions>(

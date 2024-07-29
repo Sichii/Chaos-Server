@@ -51,7 +51,7 @@ public sealed class MapInstanceListView : ViewModelListView
         Items.AddRange(mapped);
     }
 
-    protected override async void AddButton_Click(object sender, RoutedEventArgs e)
+    protected override void AddButton_Click(object sender, RoutedEventArgs e)
     {
         var baseDir = JsonContext.MapInstances.RootDirectory;
         var fullBaseDir = Path.GetFullPath(baseDir);

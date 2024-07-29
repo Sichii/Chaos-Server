@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 
@@ -28,6 +29,7 @@ public static class RectangleExtensions
     ///         false
     ///     </c>
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Contains(this IRectangle rect, IRectangle other)
     {
         ArgumentNullException.ThrowIfNull(rect);
@@ -56,6 +58,7 @@ public static class RectangleExtensions
     ///         false
     ///     </c>
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Contains<TPoint>(this IRectangle rect, TPoint point) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(rect);
@@ -222,6 +225,7 @@ public static class RectangleExtensions
     /// <param name="rect">
     ///     The rect to use as bounds
     /// </param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point GetRandomPoint(this IRectangle rect)
         => new(rect.Left + Random.Shared.Next(rect.Width), rect.Top + Random.Shared.Next(rect.Height));
 
@@ -244,6 +248,7 @@ public static class RectangleExtensions
     ///         false
     ///     </c>
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Intersects(this IRectangle rect, IRectangle other)
     {
         ArgumentNullException.ThrowIfNull(rect);
@@ -251,6 +256,37 @@ public static class RectangleExtensions
         ArgumentNullException.ThrowIfNull(other);
 
         return !((rect.Bottom < other.Top) || (rect.Left > other.Right) || (rect.Right < other.Left) || (rect.Top > other.Bottom));
+    }
+
+    /// <summary>
+    ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> intersects a
+    /// </summary>
+    /// <param name="rect">
+    ///     A rectangle
+    /// </param>
+    /// <param name="circle">
+    ///     A circle
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the rectangle intersects the circle at any point, or if either fully contains the other, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Intersects(this IRectangle rect, ICircle circle)
+    {
+        ArgumentNullException.ThrowIfNull(rect);
+
+        ArgumentNullException.ThrowIfNull(circle);
+
+        var closestX = Math.Clamp(circle.Center.X, rect.Left, rect.Right);
+        var closestY = Math.Clamp(circle.Center.Y, rect.Top, rect.Bottom);
+
+        return new Point(closestX, closestY).DistanceFrom(circle.Center) < circle.Radius;
     }
 
     /// <summary>

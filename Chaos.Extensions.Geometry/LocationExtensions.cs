@@ -13,6 +13,7 @@ public static class LocationExtensions
     /// </summary>
     /// <exception cref="InvalidOperationException">
     /// </exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void EnsureSameMap(ILocation location1, ILocation location2)
     {
         if (!location1.OnSameMapAs(location2))

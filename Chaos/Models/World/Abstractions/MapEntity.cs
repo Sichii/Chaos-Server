@@ -30,12 +30,7 @@ public abstract class MapEntity(MapInstance mapInstance, IPoint point) : WorldEn
                 $"Attempted to set location outside of map bounds. (Map: {MapInstance.InstanceId}, Destination: {point})");
         }
 
-        var oldPoint = Point.From(this);
-
-        X = point.X;
-        Y = point.Y;
-
-        MapInstance.MoveEntity(this, oldPoint);
+        MapInstance.MoveEntity(this, Point.From(point));
     }
 
     public void SetLocation(MapInstance mapInstance, IPoint point)

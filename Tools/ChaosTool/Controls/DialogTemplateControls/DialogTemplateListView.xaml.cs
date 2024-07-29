@@ -53,7 +53,7 @@ public sealed class DialogTemplateListView : ViewModelListView
         Items.AddRange(mapped);
     }
 
-    protected override async void AddButton_Click(object sender, RoutedEventArgs e)
+    protected override void AddButton_Click(object sender, RoutedEventArgs e)
     {
         var baseDir = JsonContext.DialogTemplates.RootDirectory;
         var fullBaseDir = Path.GetFullPath(baseDir);

@@ -589,16 +589,24 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             ? MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
                          .ThatAreObservedBy(this, true)
                          .ToHashSet()
-            : MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
-                         .Where(partialUpdateEntities.Contains)
-                         .ThatAreObservedBy(this, true)
-                         .ToHashSet();
+            : partialUpdateEntities.ThatAreWithinRange(this)
+                                   .Where(e => MapInstance.TryGetEntity<WorldEntity>(e.Id, out _)) //make sure they are still on the map
+                                   .ThatAreObservedBy(this, true)
+                                   .ToHashSet();
 
-        foreach (var entity in previouslyObservable.Except(currentlyObservable))
+        foreach (var entity in previouslyObservable)
+            if (!currentlyObservable.Contains(entity))
+                OnDeparture(entity, refresh);
+
+        foreach (var entity in currentlyObservable)
+            if (!previouslyObservable.Contains(entity))
+                OnApproached(entity, refresh);
+
+        /*foreach (var entity in previouslyObservable.Except(currentlyObservable))
             OnDeparture(entity, refresh);
 
         foreach (var entity in currentlyObservable.Except(previouslyObservable))
-            OnApproached(entity, refresh);
+            OnApproached(entity, refresh);*/
     }
 
     public virtual void Walk(Direction direction, bool? ignoreBlockingReactors = null)

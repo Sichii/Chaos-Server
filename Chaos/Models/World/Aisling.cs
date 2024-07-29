@@ -1111,46 +1111,48 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             ? MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
                          .ThatAreObservedBy(this, true)
                          .ToHashSet()
-            : MapInstance.GetEntitiesWithinRange<VisibleEntity>(this)
-                         .Where(partialUpdateEntities.Contains)
-                         .ThatAreObservedBy(this, true)
-                         .ToHashSet();
+            : partialUpdateEntities.ThatAreWithinRange(this)
+                                   .Where(e => MapInstance.TryGetEntity<WorldEntity>(e.Id, out _)) //make sure they are still on the map
+                                   .ThatAreObservedBy(this, true)
+                                   .ToHashSet();
 
         var entitiesToSend = new List<VisibleEntity>();
         var doorsToSend = new HashSet<Door>();
 
-        foreach (var entity in previouslyObservable.Except(currentlyObservable))
-        {
-            if (entity.Equals(this))
-                continue;
-
-            entity.HideFrom(this);
-            OnDeparture(entity, refresh);
-        }
-
-        foreach (var entity in currentlyObservable.Except(previouslyObservable))
-        {
-            if (entity.Equals(this))
-                continue;
-
-            switch (entity)
+        foreach (var entity in previouslyObservable)
+            if (!currentlyObservable.Contains(entity))
             {
-                case Aisling:
-                    entity.ShowTo(this);
+                if (entity.Equals(this))
+                    continue;
 
-                    break;
-                case Door door:
-                    doorsToSend.AddRange(door.GetCluster());
-
-                    break;
-                default:
-                    entitiesToSend.Add(entity);
-
-                    break;
+                entity.HideFrom(this);
+                OnDeparture(entity, refresh);
             }
 
-            OnApproached(entity, refresh);
-        }
+        foreach (var entity in currentlyObservable)
+            if (!previouslyObservable.Contains(entity))
+            {
+                if (entity.Equals(this))
+                    continue;
+
+                switch (entity)
+                {
+                    case Aisling:
+                        entity.ShowTo(this);
+
+                        break;
+                    case Door door:
+                        doorsToSend.AddRange(door.GetCluster());
+
+                        break;
+                    default:
+                        entitiesToSend.Add(entity);
+
+                        break;
+                }
+
+                OnApproached(entity, refresh);
+            }
 
         Client.SendVisibleEntities(entitiesToSend);
         Client.SendDoors(doorsToSend);

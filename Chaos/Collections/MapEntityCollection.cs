@@ -1,9 +1,10 @@
 using System.Diagnostics;
+using Chaos.Collections.Specialized;
 using Chaos.Common.Utilities;
-using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.EqualityComparers;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Time.Abstractions;
@@ -13,7 +14,7 @@ namespace Chaos.Collections;
 public sealed class MapEntityCollection : IDeltaUpdatable
 {
     private readonly HashSet<Aisling> Aislings;
-    private readonly Rectangle Bounds;
+    private readonly IRectangle Bounds;
     private readonly HashSet<Door> Doors;
     private readonly Dictionary<uint, MapEntity> EntityLookup;
     private readonly HashSet<GroundEntity> GroundEntities;
@@ -22,7 +23,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     private readonly ILogger Logger;
     private readonly HashSet<Merchant> Merchants;
     private readonly HashSet<Monster> Monsters;
-    private readonly HashSet<MapEntity>[,] PointLookup;
+    private readonly QuadTreeWithSpatialHash<MapEntity> QuadTree;
     private readonly HashSet<ReactorTile> Reactors;
     private readonly UpdatableCollection Updatables;
     private readonly TypeSwitchExpression<IEnumerable> ValuesCases;
@@ -35,9 +36,15 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         int mapHeight,
         int walkableArea)
     {
+        Bounds = new Rectangle(
+            0,
+            0,
+            mapWidth,
+            mapHeight);
+
         Logger = logger;
         EntityLookup = new Dictionary<uint, MapEntity>();
-        PointLookup = new HashSet<MapEntity>[mapWidth, mapHeight];
+        QuadTree = new QuadTreeWithSpatialHash<MapEntity>(Bounds, EqualityComparer<WorldEntity>.Default);
         Monsters = new HashSet<Monster>(WorldEntity.IdComparer);
         Merchants = new HashSet<Merchant>(WorldEntity.IdComparer);
         Aislings = new HashSet<Aisling>(WorldEntity.IdComparer);
@@ -45,20 +52,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         Reactors = new HashSet<ReactorTile>(WorldEntity.IdComparer);
         Doors = new HashSet<Door>(WorldEntity.IdComparer);
         Updatables = new UpdatableCollection(logger);
-
-        Bounds = new Rectangle(
-            0,
-            0,
-            mapWidth,
-            mapHeight);
-
         WalkableArea = walkableArea;
-
-        for (var x = 0; x < mapWidth; x++)
-        {
-            for (var y = 0; y < mapHeight; y++)
-                PointLookup[x, y] = new HashSet<MapEntity>(WorldEntity.IdComparer);
-        }
 
         //setup Values<T> cases
         ValuesCases = new TypeSwitchExpression<IEnumerable>().Case<Aisling>(Aislings)
@@ -126,16 +120,12 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         }
     }
 
-    public void AddToPointLookup(MapEntity mapEntity)
-    {
-        var entities = PointLookup[mapEntity.X, mapEntity.Y];
-        entities.Add(mapEntity);
-    }
+    public void AddToPointLookup(MapEntity mapEntity) => QuadTree.Insert(mapEntity);
 
     public IEnumerable<T> AtPoint<T>(IPoint point) where T: MapEntity
         => Bounds.Contains(point)
-            ? PointLookup[point.X, point.Y]
-                .OfType<T>()
+            ? QuadTree.Query(Point.From(point))
+                      .OfType<T>()
             : [];
 
     public IEnumerable<T> AtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity => points.SelectMany(AtPoint<T>);
@@ -149,20 +139,19 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         Reactors.Clear();
         Doors.Clear();
         Updatables.Clear();
-
-        foreach (var lookup in PointLookup.Flatten())
-            lookup.Clear();
+        QuadTree.Clear();
     }
 
     public bool ContainsKey(uint id) => EntityLookup.ContainsKey(id);
 
-    public void MoveEntity(MapEntity mapEntity, IPoint oldPoint)
+    public void MoveEntity(MapEntity mapEntity, IPoint newPoint)
     {
-        var fromEntities = PointLookup[oldPoint.X, oldPoint.Y];
-        var toEntities = PointLookup[mapEntity.X, mapEntity.Y];
+        if (PointEqualityComparer.Instance.Equals(newPoint, mapEntity))
+            return;
 
-        if (fromEntities.Remove(mapEntity))
-            toEntities.Add(mapEntity);
+        QuadTree.Remove(mapEntity);
+        mapEntity.SetLocation(mapEntity.MapInstance, newPoint);
+        QuadTree.Insert(mapEntity);
     }
 
     public bool Remove(uint id)
@@ -209,12 +198,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         return true;
     }
 
-    public bool RemoveFromPointLookup(MapEntity mapEntity)
-    {
-        var entities = PointLookup[mapEntity.X, mapEntity.Y];
-
-        return entities.Remove(mapEntity);
-    }
+    public bool RemoveFromPointLookup(MapEntity mapEntity) => QuadTree.Remove(mapEntity);
 
     public bool TryGetValue<T>(uint id, [NotNullWhen(true)] out T? entity)
     {
@@ -246,62 +230,9 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
     public IEnumerable<T> WithinRange<T>(IPoint point, int range = 15) where T: MapEntity
     {
-        //we arent looking in a square, we're looking in a diamond that fits into a square
-        //that diamond has 1/2 the area of the square it fits into
-        //the area of the square is (range * 2 + 1)^2
-        var searchArea = Math.Pow(range * 2 + 1, 2) / 2;
-        var avgEntitiesPerTile = EntityLookup.Count / (float)WalkableArea;
-        int entityCount;
-        var tType = typeof(T);
+        var searchBounds = new Circle(point, range);
 
-        //get an estimate of the number of entities that exist on the map for the type theyre trying to get
-        if (tType.IsAssignableTo(typeof(Aisling)))
-            entityCount = Aislings.Count;
-        else if (tType.IsAssignableTo(typeof(Monster)))
-            entityCount = Monsters.Count;
-        else if (tType.IsAssignableTo(typeof(Merchant)))
-            entityCount = Merchants.Count;
-        else if (tType.IsAssignableTo(typeof(GroundEntity)))
-            entityCount = GroundEntities.Count;
-        else if (tType.IsAssignableTo(typeof(ReactorTile)))
-            entityCount = Reactors.Count;
-        else if (tType.IsAssignableTo(typeof(Door)))
-            entityCount = Doors.Count;
-        else if (tType.IsAssignableTo(typeof(Creature)))
-            entityCount = Aislings.Count + Monsters.Count + Merchants.Count;
-        else if (tType.IsAssignableFrom(typeof(NamedEntity)))
-            entityCount = Aislings.Count + Monsters.Count + Merchants.Count + GroundEntities.Count;
-        else if (tType.IsAssignableFrom(typeof(VisibleEntity)))
-            entityCount = Aislings.Count + Monsters.Count + Merchants.Count + GroundEntities.Count + Doors.Count;
-        else
-            entityCount = EntityLookup.Count;
-
-        //the avg number of entities we can expect to search when searching by area
-        var areaSearchAvgEntityCount = searchArea * avgEntitiesPerTile;
-
-        //the amortized cost of searching by area (there is a base cost associated with enumerating the hashsets that contain the entities)
-        var estimatedAmortizedCost = searchArea + areaSearchAvgEntityCount;
-
-        //if we can expect to search significantly fewer entities by searching points
-        //then search by point lookup
-        if (estimatedAmortizedCost < entityCount)
-            foreach (var pt in point.SpiralSearch(range))
-            {
-                if (!Bounds.Contains(pt))
-                    continue;
-
-                var entities = PointLookup[pt.X, pt.Y];
-
-                if (entities.Count == 0)
-                    continue;
-
-                foreach (var entity in entities)
-                    if (entity is T t)
-                        yield return t;
-            }
-        else //otherwise just check every entity of that type with a distance check
-            foreach (var entity in Values<T>()
-                         .ThatAreWithinRange(point, range))
-                yield return entity;
+        return QuadTree.Query(searchBounds)
+                       .OfType<T>();
     }
 }
