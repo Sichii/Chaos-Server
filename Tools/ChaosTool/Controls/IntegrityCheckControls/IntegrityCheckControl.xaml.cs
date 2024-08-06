@@ -896,7 +896,7 @@ public sealed partial class IntegrityCheckControl
 
         Task AddRebuildFailureViolationAsync(string indexName, Exception ex)
             => AddViolationAsync(
-                $"Unable to build {indexName}.)",
+                $"Unable to build {indexName}.",
                 (_, _) => MessageBox.Show(
                     ex.Message,
                     "Error",

@@ -286,7 +286,7 @@ public static class RectangleExtensions
         var closestX = Math.Clamp(circle.Center.X, rect.Left, rect.Right);
         var closestY = Math.Clamp(circle.Center.Y, rect.Top, rect.Bottom);
 
-        return new Point(closestX, closestY).DistanceFrom(circle.Center) < circle.Radius;
+        return new Point(closestX, closestY).DistanceFrom(Point.From(circle.Center)) < circle.Radius;
     }
 
     /// <summary>

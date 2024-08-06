@@ -11,8 +11,6 @@
         <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <IsPackable>true</IsPackable>
-        <!--<ServerGarbageCollection>true</ServerGarbageCollection>
-                <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>-->
     </PropertyGroup>
     <PropertyGroup>
         <Company>Chaotic Minds</Company>

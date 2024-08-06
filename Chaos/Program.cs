@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime;
 using System.Text;
 using System.Text.Json.Serialization;
 using Chaos;
@@ -36,6 +37,8 @@ using AppContext = Chaos.AppContext;
 var encodingProvider = CodePagesEncodingProvider.Instance;
 Encoding.RegisterProvider(encodingProvider);
 
+GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
+
 Process.GetCurrentProcess()
        .PriorityClass = ProcessPriorityClass.High;
 
@@ -65,6 +68,12 @@ var app = builder.Build();
 
 ConfigureApp(app);
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
+
+Console.WriteLine("Server GC: " + GCSettings.IsServerGC);
+Console.WriteLine("Concurrent GC: " + (GCSettings.LatencyMode != GCLatencyMode.Batch));
+Console.WriteLine("GC Latency Mode: " + GCSettings.LatencyMode);
+
+await Task.Delay(2500);
 
 await RunApp(app);
 

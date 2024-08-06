@@ -120,6 +120,9 @@ public class JsonContext
         services.AddSingleton<IConfiguration>(configuration);
         services.AddTypeMapper();
         AddStaticAutoMapper();
+
+       services.AddOptions<EntityRepositoryOptions>()
+               .Configure(o => o.SafeSaves = false);
         services.AddTransient<IEntityRepository, EntityRepository>();
         services.AddLogging();
 

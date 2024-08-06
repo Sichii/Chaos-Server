@@ -18,15 +18,21 @@ public sealed class EntityRepository : IEntityRepository
     private readonly JsonSerializerOptions JsonSerializerOptions;
     private readonly ILogger<EntityRepository> Logger;
     private readonly ITypeMapper Mapper;
+    private readonly EntityRepositoryOptions Options;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="EntityRepository" /> class
     /// </summary>
-    public EntityRepository(ITypeMapper mapper, IOptions<JsonSerializerOptions> jsonserializerOptions, ILogger<EntityRepository> logger)
+    public EntityRepository(
+        ITypeMapper mapper,
+        IOptions<JsonSerializerOptions> jsonserializerOptions,
+        IOptionsSnapshot<EntityRepositoryOptions> options,
+        ILogger<EntityRepository> logger)
     {
         Mapper = mapper;
         Logger = logger;
         JsonSerializerOptions = jsonserializerOptions.Value;
+        Options = options.Value;
     }
 
     /// <inheritdoc />
@@ -184,7 +190,11 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
-        JsonSerializerEx.Serialize(path, obj, JsonSerializerOptions);
+        JsonSerializerEx.Serialize(
+            path,
+            obj,
+            JsonSerializerOptions,
+            Options.SafeSaves);
     }
 
     /// <inheritdoc />
@@ -198,7 +208,11 @@ public sealed class EntityRepository : IEntityRepository
 
         var schema = Mapper.Map<TSchema>(obj)!;
 
-        JsonSerializerEx.Serialize(path, schema, JsonSerializerOptions);
+        JsonSerializerEx.Serialize(
+            path,
+            schema,
+            JsonSerializerOptions,
+            Options.SafeSaves);
     }
 
     /// <inheritdoc />
@@ -212,7 +226,11 @@ public sealed class EntityRepository : IEntityRepository
 
         var schema = Mapper.Map<TSchema>(obj)!;
 
-        return JsonSerializerEx.SerializeAsync(path, schema, JsonSerializerOptions);
+        return JsonSerializerEx.SerializeAsync(
+            path,
+            schema,
+            JsonSerializerOptions,
+            Options.SafeSaves);
     }
 
     /// <inheritdoc />
@@ -226,7 +244,11 @@ public sealed class EntityRepository : IEntityRepository
 
         var schema = Mapper.MapMany<T, TSchema>(obj);
 
-        JsonSerializerEx.Serialize(path, schema, JsonSerializerOptions);
+        JsonSerializerEx.Serialize(
+            path,
+            schema,
+            JsonSerializerOptions,
+            Options.SafeSaves);
     }
 
     /// <inheritdoc />
@@ -240,7 +262,11 @@ public sealed class EntityRepository : IEntityRepository
 
         var schema = Mapper.MapMany<T, TSchema>(obj);
 
-        return JsonSerializerEx.SerializeAsync(path, schema, JsonSerializerOptions);
+        return JsonSerializerEx.SerializeAsync(
+            path,
+            schema,
+            JsonSerializerOptions,
+            Options.SafeSaves);
     }
 
     /// <inheritdoc />
@@ -252,7 +278,11 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
-        return JsonSerializerEx.SerializeAsync(path, obj, JsonSerializerOptions);
+        return JsonSerializerEx.SerializeAsync(
+            path,
+            obj,
+            JsonSerializerOptions,
+            Options.SafeSaves);
     }
 
     /// <inheritdoc />
@@ -264,7 +294,11 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
-        JsonSerializerEx.Serialize(path, obj, JsonSerializerOptions);
+        JsonSerializerEx.Serialize(
+            path,
+            obj,
+            JsonSerializerOptions,
+            Options.SafeSaves);
     }
 
     /// <inheritdoc />
@@ -276,6 +310,10 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
-        return JsonSerializerEx.SerializeAsync(path, obj, JsonSerializerOptions);
+        return JsonSerializerEx.SerializeAsync(
+            path,
+            obj,
+            JsonSerializerOptions,
+            Options.SafeSaves);
     }
 }

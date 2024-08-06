@@ -205,6 +205,7 @@ public static class ServiceCollectionExtensions
 
     public static void AddStorage(this IServiceCollection services)
     {
+        services.AddOptionsFromConfig<EntityRepositoryOptions>(ConfigKeys.Options.Key);
         services.AddTransient<IEntityRepository, EntityRepository>();
 
         //add mail store with backup service

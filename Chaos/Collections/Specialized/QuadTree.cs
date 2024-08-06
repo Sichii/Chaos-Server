@@ -19,7 +19,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     protected QuadTree<T>?[] Children { get; }
     protected List<T> Items { get; }
 
-    static QuadTree() => Pool = new QuadTreePool(ushort.MaxValue);
+    static QuadTree() => Pool = new QuadTreePool(short.MaxValue / 4);
 
     public QuadTree(IRectangle bounds)
     {
@@ -35,7 +35,10 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     /// <inheritdoc />
     public IEnumerator<T> GetEnumerator()
     {
-        if (Count > 0)
+        // ReSharper disable once ArrangeMethodOrOperatorBody
+        return new QuadTreeEnumerator(this);
+
+        /*if (Count > 0)
         {
             if (Divided)
                 for (var i = 0; i < Children.Length; i++)
@@ -51,7 +54,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
             else
                 for (var i = 0; i < Items.Count; i++)
                     yield return Items[i];
-        }
+        }*/
     }
 
     /// <inheritdoc />
@@ -153,7 +156,10 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
 
     public virtual IEnumerable<T> Query(IRectangle bounds)
     {
-        if ((Count > 0) && Bounds.Intersects(bounds))
+        // ReSharper disable once ArrangeMethodOrOperatorBody
+        return new QuadTreeRectangleQueryIterator(this, bounds);
+
+        /*if ((Count > 0) && Bounds.Intersects(bounds))
         {
             if (Divided)
                 for (var i = 0; i < Children.Length; i++)
@@ -174,12 +180,15 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
                     if (bounds.Contains(item))
                         yield return item;
                 }
-        }
+        }*/
     }
 
     public virtual IEnumerable<T> Query(ICircle circle)
     {
-        if ((Count > 0) && Bounds.Intersects(circle))
+        // ReSharper disable once ArrangeMethodOrOperatorBody
+        return new QuadTreeCircleQueryIterator(this, circle);
+
+        /*if ((Count > 0) && Bounds.Intersects(circle))
         {
             if (Divided)
                 for (var i = 0; i < Children.Length; i++)
@@ -200,7 +209,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
                     if (circle.Contains(item))
                         yield return item;
                 }
-        }
+        }*/
     }
 
     public virtual IEnumerable<T> Query(IPoint point)
@@ -314,6 +323,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         Items.Clear();
     }
 
+    #region QuadTreePool
     private sealed class QuadTreePool : DefaultObjectPool<QuadTree<T>>
     {
         public QuadTreePool(int poolCapacity)
@@ -339,4 +349,281 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
             return true;
         }
     }
+    #endregion
+
+    #region Enumerators
+    private struct QuadTreeEnumerator : IEnumerator<T>
+    {
+        private readonly QuadTree<T> Tree;
+        private readonly Stack<QuadTree<T>> Stack;
+        private int Index;
+
+        public QuadTreeEnumerator(QuadTree<T> tree)
+        {
+            Tree = tree;
+            Stack = new Stack<QuadTree<T>>();
+
+            Stack.Push(Tree);
+        }
+
+        /// <inheritdoc />
+        public readonly void Dispose() { }
+
+        /// <inheritdoc />
+        public bool MoveNext()
+        {
+            while (Stack.Count > 0)
+            {
+                var current = Stack.Peek();
+
+                if (current.Count == 0)
+                {
+                    Stack.Pop();
+
+                    continue;
+                }
+
+                if (current.Divided)
+                {
+                    Stack.Pop();
+
+                    for (var i = 0; i < current.Children.Length; i++)
+                    {
+                        var child = current.Children[i]!;
+
+                        if (child.Count == 0)
+                            continue;
+
+                        Stack.Push(child);
+                    }
+
+                    continue;
+                }
+
+                if (Index >= current.Items.Count)
+                {
+                    Index = 0;
+                    Stack.Pop();
+
+                    continue;
+                }
+
+                Current = current.Items[Index++];
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc />
+        public void Reset()
+        {
+            Index = 0;
+            Stack.Clear();
+        }
+
+        /// <inheritdoc />
+        public T Current { get; private set; } = default!;
+
+        /// <inheritdoc />
+        readonly object IEnumerator.Current => Current;
+    }
+
+    /// <summary>
+    ///     An iterator for querying a <see cref="QuadTree{T}" /> with a rectangle.
+    /// </summary>
+    /// <remarks>
+    ///     Since the query method would need to utilize an iterator block anyway, having the IEnumerator also be an
+    ///     IEnumerable saves the runtime from creating an iterator block class
+    /// </remarks>
+    private struct QuadTreeRectangleQueryIterator : IEnumerator<T>, IEnumerable<T>
+    {
+        private readonly QuadTree<T> Tree;
+        private readonly Stack<QuadTree<T>> Stack;
+        private readonly IRectangle Bounds;
+        private int Index;
+
+        public QuadTreeRectangleQueryIterator(QuadTree<T> tree, IRectangle bounds)
+        {
+            Tree = tree;
+            Stack = new Stack<QuadTree<T>>();
+            Bounds = bounds;
+
+            Stack.Push(Tree);
+        }
+
+        /// <inheritdoc />
+        public readonly void Dispose() { }
+
+        /// <inheritdoc />
+        public bool MoveNext()
+        {
+            while (Stack.Count > 0)
+            {
+                var current = Stack.Peek();
+
+                if (current.Count == 0)
+                {
+                    Stack.Pop();
+
+                    continue;
+                }
+
+                if (current.Divided)
+                {
+                    Stack.Pop();
+
+                    for (var i = 0; i < current.Children.Length; i++)
+                    {
+                        var child = current.Children[i]!;
+
+                        if ((child.Count == 0) || !child.Bounds.Intersects(Bounds))
+                            continue;
+
+                        Stack.Push(child);
+                    }
+
+                    continue;
+                }
+
+                if (Index >= current.Items.Count)
+                {
+                    Index = 0;
+                    Stack.Pop();
+
+                    continue;
+                }
+
+                var item = current.Items[Index++];
+
+                if (Bounds.Contains(item))
+                {
+                    Current = item;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc />
+        public void Reset()
+        {
+            Index = 0;
+            Stack.Clear();
+        }
+
+        /// <inheritdoc />
+        public T Current { get; private set; } = default!;
+
+        /// <inheritdoc />
+        readonly object IEnumerator.Current => Current;
+
+        /// <inheritdoc />
+        public IEnumerator<T> GetEnumerator() => this;
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    /// <summary>
+    ///     An iterator for querying a <see cref="QuadTree{T}" /> with a circle.
+    /// </summary>
+    /// <remarks>
+    ///     Since the query method would need to utilize an iterator block anyway, having the IEnumerator also be an
+    ///     IEnumerable saves the runtime from creating an iterator block class
+    /// </remarks>
+    private struct QuadTreeCircleQueryIterator : IEnumerator<T>, IEnumerable<T>
+    {
+        private readonly QuadTree<T> Tree;
+        private readonly Stack<QuadTree<T>> Stack;
+        private readonly ICircle Bounds;
+        private int Index;
+
+        public QuadTreeCircleQueryIterator(QuadTree<T> tree, ICircle bounds)
+        {
+            Tree = tree;
+            Stack = new Stack<QuadTree<T>>();
+            Bounds = bounds;
+
+            Stack.Push(Tree);
+        }
+
+        /// <inheritdoc />
+        public readonly void Dispose() { }
+
+        /// <inheritdoc />
+        public bool MoveNext()
+        {
+            while (Stack.Count > 0)
+            {
+                var current = Stack.Peek();
+
+                if (current.Count == 0)
+                {
+                    Stack.Pop();
+
+                    continue;
+                }
+
+                if (current.Divided)
+                {
+                    Stack.Pop();
+
+                    for (var i = 0; i < current.Children.Length; i++)
+                    {
+                        var child = current.Children[i]!;
+
+                        if ((child.Count == 0) || !child.Bounds.Intersects(Bounds))
+                            continue;
+
+                        Stack.Push(child);
+                    }
+
+                    continue;
+                }
+
+                if (Index >= current.Items.Count)
+                {
+                    Index = 0;
+                    Stack.Pop();
+
+                    continue;
+                }
+
+                var item = current.Items[Index++];
+
+                if (Bounds.Contains(item))
+                {
+                    Current = item;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <inheritdoc />
+        public void Reset()
+        {
+            Index = 0;
+            Stack.Clear();
+        }
+
+        /// <inheritdoc />
+        public T Current { get; private set; } = default!;
+
+        /// <inheritdoc />
+        readonly object IEnumerator.Current => Current;
+
+        /// <inheritdoc />
+        public IEnumerator<T> GetEnumerator() => this;
+
+        /// <inheritdoc />
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+    #endregion
 }

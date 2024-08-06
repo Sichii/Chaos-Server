@@ -10,6 +10,9 @@
         <GenerateDocumentationFile>false</GenerateDocumentationFile>
         <OutputPath>bin\$(Configuration)\</OutputPath>
         <IsPackable>false</IsPackable>
+        <ServerGarbageCollection>true</ServerGarbageCollection>
+        <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+        <!--<GCHeapHardLimit>1073741824</GCHeapHardLimit>-->
     </PropertyGroup>
     <PropertyGroup>
         <ApplicationIcon>Resources\chaos.ico</ApplicationIcon>

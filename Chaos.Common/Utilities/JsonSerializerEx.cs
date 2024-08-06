@@ -94,11 +94,21 @@ public static class JsonSerializerEx
     /// <param name="options">
     ///     The serialization options to use
     /// </param>
-    public static void Serialize(string path, object value, JsonSerializerOptions options)
+    /// <param name="safeSaves">
+    ///     Whether or not to use atomic saves. This will produce a .bak file in the same directory as the file being saved
+    /// </param>
+    public static void Serialize(
+        string path,
+        object value,
+        JsonSerializerOptions options,
+        bool safeSaves = true)
     {
         var json = JsonSerializer.Serialize(value, options);
 
-        FileEx.SafeWriteAllText(path, json);
+        if (safeSaves)
+            FileEx.SafeWriteAllText(path, json);
+        else
+            File.WriteAllText(path, json);
     }
 
     /// <summary>
@@ -113,10 +123,20 @@ public static class JsonSerializerEx
     /// <param name="options">
     ///     The serialization options to use
     /// </param>
-    public static Task SerializeAsync(string path, object value, JsonSerializerOptions options)
+    /// <param name="safeSaves">
+    ///     Whether or not to use atomic saves. This will produce a .bak file in the same directory as the file being saved
+    /// </param>
+    public static Task SerializeAsync(
+        string path,
+        object value,
+        JsonSerializerOptions options,
+        bool safeSaves = true)
     {
         var json = JsonSerializer.Serialize(value, options);
 
-        return FileEx.SafeWriteAllTextAsync(path, json);
+        if (safeSaves)
+            return FileEx.SafeWriteAllTextAsync(path, json);
+
+        return File.WriteAllTextAsync(path, json);
     }
 }
