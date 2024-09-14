@@ -12,7 +12,7 @@ public sealed class ItemMetaData : MetaDataBase<ItemMetaNode>
     /// <summary>
     ///     The size of the <see cref="ItemMetaData" /> in bytes
     /// </summary>
-    public int Size => Nodes.Sum(node => node.Length);
+    public int Size => Nodes.Sum(node => node.Length) + 2;
 
     /// <inheritdoc />
     public ItemMetaData(int num)

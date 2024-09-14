@@ -1,3 +1,4 @@
+using System.Text;
 using Chaos.Common.Definitions;
 using Chaos.IO.Memory;
 using Chaos.MetaData.Abstractions;
@@ -46,9 +47,12 @@ public sealed record ItemMetaNode(string Name) : IMetaNode
     /// </summary>
     public int Length
         => 14
-           + Name.Length
-           + Category.Length
-           + Description.Length
+           + Encoding.GetEncoding(949)
+                     .GetByteCount(Name)
+           + Encoding.GetEncoding(949)
+                     .GetByteCount(Category)
+           + Encoding.GetEncoding(949)
+                     .GetByteCount(Description)
            + Level.ToString()
                   .Length
            + Weight.ToString()

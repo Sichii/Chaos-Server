@@ -12,24 +12,21 @@ public sealed class ItemMetaNodeCollection : MetaNodeCollection<ItemMetaNode>, I
     {
         var index = 0;
         var metadata = new ItemMetaData(index++);
-        var size = 0;
 
         for (var i = 0; i < Nodes.Count; i++)
         {
             var node = Nodes[i];
 
-            if ((node.Length + size) > MAX_SIZE)
+            if ((node.Length + metadata.Size) >= MAX_SIZE)
             {
                 metadata.Compress();
 
                 yield return metadata;
 
                 metadata = new ItemMetaData(index++);
-                size = 0;
             }
 
             metadata.AddNode(node);
-            size += node.Length;
         }
 
         metadata.Compress();
