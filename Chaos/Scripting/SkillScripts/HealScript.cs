@@ -54,6 +54,9 @@ public class HealScript : ConfigurableSkillScriptBase,
     public BodyAnimation BodyAnimation { get; init; }
 
     /// <inheritdoc />
+    public bool? ScaleBodyAnimationSpeedByAttackSpeed { get; init; }
+
+    /// <inheritdoc />
     public ushort? AnimationSpeed { get; init; }
 
     /// <inheritdoc />

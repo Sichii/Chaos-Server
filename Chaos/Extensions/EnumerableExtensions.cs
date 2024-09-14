@@ -14,7 +14,7 @@ public static class EnumerableExtensions
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T? ClosestOrDefault<T>(this IEnumerable<T> objs, IPoint point) where T: MapEntity
-        => objs.MinBy(o => o.DistanceFrom(point));
+        => objs.MinBy(o => o.ManhattanDistanceFrom(point));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Item> FixStacks(this IEnumerable<Item> items, ICloningService<Item> itemCloner)

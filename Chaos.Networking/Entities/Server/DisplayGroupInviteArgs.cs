@@ -10,9 +10,14 @@ namespace Chaos.Networking.Entities.Server;
 public sealed record DisplayGroupInviteArgs : IPacketSerializable
 {
     /// <summary>
+    ///     The group box information, if present
+    /// </summary>
+    public DisplayGroupBoxInfo? GroupBoxInfo { get; set; }
+
+    /// <summary>
     ///     The type of the request
     /// </summary>
-    public GroupRequestType GroupRequestType { get; set; }
+    public ServerGroupSwitch ServerGroupSwitch { get; set; }
 
     /// <summary>
     ///     The name of the source of the request

@@ -117,7 +117,7 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
         var closestVerbalBanker = aisling.MapInstance
                                          .GetEntities<Merchant>()
                                          .Where(merchant => merchant.Script.Is<VerbalBankerScriptBase>())
-                                         .OrderBy(x => x.DistanceFrom(aisling))
+                                         .OrderBy(x => x.ManhattanDistanceFrom(aisling))
                                          .ThenBy(x => x.Creation)
                                          .First();
 

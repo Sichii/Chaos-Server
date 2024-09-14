@@ -88,7 +88,7 @@ public sealed class Pathfinder : IPathfinder
             return new Stack<IPoint>();
         }
 
-        if (start.DistanceFrom(end) == 0)
+        if (start.ManhattanDistanceFrom(end) == 0)
             return new Stack<IPoint>();
 
         using var @lock = Sync.Enter();
@@ -250,7 +250,7 @@ public sealed class Pathfinder : IPathfinder
                     continue;
 
                 neighbor.Parent = node;
-                PriorityQueue.Enqueue(neighbor, neighbor.DistanceFrom(start) + neighbor.DistanceFrom(end));
+                PriorityQueue.Enqueue(neighbor, neighbor.ManhattanDistanceFrom(start) + neighbor.ManhattanDistanceFrom(end));
                 neighbor.Open = true;
             }
 

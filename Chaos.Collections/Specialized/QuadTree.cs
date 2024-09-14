@@ -1,4 +1,7 @@
+using System.Collections;
+using Chaos.Collections.ObjectPool;
 using Chaos.Extensions.Geometry;
+using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Microsoft.Extensions.ObjectPool;
@@ -6,22 +9,58 @@ using Microsoft.Extensions.ObjectPool;
 // ReSharper disable once CheckNamespace
 namespace Chaos.Collections.Specialized;
 
+/// <summary>
+///     A data structure that repeatedly divides a 2D space into quadrants to performantly store and query items via
+///     spatial means.
+/// </summary>
+/// <typeparam name="T">
+///     An implementation of <see cref="IPoint" />
+/// </typeparam>
 public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
 {
-    private static QuadTreePool Pool;
+    private static QuadTreePool<T> Pool;
 
     // ReSharper disable once StaticMemberInGenericType
     #pragma warning disable CA2211
+    /// <summary>
+    ///     The maximum number of items a <see cref="QuadTree{T}" /> can hold before subdividing.
+    /// </summary>
+
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public static int Capacity = 32;
     #pragma warning restore CA2211
+    /// <summary>
+    ///     The bounds of the <see cref="QuadTree{T}" />.
+    /// </summary>
     protected IRectangle Bounds { get; set; }
+
+    /// <summary>
+    ///     The number of items in the <see cref="QuadTree{T}" /> or it's children.
+    /// </summary>
     public int Count { get; private set; }
+
+    /// <summary>
+    ///     Whether the <see cref="QuadTree{T}" /> has been divided into quadrants.
+    /// </summary>
     protected bool Divided { get; set; }
+
+    /// <summary>
+    ///     The children of the <see cref="QuadTree{T}" />.
+    /// </summary>
     protected QuadTree<T>?[] Children { get; }
+
+    /// <summary>
+    ///     The items in the <see cref="QuadTree{T}" />.
+    /// </summary>
     protected List<T> Items { get; }
 
-    static QuadTree() => Pool = new QuadTreePool(short.MaxValue / 4);
+    static QuadTree() => Pool = new QuadTreePool<T>(short.MaxValue / 4);
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="QuadTree{T}" /> class.
+    /// </summary>
+    /// <param name="bounds">
+    /// </param>
     public QuadTree(IRectangle bounds)
     {
         Items = new List<T>(Capacity);
@@ -30,6 +69,9 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         Divided = false;
     }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="QuadTree{T}" /> class.
+    /// </summary>
     public QuadTree()
         : this(new Rectangle()) { }
 
@@ -69,6 +111,9 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         return true;
     }
 
+    /// <summary>
+    ///     Clears the <see cref="QuadTree{T}" /> of all items. Returns children to the pool recursively.
+    /// </summary>
     public virtual void Clear()
     {
         Items.Clear();
@@ -87,12 +132,33 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         }
     }
 
+    /// <summary>
+    ///     Adds an item to the <see cref="QuadTree{T}" />.
+    /// </summary>
+    /// <param name="item">
+    ///     The item to add to the quadtree
+    /// </param>
     protected virtual void InnerAdd(T item)
     {
         Items.Add(item);
         Count++;
     }
 
+    /// <summary>
+    ///     Removes an item from the <see cref="QuadTree{T}" />.
+    /// </summary>
+    /// <param name="item">
+    ///     The item to remove from the quadtree
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the item was found and removed, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     protected virtual bool InnerRemove(T item)
     {
         if (Items.Remove(item))
@@ -105,6 +171,20 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         return false;
     }
 
+    /// <summary>
+    ///     Inserts an item into the <see cref="QuadTree{T}" /> if it is within the bounds of the quadtree.
+    /// </summary>
+    /// <param name="item">
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the item was inserted into the quadtree, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public virtual bool Insert(T item)
     {
         if (!Bounds.Contains(item))
@@ -155,64 +235,49 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         Divided = false;
     }
 
-    public virtual IEnumerable<T> Query(IRectangle bounds)
-    {
-        // ReSharper disable once ArrangeMethodOrOperatorBody
-        return new QuadTreeRectangleQueryIterator(this, bounds);
+    /// <summary>
+    ///     Queries the <see cref="QuadTree{T}" /> for items within the specified bounds.
+    /// </summary>
+    /// <param name="bounds">
+    ///     The query bounds
+    /// </param>
+    /// <returns>
+    ///     All items contained within the specified bounds
+    /// </returns>
+    /// <remarks>
+    ///     We use a custom iterator here to avoid a lot of overhead. By default, iterator blocks are converted into classes,
+    ///     so they are allocated on the heap. The typical recursive iteration of a QuadTree would result in the allocation of
+    ///     a new iterator every time we go depth+1 from current, which would result in hundreds of allocations every time we
+    ///     query the tree. Instead, only one instance of the custom iterator is needed.
+    /// </remarks>
+    public virtual IEnumerable<T> Query(IRectangle bounds) => new QuadTreeRectangleQueryIterator(this, bounds);
 
-        /*if ((Count > 0) && Bounds.Intersects(bounds))
-        {
-            if (Divided)
-                for (var i = 0; i < Children.Length; i++)
-                {
-                    var child = Children[i]!;
+    /// <summary>
+    ///     Queries the <see cref="QuadTree{T}" /> for items within the specified bounds.
+    /// </summary>
+    /// <param name="bounds">
+    ///     The query bounds
+    /// </param>
+    /// <returns>
+    ///     All items contained within the specified bounds
+    /// </returns>
+    /// <remarks>
+    ///     We use a custom iterator here to avoid a lot of overhead. By default, iterator blocks are converted into classes,
+    ///     so they are allocated on the heap. The typical recursive iteration of a QuadTree would result in the allocation of
+    ///     a new iterator every time we go depth+1 from current, which would result in hundreds of allocations every time we
+    ///     query the tree. Instead, only one instance of the custom iterator is needed.
+    /// </remarks>
+    public virtual IEnumerable<T> Query(ICircle bounds) => new QuadTreeCircleQueryIterator(this, bounds);
 
-                    if (child.Count == 0)
-                        continue;
-
-                    foreach (var item in child.Query(bounds))
-                        yield return item;
-                }
-            else
-                for (var i = 0; i < Items.Count; i++)
-                {
-                    var item = Items[i];
-
-                    if (bounds.Contains(item))
-                        yield return item;
-                }
-        }*/
-    }
-
-    public virtual IEnumerable<T> Query(ICircle circle)
-    {
-        // ReSharper disable once ArrangeMethodOrOperatorBody
-        return new QuadTreeCircleQueryIterator(this, circle);
-
-        /*if ((Count > 0) && Bounds.Intersects(circle))
-        {
-            if (Divided)
-                for (var i = 0; i < Children.Length; i++)
-                {
-                    var child = Children[i]!;
-
-                    if (child.Count == 0)
-                        continue;
-
-                    foreach (var item in child.Query(circle))
-                        yield return item;
-                }
-            else
-                for (var i = 0; i < Items.Count; i++)
-                {
-                    var item = Items[i];
-
-                    if (circle.Contains(item))
-                        yield return item;
-                }
-        }*/
-    }
-
+    /// <summary>
+    ///     Queries the <see cref="QuadTree{T}" /> for items at the specified point.
+    /// </summary>
+    /// <param name="point">
+    ///     The point to query items at
+    /// </param>
+    /// <returns>
+    ///     All items located at the specified point
+    /// </returns>
     public virtual IEnumerable<T> Query(IPoint point)
     {
         if ((Count > 0) && Bounds.Contains(point))
@@ -239,6 +304,21 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         }
     }
 
+    /// <summary>
+    ///     Removes an item from the <see cref="QuadTree{T}" />.
+    /// </summary>
+    /// <param name="entity">
+    ///     The item to remove
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the item was found and removed, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public virtual bool Remove(T entity)
     {
         if ((Count == 0) || !Bounds.Contains(entity))
@@ -267,9 +347,20 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         return InnerRemove(entity);
     }
 
+    /// <summary>
+    ///     Sets the bounds of the <see cref="QuadTree{T}" />.
+    /// </summary>
+    /// <param name="bounds">
+    /// </param>
     public virtual void SetBounds(IRectangle bounds) => Bounds = bounds;
 
-    public static void SetPoolCapacity(int capacity) => Pool = new QuadTreePool(capacity);
+    /// <summary>
+    ///     Sets the capacity of the <see cref="QuadTree{T}" /> pool.
+    /// </summary>
+    /// <param name="capacity">
+    ///     A number specific to your application needs. The pool is shared amonst all QuadTree instances.
+    /// </param>
+    public static void SetPoolCapacity(int capacity) => Pool = new QuadTreePool<T>(capacity);
 
     private void Subdivide()
     {
@@ -323,34 +414,6 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
 
         Items.Clear();
     }
-
-    #region QuadTreePool
-    private sealed class QuadTreePool : DefaultObjectPool<QuadTree<T>>
-    {
-        public QuadTreePool(int poolCapacity)
-            : base(new QuadTreePoolPolicy(), poolCapacity) { }
-
-        public QuadTree<T> Get(Rectangle bounds)
-        {
-            var ret = Get();
-            ret.SetBounds(bounds);
-
-            return ret;
-        }
-    }
-
-    private sealed class QuadTreePoolPolicy : PooledObjectPolicy<QuadTree<T>>
-    {
-        public override QuadTree<T> Create() => new(new Rectangle());
-
-        public override bool Return(QuadTree<T> obj)
-        {
-            obj.Clear();
-
-            return true;
-        }
-    }
-    #endregion
 
     #region Enumerators
     private struct QuadTreeEnumerator : IEnumerator<T>
@@ -460,6 +523,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         /// <inheritdoc />
         public bool MoveNext()
         {
+            //this is basically a depth-first search
             while (Stack.Count > 0)
             {
                 var current = Stack.Peek();
@@ -479,6 +543,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
                     {
                         var child = current.Children[i]!;
 
+                        //skip empty nodes, and nodes that don't intersect the circle
                         if ((child.Count == 0) || !child.Bounds.Intersects(Bounds))
                             continue;
 
@@ -488,6 +553,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
                     continue;
                 }
 
+                //while searching the children of a node, only pop the node if we have searched all of it's children
                 if (Index >= current.Items.Count)
                 {
                     Index = 0;
@@ -498,6 +564,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
 
                 var item = current.Items[Index++];
 
+                //if the item is within the bounds, return it (set it as the current item for the iterator)
                 if (Bounds.Contains(item))
                 {
                     Current = item;
@@ -558,6 +625,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         /// <inheritdoc />
         public bool MoveNext()
         {
+            //this is basically a depth-first search
             while (Stack.Count > 0)
             {
                 var current = Stack.Peek();
@@ -577,6 +645,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
                     {
                         var child = current.Children[i]!;
 
+                        //skip empty nodes, and nodes that don't intersect the circle
                         if ((child.Count == 0) || !child.Bounds.Intersects(Bounds, DistanceType.Manhattan))
                             continue;
 
@@ -586,6 +655,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
                     continue;
                 }
 
+                //while searching the children of a node, only pop the node if we have searched all of it's children
                 if (Index >= current.Items.Count)
                 {
                     Index = 0;
@@ -596,6 +666,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
 
                 var item = current.Items[Index++];
 
+                //if the item is within the bounds, return it (set it as the current item for the iterator)
                 if (Bounds.Contains(item, DistanceType.Manhattan))
                 {
                     Current = item;

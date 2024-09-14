@@ -27,7 +27,7 @@ public class GeometryBenchmarks
 
         // ReSharper disable once UnusedVariable
         var points = rect.GetPoints()
-                         .Where(p => p.DistanceFrom(CenterPoint) <= Range)
+                         .Where(p => p.ManhattanDistanceFrom(CenterPoint) <= Range)
                          .ToList();
     }
 

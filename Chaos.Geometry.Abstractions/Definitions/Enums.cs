@@ -35,3 +35,19 @@ public enum Direction : byte
     /// </summary>
     Invalid = 255
 }
+
+/// <summary>
+///     Defines the possible distance types for distance checking
+/// </summary>
+public enum DistanceType : byte
+{
+    /// <summary>
+    ///     Manhattan distance
+    /// </summary>
+    Manhattan = 0,
+
+    /// <summary>
+    ///     Euclidean distance
+    /// </summary>
+    Euclidean = 1
+}

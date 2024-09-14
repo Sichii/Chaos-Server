@@ -17,7 +17,7 @@ public class AttackingScript : MonsterScriptBase
     {
         //if target is invalid or we're not close enough
         //reset attack delay and return
-        if (Target is not { IsAlive: true } || (Subject.DistanceFrom(Target) != 1))
+        if (Target is not { IsAlive: true } || (Subject.ManhattanDistanceFrom(Target) != 1))
             return;
 
         var direction = Target.DirectionalRelationTo(Subject);

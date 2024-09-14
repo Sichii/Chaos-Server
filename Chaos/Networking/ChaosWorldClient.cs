@@ -31,6 +31,7 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
 {
     private readonly ITypeMapper Mapper;
     private readonly IWorldServer<IChaosWorldClient> Server;
+    private Animation? CurrentAnimation;
     public Aisling Aisling { get; set; } = null!;
 
     public ChaosWorldClient(
@@ -84,9 +85,47 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
 
     public void SendAnimation(Animation animation)
     {
-        var args = Mapper.Map<AnimationArgs>(animation);
+        //check if the current animation is null
+        var currentAnimation = Interlocked.CompareExchange(ref CurrentAnimation, animation, null);
 
-        Send(args);
+        if (currentAnimation is null)
+        {
+            InnerSendAnimation();
+
+            return;
+        }
+
+        //this is for thread safety
+        //if the current animation is not null
+        while (true)
+        {
+            //if the current animation is higher priority, don't replace it
+            if (!animation.ShouldAnimateOver(currentAnimation))
+                break;
+
+            //try to replace the current animation with the new animation
+            var newCurrentAnimation = Interlocked.CompareExchange(ref CurrentAnimation, animation, currentAnimation);
+
+            //the animation replaced was the animation we expected
+            if (newCurrentAnimation == currentAnimation)
+            {
+                InnerSendAnimation();
+
+                break;
+            }
+
+            currentAnimation = newCurrentAnimation;
+        }
+
+        return;
+
+        void InnerSendAnimation()
+        {
+            animation.Started = DateTime.UtcNow;
+            var args = Mapper.Map<AnimationArgs>(animation);
+
+            Send(args);
+        }
     }
 
     public void SendAttributes(StatUpdateType statUpdateType)
@@ -269,13 +308,16 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         }
     }
 
-    public void SendDisplayGroupInvite(GroupRequestType groupRequestType, string fromName)
+    public void SendDisplayGroupInvite(ServerGroupSwitch serverGroupSwitch, string fromName, DisplayGroupBoxInfo? groupBoxInfo = null)
     {
         var args = new DisplayGroupInviteArgs
         {
-            GroupRequestType = groupRequestType,
+            ServerGroupSwitch = serverGroupSwitch,
             SourceName = fromName
         };
+
+        if (serverGroupSwitch == ServerGroupSwitch.ShowGroupBox)
+            args.GroupBoxInfo = groupBoxInfo;
 
         Send(args);
     }

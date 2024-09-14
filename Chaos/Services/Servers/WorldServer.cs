@@ -12,11 +12,13 @@ using Chaos.Cryptography;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
+using Chaos.Models.Data;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.Networking.Entities.Client;
+using Chaos.Networking.Entities.Server;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
@@ -748,9 +750,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
             var aisling = localClient.Aisling;
 
-            switch (localArgs.GroupRequestType)
+            switch (localArgs.ClientGroupSwitch)
             {
-                case GroupRequestType.FormalInvite:
+                case ClientGroupSwitch.FormalInvite:
                     Logger.WithTopics(
                               Topics.Entities.Aisling,
                               Topics.Entities.Group,
@@ -762,24 +764,122 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                               localClient);
 
                     return default;
-                case GroupRequestType.TryInvite:
+                case ClientGroupSwitch.TryInvite:
                 {
                     GroupService.Invite(aisling, target);
 
                     return default;
                 }
-                case GroupRequestType.AcceptInvite:
+                case ClientGroupSwitch.AcceptInvite:
                 {
-                    GroupService.AcceptInvite(target, aisling);
+                    var type = GroupService.DetermineRequestType(target, aisling);
+
+                    switch (type)
+                    {
+                        case IGroupService.RequestType.Invite:
+                            GroupService.AcceptInvite(target, aisling);
+
+                            break;
+                        case IGroupService.RequestType.RequestToJoin:
+                            GroupService.AcceptRequestToJoin(target, aisling);
+
+                            break;
+                        default:
+                            Logger.WithTopics(
+                                      Topics.Entities.Aisling,
+                                      Topics.Entities.Group,
+                                      Topics.Actions.Invite,
+                                      Topics.Qualifiers.Cheating)
+                                  .LogWarning(
+                                      "{@Aisling} attempted to accept an invite from {@Target}, but there was no invite or request",
+                                      aisling,
+                                      target);
+
+                            break;
+                    }
 
                     return default;
                 }
-                case GroupRequestType.Groupbox:
-                    //TODO: implement this maybe
+                case ClientGroupSwitch.CreateGroupbox:
+                    client.Aisling.GroupBox = new GroupBox
+                    {
+                        Name = localArgs.GroupBoxInfo!.Name,
+                        Note = localArgs.GroupBoxInfo.Note,
+                        MinLevel = localArgs.GroupBoxInfo.MinLevel,
+                        MaxLevel = localArgs.GroupBoxInfo.MaxLevel,
+                        MaxWarriors = localArgs.GroupBoxInfo.MaxWarriors,
+                        MaxWizards = localArgs.GroupBoxInfo.MaxWizards,
+                        MaxMonks = localArgs.GroupBoxInfo.MaxMonks,
+                        MaxPriests = localArgs.GroupBoxInfo.MaxPriests,
+                        MaxRogues = localArgs.GroupBoxInfo.MaxRogues
+                    };
+
+                    client.Aisling.Display();
 
                     return default;
-                case GroupRequestType.RemoveGroupBox:
-                    //TODO: implement this maybe
+                case ClientGroupSwitch.ViewGroupBox:
+                    if (target.GroupBox is null)
+                    {
+                        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Group, Topics.Qualifiers.Cheating)
+                              .LogWarning(
+                                  "{@Aisling} attempted to view {@Target}'s group box, but they do not have one",
+                                  localClient.Aisling,
+                                  target);
+
+                        return default;
+                    }
+
+                    var classCounts = new byte[6];
+
+                    if (target.Group is not null)
+                        foreach (var member in target.Group)
+                        {
+                            if (member.UserStatSheet.BaseClass == BaseClass.Diacht)
+                                continue;
+
+                            classCounts[(int)member.UserStatSheet.BaseClass]++;
+                        }
+                    else if (target.UserStatSheet.BaseClass != BaseClass.Diacht)
+                        classCounts[(int)target.UserStatSheet.BaseClass]++;
+
+                    var groupBoxInfo = new DisplayGroupBoxInfo
+                    {
+                        Name = target.GroupBox.Name,
+                        Note = target.GroupBox.Note,
+                        MinLevel = target.GroupBox.MinLevel,
+                        MaxLevel = target.GroupBox.MaxLevel,
+                        MaxWarriors = target.GroupBox.MaxWarriors,
+                        CurrentWarriors = classCounts[(int)BaseClass.Warrior],
+                        MaxWizards = target.GroupBox.MaxWizards,
+                        CurrentWizards = classCounts[(int)BaseClass.Wizard],
+                        MaxRogues = target.GroupBox.MaxRogues,
+                        CurrentRogues = classCounts[(int)BaseClass.Rogue],
+                        MaxPriests = target.GroupBox.MaxPriests,
+                        CurrentPriests = classCounts[(int)BaseClass.Priest],
+                        MaxMonks = target.GroupBox.MaxMonks,
+                        CurrentMonks = classCounts[(int)BaseClass.Monk]
+                    };
+
+                    client.SendDisplayGroupInvite(ServerGroupSwitch.ShowGroupBox, args.TargetName, groupBoxInfo);
+
+                    return default;
+                case ClientGroupSwitch.RemoveGroupBox:
+                    client.Aisling.GroupBox = null;
+
+                    return default;
+                case ClientGroupSwitch.RequestToJoin:
+                    if (target.GroupBox is null)
+                    {
+                        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Group, Topics.Qualifiers.Cheating)
+                              .LogWarning(
+                                  "{@Aisling} attempted to interact with {@Target}'s group box, but they do not have one",
+                                  localClient.Aisling,
+                                  target);
+
+                        return default;
+                    }
+
+                    GroupService.RequestToJoin(localClient.Aisling, target);
 
                     return default;
                 default:

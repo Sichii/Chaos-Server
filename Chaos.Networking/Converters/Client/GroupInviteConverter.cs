@@ -18,33 +18,42 @@ public sealed class GroupInviteConverter : PacketConverterBase<GroupInviteArgs>
     [SuppressMessage("ReSharper", "UnusedVariable")]
     public override GroupInviteArgs Deserialize(ref SpanReader reader)
     {
-        var groupRequestType = reader.ReadByte();
+        var groupRequestType = (ClientGroupSwitch)reader.ReadByte();
+        var targetName = reader.ReadString8();
+        var groupBoxInfo = default(CreateGroupBoxInfo);
+
+        if (groupRequestType == ClientGroupSwitch.CreateGroupbox)
+        {
+            var name = reader.ReadString8();
+            var note = reader.ReadString8();
+            var minLevel = reader.ReadByte();
+            var maxLevel = reader.ReadByte();
+            var maxWarriors = reader.ReadByte();
+            var maxWizards = reader.ReadByte();
+            var maxRogues = reader.ReadByte();
+            var maxPriests = reader.ReadByte();
+            var maxMonks = reader.ReadByte();
+
+            groupBoxInfo = new CreateGroupBoxInfo
+            {
+                Name = name,
+                Note = note,
+                MinLevel = minLevel,
+                MaxLevel = maxLevel,
+                MaxWarriors = maxWarriors,
+                MaxWizards = maxWizards,
+                MaxRogues = maxRogues,
+                MaxPriests = maxPriests,
+                MaxMonks = maxMonks
+            };
+        }
 
         var args = new GroupInviteArgs
         {
-            GroupRequestType = (GroupRequestType)groupRequestType
+            ClientGroupSwitch = groupRequestType,
+            TargetName = targetName,
+            GroupBoxInfo = groupBoxInfo
         };
-
-        //TODO: finish group box stuff
-        if (groupRequestType == (byte)GroupRequestType.Groupbox)
-        {
-            var leader = reader.ReadString8();
-            var test = reader.ReadString8();
-            reader.ReadByte(); //unknown
-            var minLevel = reader.ReadByte();
-            var maxLevel = reader.ReadByte();
-            var maxOfClass = new byte[6];
-
-            maxOfClass[(byte)BaseClass.Warrior] = reader.ReadByte();
-            maxOfClass[(byte)BaseClass.Wizard] = reader.ReadByte();
-            maxOfClass[(byte)BaseClass.Rogue] = reader.ReadByte();
-            maxOfClass[(byte)BaseClass.Priest] = reader.ReadByte();
-            maxOfClass[(byte)BaseClass.Monk] = reader.ReadByte();
-        }
-
-        var targetName = reader.ReadString8();
-
-        args.TargetName = targetName;
 
         return args;
     }
@@ -52,24 +61,20 @@ public sealed class GroupInviteConverter : PacketConverterBase<GroupInviteArgs>
     /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, GroupInviteArgs args)
     {
-        writer.WriteByte((byte)args.GroupRequestType);
-
-        if (args.GroupRequestType == GroupRequestType.Groupbox)
-        {
-            /* TODO: finish group box stuff
-            writer.WriteString8(args.Leader);
-            writer.WriteString8(args.Test);
-            writer.WriteByte(0); //unknown
-            writer.WriteByte(args.MinLevel);
-            writer.WriteByte(args.MaxLevel);
-            writer.WriteByte(args.MaxOfClass[(byte)BaseClass.Warrior]);
-            writer.WriteByte(args.MaxOfClass[(byte)BaseClass.Wizard]);
-            writer.WriteByte(args.MaxOfClass[(byte)BaseClass.Rogue]);
-            writer.WriteByte(args.MaxOfClass[(byte)BaseClass.Priest]);
-            writer.WriteByte(args.MaxOfClass[(byte)BaseClass.Monk]);
-            */
-        }
-
+        writer.WriteByte((byte)args.ClientGroupSwitch);
         writer.WriteString8(args.TargetName);
+
+        if (args.ClientGroupSwitch == ClientGroupSwitch.CreateGroupbox)
+        {
+            writer.WriteString8(args.GroupBoxInfo!.Name);
+            writer.WriteString8(args.GroupBoxInfo.Note);
+            writer.WriteByte(args.GroupBoxInfo.MinLevel);
+            writer.WriteByte(args.GroupBoxInfo.MaxLevel);
+            writer.WriteByte(args.GroupBoxInfo.MaxWarriors);
+            writer.WriteByte(args.GroupBoxInfo.MaxWizards);
+            writer.WriteByte(args.GroupBoxInfo.MaxRogues);
+            writer.WriteByte(args.GroupBoxInfo.MaxPriests);
+            writer.WriteByte(args.GroupBoxInfo.MaxMonks);
+        }
     }
 }

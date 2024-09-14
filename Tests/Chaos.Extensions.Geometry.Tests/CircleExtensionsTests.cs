@@ -182,7 +182,7 @@ public sealed class CircleExtensionsTests
         var otherPoint = new Point(10, 10);
 
         // Act
-        var edgeDistance = circle.EdgeDistanceFrom(otherPoint);
+        var edgeDistance = circle.EuclideanEdgeDistanceFrom(otherPoint);
 
         // Assert
         edgeDistance.Should()
@@ -197,7 +197,7 @@ public sealed class CircleExtensionsTests
         var otherPoint = new Point(0, 0);
 
         // Act
-        var edgeDistance = circle.EdgeDistanceFrom(otherPoint);
+        var edgeDistance = circle.EuclideanEdgeDistanceFrom(otherPoint);
 
         // Assert
         edgeDistance.Should()
@@ -212,7 +212,7 @@ public sealed class CircleExtensionsTests
         var otherPoint = new Point(2, 2);
 
         // Act
-        var edgeDistance = circle.EdgeDistanceFrom(otherPoint);
+        var edgeDistance = circle.EuclideanEdgeDistanceFrom(otherPoint);
 
         // Assert
         edgeDistance.Should()
@@ -227,7 +227,7 @@ public sealed class CircleExtensionsTests
         var circle2 = new Circle(new Point(15, 15), 5);
 
         // Act
-        var edgeToEdgeDistance = circle1.EdgeToEdgeDistanceFrom(circle2);
+        var edgeToEdgeDistance = circle1.EuclideanEdgeToEdgeDistanceFrom(circle2);
 
         // Assert
         edgeToEdgeDistance.Should()
@@ -242,7 +242,7 @@ public sealed class CircleExtensionsTests
         var circle2 = new Circle(new Point(4, 4), 5);
 
         // Act
-        var edgeToEdgeDistance = circle1.EdgeToEdgeDistanceFrom(circle2);
+        var edgeToEdgeDistance = circle1.EuclideanEdgeToEdgeDistanceFrom(circle2);
 
         // Assert
         edgeToEdgeDistance.Should()
@@ -257,7 +257,7 @@ public sealed class CircleExtensionsTests
         var circle2 = new Circle(new Point(10, 0), 5);
 
         // Act
-        var edgeToEdgeDistance = circle1.EdgeToEdgeDistanceFrom(circle2);
+        var edgeToEdgeDistance = circle1.EuclideanEdgeToEdgeDistanceFrom(circle2);
 
         // Assert
         edgeToEdgeDistance.Should()

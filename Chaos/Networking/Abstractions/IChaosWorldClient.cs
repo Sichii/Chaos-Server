@@ -9,6 +9,7 @@ using Chaos.Models.Panel;
 using Chaos.Models.Panel.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
 using Chaos.Services.Storage.Abstractions;
 
@@ -39,7 +40,7 @@ public interface IChaosWorldClient : IConnectedClient
     void SendDisplayAisling(Aisling aisling);
     void SendDisplayBoard(BoardBase boardBase, short? startPostId = null);
     void SendDisplayDialog(Dialog dialog);
-    void SendDisplayGroupInvite(GroupRequestType groupRequestType, string fromName);
+    void SendDisplayGroupInvite(ServerGroupSwitch serverGroupSwitch, string fromName, DisplayGroupBoxInfo? groupBoxInfo = null);
     void SendDisplayPublicMessage(uint id, PublicMessageType publicMessageType, string message);
     void SendDisplayUnequip(EquipmentSlot equipmentSlot);
     void SendDoors(IEnumerable<Door> doors);

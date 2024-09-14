@@ -32,7 +32,7 @@ public class DestroyCommand : ICommand<Aisling>
             var entity = source.MapInstance
                                .GetEntities<NamedEntity>()
                                .Where(entity => entity.Name.EqualsI(entityName))
-                               .MinBy(entity => entity.DistanceFrom(source));
+                               .MinBy(entity => entity.ManhattanDistanceFrom(source));
 
             //if the entity is not found or is an aisling
             if (entity is null or Aisling)

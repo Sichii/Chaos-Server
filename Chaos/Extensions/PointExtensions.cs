@@ -28,6 +28,6 @@ public static class PointExtensions
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return point.DistanceFrom(other) <= distance;
+        return point.ManhattanDistanceFrom(other) <= distance;
     }
 }

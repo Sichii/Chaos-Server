@@ -45,6 +45,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public int FaceSprite { get; set; }
     public Gender Gender { get; set; }
     public Group? Group { get; set; }
+    public GroupBox? GroupBox { get; set; }
     public Guild? Guild { get; set; }
     public string? GuildRank { get; set; }
     public DisplayColor HairColor { get; set; }
@@ -273,16 +274,28 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             inventoryObserver.OnAdded(item);
 
         foreach (var spell in SpellBook)
+        {
             spellBookObserver.OnAdded(spell);
 
+            if (spell.Elapsed.HasValue)
+                Client.SendCooldown(spell);
+        }
+
         foreach (var skill in SkillBook)
+        {
             skillBookObserver.OnAdded(skill);
+
+            if (skill.Elapsed.HasValue)
+                Client.SendCooldown(skill);
+        }
 
         foreach (var effect in Effects)
         {
             effect.Subject = this;
             effect.OnReApplied();
         }
+
+        Effects.ResetDisplay();
     }
 
     public bool CanCarry(params Item[] items) => CanCarry(items.Select(item => (item, item.Count)));
@@ -357,7 +370,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         if (!fullCheck)
             return ApproachTime.ContainsKey(entity);
 
-        if ((entity.DistanceFrom(this) > 1) && !MapInstance.IsInSharedLanternVision(entity))
+        if ((entity.ManhattanDistanceFrom(this) > 1) && !MapInstance.IsInSharedLanternVision(entity))
             return false;
 
         if (Vision == VisionType.TrueBlind)

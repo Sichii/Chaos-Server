@@ -304,7 +304,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         pathOptions.IgnoreWalls |= Type == CreatureType.WalkThrough;
 
         //if we're within distance, no need to pathfind
-        if (this.DistanceFrom(target) <= distance)
+        if (this.ManhattanDistanceFrom(target) <= distance)
             return;
 
         var path = FindPath(target, pathOptions);

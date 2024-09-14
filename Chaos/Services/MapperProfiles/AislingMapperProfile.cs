@@ -226,7 +226,7 @@ public sealed class AislingMapperProfile(
                 Direction = obj.Direction,
                 FaceSprite = (byte)obj.FaceSprite,
                 Gender = obj.Gender,
-                GroupBoxText = null,
+                GroupBoxText = obj.GroupBox?.Name,
                 HeadColor = headColor,
                 HeadSprite = overHelm?.ItemSprite.DisplaySprite ?? helmet?.ItemSprite.DisplaySprite ?? (ushort)obj.HairStyle,
                 Id = obj.Id,

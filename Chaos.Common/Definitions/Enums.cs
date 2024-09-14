@@ -1112,13 +1112,22 @@ public enum CreatureType : byte
     Aisling = 4
 }
 
-public enum GroupRequestType : byte
+public enum ClientGroupSwitch : byte
 {
     FormalInvite = 1,
     TryInvite = 2,
     AcceptInvite = 3,
-    Groupbox = 4,
-    RemoveGroupBox = 6
+    CreateGroupbox = 4,
+    ViewGroupBox = 5,
+    RemoveGroupBox = 6,
+    RequestToJoin = 7
+}
+
+public enum ServerGroupSwitch : byte
+{
+    Invite = 1,
+    ShowGroupBox = 4,
+    RequestToJoin = 5
 }
 
 /// <summary>

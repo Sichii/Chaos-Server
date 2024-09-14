@@ -174,7 +174,7 @@ public sealed class PointExtensionsTests
         var otherPoint = new Point(otherX, otherY);
 
         // Act
-        var result = point.DistanceFrom(otherPoint);
+        var result = point.ManhattanDistanceFrom(otherPoint);
 
         // Assert
         result.Should()

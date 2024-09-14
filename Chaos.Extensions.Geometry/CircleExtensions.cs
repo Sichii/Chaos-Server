@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.Abstractions.Definitions;
 
 namespace Chaos.Extensions.Geometry;
 
@@ -80,6 +81,9 @@ public static class CircleExtensions
     /// <param name="other">
     ///     Another circle.
     /// </param>
+    /// <param name="distanceType">
+    ///     The distance type to use for calculations.
+    /// </param>
     /// <returns>
     ///     <c>
     ///         true
@@ -97,13 +101,19 @@ public static class CircleExtensions
     ///     other
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Contains<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
+    public static bool Contains<TCircle>(this TCircle circle, TCircle other, DistanceType distanceType = DistanceType.Euclidean)
+        where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return circle.Radius >= (circle.Center.DistanceFrom(other.Center) + other.Radius);
+        return distanceType switch
+        {
+            DistanceType.Manhattan => circle.Radius >= (circle.Center.ManhattanDistanceFrom(other.Center) + other.Radius),
+            DistanceType.Euclidean => circle.Radius >= (circle.Center.EuclideanDistanceFrom(other.Center) + other.Radius),
+            _                      => throw new ArgumentOutOfRangeException(nameof(distanceType), distanceType, null)
+        };
     }
 
     /// <summary>
@@ -114,6 +124,9 @@ public static class CircleExtensions
     /// </param>
     /// <param name="point">
     ///     A point.
+    /// </param>
+    /// <param name="distanceType">
+    ///     The distance type to use for calculations.
     /// </param>
     /// <returns>
     ///     <c>
@@ -132,14 +145,20 @@ public static class CircleExtensions
     ///     point
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Contains<TCircle, TPoint>(this TCircle circle, TPoint point) where TCircle: ICircle
-                                                                                    where TPoint: IPoint
+    public static bool Contains<TCircle, TPoint>(this TCircle circle, TPoint point, DistanceType distanceType = DistanceType.Euclidean)
+        where TCircle: ICircle
+        where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(circle);
 
         ArgumentNullException.ThrowIfNull(point);
 
-        return point.DistanceFrom(circle.Center) <= circle.Radius;
+        return distanceType switch
+        {
+            DistanceType.Manhattan => point.ManhattanDistanceFrom(circle.Center) <= circle.Radius,
+            DistanceType.Euclidean => point.EuclideanDistanceFrom(circle.Center) <= circle.Radius,
+            _                      => throw new ArgumentOutOfRangeException(nameof(distanceType), distanceType, null)
+        };
     }
 
     /// <summary>
@@ -162,7 +181,7 @@ public static class CircleExtensions
     ///     other
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float EdgeDistanceFrom<TCircle, TPoint>(this TCircle circle, TPoint other) where TCircle: ICircle
+    public static double EuclideanEdgeDistanceFrom<TCircle, TPoint>(this TCircle circle, TPoint other) where TCircle: ICircle
         where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(circle);
@@ -192,13 +211,13 @@ public static class CircleExtensions
     ///     other
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float EdgeToEdgeDistanceFrom<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
+    public static double EuclideanEdgeToEdgeDistanceFrom<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return Convert.ToInt32(Math.Max(0.0f, circle.Center.EuclideanDistanceFrom(other.Center) - circle.Radius - other.Radius));
+        return Math.Max(0.0f, circle.Center.EuclideanDistanceFrom(other.Center) - circle.Radius - other.Radius);
     }
 
     /// <summary>
@@ -351,6 +370,9 @@ public static class CircleExtensions
     /// <param name="other">
     ///     Another circle.
     /// </param>
+    /// <param name="distanceType">
+    ///     The distance type to use for calculations.
+    /// </param>
     /// <returns>
     ///     <c>
     ///         true
@@ -368,13 +390,19 @@ public static class CircleExtensions
     ///     other
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Intersects<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
+    public static bool Intersects<TCircle>(this TCircle circle, TCircle other, DistanceType distanceType = DistanceType.Euclidean)
+        where TCircle: ICircle
     {
         ArgumentNullException.ThrowIfNull(circle);
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return circle.Center.DistanceFrom(other.Center) <= (circle.Radius + other.Radius);
+        return distanceType switch
+        {
+            DistanceType.Manhattan => circle.Center.ManhattanDistanceFrom(other.Center) <= (circle.Radius + other.Radius),
+            DistanceType.Euclidean => circle.Center.EuclideanDistanceFrom(other.Center) <= (circle.Radius + other.Radius),
+            _                      => throw new ArgumentOutOfRangeException(nameof(distanceType), distanceType, null)
+        };
     }
 
     /// <summary>
@@ -386,6 +414,9 @@ public static class CircleExtensions
     /// <param name="circle">
     ///     A circle
     /// </param>
+    /// <param name="distanceType">
+    ///     The distance type to use for calculations.
+    /// </param>
     /// <returns>
     ///     <c>
     ///         true
@@ -396,7 +427,7 @@ public static class CircleExtensions
     ///     </c>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Intersects(this ICircle circle, IRectangle rect)
+    public static bool Intersects(this ICircle circle, IRectangle rect, DistanceType distanceType = DistanceType.Euclidean)
     {
         ArgumentNullException.ThrowIfNull(rect);
         ArgumentNullException.ThrowIfNull(circle);
@@ -404,6 +435,70 @@ public static class CircleExtensions
         var closestX = Math.Clamp(circle.Center.X, rect.Left, rect.Right);
         var closestY = Math.Clamp(circle.Center.Y, rect.Top, rect.Bottom);
 
-        return new Point(closestX, closestY).DistanceFrom(circle.Center) <= circle.Radius;
+        return distanceType switch
+        {
+            DistanceType.Manhattan => new Point(closestX, closestY).ManhattanDistanceFrom(circle.Center) <= circle.Radius,
+            DistanceType.Euclidean => new Point(closestX, closestY).EuclideanDistanceFrom(circle.Center) <= circle.Radius,
+            _                      => throw new ArgumentOutOfRangeException(nameof(distanceType), distanceType, null)
+        };
+    }
+
+    /// <summary>
+    ///     Calculates the edge-to-center euclidean distance to some center-point.
+    /// </summary>
+    /// <param name="circle">
+    ///     This circle.
+    /// </param>
+    /// <param name="other">
+    ///     A center-point of some entity.
+    /// </param>
+    /// <returns>
+    ///     The manhattan distance between the center-point of this circle and the some other point, minus this circle's
+    ///     radius. Value can not be negative.
+    /// </returns>
+    /// <exception cref="System.ArgumentNullException">
+    ///     circle
+    /// </exception>
+    /// <exception cref="System.ArgumentNullException">
+    ///     other
+    /// </exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int ManhattanEdgeDistanceFrom<TCircle, TPoint>(this TCircle circle, TPoint other) where TCircle: ICircle
+        where TPoint: IPoint
+    {
+        ArgumentNullException.ThrowIfNull(circle);
+
+        ArgumentNullException.ThrowIfNull(other);
+
+        return Math.Max(0, circle.Center.ManhattanDistanceFrom(other) - circle.Radius);
+    }
+
+    /// <summary>
+    ///     Calculates the edge-to-edge euclidean distance to another circle.
+    /// </summary>
+    /// <param name="circle">
+    ///     This circle.
+    /// </param>
+    /// <param name="other">
+    ///     Another circle.
+    /// </param>
+    /// <returns>
+    ///     The manhattan distance between the centerpoints of two circles, minus the sum of their radi. Value can not be
+    ///     negative.
+    /// </returns>
+    /// <exception cref="System.ArgumentNullException">
+    ///     circle
+    /// </exception>
+    /// <exception cref="System.ArgumentNullException">
+    ///     other
+    /// </exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float ManhattanEdgeToEdgeDistanceFrom<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
+    {
+        ArgumentNullException.ThrowIfNull(circle);
+
+        ArgumentNullException.ThrowIfNull(other);
+
+        return Math.Max(0, circle.Center.ManhattanDistanceFrom(other.Center) - circle.Radius - other.Radius);
     }
 }

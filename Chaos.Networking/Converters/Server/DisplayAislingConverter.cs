@@ -100,13 +100,9 @@ public sealed class DisplayAislingConverter : PacketConverterBase<DisplayAisling
             args.FaceSprite = faceSprite;
         }
 
-        var nameTagStyle = reader.ReadByte();
-        var name = reader.ReadString8();
-        var groupBoxText = reader.ReadString8();
-
-        args.NameTagStyle = (NameTagStyle)nameTagStyle;
-        args.Name = name;
-        args.GroupBoxText = groupBoxText;
+        args.NameTagStyle = (NameTagStyle)reader.ReadByte();
+        args.Name = reader.ReadString8();
+        args.GroupBoxText = reader.ReadString8();
 
         if (args is { BodySprite: BodySprite.None, IsTransparent: true })
         {

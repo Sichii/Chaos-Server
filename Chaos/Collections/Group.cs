@@ -31,11 +31,11 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
         ChannelName = $"!group-{Guid.NewGuid()}";
         ChannelService = channelService;
 
-        Members = new List<Aisling>
-        {
+        Members =
+        [
             sender,
             receiver
-        };
+        ];
 
         //create a group chat channel and add both members to it
         ChannelService.RegisterChannel(

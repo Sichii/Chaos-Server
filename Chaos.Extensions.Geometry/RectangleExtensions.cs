@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.Abstractions.Definitions;
 
 namespace Chaos.Extensions.Geometry;
 
@@ -267,6 +268,9 @@ public static class RectangleExtensions
     /// <param name="circle">
     ///     A circle
     /// </param>
+    /// <param name="distanceType">
+    ///     The type of distance check to use when measuring distance
+    /// </param>
     /// <returns>
     ///     <c>
     ///         true
@@ -277,7 +281,7 @@ public static class RectangleExtensions
     ///     </c>
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Intersects(this IRectangle rect, ICircle circle)
+    public static bool Intersects(this IRectangle rect, ICircle circle, DistanceType distanceType = DistanceType.Euclidean)
     {
         ArgumentNullException.ThrowIfNull(rect);
 
@@ -286,7 +290,12 @@ public static class RectangleExtensions
         var closestX = Math.Clamp(circle.Center.X, rect.Left, rect.Right);
         var closestY = Math.Clamp(circle.Center.Y, rect.Top, rect.Bottom);
 
-        return new Point(closestX, closestY).DistanceFrom(Point.From(circle.Center)) < circle.Radius;
+        return distanceType switch
+        {
+            DistanceType.Manhattan => new Point(closestX, closestY).ManhattanDistanceFrom(Point.From(circle.Center)) < circle.Radius,
+            DistanceType.Euclidean => new Point(closestX, closestY).EuclideanDistanceFrom(Point.From(circle.Center)) < circle.Radius,
+            _                      => throw new ArgumentOutOfRangeException(nameof(distanceType), distanceType, null)
+        };
     }
 
     /// <summary>

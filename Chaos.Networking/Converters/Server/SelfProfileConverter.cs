@@ -22,7 +22,7 @@ public sealed class SelfProfileConverter : PacketConverterBase<SelfProfileArgs>
         var title = reader.ReadString8();
         var groupString = reader.ReadString8();
         var groupOpen = reader.ReadBoolean();
-        _ = reader.ReadBoolean(); //groupbox fml
+        var groupBox = reader.ReadBoolean();
 
         //TODO: read groupbox shit
         var baseClass = reader.ReadByte();

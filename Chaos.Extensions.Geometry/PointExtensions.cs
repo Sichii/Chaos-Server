@@ -99,7 +99,7 @@ public static class PointExtensions
     ///     The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to find the relation to
     /// </param>
     /// <returns>
-    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> <paramref name="other" /> would need to face
+    ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" />  <paramref name="other" /> would need to face
     ///     to be facing <paramref name="point" />
     /// </returns>
     public static Direction DirectionalRelationTo<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
@@ -153,33 +153,10 @@ public static class PointExtensions
     ///     The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against
     /// </param>
     /// <returns>
-    ///     The distance between the two given points without moving diagonally
+    ///     The manhattan distance between the two given points
     /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int DistanceFrom<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
-                                                                                        where TPoint2: IPoint
-    {
-        ArgumentNullException.ThrowIfNull(point);
-
-        ArgumentNullException.ThrowIfNull(other);
-
-        return Math.Abs(point.X - other.X) + Math.Abs(point.Y - other.Y);
-    }
-
-    /// <summary>
-    ///     Determines the distances between this <see cref="Chaos.Geometry.Abstractions.IPoint" /> and another
-    ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
-    /// </summary>
-    /// <param name="point">
-    /// </param>
-    /// <param name="other">
-    ///     The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against
-    /// </param>
-    /// <returns>
-    ///     The distance between the two given points allowing diagonal movement
-    /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float EuclideanDistanceFrom<TPoint>(this TPoint point, TPoint other) where TPoint: IPoint
+    public static double EuclideanDistanceFrom<TPoint>(this TPoint point, TPoint other) where TPoint: IPoint
     {
         ArgumentNullException.ThrowIfNull(point);
 
@@ -188,7 +165,7 @@ public static class PointExtensions
         var xDiff = other.X - point.X;
         var yDiff = other.Y - point.Y;
 
-        return (float)Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+        return Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
     }
 
     /// <summary>
@@ -438,6 +415,29 @@ public static class PointExtensions
             Direction.All   => true,
             _               => false
         };
+    }
+
+    /// <summary>
+    ///     Determines the distances between this <see cref="Chaos.Geometry.Abstractions.IPoint" /> and another
+    ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
+    /// </summary>
+    /// <param name="point">
+    /// </param>
+    /// <param name="other">
+    ///     The <see cref="Chaos.Geometry.Abstractions.IPoint" /> to check distance against
+    /// </param>
+    /// <returns>
+    ///     The manhattan distance between the two given points
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int ManhattanDistanceFrom<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
+        where TPoint2: IPoint
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        ArgumentNullException.ThrowIfNull(other);
+
+        return Math.Abs(point.X - other.X) + Math.Abs(point.Y - other.Y);
     }
 
     /// <summary>

@@ -81,7 +81,7 @@ public static class AoeShapeExtensions
                 case AoeShape.AllAround:
                 case AoeShape.Front:
                 case AoeShape.FrontalDiamond:
-                    return allPossiblePoints.Where(pt => pt.DistanceFrom(source) == range);
+                    return allPossiblePoints.Where(pt => pt.ManhattanDistanceFrom(source) == range);
 
                 case AoeShape.FrontalCone:
                     var travelsOnXAxis = aoeDirection is Direction.Left or Direction.Right;
