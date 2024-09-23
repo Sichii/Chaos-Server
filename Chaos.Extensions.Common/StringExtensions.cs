@@ -446,8 +446,8 @@ public static class StringExtensions
     /// </returns>
     public static string Inject([StructuredMessageTemplate] this string str1, params object[] parameters)
     {
-        var paramStrs = new string[parameters.Length];
         var paramsTotalLength = 0;
+        var paramStrs = new string[parameters.Length];
 
         //convert all parameters to strings and aggregate the length of the parameters
         for (var i = 0; i < parameters.Length; i++)
@@ -463,18 +463,17 @@ public static class StringExtensions
         var paramIndex = 0;
         var strIndex = 0;
         var resIndex = 0;
-        var strSpan = str1.AsSpan();
-        Span<char> result = stackalloc char[strSpan.Length + paramsTotalLength];
+        Span<char> result = stackalloc char[str1.Length + paramsTotalLength];
         var startPhIndex = -1;
 
-        while (strIndex < strSpan.Length)
+        while (strIndex < str1.Length)
         {
             var nextIndex = strIndex + 1;
 
-            switch (strSpan[strIndex])
+            switch (str1[strIndex])
             {
                 //handle double curly braces
-                case '{' when (nextIndex < strSpan.Length) && (strSpan[nextIndex] == '{'):
+                case '{' when (nextIndex < str1.Length) && (str1[nextIndex] == '{'):
                     result[resIndex++] = '{';
                     strIndex += 2;
 
@@ -488,7 +487,7 @@ public static class StringExtensions
                     break;
 
                 //handle double curly braces
-                case '}' when (nextIndex < strSpan.Length) && (strSpan[nextIndex] == '}'):
+                case '}' when (nextIndex < str1.Length) && (str1[nextIndex] == '}'):
                     result[resIndex++] = '}';
                     strIndex += 2;
 
@@ -496,7 +495,7 @@ public static class StringExtensions
 
                 //handle end of placeholder
                 case '}' when startPhIndex >= 0:
-                    if (paramIndex >= paramStrs.Length)
+                    if (paramIndex >= parameters.Length)
                         throw new ArgumentException(
                             "The number of parameters is less than the number of placeholders in the string",
                             nameof(parameters));
@@ -514,7 +513,7 @@ public static class StringExtensions
                 //handle normal character
                 default:
                     if (startPhIndex < 0)
-                        result[resIndex++] = strSpan[strIndex];
+                        result[resIndex++] = str1[strIndex];
 
                     strIndex++;
 

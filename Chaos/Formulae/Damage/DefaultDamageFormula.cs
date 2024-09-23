@@ -1,9 +1,11 @@
 using System.Collections.Immutable;
 using Chaos.Common.Definitions;
+using Chaos.Extensions;
 using Chaos.Formulae.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
+using Chaos.Scripting.ReactorTileScripts.Abstractions;
 using Chaos.Scripting.SkillScripts.Abstractions;
 using Chaos.Scripting.SpellScripts.Abstractions;
 using Chaos.Services.Servers.Options;
@@ -71,6 +73,19 @@ public class DefaultDamageFormula : IDamageFormula
             {
                 var addedFromPct = damage * (attacker.StatSheet.EffectiveSpellDamagePct / 100m);
                 damage += Convert.ToInt32(attacker.StatSheet.EffectiveFlatSpellDamage + addedFromPct);
+
+                break;
+            }
+            case IReactorTileScript reactorTileScript:
+            {
+                if (reactorTileScript.Is<SubjectiveScriptBase<ReactorTile>>(out var subjectReactorTileScript))
+                {
+                    var sourceScript = subjectReactorTileScript.Subject.SourceScript;
+
+                    // ReSharper disable once TailRecursiveCall
+                    if (sourceScript is not null && sourceScript is not IReactorTileScript)
+                        ApplySkillSpellModifier(ref damage, sourceScript, attacker);
+                }
 
                 break;
             }

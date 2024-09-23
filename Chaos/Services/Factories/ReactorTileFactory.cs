@@ -22,7 +22,8 @@ public sealed class ReactorTileFactory(IScriptProvider scriptProvider, ISimpleCa
         bool shouldBlockPathfinding,
         ICollection<string> scriptKeys,
         IDictionary<string, IScriptVars> scriptVars,
-        Creature? owner = null)
+        Creature? owner = null,
+        IScript? sourceScript = null)
         => new(
             mapInstance,
             point,
@@ -30,7 +31,8 @@ public sealed class ReactorTileFactory(IScriptProvider scriptProvider, ISimpleCa
             ScriptProvider,
             scriptKeys,
             scriptVars,
-            owner);
+            owner,
+            sourceScript);
 
     /// <inheritdoc />
     public ReactorTile Create(
@@ -38,7 +40,8 @@ public sealed class ReactorTileFactory(IScriptProvider scriptProvider, ISimpleCa
         MapInstance mapInstance,
         IPoint point,
         ICollection<string>? extraScriptKeys = null,
-        Creature? owner = null)
+        Creature? owner = null,
+        IScript? sourceScript = null)
     {
         extraScriptKeys ??= Array.Empty<string>();
         var template = Cache.Get<ReactorTileTemplate>(templateKey);
@@ -49,6 +52,7 @@ public sealed class ReactorTileFactory(IScriptProvider scriptProvider, ISimpleCa
             point,
             ScriptProvider,
             extraScriptKeys,
-            owner);
+            owner,
+            sourceScript);
     }
 }

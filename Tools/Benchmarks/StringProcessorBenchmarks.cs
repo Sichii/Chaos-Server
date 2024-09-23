@@ -19,44 +19,27 @@ public class StringProcessorBenchmarks
     private const string SHORT_STRING_VALUE = "One is 1, {Two} is 2";
 
     [Benchmark]
-    public void FormatLongString()
-    {
-        var str = string.Format(
+    public string FormatLongString()
+        => string.Format(
             LONG_STRING_FORMAT,
             1,
             2,
             4);
 
-        if (!str.Equals(LONG_STRING_VALUE))
-            throw new InvalidOperationException($"{str} is not {LONG_STRING_VALUE}");
-    }
-
     [Benchmark]
-    public void FormatMediumString()
-    {
-        var str = string.Format(
+    public string FormatMediumString()
+        => string.Format(
             MEDIUM_STRING_FORMAT,
             1,
             2,
             4);
 
-        if (!str.Equals(MEDIUM_STRING_VALUE))
-            throw new InvalidOperationException($"{str} is not {MEDIUM_STRING_VALUE}");
-    }
-
     [Benchmark(Baseline = true)]
-    public void FormatShortString()
-    {
-        var str = string.Format(SHORT_STRING_FORMAT, 1, 2);
-
-        if (!str.Equals(SHORT_STRING_VALUE))
-            throw new InvalidOperationException($"{str} is not {SHORT_STRING_VALUE}");
-    }
+    public string FormatShortString() => string.Format(SHORT_STRING_FORMAT, 1, 2);
 
     [Benchmark]
-    public void Inject2LongString()
-    {
-        var str = LONG_STRING_FORMAT.Inject(
+    public string InjectLongString()
+        => LONG_STRING_FORMAT.Inject(
             1,
             2,
             4,
@@ -64,25 +47,9 @@ public class StringProcessorBenchmarks
             2,
             4);
 
-        if (!str.Equals(LONG_STRING_VALUE))
-            throw new InvalidOperationException($"{str} is not {LONG_STRING_VALUE}");
-    }
+    [Benchmark]
+    public string InjectMediumString() => MEDIUM_STRING_FORMAT.Inject(1, 2, 4);
 
     [Benchmark]
-    public void Inject2MediumString()
-    {
-        var str = MEDIUM_STRING_FORMAT.Inject(1, 2, 4);
-
-        if (!str.Equals(MEDIUM_STRING_VALUE))
-            throw new InvalidOperationException($"{str} is not {MEDIUM_STRING_VALUE}");
-    }
-
-    [Benchmark]
-    public void Inject2ShortString()
-    {
-        var str = SHORT_STRING.Inject(1, 2);
-
-        if (!str.Equals(SHORT_STRING_VALUE))
-            throw new InvalidOperationException($"{str} is not {SHORT_STRING_VALUE}");
-    }
+    public string InjectShortString() => SHORT_STRING.Inject(1, 2);
 }

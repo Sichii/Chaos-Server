@@ -286,7 +286,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             skillBookObserver.OnAdded(skill);
 
             if (skill.Elapsed.HasValue)
+            {
+                if (skill.Template.IsAssail)
+                    continue;
+
                 Client.SendCooldown(skill);
+            }
         }
 
         foreach (var effect in Effects)

@@ -1,4 +1,5 @@
 using Chaos.Models.Data;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
 using Chaos.Scripting.Components.Execution;
 using Chaos.Services.Factories.Abstractions;
@@ -24,7 +25,8 @@ public struct LayReactorAbilityComponent : IComponent
                 options.ReactorTileTemplateKey,
                 map,
                 point,
-                owner: context.Source);
+                owner: context.Source,
+                sourceScript: options.SourceScript);
 
             map.SimpleAdd(trap);
         }
@@ -34,5 +36,6 @@ public struct LayReactorAbilityComponent : IComponent
     {
         IReactorTileFactory ReactorTileFactory { get; init; }
         string? ReactorTileTemplateKey { get; init; }
+        IScript? SourceScript { get; init; }
     }
 }

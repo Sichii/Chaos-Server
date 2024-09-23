@@ -20,7 +20,8 @@ public sealed class TemplatedReactorTile : ReactorTile
         IPoint point,
         IScriptProvider scriptProvider,
         ICollection<string>? extraScriptKeys,
-        Creature? owner)
+        Creature? owner,
+        IScript? sourceScript = null)
         : base(
             mapInstance,
             point,
@@ -32,12 +33,14 @@ public sealed class TemplatedReactorTile : ReactorTile
                     .Union(extraScriptKeys ??= Array.Empty<string>())
                     .ToList(),
             template.ScriptVars,
-            owner)
+            owner,
+            sourceScript)
         => Template = template;
 }
 
 public class ReactorTile : InteractableEntity, IDeltaUpdatable, IScripted<IReactorTileScript>
 {
+    public IScript? SourceScript { get; set; }
     public Creature? Owner { get; }
 
     /// <inheritdoc />
@@ -59,10 +62,12 @@ public class ReactorTile : InteractableEntity, IDeltaUpdatable, IScripted<IReact
         // ReSharper disable once ParameterTypeCanBeEnumerable.Local
         ICollection<string> scriptKeys,
         IDictionary<string, IScriptVars> scriptVars,
-        Creature? owner = null)
+        Creature? owner = null,
+        IScript? sourceScript = null)
         : base(mapInstance, point)
     {
         Owner = owner;
+        SourceScript = sourceScript;
         ShouldBlockPathfinding = shouldBlockPathfinding;
         ScriptVars = new Dictionary<string, IScriptVars>(scriptVars, StringComparer.OrdinalIgnoreCase);
         ScriptKeys = new HashSet<string>(scriptKeys, StringComparer.OrdinalIgnoreCase);

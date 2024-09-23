@@ -3,6 +3,7 @@ using Chaos.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.AbilityComponents;
 using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.SpellScripts.Abstractions;
@@ -62,6 +63,9 @@ public class LayReactorTileScript(Spell subject, IReactorTileFactory reactorTile
 
     /// <inheritdoc />
     public string? ReactorTileTemplateKey { get; init; }
+
+    /// <inheritdoc />
+    public IScript? SourceScript { get; init; }
 
     /// <inheritdoc />
     public IReactorTileFactory ReactorTileFactory { get; init; } = reactorTileFactory;
