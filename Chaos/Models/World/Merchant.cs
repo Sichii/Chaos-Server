@@ -1,5 +1,6 @@
 using Chaos.Collections;
 using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.EqualityComparers;
@@ -155,6 +156,10 @@ public sealed class Merchant : Creature,
         return item != null;
     }
 
+    public override void OnClicked(Aisling source) => Script.OnClicked(source);
+
+    public override void OnGoldDroppedOn(Aisling source, int amount) => Script.OnGoldDroppedOn(source, amount);
+
     /// <inheritdoc />
     public bool TryGetSkill(string skillName, [MaybeNullWhen(false)] out Skill skill)
     {
@@ -170,10 +175,6 @@ public sealed class Merchant : Creature,
 
         return spell != null;
     }
-
-    public override void OnClicked(Aisling source) => Script.OnClicked(source);
-
-    public override void OnGoldDroppedOn(Aisling source, int amount) => Script.OnGoldDroppedOn(source, amount);
 
     /// <inheritdoc />
     public override void Update(TimeSpan delta)

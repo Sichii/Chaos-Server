@@ -1,5 +1,5 @@
 using Chaos.Common.Abstractions;
-using Chaos.Extensions.Common;
+using Chaos.DarkAges.Extensions;
 using Chaos.Models.Menu;
 using Chaos.Models.Templates;
 using Chaos.Networking.Entities.Server;

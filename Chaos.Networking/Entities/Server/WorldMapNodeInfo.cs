@@ -1,11 +1,11 @@
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
+using Chaos.Networking.Abstractions.Definitions;
 
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
-///     Represents the serialization of a world map node in the
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.WorldMap" /> packet
+///     Represents the serialization of a world map node in the <see cref="ServerOpCode.WorldMap" /> packet
 /// </summary>
 public sealed record WorldMapNodeInfo
 {

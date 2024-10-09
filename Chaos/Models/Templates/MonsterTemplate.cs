@@ -1,6 +1,6 @@
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.Templates.Abstractions;
 using Chaos.Scripting.Abstractions;

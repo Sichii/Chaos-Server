@@ -1,4 +1,4 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Schemas.Templates;
 using Chaos.Wpf.Collections.ObjectModel;
 using Chaos.Wpf.Observables;

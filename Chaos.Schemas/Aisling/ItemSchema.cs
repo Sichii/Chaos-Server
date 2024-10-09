@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Schemas.Aisling.Abstractions;
 
 namespace Chaos.Schemas.Aisling;

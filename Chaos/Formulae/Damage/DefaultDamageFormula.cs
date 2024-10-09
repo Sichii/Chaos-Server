@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Extensions;
 using Chaos.Formulae.Abstractions;
 using Chaos.Models.World;

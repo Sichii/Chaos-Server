@@ -1,4 +1,4 @@
-namespace Chaos.Common.Definitions;
+namespace Chaos.DarkAges.Definitions;
 
 /// <summary>
 ///     Contains common consants

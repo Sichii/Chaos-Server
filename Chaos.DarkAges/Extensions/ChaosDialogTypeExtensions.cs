@@ -1,6 +1,6 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 
-namespace Chaos.Extensions.Common;
+namespace Chaos.DarkAges.Extensions;
 
 /// <summary>
 ///     Provides extension methods for <see cref="ChaosDialogType" />.
@@ -8,14 +8,13 @@ namespace Chaos.Extensions.Common;
 public static class ChaosDialogTypeExtensions
 {
     /// <summary>
-    ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="Chaos.Common.Definitions.DialogType" />
+    ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="value" />
     /// </summary>
     /// <param name="value">
     ///     The value to convert
     /// </param>
     /// <returns>
-    ///     An equivalent <see cref="Chaos.Common.Definitions.DialogType" /> to the <see cref="ChaosDialogType" /> if one
-    ///     exists, otherwise
+    ///     An equivalent <see cref="DialogType" /> to the <see cref="DialogType" /> if one exists, otherwise
     ///     <c>
     ///         null
     ///     </c>
@@ -34,14 +33,13 @@ public static class ChaosDialogTypeExtensions
         };
 
     /// <summary>
-    ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="Chaos.Common.Definitions.MenuType" />
+    ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="value" />
     /// </summary>
     /// <param name="value">
     ///     The value to convert
     /// </param>
     /// <returns>
-    ///     An equivalent <see cref="Chaos.Common.Definitions.MenuType" /> to the <see cref="ChaosDialogType" /> if one exists,
-    ///     otherwise
+    ///     An equivalent <see cref="MenuType" /> to the <see cref="MenuType" /> if one exists, otherwise
     ///     <c>
     ///         null
     ///     </c>

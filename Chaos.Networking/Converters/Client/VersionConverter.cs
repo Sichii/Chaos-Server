@@ -1,7 +1,7 @@
 using Chaos.IO.Memory;
+using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Entities.Client;
 using Chaos.Packets.Abstractions;
-using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Networking.Converters.Client;
 
@@ -31,11 +31,6 @@ public sealed class VersionConverter : PacketConverterBase<VersionArgs>
     {
         writer.WriteUInt16(args.Version);
 
-        writer.WriteBytes(
-            [
-                0x4C,
-                0x4B,
-                0x00
-            ]);
+        writer.WriteBytes(0x4C, 0x4B, 0x00);
     }
 }

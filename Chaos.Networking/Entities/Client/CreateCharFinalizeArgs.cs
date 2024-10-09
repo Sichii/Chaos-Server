@@ -1,11 +1,11 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
+using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.CreateCharFinalize" /> packet
+///     Represents the serialization of the <see cref="ClientOpCode.CreateCharFinalize" /> packet
 /// </summary>
 public sealed record CreateCharFinalizeArgs : IPacketSerializable
 {

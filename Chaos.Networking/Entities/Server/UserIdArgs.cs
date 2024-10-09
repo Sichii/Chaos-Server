@@ -1,12 +1,12 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Geometry.Abstractions.Definitions;
+using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.UserId" />
-///     packet
+///     Represents the serialization of the <see cref="ServerOpCode.UserId" /> packet
 /// </summary>
 public sealed record UserIdArgs : IPacketSerializable
 {

@@ -1,5 +1,6 @@
 using System.Text;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
+using Chaos.DarkAges.Extensions;
 using FluentAssertions;
 using Xunit;
 

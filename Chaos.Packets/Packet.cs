@@ -1,5 +1,4 @@
 using System.Text;
-using Chaos.Packets.Abstractions.Definitions;
 
 namespace Chaos.Packets;
 
@@ -65,15 +64,6 @@ public ref struct Packet
     /// <param name="opcode">
     ///     The operation code of the packet.
     /// </param>
-    public Packet(ClientOpCode opcode)
-        : this((byte)opcode) { }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="Packet" /> struct with the specified operation code.
-    /// </summary>
-    /// <param name="opcode">
-    ///     The operation code of the packet.
-    /// </param>
     public Packet(byte opcode)
     {
         OpCode = opcode;
@@ -82,15 +72,6 @@ public ref struct Packet
         Buffer = new Span<byte>();
         IsEncrypted = false;
     }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="Packet" /> struct with the specified operation code.
-    /// </summary>
-    /// <param name="opcode">
-    ///     The operation code of the packet.
-    /// </param>
-    public Packet(ServerOpCode opcode)
-        : this((byte)opcode) { }
 
     /// <summary>
     ///     Returns the packet data as an ASCII string.

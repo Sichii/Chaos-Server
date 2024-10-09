@@ -1,5 +1,5 @@
 using Chaos.Collections.Abstractions;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Panel;
 using Chaos.TypeMapper.Abstractions;

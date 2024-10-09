@@ -1,8 +1,9 @@
+using Chaos.Networking.Abstractions.Definitions;
+
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
-///     Represents the serialization of a door in the
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.Door" /> packet
+///     Represents the serialization of a door in the <see cref="ServerOpCode.Door" /> packet
 /// </summary>
 public sealed record DoorInfo
 {

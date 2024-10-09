@@ -1,11 +1,12 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Geometry.Abstractions;
+using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.Click" /> packet
+///     Represents the serialization of the <see cref="ClientOpCode.Click" /> packet
 /// </summary>
 public sealed record ClickArgs : IPacketSerializable
 {

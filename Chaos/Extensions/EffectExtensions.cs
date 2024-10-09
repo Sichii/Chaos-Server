@@ -1,4 +1,4 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Scripting.EffectScripts.Abstractions;
 
 namespace Chaos.Extensions;

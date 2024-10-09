@@ -1,5 +1,5 @@
 using Chaos.Common.Abstractions;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Scripting.Abstractions;
 
 namespace Chaos.Models.Templates.Abstractions;

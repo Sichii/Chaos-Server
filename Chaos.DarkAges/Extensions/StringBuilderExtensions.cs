@@ -1,7 +1,7 @@
 using System.Text;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 
-namespace Chaos.Extensions.Common;
+namespace Chaos.DarkAges.Extensions;
 
 /// <summary>
 ///     Extensions for <see cref="StringBuilder" />

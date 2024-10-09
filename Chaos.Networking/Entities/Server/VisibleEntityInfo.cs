@@ -1,8 +1,9 @@
+using Chaos.Networking.Abstractions.Definitions;
+
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
-///     Represents the serialization of a visible entity in the
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.DisplayVisibleEntities" /> packet
+///     Represents the serialization of a visible entity in the <see cref="ServerOpCode.DisplayVisibleEntities" /> packet
 /// </summary>
 public record VisibleEntityInfo : WorldEntityInfo
 {

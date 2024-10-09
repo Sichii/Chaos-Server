@@ -1,6 +1,6 @@
 using Chaos.Collections;
-using Chaos.Common.Definitions;
 using Chaos.Common.Synchronization;
+using Chaos.DarkAges.Definitions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.NLog.Logging.Definitions;

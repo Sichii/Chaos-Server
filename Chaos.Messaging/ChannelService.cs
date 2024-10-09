@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using System.Text;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.IO.Memory;
 using Chaos.Messaging.Abstractions;

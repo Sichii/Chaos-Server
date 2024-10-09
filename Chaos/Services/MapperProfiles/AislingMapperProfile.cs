@@ -1,7 +1,7 @@
 using Chaos.Collections;
 using Chaos.Collections.Synchronized;
 using Chaos.Common.Abstractions;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Definitions;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.Data;

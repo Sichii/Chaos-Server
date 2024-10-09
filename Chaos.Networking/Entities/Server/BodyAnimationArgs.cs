@@ -1,11 +1,11 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
+using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Server;
 
 /// <summary>
-///     Represents the serialization of the
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ServerOpCode.BodyAnimation" /> packet
+///     Represents the serialization of the <see cref="ServerOpCode.BodyAnimation" /> packet
 /// </summary>
 public sealed record BodyAnimationArgs : IPacketSerializable
 {

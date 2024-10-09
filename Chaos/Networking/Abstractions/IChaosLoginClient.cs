@@ -1,4 +1,4 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Services.Storage.Abstractions;
 
 namespace Chaos.Networking.Abstractions;

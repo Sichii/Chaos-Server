@@ -1,4 +1,4 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.IO.Memory;
 using Chaos.MetaData.Abstractions;
 

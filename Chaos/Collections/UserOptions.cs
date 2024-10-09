@@ -1,5 +1,5 @@
 using System.ComponentModel;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
 
 namespace Chaos.Collections;

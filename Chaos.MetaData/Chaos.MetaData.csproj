@@ -7,6 +7,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
         <ProjectReference Include="..\Chaos.Cryptography\Chaos.Cryptography.csproj"/>
+        <ProjectReference Include="..\Chaos.DarkAges\Chaos.DarkAges.csproj"/>
         <ProjectReference Include="..\Chaos.IO\Chaos.IO.csproj"/>
     </ItemGroup>
 

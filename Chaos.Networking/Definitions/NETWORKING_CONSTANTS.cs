@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 
 namespace Chaos.Networking.Definitions;
 

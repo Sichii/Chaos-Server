@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Schemas.Data;
 
 namespace Chaos.Schemas.Templates;

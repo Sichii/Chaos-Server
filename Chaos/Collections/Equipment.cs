@@ -1,6 +1,6 @@
 using Chaos.Collections.Abstractions;
-using Chaos.Common.Definitions;
-using Chaos.Extensions.Common;
+using Chaos.DarkAges.Definitions;
+using Chaos.DarkAges.Extensions;
 using Chaos.Models.Panel;
 
 namespace Chaos.Collections;

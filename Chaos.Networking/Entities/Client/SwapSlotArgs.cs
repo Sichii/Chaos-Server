@@ -1,11 +1,11 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
+using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.SwapSlot" />
-///     packet
+///     Represents the serialization of the <see cref="ClientOpCode.SwapSlot" /> packet
 /// </summary>
 /// <remarks>
 ///     This packet is also used merely for moving objects, not just swapping

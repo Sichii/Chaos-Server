@@ -1,5 +1,5 @@
 using System.Net;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 
 namespace Chaos.Networking.Abstractions;
 

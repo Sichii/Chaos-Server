@@ -1,10 +1,10 @@
+using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Packets.Abstractions;
 
 namespace Chaos.Networking.Entities.Client;
 
 /// <summary>
-///     Represents the serialization of the
-///     <see cref="Chaos.Packets.Abstractions.Definitions.ClientOpCode.PasswordChange" /> packet
+///     Represents the serialization of the <see cref="ClientOpCode.PasswordChange" /> packet
 /// </summary>
 public sealed record PasswordChangeArgs : IPacketSerializable
 {

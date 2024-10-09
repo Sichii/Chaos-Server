@@ -1,6 +1,6 @@
 using Chaos.Collections.Common;
-using Chaos.Common.Definitions;
-using Chaos.Extensions.Common;
+using Chaos.DarkAges.Definitions;
+using Chaos.DarkAges.Extensions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;

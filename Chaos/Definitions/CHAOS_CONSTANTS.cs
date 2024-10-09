@@ -1,5 +1,5 @@
 using System.Collections.Frozen;
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
 
 namespace Chaos.Definitions;
 

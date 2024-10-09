@@ -6,6 +6,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
+        <ProjectReference Include="..\Chaos.DarkAges\Chaos.DarkAges.csproj"/>
         <ProjectReference Include="..\Chaos.Geometry\Chaos.Geometry.csproj"/>
         <ProjectReference Include="..\Chaos.Time\Chaos.Time.csproj"/>
     </ItemGroup>

@@ -1,4 +1,5 @@
-using Chaos.Common.Definitions;
+using Chaos.DarkAges.Definitions;
+using Chaos.DarkAges.Extensions;
 using Chaos.Testing.Infrastructure.Definitions;
 using FluentAssertions;
 using Xunit;
