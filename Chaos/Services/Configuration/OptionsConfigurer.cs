@@ -61,6 +61,7 @@ public sealed class OptionsConfigurer(IStagingDirectory stagingDirectory, IChann
         options.UseBaseDirectory(StagingDirectory.StagingDirectory);
 
         // ReSharper disable once ArrangeMethodOrOperatorBody
+        //add more mutators here
         options.PrefixMutators.Add(ItemMetaNodeMutator.Create(MagicPrefixScript.Mutate));
 
         //dyeable mutator
@@ -78,8 +79,6 @@ public sealed class OptionsConfigurer(IStagingDirectory stagingDirectory, IChann
                                        Name = $"{colorName} {node.Name}"
                                    });
                 }));
-
-        //add more mutators here
     }
 
     /// <inheritdoc />

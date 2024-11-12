@@ -10,6 +10,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Chaos.Collections\Chaos.Collections.csproj"/>
         <ProjectReference Include="..\..\Chaos.Common\Chaos.Common.csproj"/>
         <ProjectReference Include="..\..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
         <ProjectReference Include="..\..\Chaos.Extensions.Geometry\Chaos.Extensions.Geometry.csproj"/>

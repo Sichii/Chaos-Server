@@ -1793,29 +1793,110 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             {
                 //if the player has an exchange open, cancel it so items are returned
                 var activeExchange = aisling.ActiveObject.TryGet<Exchange>();
-                activeExchange?.Cancel(aisling);
 
-                //leave the group if in one
-                aisling.Group?.Leave(aisling);
+                try
+                {
+                    activeExchange?.Cancel(aisling);
+                } catch (Exception ex)
+                {
+                    Logger.WithTopics(
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
+                          .WithProperty(client)
+                          .LogError(
+                              ex,
+                              "{@Aisling} failed to cancel exchange {@Exchange} on disconnect",
+                              aisling,
+                              activeExchange);
+                }
 
-                //leave guild channel if in one
-                aisling.Guild?.LeaveChannel(aisling);
+                try
+                {
+                    //leave the group if in one
+                    aisling.Group?.Leave(aisling);
+                } catch (Exception ex)
+                {
+                    Logger.WithTopics(
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
+                          .WithProperty(client)
+                          .LogError(ex, "{@Aisling} failed to leave group on disconnect", aisling);
+                }
 
-                //leave chat channels
-                foreach (var channel in aisling.ChannelSettings)
-                    try
-                    {
-                        ChannelService.LeaveChannel(aisling, channel.ChannelName);
-                    } catch
-                    {
-                        //ignored
-                    }
+                try
+                {
+                    //leave guild channel if in one
+                    aisling.Guild?.LeaveChannel(aisling);
+                } catch (Exception ex)
+                {
+                    Logger.WithTopics(
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
+                          .WithProperty(client)
+                          .LogError(
+                              ex,
+                              "{@Aisling} failed to leave guild channel on disconnect (Guild: {@Guild}",
+                              aisling,
+                              aisling.Guild);
+                }
 
-                //save aisling
-                await SaveUserAsync(client.Aisling);
+                try
+                {
+                    //leave chat channels
+                    foreach (var channel in aisling.ChannelSettings)
+                        try
+                        {
+                            ChannelService.LeaveChannel(aisling, channel.ChannelName);
+                        } catch
+                        {
+                            //ignored
+                        }
+                } catch (Exception ex)
+                {
+                    Logger.WithTopics(
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
+                          .WithProperty(client)
+                          .LogError(ex, "{@Aisling} failed to leave chat channels on disconnect", aisling);
+                }
 
-                //remove aisling from map
-                mapInstance?.RemoveEntity(client.Aisling);
+                try
+                {
+                    //save aisling
+                    await SaveUserAsync(client.Aisling);
+                } catch (Exception ex)
+                {
+                    Logger.WithTopics(
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
+                          .WithProperty(client)
+                          .LogError(ex, "{@Aisling} failed to save on disconnect", aisling);
+                }
+
+                try
+                {
+                    //remove aisling from map
+                    mapInstance?.RemoveEntity(client.Aisling);
+                } catch (Exception ex)
+                {
+                    Logger.WithTopics(
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
+                          .WithProperty(client)
+                          .LogError(ex, "{@Aisling} failed to remove from map on disconnect", aisling);
+                }
             }
         } catch (Exception ex)
         {

@@ -114,6 +114,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		docs\articles\ChaosTool.md = docs\articles\ChaosTool.md
 		docs\articles\BulletinBoards.md = docs\articles\BulletinBoards.md
 		docs\articles\ReactorTiles.md = docs\articles\ReactorTiles.md
+		docs\articles\ChaosAssetManager.md = docs\articles\ChaosAssetManager.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chaos.Storage", "Chaos.Storage\Chaos.Storage.csproj", "{776DB858-7973-4458-A923-49C31CC934C7}"

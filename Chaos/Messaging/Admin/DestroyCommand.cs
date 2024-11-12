@@ -14,10 +14,11 @@ public class DestroyCommand : ICommand<Aisling>
     public ValueTask ExecuteAsync(Aisling source, ArgumentCollection args)
     {
         //if a number was given
+        //this one will actually remove a player from a map so by careful
         if (args.TryGetNext<uint>(out var id))
         {
             //if the entity is not found or is an aisling
-            if (!source.MapInstance.TryGetEntity<VisibleEntity>(id, out var obj) || obj is Aisling)
+            if (!source.MapInstance.TryGetEntity<VisibleEntity>(id, out var obj))
                 source.SendOrangeBarMessage("Invalid entity.");
             else
                 source.MapInstance.RemoveEntity(obj);
@@ -35,6 +36,7 @@ public class DestroyCommand : ICommand<Aisling>
                                .MinBy(entity => entity.ManhattanDistanceFrom(source));
 
             //if the entity is not found or is an aisling
+            //just incase a player has the same name as a monster, or you mistype
             if (entity is null or Aisling)
                 source.SendOrangeBarMessage("Invalid entity.");
             else

@@ -5,6 +5,7 @@ using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
 using Chaos.Definitions;
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Formulae;
 using Chaos.Geometry.Abstractions;
@@ -386,9 +387,15 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                 aisling.Client.SendDisplayPublicMessage(Id, publicMessageType, sendMessage);
 
         Trackers.LastTalk = DateTime.UtcNow;
+        var showSomeId = this is Aisling { IsAdmin: true } && message.ContainsI("show me some ids");
 
         foreach (var creature in creaturesWithinRange)
+        {
+            if (!creature.Equals(this) && showSomeId)
+                creature.Say(creature.Id.ToString());
+
             creature.Script.OnPublicMessage(this, message);
+        }
     }
 
     /// <summary>

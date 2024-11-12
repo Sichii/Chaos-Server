@@ -150,6 +150,9 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// <inheritdoc />
     public virtual async void BeginReceive()
     {
+        if (!Socket.Connected)
+            return;
+
         Connected = true;
         await Task.Yield();
 
@@ -263,7 +266,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// <inheritdoc />
     public virtual void Send(ref Packet packet)
     {
-        if (!Connected)
+        if (!Connected || !Socket.Connected)
             return;
 
         //no way to pass the packet in because its a ref struct

@@ -643,29 +643,29 @@ public enum StatUpdateType : byte
     ///     mail
     /// </summary>
     UnreadMail = 1,
-    Unknown = 2,
+    Unknown = 1 << 1,
 
     /// <summary>
     ///     Blind, Mail, Elements, Ressists, AC, DMG, HIT
     /// </summary>
-    Secondary = 4,
+    Secondary = 1 << 2,
 
     /// <summary>
     ///     Exp, Gold
     /// </summary>
-    ExpGold = 8,
+    ExpGold = 1 << 3,
 
     /// <summary>
     ///     Current HP, Current MP
     /// </summary>
-    Vitality = 16,
+    Vitality = 1 << 4,
 
     /// <summary>
     ///     Level, Max HP/MP, Current stats, Weight, Unspent
     /// </summary>
-    Primary = 32,
-    GameMasterA = 64,
-    GameMasterB = 128,
+    Primary = 1 << 5,
+    GameMasterA = 1 << 6,
+    GameMasterB = 1 << 7,
     Swimming = GameMasterA | GameMasterB,
     Full = Primary | Vitality | ExpGold | Secondary
 }

@@ -36,6 +36,7 @@
         <None Remove="PersistentIdUInt64.json.bak"/>
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\Chaos.Collections\Chaos.Collections.csproj"/>
         <ProjectReference Include="..\Chaos.Messaging.Abstractions\Chaos.Messaging.Abstractions.csproj"/>
         <ProjectReference Include="..\Chaos.Messaging\Chaos.Messaging.csproj"/>
         <ProjectReference Include="..\Chaos.MetaData\Chaos.MetaData.csproj"/>

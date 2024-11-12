@@ -2,6 +2,8 @@
   href: InitialSetup.md
 - name: ChaosTool
   href: ChaosTool.md
+- name: ChaosAssetManager
+  href: ChaosAssetManager.md
 - name: Logging
   href: Logging.md
 - name: Access Manager

@@ -50,7 +50,7 @@ in `appsettings.json` at `Options:MailBoxStoreOptions`.
 
 ### How do I use them?
 
-MailBoxes are made accessibly through the [MailStore](<xref:Chaos.Services.Storage.MailStore>), which is an
+MailBoxes are made accessible through the [MailStore](<xref:Chaos.Services.Storage.MailStore>), which is an
 implementation of [IStore\<T\>](<xref:Chaos.Storage.Abstractions.IStore`1>).
 
 > [!NOTE]

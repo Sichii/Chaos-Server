@@ -191,7 +191,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         try
                         {
                             await ServiceProvider.ReloadMetaDataAsync(Logger);
-                            aisling.SendOrangeBarMessage("Metadata reloaded");
+                            aisling.SendOrangeBarMessage("Metadata reloaded (MUST FULL RESTART CLIENT TO TAKE EFFECT)");
                         } catch (Exception e)
                         {
                             aisling.SendOrangeBarMessage("Failed to reload metadata");
