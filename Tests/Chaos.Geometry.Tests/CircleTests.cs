@@ -1,13 +1,14 @@
+#region
 using Chaos.Geometry.Abstractions;
 using FluentAssertions;
 using Moq;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class CircleTests
 {
-    [Fact]
+    [Test]
     public void ByteTupleToPointConversion_ReturnsExpectedPoint()
     {
         (byte, byte) tuple = (2, 3);
@@ -23,7 +24,7 @@ public sealed class CircleTests
              .Be(3);
     }
 
-    [Fact]
+    [Test]
     public void Circle_Constructor_CreatesCircleWithGivenCenterAndRadius()
     {
         // Arrange
@@ -43,7 +44,7 @@ public sealed class CircleTests
               .Be(RADIUS);
     }
 
-    [Fact]
+    [Test]
     public void Circle_Equals_ReturnsFalseWhenCirclesAreNotEqual()
     {
         // Arrange
@@ -62,7 +63,7 @@ public sealed class CircleTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Circle_Equals_ReturnsFalseWhenComparingWithDifferentType()
     {
         // Arrange
@@ -79,7 +80,7 @@ public sealed class CircleTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Circle_Equals_ReturnsTrueWhenCirclesAreEqual()
     {
         // Arrange
@@ -96,7 +97,7 @@ public sealed class CircleTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Circle_GetHashCode_ReturnsConsistentHashCode()
     {
         // Arrange
@@ -117,7 +118,7 @@ public sealed class CircleTests
                  .Be(expectedHashCode);
     }
 
-    [Fact]
+    [Test]
     public void EqualityOperator_ReturnsTrueForSamePoints()
     {
         var point1 = new Point(5, 5);
@@ -129,7 +130,7 @@ public sealed class CircleTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void EqualityOperator_WithSameValues_ReturnsTrue()
     {
         // Arrange
@@ -144,7 +145,7 @@ public sealed class CircleTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void InequalityOperator_ReturnsFalseForSamePoints()
     {
         var point1 = new Point(5, 5);
@@ -156,7 +157,7 @@ public sealed class CircleTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void InequalityOperator_ReturnsTrueForDifferentPoints()
     {
         var point1 = new Point(5, 5);
@@ -168,7 +169,7 @@ public sealed class CircleTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void InequalityOperator_WithDifferentValues_ReturnsTrue()
     {
         // Arrange
@@ -183,7 +184,7 @@ public sealed class CircleTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void IntTupleToPointConversion_ReturnsExpectedPoint()
     {
         var tuple = (500, 1000);
@@ -199,7 +200,7 @@ public sealed class CircleTests
              .Be(1000);
     }
 
-    [Fact]
+    [Test]
     public void ShortTupleToPointConversion_ReturnsExpectedPoint()
     {
         (short, short) tuple = (-5, -10);
@@ -215,7 +216,7 @@ public sealed class CircleTests
              .Be(-10);
     }
 
-    [Fact]
+    [Test]
     public void UShortTupleToPointConversion_ReturnsExpectedPoint()
     {
         (ushort, ushort) tuple = (3000, 4000);

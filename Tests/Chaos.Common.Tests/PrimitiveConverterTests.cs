@@ -1,7 +1,8 @@
+#region
 using Chaos.Common.Converters;
 using Chaos.Testing.Infrastructure.Definitions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable UnusedMember.Local
 
@@ -11,7 +12,7 @@ namespace Chaos.Common.Tests;
 
 public sealed class PrimitiveConverterTests
 {
-    [Fact]
+    [Test]
     public void Convert_ShouldConvertEnumStringValueToEnumType()
     {
         // Arrange
@@ -27,7 +28,7 @@ public sealed class PrimitiveConverterTests
               .Be(EXPECTED);
     }
 
-    [Fact]
+    [Test]
     public void Convert_ShouldConvertStringToParsedType()
     {
         // Arrange
@@ -43,11 +44,11 @@ public sealed class PrimitiveConverterTests
     }
 
     //@formatter:off
-    [Theory]
-    [InlineData(10, typeof(int))]
-    [InlineData("123", typeof(int))]
-    [InlineData("true", typeof(bool))]
-    [InlineData("3.14", typeof(double))]
+    [Test]
+    [Arguments(10, typeof(int))]
+    [Arguments("123", typeof(int))]
+    [Arguments("true", typeof(bool))]
+    [Arguments("3.14", typeof(double))]
     //@formatter:on
     public void Convert_ShouldConvertValueToSpecifiedType(object value, Type targetType)
     {

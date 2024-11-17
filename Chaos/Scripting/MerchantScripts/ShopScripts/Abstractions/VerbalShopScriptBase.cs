@@ -1,3 +1,4 @@
+#region
 using Chaos.Common.Utilities;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
@@ -6,6 +7,7 @@ using Chaos.Models.World;
 using Chaos.Scripting.MerchantScripts.Abstractions;
 using Chaos.Utilities;
 using Humanizer;
+#endregion
 
 namespace Chaos.Scripting.MerchantScripts.ShopScripts.Abstractions;
 
@@ -98,7 +100,11 @@ public abstract class VerbalShopScriptBase : MerchantScriptBase
         else
             template.ReplaceI("{AmountOfThing} are", "{AmountOfThing} is");
 
-        return template.Inject(name, thing.ToQuantity(amount));
+        return template.Inject(
+            [
+                name,
+                thing.ToQuantity(amount)
+            ]);
     }
 
     protected virtual bool IsClosestVerbalShopTo(Aisling aisling)

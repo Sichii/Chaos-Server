@@ -1,14 +1,15 @@
+#region
 using System.Text;
 using System.Text.Json;
 using Chaos.Common.Converters;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class EnumerableConverterTests
 {
-    [Fact]
+    [Test]
     public void Read_ShouldDeserializeJsonArrayAndCreateEnumerableInstance()
     {
         // Arrange
@@ -41,7 +42,7 @@ public sealed class EnumerableConverterTests
                   });
     }
 
-    [Fact]
+    [Test]
     public void Write_ShouldSerializeEnumerableInstanceAsJsonArray()
     {
         // Arrange

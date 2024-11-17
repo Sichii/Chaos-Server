@@ -1,12 +1,13 @@
+#region
 using Chaos.Collections.Synchronized;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class SynchronizedHashSetTests
 {
-    [Fact]
+    [Test]
     public void Add_Should_Add_Item_To_Set()
     {
         // Arrange
@@ -21,7 +22,7 @@ public sealed class SynchronizedHashSetTests
            .Contain(42);
     }
 
-    [Fact]
+    [Test]
     public void Clear_ShouldRemoveAllItemsFromSet()
     {
         // Arrange
@@ -35,17 +36,16 @@ public sealed class SynchronizedHashSetTests
            .BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void Contains_Should_Return_True_When_Item_Exists_In_Set()
     {
         // Arrange
         var set = new SynchronizedHashSet<string>(
-            new[]
-            {
+            [
                 "apple",
                 "banana",
                 "orange"
-            });
+            ]);
 
         // Act
         var contains = set.Contains("banana");
@@ -55,18 +55,17 @@ public sealed class SynchronizedHashSetTests
                 .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void CopyTo_Should_Copy_Items_To_Array_Starting_At_Given_Index()
     {
         // Arrange
         var set = new SynchronizedHashSet<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3,
                 4
-            });
+            ]);
         var array = new int[5];
 
         // Act
@@ -82,7 +81,7 @@ public sealed class SynchronizedHashSetTests
                  4);
     }
 
-    [Fact]
+    [Test]
     public void Count_Should_Return_Correct_Count()
     {
         // Arrange
@@ -96,7 +95,7 @@ public sealed class SynchronizedHashSetTests
              .Be(5);
     }
 
-    [Fact]
+    [Test]
     public void ExceptWith_ShouldRemoveSpecifiedItemsFromSet()
     {
         // Arrange
@@ -104,46 +103,42 @@ public sealed class SynchronizedHashSetTests
 
         // Act
         set.ExceptWith(
-            new[]
-            {
+            [
                 2,
                 4
-            });
+            ]);
 
         // Assert
         set.Should()
            .BeEquivalentTo(
-               new[]
-               {
+               [
                    1,
                    3,
                    5
-               });
+               ]);
     }
 
-    [Fact]
+    [Test]
     public void IntersectWith_Should_Only_Keep_Common_Items_In_Set()
     {
         // Arrange
         var set1 = new SynchronizedHashSet<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3,
                 4,
                 5
-            });
+            ]);
 
         var set2 = new SynchronizedHashSet<int>(
-            new[]
-            {
+            [
                 3,
                 4,
                 5,
                 6,
                 7
-            });
+            ]);
 
         // Act
         set1.IntersectWith(set2);
@@ -153,7 +148,7 @@ public sealed class SynchronizedHashSetTests
             .Equal(3, 4, 5);
     }
 
-    [Fact]
+    [Test]
     public void IsProperSubsetOf_ShouldReturnTrueWhenSetIsProperSubset()
     {
         // Arrange
@@ -161,8 +156,7 @@ public sealed class SynchronizedHashSetTests
 
         // Act
         var result = set.IsProperSubsetOf(
-            new[]
-            {
+            [
                 0,
                 1,
                 2,
@@ -174,14 +168,14 @@ public sealed class SynchronizedHashSetTests
                 8,
                 9,
                 10
-            });
+            ]);
 
         // Assert
         result.Should()
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void IsProperSupersetOf_ShouldReturnTrueWhenSetIsProperSuperset()
     {
         // Arrange
@@ -189,18 +183,17 @@ public sealed class SynchronizedHashSetTests
 
         // Act
         var result = set.IsProperSupersetOf(
-            new[]
-            {
+            [
                 2,
                 4
-            });
+            ]);
 
         // Assert
         result.Should()
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void IsSubsetOf_ShouldReturnTrueWhenSetIsSubset()
     {
         // Arrange
@@ -208,8 +201,7 @@ public sealed class SynchronizedHashSetTests
 
         // Act
         var result = set.IsSubsetOf(
-            new[]
-            {
+            [
                 0,
                 1,
                 2,
@@ -217,14 +209,14 @@ public sealed class SynchronizedHashSetTests
                 4,
                 5,
                 6
-            });
+            ]);
 
         // Assert
         result.Should()
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void IsSupersetOf_ShouldReturnTrueWhenSetIsSuperset()
     {
         // Arrange
@@ -232,18 +224,17 @@ public sealed class SynchronizedHashSetTests
 
         // Act
         var result = set.IsSupersetOf(
-            new[]
-            {
+            [
                 2,
                 4
-            });
+            ]);
 
         // Assert
         result.Should()
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Overlaps_ShouldReturnTrueWhenSetOverlapsWithOtherSet()
     {
         // Arrange
@@ -251,29 +242,27 @@ public sealed class SynchronizedHashSetTests
 
         // Act
         var result = set.Overlaps(
-            new[]
-            {
+            [
                 4,
                 6,
                 8
-            });
+            ]);
 
         // Assert
         result.Should()
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Remove_Should_Remove_Item_From_Set()
     {
         // Arrange
         var set = new SynchronizedHashSet<string>(
-            new[]
-            {
+            [
                 "apple",
                 "banana",
                 "orange"
-            });
+            ]);
 
         // Act
         var removed = set.Remove("banana");
@@ -286,25 +275,23 @@ public sealed class SynchronizedHashSetTests
            .NotContain("banana");
     }
 
-    [Fact]
+    [Test]
     public void SetEquals_Should_Return_True_When_Sets_Are_Equal()
     {
         // Arrange
         var set1 = new SynchronizedHashSet<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         var set2 = new SynchronizedHashSet<int>(
-            new[]
-            {
+            [
                 3,
                 2,
                 1
-            });
+            ]);
 
         // Act
         var equals = set1.SetEquals(set2);
@@ -314,7 +301,7 @@ public sealed class SynchronizedHashSetTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void SymmetricExceptWith_ShouldPerformSymmetricDifferenceOperation()
     {
         // Arrange
@@ -322,26 +309,24 @@ public sealed class SynchronizedHashSetTests
 
         // Act
         set.SymmetricExceptWith(
-            new[]
-            {
+            [
                 2,
                 4,
                 6
-            });
+            ]);
 
         // Assert
         set.Should()
            .BeEquivalentTo(
-               new[]
-               {
+               [
                    1,
                    3,
                    5,
                    6
-               });
+               ]);
     }
 
-    [Fact]
+    [Test]
     public void TryGetValue_ShouldRetrieveValueForExistingKey()
     {
         // Arrange
@@ -361,7 +346,7 @@ public sealed class SynchronizedHashSetTests
                    .Be(42);
     }
 
-    [Fact]
+    [Test]
     public void TryGetValue_ShouldReturnFalseForNonExistingKey()
     {
         // Arrange
@@ -381,25 +366,23 @@ public sealed class SynchronizedHashSetTests
                    .Be(default);
     }
 
-    [Fact]
+    [Test]
     public void UnionWith_Should_Add_Items_From_Other_Set_To_Current_Set()
     {
         // Arrange
         var set1 = new SynchronizedHashSet<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         var set2 = new SynchronizedHashSet<int>(
-            new[]
-            {
+            [
                 3,
                 4,
                 5
-            });
+            ]);
 
         // Act
         set1.UnionWith(set2);

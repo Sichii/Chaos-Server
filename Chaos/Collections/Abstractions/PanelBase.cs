@@ -1,7 +1,8 @@
-using Chaos.Common.Synchronization;
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Panel.Abstractions;
+#endregion
 
 namespace Chaos.Collections.Abstractions;
 
@@ -11,7 +12,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         get
         {
-            using var @lock = Sync.Enter();
+            using var @lock = Sync.EnterScope();
 
             return TotalSlots - Objects.Count(obj => obj != null);
         }
@@ -21,7 +22,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         get
         {
-            using var @lock = Sync.Enter();
+            using var @lock = Sync.EnterScope();
 
             return Objects.Count(obj => obj != null);
         }
@@ -33,7 +34,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         get
         {
-            using var @lock = Sync.Enter();
+            using var @lock = Sync.EnterScope();
 
             return Objects.Count(obj => obj != null) >= TotalSlots;
         }
@@ -45,7 +46,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     protected ICollection<Observers.Abstractions.IObserver<T>> Observers { get; }
 
     public PanelType PanelType { get; }
-    protected AutoReleasingMonitor Sync { get; }
+    protected Lock Sync { get; }
     protected int TotalSlots { get; }
 
     protected PanelBase(PanelType panelType, int length, byte[] invalidSlots)
@@ -55,19 +56,19 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         Objects = new T[Length];
         InvalidSlots = invalidSlots;
         TotalSlots = Length - invalidSlots.Length;
-        Sync = new AutoReleasingMonitor();
+        Sync = new Lock();
         Observers = new List<Observers.Abstractions.IObserver<T>>();
     }
 
     public virtual void AddObserver(Observers.Abstractions.IObserver<T> observer)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
         Observers.Add(observer);
     }
 
     public virtual bool Contains(T obj)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Objects.Any(o => (o != null) && o.Template.Name.EqualsI(obj.Template.Name));
     }
@@ -77,14 +78,14 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         if (!IsValidSlot(slot))
             return false;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Objects[slot] != null;
     }
 
     public virtual bool Contains(string name)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return this.Any(obj => obj.Template.Name.EqualsI(name));
     }
@@ -92,7 +93,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     /// <inheritdoc />
     public bool ContainsByTemplateKey(string templateKey)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return this.Any(obj => obj.Template.TemplateKey.EqualsI(templateKey));
     }
@@ -103,7 +104,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         List<T?> snapshot;
 
-        using (Sync.Enter())
+        using (Sync.EnterScope())
             snapshot = Objects.ToList();
 
         return snapshot.Where((obj, index) => (obj != null) && IsValidSlot((byte)index))
@@ -116,7 +117,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         get
         {
-            using var @lock = Sync.Enter();
+            using var @lock = Sync.EnterScope();
 
             if (IsValidSlot(slot))
                 return Objects[slot];
@@ -129,7 +130,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         get
         {
-            using var @lock = Sync.Enter();
+            using var @lock = Sync.EnterScope();
 
             return this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name));
         }
@@ -137,7 +138,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
 
     public virtual bool Remove(string name)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var obj = this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name));
 
@@ -152,7 +153,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         if (!IsValidSlot(slot))
             return false;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var existing = Objects[slot];
 
@@ -168,7 +169,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     /// <inheritdoc />
     public bool RemoveByTemplateKey(string templateKey)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var obj = this.FirstOrDefault(obj => obj.Template.TemplateKey.EqualsI(templateKey));
 
@@ -182,7 +183,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
 
     public virtual bool TryAddToNextSlot(T obj)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         for (byte i = 1; i < Length; i++)
             if ((Objects[i] == null) && IsValidSlot(i))
@@ -198,7 +199,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         if (!IsValidSlot(slot))
             return false;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         obj = Objects[slot];
 
@@ -207,7 +208,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
 
     public virtual bool TryGetObject(string name, [MaybeNullWhen(false)] out T obj)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var actualObjects = Objects.Where(obj => obj is not null)
                                    .ToList();
@@ -219,7 +220,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
 
     public virtual bool TryGetObjectByTemplateKey(string templateKey, [MaybeNullWhen(false)] out T obj)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var actualObjects = Objects.Where(obj => obj is not null)
                                    .ToList();
@@ -236,7 +237,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         if (!IsValidSlot(slot))
             return false;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         obj = Objects[slot];
 
@@ -254,7 +255,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         obj = default;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         obj = this.FirstOrDefault(obj => obj.Template.Name.EqualsI(name));
 
@@ -272,7 +273,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         obj = default;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         obj = this.FirstOrDefault(obj => obj.Template.TemplateKey.EqualsI(templateKey));
 
@@ -290,7 +291,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         if (!IsValidSlot(slot1) || !IsValidSlot(slot2))
             return false;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var obj1 = Objects[slot1];
         var obj2 = Objects[slot2];
@@ -321,7 +322,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
 
     public void Update(TimeSpan delta)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         foreach (var obj in Objects)
             obj?.Update(delta);
@@ -332,7 +333,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         if (!IsValidSlot(slot))
             return;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var obj = Objects[slot];
 
@@ -384,7 +385,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         if (!IsValidSlot(slot))
             return false;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var existing = Objects[slot];
 

@@ -1,13 +1,15 @@
+#region
 using Chaos.Formulae.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+#endregion
 
 namespace Chaos.Formulae.Experience;
 
 public class DefaultExperienceFormula : IExperienceFormula
 {
     /// <inheritdoc />
-    public long Calculate(Creature killedCreature, params Aisling[] aislings)
+    public long Calculate(Creature killedCreature, params ICollection<Aisling> aislings)
     {
         switch (killedCreature)
         {

@@ -1,12 +1,13 @@
+#region
 using Chaos.Common.Utilities;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class TypeSwitchTests
 {
-    [Fact]
+    [Test]
     public void GenericSwitch_ShouldExecuteActionForMatchingType()
     {
         // Arrange
@@ -22,7 +23,7 @@ public sealed class TypeSwitchTests
                        .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Switch_ShouldExecuteActionForMatchingType()
     {
         // Arrange
@@ -38,7 +39,7 @@ public sealed class TypeSwitchTests
                           .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Switch_ShouldExecuteDefaultActionWhenNoMatchFound()
     {
         // Arrange
@@ -55,7 +56,7 @@ public sealed class TypeSwitchTests
                            .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Switch_ShouldThrowInvalidOperationExceptionWhenNoMatchAndNoDefault()
     {
         // Arrange

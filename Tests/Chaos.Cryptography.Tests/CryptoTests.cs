@@ -1,7 +1,8 @@
+#region
 using System.Text;
 using Chaos.Cryptography.Abstractions.Definitions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable ArrangeAttributes
 
@@ -20,7 +21,7 @@ public sealed class CryptoTests
                 5
             ]));
 
-    [Fact]
+    [Test]
     public void Should_GenerateKey_With_Valid_A_And_B()
     {
         var key = Crypto.GenerateKey(1, 2);
@@ -33,7 +34,7 @@ public sealed class CryptoTests
            .Be(9);
     }
 
-    [Fact]
+    [Test]
     public void Should_GenerateKeySalts_With_Valid_Seed()
     {
         var keySalts = Crypto.GenerateKeySalts("mySeed");
@@ -46,7 +47,7 @@ public sealed class CryptoTests
                 .Be(1024, "32 hashes of 32 characters each = 1024");
     }
 
-    [Fact]
+    [Test]
     public void Should_GetMd5Hash_With_Valid_Value()
     {
         var md5Hash = Crypto.GetMd5Hash("myValue");
@@ -59,10 +60,10 @@ public sealed class CryptoTests
                .Be(32);
     }
 
-    [Theory]
-    [InlineData(0, EncryptionType.None)]
-    [InlineData(3, EncryptionType.Normal)]
-    [InlineData(255, EncryptionType.MD5)]
+    [Test]
+    [Arguments((byte)0, EncryptionType.None)]
+    [Arguments((byte)3, EncryptionType.Normal)]
+    [Arguments((byte)255, EncryptionType.MD5)]
     public void Should_Return_Valid_EncryptionType_From_GetClientEncryptionType(byte opCode, EncryptionType expectedType)
     {
         var actualType = Crypto.GetClientEncryptionType(opCode);
@@ -71,10 +72,10 @@ public sealed class CryptoTests
                   .Be(expectedType);
     }
 
-    [Theory]
-    [InlineData(0, EncryptionType.None)]
-    [InlineData(2, EncryptionType.Normal)]
-    [InlineData(255, EncryptionType.MD5)]
+    [Test]
+    [Arguments((byte)0, EncryptionType.None)]
+    [Arguments((byte)2, EncryptionType.Normal)]
+    [Arguments((byte)255, EncryptionType.MD5)]
     public void Should_Return_Valid_EncryptionType_From_ServerEncryptionType(byte opCode, EncryptionType expectedType)
     {
         var actualType = Crypto.GetServerEncryptionType(opCode);
@@ -83,10 +84,10 @@ public sealed class CryptoTests
                   .Be(expectedType);
     }
 
-    [Theory]
-    [InlineData(0, false)]
-    [InlineData(2, true)]
-    [InlineData(3, true)]
+    [Test]
+    [Arguments((byte)0, false)]
+    [Arguments((byte)2, true)]
+    [Arguments((byte)3, true)]
     public void ShouldBeEncrypted_Should_Return_Correct_Value(byte opCode, bool expectedResult)
     {
         var result = Crypto.IsClientEncrypted(opCode);
@@ -95,10 +96,10 @@ public sealed class CryptoTests
               .Be(expectedResult);
     }
 
-    [Theory]
-    [InlineData(0, false)]
-    [InlineData(1, true)]
-    [InlineData(2, true)]
+    [Test]
+    [Arguments((byte)0, false)]
+    [Arguments((byte)1, true)]
+    [Arguments((byte)2, true)]
     public void ShouldEncrypt_Should_Return_Correct_Value(byte opCode, bool expectedResult)
     {
         var result = Crypto.IsServerEncrypted(opCode);

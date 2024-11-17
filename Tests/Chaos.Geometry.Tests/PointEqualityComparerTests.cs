@@ -1,12 +1,13 @@
+#region
 using Chaos.Geometry.EqualityComparers;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class PointEqualityComparerTests
 {
-    [Fact]
+    [Test]
     public void Equals_ReturnsFalse_WhenPointsAreNotEqual()
     {
         // Arrange
@@ -21,7 +22,7 @@ public sealed class PointEqualityComparerTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Equals_ReturnsTrue_WhenPointsAreEqual()
     {
         // Arrange
@@ -36,7 +37,7 @@ public sealed class PointEqualityComparerTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ReturnsDifferentHashCode_WhenPointsAreNotEqual()
     {
         // Arrange
@@ -52,7 +53,7 @@ public sealed class PointEqualityComparerTests
                  .NotBe(hashCode2);
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ReturnsSameHashCode_WhenPointsAreEqual()
     {
         // Arrange

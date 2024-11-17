@@ -1,12 +1,13 @@
+#region
 using Chaos.Collections.Common;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class StaticVarsTests
 {
-    [Fact]
+    [Test]
     public void ContainsKey_ShouldReturnFalse_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -29,7 +30,7 @@ public sealed class StaticVarsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void ContainsKey_ShouldReturnTrue_WhenKeyExists()
     {
         // Arrange
@@ -52,7 +53,7 @@ public sealed class StaticVarsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Get_ShouldReturnDefaultValue_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -75,7 +76,7 @@ public sealed class StaticVarsTests
               .Be(default);
     }
 
-    [Fact]
+    [Test]
     public void Get_ShouldReturnValue_WhenKeyExists()
     {
         // Arrange
@@ -98,7 +99,7 @@ public sealed class StaticVarsTests
               .Be("Value1");
     }
 
-    [Fact]
+    [Test]
     public void GetRequired_ShouldReturnValue_WhenKeyExists()
     {
         // Arrange
@@ -121,7 +122,7 @@ public sealed class StaticVarsTests
               .Be("Value1");
     }
 
-    [Fact]
+    [Test]
     public void GetRequired_ShouldThrowException_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -145,7 +146,7 @@ public sealed class StaticVarsTests
            .WithMessage("Required key \"Key3\" was not found while populating script variables");
     }
 
-    [Fact]
+    [Test]
     public void Set_ShouldSetValue_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -166,7 +167,7 @@ public sealed class StaticVarsTests
             .Be(123);
     }
 
-    [Fact]
+    [Test]
     public void Set_ShouldUpdateValue_WhenKeyExists()
     {
         // Arrange

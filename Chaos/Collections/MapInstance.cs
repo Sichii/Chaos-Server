@@ -1,3 +1,4 @@
+#region
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Chaos.Common.Synchronization;
@@ -20,6 +21,7 @@ using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Collections;
 
@@ -96,7 +98,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             walkableArea);
 
         MapInstanceCtx = CancellationTokenSource.CreateLinkedTokenSource(ServerShutdownToken);
-        MonsterSpawns = new List<MonsterSpawn>();
+        MonsterSpawns = [];
         Sync = new FifoAutoReleasingSemaphoreSlim(1, 1, $"MapInstance {InstanceId}");
         Template = template;
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
@@ -159,12 +161,20 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     action();
                 } catch (Exception e)
                 {
-                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+                    Logger.WithTopics(
+                              [
+                                  Topics.Entities.MapInstance,
+                                  Topics.Actions.Update
+                              ])
                           .LogError(e, "Failed to process action in map {@MapInstance}", this);
                 }
         } catch (Exception e)
         {
-            Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+            Logger.WithTopics(
+                      [
+                          Topics.Entities.MapInstance,
+                          Topics.Actions.Update
+                      ])
                   .LogError(e, "Failed to update map {@MapInstance}", this);
         }
     }
@@ -279,7 +289,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Destroy()
     {
-        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Delete)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.MapInstance,
+                      Topics.Actions.Delete
+                  ])
               .WithProperty(this)
               .LogInformation("Shutting down map instance {@MapInstanceId}", InstanceId);
 
@@ -513,11 +527,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                                                          m
                                                      });
 
-                                             return new[]
-                                             {
+                                             return
+                                             [
                                                  grp.Where(m => m.MapInstance == this)
                                                     .ToList()
-                                             };
+                                             ];
                                          })
                                      .ToList();
 
@@ -749,7 +763,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             aisling.Client.SendSound(music, true);
     }
 
-    public void PlaySound(byte sound, params IPoint[] points)
+    public void PlaySound(byte sound, params IReadOnlyList<IPoint> points)
     {
         switch (points)
         {
@@ -843,7 +857,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 await UpdateMapAsync(DeltaTime.GetDelta);
             } catch (Exception e)
             {
-                Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+                Logger.WithTopics(
+                          [
+                              Topics.Entities.MapInstance,
+                              Topics.Actions.Update
+                          ])
                       .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
             }
         }

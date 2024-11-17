@@ -1,12 +1,13 @@
+#region
 using Chaos.Geometry.Abstractions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class LocationTests
 {
-    [Fact]
+    [Test]
     public void Constructor_WithStringAndIPoint_InitializesCorrectly()
     {
         var point = (IPoint)new Point(5, 10);
@@ -25,7 +26,7 @@ public sealed class LocationTests
                 .Be(10);
     }
 
-    [Fact]
+    [Test]
     public void Constructor_WithStringAndPoint_InitializesCorrectly()
     {
         var point = new Point(5, 10);
@@ -44,7 +45,7 @@ public sealed class LocationTests
                 .Be(10);
     }
 
-    [Fact]
+    [Test]
     public void Deconstructor_ReturnsCorrectValues()
     {
         var location = new Location("TestMap", 5, 10);
@@ -60,7 +61,7 @@ public sealed class LocationTests
          .Be(10);
     }
 
-    [Fact]
+    [Test]
     public void EqualityOperator_ReturnsTrueForSameLocations()
     {
         var location1 = new Location("TestMap", 5, 10);
@@ -70,7 +71,7 @@ public sealed class LocationTests
                                 .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Equals_ReturnsFalseForDifferentLocations()
     {
         var location1 = new Location("TestMap1", 5, 10);
@@ -81,7 +82,7 @@ public sealed class LocationTests
                  .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Equals_ReturnsTrueForSameLocations()
     {
         var location1 = new Location("TestMap", 5, 10);
@@ -92,7 +93,7 @@ public sealed class LocationTests
                  .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void InequalityOperator_ReturnsFalseForSameLocations()
     {
         var location1 = new Location("TestMap", 5, 10);
@@ -102,7 +103,7 @@ public sealed class LocationTests
                                 .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void InequalityOperator_ReturnsTrueForDifferentLocations()
     {
         var location1 = new Location("TestMap1", 5, 10);
@@ -112,7 +113,7 @@ public sealed class LocationTests
                                 .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Location_Constructor_CreatesLocationWithGivenValues()
     {
         // Arrange
@@ -137,7 +138,7 @@ public sealed class LocationTests
                 .Be(Y);
     }
 
-    [Fact]
+    [Test]
     public void Location_Equals_ReturnsFalseWhenComparingWithDifferentType()
     {
         // Arrange
@@ -152,7 +153,7 @@ public sealed class LocationTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Location_Equals_ReturnsFalseWhenLocationsAreNotEqual()
     {
         // Arrange
@@ -167,7 +168,7 @@ public sealed class LocationTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Location_Equals_ReturnsTrueWhenLocationsAreEqual()
     {
         // Arrange
@@ -185,7 +186,7 @@ public sealed class LocationTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Location_From_ReturnsNewLocationWithSameValuesWhenPassedLocationOfDifferentType()
     {
         // Arrange
@@ -208,7 +209,7 @@ public sealed class LocationTests
                    .Be(originalLocation.Y);
     }
 
-    [Fact]
+    [Test]
     public void Location_From_ReturnsSameLocationWhenPassedLocationOfSameType()
     {
         // Arrange
@@ -222,7 +223,7 @@ public sealed class LocationTests
                    .BeEquivalentTo(originalLocation);
     }
 
-    [Fact]
+    [Test]
     public void Location_GetHashCode_ReturnsConsistentHashCode()
     {
         // Arrange
@@ -241,7 +242,7 @@ public sealed class LocationTests
                  .Be(expectedHashCode);
     }
 
-    [Fact]
+    [Test]
     public void Location_TryParse_InvalidInput_ReturnsFalseAndDefaultLocation()
     {
         // Arrange
@@ -258,7 +259,7 @@ public sealed class LocationTests
                 .Be(default(Location));
     }
 
-    [Fact]
+    [Test]
     public void Location_TryParse_ValidInput_ReturnsTrueAndParsesLocation()
     {
         // Arrange
@@ -287,7 +288,7 @@ public sealed class LocationTests
                 .Be(EXPECTED_Y);
     }
 
-    [Fact]
+    [Test]
     public void ToString_ReturnsExpectedFormat()
     {
         // Assuming ToString() outputs in the format: "Map: X,Y"

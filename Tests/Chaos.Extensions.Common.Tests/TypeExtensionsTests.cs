@@ -1,6 +1,7 @@
+#region
 using System.Runtime.CompilerServices;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable ClassCanBeSealed.Global
 // ReSharper disable UnusedTypeParameter
@@ -9,7 +10,7 @@ namespace Chaos.Extensions.Common.Tests;
 
 public sealed class TypeExtensionsTests
 {
-    [Fact]
+    [Test]
     public void ExtractGenericBaseType_Should_Return_AnotherDerivedType_When_GenericBaseType_Is_AnotherDerived()
     {
         // Arrange
@@ -26,7 +27,7 @@ public sealed class TypeExtensionsTests
               .Be(typeof(AnotherDerived<string>));
     }
 
-    [Fact]
+    [Test]
     public void ExtractGenericBaseType_Should_Return_BaseType_When_GenericBaseType_Is_Base()
     {
         // Arrange
@@ -43,7 +44,7 @@ public sealed class TypeExtensionsTests
               .Be(typeof(Base<int>));
     }
 
-    [Fact]
+    [Test]
     public void ExtractGenericBaseType_Should_Return_Null_When_GenericBaseType_Is_Not_Found()
     {
         // Arrange
@@ -57,7 +58,7 @@ public sealed class TypeExtensionsTests
               .BeNull();
     }
 
-    [Fact]
+    [Test]
     public void ExtractGenericInterfaces_Should_Return_Empty_Collection_When_GenericInterfaceType_Is_Not_Found()
     {
         // Arrange
@@ -71,7 +72,7 @@ public sealed class TypeExtensionsTests
               .BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void ExtractGenericInterfaces_Should_Return_Empty_Collection_When_Type_Does_Not_Implement_Generic_Interface()
     {
         // Arrange
@@ -85,7 +86,7 @@ public sealed class TypeExtensionsTests
               .BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void ExtractGenericInterfaces_Should_Return_Interfaces_When_GenericInterfaceType_Is_Another_Interface()
     {
         // Arrange
@@ -103,7 +104,7 @@ public sealed class TypeExtensionsTests
               .Contain(typeof(IAnotherDerived<string>));
     }
 
-    [Fact]
+    [Test]
     public void ExtractGenericInterfaces_Should_Return_Interfaces_When_GenericInterfaceType_Is_Base_Interface()
     {
         // Arrange
@@ -121,7 +122,7 @@ public sealed class TypeExtensionsTests
               .Contain(typeof(IBase<int>));
     }
 
-    [Fact]
+    [Test]
     public void GetBaseTypes_Should_Return_All_Base_Types()
     {
         // Arrange
@@ -139,7 +140,7 @@ public sealed class TypeExtensionsTests
               .ContainInOrder(typeof(AnotherDerived<string>), typeof(Base<string>), typeof(object));
     }
 
-    [Fact]
+    [Test]
     public void HasBaseType_Should_Return_False_When_Type_Does_Not_Have_Base_Type()
     {
         // Arrange
@@ -153,7 +154,7 @@ public sealed class TypeExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void HasBaseType_Should_Return_True_When_Type_Has_Base_Type()
     {
         // Arrange
@@ -167,7 +168,7 @@ public sealed class TypeExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void HasBaseType_Should_Return_True_When_Type_Has_Base_Type_Matching_Reference_Type()
     {
         // Arrange
@@ -182,7 +183,7 @@ public sealed class TypeExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void HasBaseType_Should_Return_True_When_Type_Has_Generic_Base_Type_Definition()
     {
         // Arrange
@@ -196,7 +197,7 @@ public sealed class TypeExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void HasInterface_Should_Return_False_When_Type_Does_Not_Implement_Interface()
     {
         // Arrange
@@ -210,7 +211,7 @@ public sealed class TypeExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void HasInterface_Should_Return_True_When_Type_Implements_Generic_Interface_Definition()
     {
         // Arrange
@@ -224,7 +225,7 @@ public sealed class TypeExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void HasInterface_Should_Return_True_When_Type_Implements_Interface()
     {
         // Arrange
@@ -238,7 +239,7 @@ public sealed class TypeExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void HasInterface_Should_Return_True_When_Type_Implements_Interface_Matching_Reference_Type()
     {
         // Arrange
@@ -253,7 +254,7 @@ public sealed class TypeExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void IsCompilerGenerated_Should_Return_False_For_Non_Compiler_Generated_Type()
     {
         // Arrange
@@ -267,7 +268,7 @@ public sealed class TypeExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void IsCompilerGenerated_Should_Return_True_For_Compiler_Generated_Type()
     {
         // Arrange
@@ -281,7 +282,7 @@ public sealed class TypeExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void LoadImplementations_Should_Return_All_Constructable_Types_Implementing_Interface()
     {
         // Arrange
@@ -299,7 +300,7 @@ public sealed class TypeExtensionsTests
                        .NotContain(interfaceType);
     }
 
-    [Fact]
+    [Test]
     public void LoadImplementations_Should_Return_All_Constructable_Types_Inheriting_From_Base_Type()
     {
         // Arrange

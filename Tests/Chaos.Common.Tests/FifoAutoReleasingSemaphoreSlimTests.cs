@@ -1,12 +1,13 @@
+#region
 using Chaos.Common.Synchronization;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class FifoAutoReleasingSemaphoreSlimTests
 {
-    [Fact]
+    [Test]
     public async Task WaitAsync_ShouldAcquireSemaphoreInOrder()
     {
         // Arrange
@@ -31,7 +32,7 @@ public sealed class FifoAutoReleasingSemaphoreSlimTests
              .Be(10);
     }
 
-    [Fact]
+    [Test]
     public async Task WaitAsync_WithTimeout_ShouldAcquireSemaphoreInOrderWithinTimeout()
     {
         // Arrange
@@ -61,7 +62,7 @@ public sealed class FifoAutoReleasingSemaphoreSlimTests
              .Be(10);
     }
 
-    [Fact]
+    [Test]
     public async Task WaitAsync_WithTimeout_ShouldNotAcquireSemaphoreIfTimeoutExpires()
     {
         // Arrange
@@ -92,7 +93,7 @@ public sealed class FifoAutoReleasingSemaphoreSlimTests
              .Be(5, "because there is only enough time in the timeout for entrances to be at (0, 100, 200, 300, 400) milliseconds");
     }
 
-    [Fact]
+    [Test]
     public async Task WaitAsync_WithTimeout_With_OutTask_ShouldAcquireSemaphoreInOrderWithinTimeout()
     {
         // Arrange
@@ -120,7 +121,7 @@ public sealed class FifoAutoReleasingSemaphoreSlimTests
              .Be(10);
     }
 
-    [Fact]
+    [Test]
     public async Task WaitAsync_WithTimeout_With_OutTask_ShouldNotAcquireSemaphoreIfTimeoutExpires()
     {
         // Arrange

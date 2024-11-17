@@ -1,12 +1,13 @@
+#region
 using Chaos.Collections.Synchronized;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class SynchronizedListTests
 {
-    [Fact]
+    [Test]
     public void Add_ShouldAddItemToList()
     {
         // Arrange
@@ -25,17 +26,16 @@ public sealed class SynchronizedListTests
             .Contain(42);
     }
 
-    [Fact]
+    [Test]
     public void Clear_ShouldRemoveAllItemsFromList()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         list.Clear();
@@ -46,17 +46,16 @@ public sealed class SynchronizedListTests
             .Be(0);
     }
 
-    [Fact]
+    [Test]
     public void Contains_ShouldReturnFalseIfItemDoesNotExistInList()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         var contains = list.Contains(4);
@@ -66,17 +65,16 @@ public sealed class SynchronizedListTests
                 .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Contains_ShouldReturnTrueIfItemExistsInList()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         var contains = list.Contains(2);
@@ -86,17 +84,16 @@ public sealed class SynchronizedListTests
                 .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void CopyTo_ShouldCopyItemsToArray()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
         var array = new int[3];
 
         // Act
@@ -105,25 +102,23 @@ public sealed class SynchronizedListTests
         // Assert
         array.Should()
              .BeEquivalentTo(
-                 new[]
-                 {
+                 [
                      1,
                      2,
                      3
-                 });
+                 ]);
     }
 
-    [Fact]
+    [Test]
     public void Count_ShouldReturnCorrectCount()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         var count = list.Count;
@@ -133,17 +128,16 @@ public sealed class SynchronizedListTests
              .Be(3);
     }
 
-    [Fact]
+    [Test]
     public void GetEnumerator_ShouldEnumerateItemsInList()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         var result = list.ToList();
@@ -151,25 +145,23 @@ public sealed class SynchronizedListTests
         // Assert
         result.Should()
               .BeEquivalentTo(
-                  new[]
-                  {
+                  [
                       1,
                       2,
                       3
-                  });
+                  ]);
     }
 
-    [Fact]
+    [Test]
     public void Indexer_ShouldGetAndSetItemAtIndex()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         var item = list[1];
@@ -185,17 +177,16 @@ public sealed class SynchronizedListTests
     }
 
     // Idk why this doesn't throw IndexOutOfRangeException
-    [Fact]
+    [Test]
     public void Indexer_ShouldThrowArgumentOutOfRangeException_WhenIndexIsOutOfRange()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act & Assert
         list.Invoking(
@@ -207,17 +198,16 @@ public sealed class SynchronizedListTests
             .Throw<ArgumentOutOfRangeException>();
     }
 
-    [Fact]
+    [Test]
     public void Indexer_ShouldThrowNotSupportedException_WhenSettingItemAtIndex_WhenListIsReadOnly()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            }).AsReadOnly();
+            ]).AsReadOnly();
 
         // Act & Assert
         list.Invoking(l => ((IList<int>)l)[1] = 42)
@@ -225,17 +215,16 @@ public sealed class SynchronizedListTests
             .Throw<NotSupportedException>();
     }
 
-    [Fact]
+    [Test]
     public void IndexOf_ShouldReturnIndexForExistingItem()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         var index = list.IndexOf(2);
@@ -245,17 +234,16 @@ public sealed class SynchronizedListTests
              .Be(1);
     }
 
-    [Fact]
+    [Test]
     public void IndexOf_ShouldReturnNegativeOneForNonExistingItem()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         var index = list.IndexOf(4);
@@ -265,17 +253,16 @@ public sealed class SynchronizedListTests
              .Be(-1);
     }
 
-    [Fact]
+    [Test]
     public void Insert_ShouldInsertItemAtSpecifiedIndex()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         list.Insert(1, 42);
@@ -290,7 +277,7 @@ public sealed class SynchronizedListTests
             .Be(42);
     }
 
-    [Fact]
+    [Test]
     public void IsReadOnly_ShouldReturnFalse()
     {
         // Arrange
@@ -305,17 +292,16 @@ public sealed class SynchronizedListTests
                   .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Remove_ShouldRemoveItemFromList()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         var removed = list.Remove(2);
@@ -332,17 +318,16 @@ public sealed class SynchronizedListTests
             .NotContain(2);
     }
 
-    [Fact]
+    [Test]
     public void RemoveAt_ShouldRemoveItemAtSpecifiedIndex()
     {
         // Arrange
         var list = new SynchronizedList<int>(
-            new[]
-            {
+            [
                 1,
                 2,
                 3
-            });
+            ]);
 
         // Act
         list.RemoveAt(1);

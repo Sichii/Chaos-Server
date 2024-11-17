@@ -1,3 +1,4 @@
+#region
 using System.Diagnostics;
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
@@ -8,6 +9,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 using Chaos.Storage.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.DialogScripts.GuildScripts;
 
@@ -90,7 +92,11 @@ public class GuildMemberKickScript : GuildScriptBase
             throw new UnreachableException(
                 "The only failure reason is if the person being kicked is a leader. That should be checked for.");
 
-        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Kick)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Guild,
+                      Topics.Actions.Kick
+                  ])
               .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)

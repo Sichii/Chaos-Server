@@ -1,8 +1,10 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿#region
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
 using Chaos.Geometry.JsonConverters;
+#endregion
 
 namespace Chaos.Geometry;
 
@@ -125,7 +127,7 @@ public sealed record Location : ILocation, IEquatable<ILocation>
     public static bool TryParse(string str, [MaybeNullWhen(false)] out Location location)
     {
         location = null;
-        var match = RegexCache.LOCATION_REGEX.Match(str);
+        var match = RegexCache.LocationRegex.Match(str);
 
         if (!match.Success)
             return false;

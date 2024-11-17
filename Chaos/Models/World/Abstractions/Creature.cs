@@ -1,3 +1,4 @@
+#region
 using System.Runtime.CompilerServices;
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
@@ -22,6 +23,7 @@ using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.NaturalRegeneration;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Models.World.Abstractions;
 
@@ -256,7 +258,12 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             source.Client.SendAttributes(StatUpdateType.ExpGold);
             Script.OnGoldDroppedOn(source, amount);
 
-            Logger.WithTopics(Topics.Entities.Creature, Topics.Entities.Gold, Topics.Actions.Drop)
+            Logger.WithTopics(
+                      [
+                          Topics.Entities.Creature,
+                          Topics.Entities.Gold,
+                          Topics.Actions.Drop
+                      ])
                   .WithProperty(source)
                   .LogInformation(
                       "Aisling {@AislingName} dropped {Amount} gold on creature {@CreatureName}",
@@ -282,7 +289,12 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (source.Inventory.RemoveQuantity(slot, count, out var items))
             foreach (var item in items)
             {
-                Logger.WithTopics(Topics.Entities.Creature, Topics.Entities.Item, Topics.Actions.Drop)
+                Logger.WithTopics(
+                          [
+                              Topics.Entities.Creature,
+                              Topics.Entities.Item,
+                              Topics.Actions.Drop
+                          ])
                       .WithProperty(source)
                       .WithProperty(item)
                       .WithProperty(this)
@@ -413,7 +425,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         bool ignoreSharding = false,
         bool fromWolrdMap = false,
         Func<Task>? onTraverse = null)
-        => Task.Run(
+        => Task.Run<Task>(
             async () =>
             {
                 var currentMap = MapInstance;
@@ -446,7 +458,12 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                         await onTraverse();
                 } catch (Exception e)
                 {
-                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.Creature, Topics.Actions.Traverse)
+                    Logger.WithTopics(
+                              [
+                                  Topics.Entities.MapInstance,
+                                  Topics.Entities.Creature,
+                                  Topics.Actions.Traverse
+                              ])
                           .WithProperty(this)
                           .WithProperty(currentMap)
                           .WithProperty(destinationMap)
@@ -467,7 +484,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         groundItems = items.Select(i => new GroundItem(i, MapInstance, point))
                            .ToArray();
 
-        if (!groundItems.Any())
+        if (groundItems.Length == 0)
             return false;
 
         MapInstance.AddEntities(groundItems);
@@ -477,7 +494,12 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         foreach (var groundItem in groundItems)
         {
-            Logger.WithTopics(Topics.Entities.Creature, Topics.Entities.Item, Topics.Actions.Drop)
+            Logger.WithTopics(
+                      [
+                          Topics.Entities.Creature,
+                          Topics.Entities.Item,
+                          Topics.Actions.Drop
+                      ])
                   .WithProperty(this)
                   .WithProperty(groundItem)
                   .LogInformation(
@@ -497,8 +519,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         return true;
     }
 
-    public virtual bool TryDrop(IPoint point, [MaybeNullWhen(false)] out GroundItem[] groundItems, params Item[] items)
-        => TryDrop(point, items.AsEnumerable(), out groundItems);
+    public virtual bool TryDrop(IPoint point, [MaybeNullWhen(false)] out GroundItem[] groundItems, params IEnumerable<Item> items)
+        => TryDrop(point, items, out groundItems);
 
     public virtual bool TryDropGold(IPoint point, int amount, [MaybeNullWhen(false)] out Money money)
     {
@@ -513,7 +535,12 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         MapInstance.AddEntity(money, point);
 
-        Logger.WithTopics(Topics.Entities.Creature, Topics.Entities.Gold, Topics.Actions.Drop)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Creature,
+                      Topics.Entities.Gold,
+                      Topics.Actions.Drop
+                  ])
               .WithProperty(this)
               .WithProperty(money)
               .LogInformation(

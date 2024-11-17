@@ -1,8 +1,9 @@
+#region
 using System.Text;
 using Chaos.IO.Definitions;
 using Chaos.IO.Memory;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.IO.Tests;
 
@@ -10,7 +11,7 @@ public sealed class SpanReaderTests
 {
     private static readonly Encoding Encoding = Encoding.UTF8;
 
-    [Fact]
+    [Test]
     public void ReadArgs_ShouldReturnListOfStrings()
     {
         // Arrange
@@ -25,7 +26,7 @@ public sealed class SpanReaderTests
               .ContainInOrder("hello", "world");
     }
 
-    [Fact]
+    [Test]
     public void ReadArgs8_ShouldReturnListOfStrings()
     {
         // Arrange
@@ -40,7 +41,7 @@ public sealed class SpanReaderTests
               .ContainInOrder("hello", "world");
     }
 
-    [Fact]
+    [Test]
     public void ReadBoolean_ShouldReturnBooleanValue()
     {
         // Arrange
@@ -58,7 +59,7 @@ public sealed class SpanReaderTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void ReadByte_ShouldReturnByteValue()
     {
         // Arrange
@@ -76,7 +77,7 @@ public sealed class SpanReaderTests
               .Be(0xAB);
     }
 
-    [Fact]
+    [Test]
     public void ReadBytes_ShouldReturnByteArrayWithSpecifiedLength()
     {
         // Arrange
@@ -91,7 +92,7 @@ public sealed class SpanReaderTests
               .Equal(Encoding.GetBytes("Hello"));
     }
 
-    [Fact]
+    [Test]
     public void ReadBytes_ShouldThrowEndOfStreamException_WhenRemainingBytesAreLessThanRequestedLength()
     {
         // Arrange
@@ -115,7 +116,7 @@ public sealed class SpanReaderTests
           .BeOfType<EndOfStreamException>();
     }
 
-    [Fact]
+    [Test]
     public void ReadData_ShouldReturnAllRemainingBytes()
     {
         // Arrange
@@ -130,7 +131,7 @@ public sealed class SpanReaderTests
               .Equal(buffer);
     }
 
-    [Fact]
+    [Test]
     public void ReadData16_ShouldReturnByteArrayWithLengthSpecifiedByUInt16()
     {
         // Arrange
@@ -145,7 +146,7 @@ public sealed class SpanReaderTests
               .Equal(Encoding.GetBytes("Hello, world!"));
     }
 
-    [Fact]
+    [Test]
     public void ReadData8_ShouldReturnByteArrayWithLengthSpecifiedByByte()
     {
         // Arrange
@@ -160,7 +161,7 @@ public sealed class SpanReaderTests
               .Equal(Encoding.GetBytes("Hello, world!"));
     }
 
-    [Fact]
+    [Test]
     public void ReadInt16_ShouldReturnInt16Value()
     {
         // Arrange
@@ -179,7 +180,7 @@ public sealed class SpanReaderTests
               .Be(0x1234);
     }
 
-    [Fact]
+    [Test]
     public void ReadInt16_ShouldReturnInt16Value_LittleEndian()
     {
         // Arrange
@@ -198,7 +199,7 @@ public sealed class SpanReaderTests
               .Be(0x1234);
     }
 
-    [Fact]
+    [Test]
     public void ReadInt32_ShouldReturnInt32Value()
     {
         // Arrange
@@ -219,7 +220,7 @@ public sealed class SpanReaderTests
               .Be(0x12345678);
     }
 
-    [Fact]
+    [Test]
     public void ReadInt32_ShouldReturnInt32Value_LittleEndian()
     {
         // Arrange
@@ -240,7 +241,7 @@ public sealed class SpanReaderTests
               .Be(0x12345678);
     }
 
-    [Fact]
+    [Test]
     public void ReadPoint16_ShouldReturnTupleOfUInt16()
     {
         // Arrange
@@ -261,7 +262,7 @@ public sealed class SpanReaderTests
               .Be((0x1234, 0x5678));
     }
 
-    [Fact]
+    [Test]
     public void ReadPoint16_ShouldReturnTupleOfUInt16_LittleEndian()
     {
         // Arrange
@@ -282,7 +283,7 @@ public sealed class SpanReaderTests
               .Be((0x1234, 0x5678));
     }
 
-    [Fact]
+    [Test]
     public void ReadPoint8_ShouldReturnTupleOfByte()
     {
         // Arrange
@@ -301,7 +302,7 @@ public sealed class SpanReaderTests
               .Be((0x12, 0x34));
     }
 
-    [Fact]
+    [Test]
     public void ReadSByte_ShouldReturnSByteValue()
     {
         // Arrange
@@ -319,7 +320,7 @@ public sealed class SpanReaderTests
               .Be(-0x55);
     }
 
-    [Fact]
+    [Test]
     public void ReadString_ShouldReturnStringUntilEndOfBuffer_WhenNoNullTerminatorIsFound()
     {
         // Arrange
@@ -334,7 +335,7 @@ public sealed class SpanReaderTests
               .Be("Hello, world!");
     }
 
-    [Fact]
+    [Test]
     public void ReadString_ShouldReturnStringUntilNullTerminator()
     {
         // Arrange
@@ -349,7 +350,7 @@ public sealed class SpanReaderTests
               .Be("Hello");
     }
 
-    [Fact]
+    [Test]
     public void ReadString16_ShouldReturnStringWithLengthSpecifiedByUInt16()
     {
         // Arrange
@@ -364,7 +365,7 @@ public sealed class SpanReaderTests
               .Be("Hello, world!");
     }
 
-    [Fact]
+    [Test]
     public void ReadString16_ShouldThrowEndOfStreamException_WhenRemainingBytesAreLessThanSpecifiedLength()
     {
         // Arrange
@@ -390,7 +391,7 @@ public sealed class SpanReaderTests
                  .BeOfType<EndOfStreamException>();
     }
 
-    [Fact]
+    [Test]
     public void ReadString8_ShouldReturnStringWithLengthSpecifiedByByte()
     {
         // Arrange
@@ -405,7 +406,7 @@ public sealed class SpanReaderTests
               .Be("Hello, world!");
     }
 
-    [Fact]
+    [Test]
     public void ReadString8_ShouldThrowEndOfStreamException_WhenRemainingBytesAreLessThanSpecifiedLength()
     {
         // Arrange
@@ -431,7 +432,7 @@ public sealed class SpanReaderTests
                  .BeOfType<EndOfStreamException>();
     }
 
-    [Fact]
+    [Test]
     public void ReadUInt16_ShouldReturnUInt16Value()
     {
         // Arrange
@@ -450,7 +451,7 @@ public sealed class SpanReaderTests
               .Be(0x1234);
     }
 
-    [Fact]
+    [Test]
     public void ReadUInt16_ShouldReturnUInt16Value_LittleEndian()
     {
         // Arrange
@@ -469,7 +470,7 @@ public sealed class SpanReaderTests
               .Be(0x1234);
     }
 
-    [Fact]
+    [Test]
     public void ReadUInt32_ShouldReturnUInt32Value()
     {
         // Arrange
@@ -490,7 +491,7 @@ public sealed class SpanReaderTests
               .Be(0x12345678);
     }
 
-    [Fact]
+    [Test]
     public void ReadUInt32_ShouldReturnUInt32Value_LittleEndian()
     {
         // Arrange

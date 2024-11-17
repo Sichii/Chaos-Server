@@ -1,21 +1,22 @@
 // ReSharper disable ArrangeAttributes
 
+#region
 using Chaos.Geometry;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Geometry.Tests;
 
 public sealed class RectangleExtensionsTests
 {
     //@formatter:off
-    [Theory]
-    [InlineData(0, 0, 10, 10, 5, 5, true)]    // Point is inside the rectangle
-    [InlineData(0, 0, 10, 10, 0, 0, true)]    // Point is on the top-left corner of the rectangle
-    [InlineData(0, 0, 10, 10, 9, 9, true)]  // Point is on the bottom-right corner of the rectangle
-    [InlineData(0, 0, 10, 10, 15, 15, false)] // Point is outside the rectangle
-    [InlineData(0, 0, 10, 10, 5, 15, false)]  // Point is below the rectangle
-    [InlineData(0, 0, 10, 10, -5, -5, false)] // Point is outside the rectangle
+    [Test]
+    [Arguments(0, 0, 10, 10, 5, 5, true)]    // Point is inside the rectangle
+    [Arguments(0, 0, 10, 10, 0, 0, true)]    // Point is on the top-left corner of the rectangle
+    [Arguments(0, 0, 10, 10, 9, 9, true)]  // Point is on the bottom-right corner of the rectangle
+    [Arguments(0, 0, 10, 10, 15, 15, false)] // Point is outside the rectangle
+    [Arguments(0, 0, 10, 10, 5, 15, false)]  // Point is below the rectangle
+    [Arguments(0, 0, 10, 10, -5, -5, false)] // Point is outside the rectangle
     //@formatter:on
     public void Contains_Should_Return_Correct_Result(
         int rectX,
@@ -43,7 +44,7 @@ public sealed class RectangleExtensionsTests
               .Be(expectedResult);
     }
 
-    [Fact]
+    [Test]
     public void Contains_Should_Return_False_When_Rectangle_Does_Not_Contain_Other_Rectangle()
     {
         // Arrange
@@ -67,7 +68,7 @@ public sealed class RectangleExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Contains_Should_Return_False_When_Rectangles_Intersect()
     {
         // Arrange
@@ -91,7 +92,7 @@ public sealed class RectangleExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Contains_Should_Return_True_When_Rectangle_Contains_Other_Rectangle()
     {
         // Arrange
@@ -115,7 +116,7 @@ public sealed class RectangleExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Contains_Should_Return_True_When_Rectangle_Contains_Same_Rectangle()
     {
         // Arrange
@@ -139,7 +140,7 @@ public sealed class RectangleExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void GenerateMaze_Should_GeneratePerfectMaze()
     {
         var rect = new Rectangle(
@@ -173,7 +174,7 @@ public sealed class RectangleExtensionsTests
                       .Contain(start);
     }
 
-    [Fact]
+    [Test]
     public void GetOutline_Should_Return_Correct_Outline_Points_For_Rectangle()
     {
         // Arrange
@@ -193,8 +194,7 @@ public sealed class RectangleExtensionsTests
 
         outline.Should()
                .BeEquivalentTo(
-                   new[]
-                   {
+                   [
                        new Point(0, 0),
                        new Point(0, 1),
                        new Point(0, 2),
@@ -207,10 +207,10 @@ public sealed class RectangleExtensionsTests
                        new Point(3, 0),
                        new Point(2, 0),
                        new Point(1, 0)
-                   });
+                   ]);
     }
 
-    [Fact]
+    [Test]
     public void GetOutline_Should_Return_Correct_Outline_Points_For_Rectangle_With_Negative_Coordinates()
     {
         // Arrange
@@ -230,8 +230,7 @@ public sealed class RectangleExtensionsTests
 
         outline.Should()
                .BeEquivalentTo(
-                   new[]
-                   {
+                   [
                        new Point(-3, -2),
                        new Point(-3, -1),
                        new Point(-3, 0),
@@ -248,10 +247,10 @@ public sealed class RectangleExtensionsTests
                        new Point(0, -2),
                        new Point(-1, -2),
                        new Point(-2, -2)
-                   });
+                   ]);
     }
 
-    [Fact]
+    [Test]
     public void GetOutline_Should_Return_Correct_Outline_Points_For_Square()
     {
         // Arrange
@@ -271,8 +270,7 @@ public sealed class RectangleExtensionsTests
 
         outline.Should()
                .BeEquivalentTo(
-                   new[]
-                   {
+                   [
                        new Point(0, 0),
                        new Point(0, 1),
                        new Point(0, 2),
@@ -285,10 +283,10 @@ public sealed class RectangleExtensionsTests
                        new Point(3, 0),
                        new Point(2, 0),
                        new Point(1, 0)
-                   });
+                   ]);
     }
 
-    [Fact]
+    [Test]
     public void GetPoints_Should_Return_All_Points_Inside_Rectangle()
     {
         // Arrange
@@ -308,18 +306,17 @@ public sealed class RectangleExtensionsTests
 
         points.Should()
               .BeEquivalentTo(
-                  new[]
-                  {
+                  [
                       new Point(0, 0),
                       new Point(1, 0),
                       new Point(2, 0),
                       new Point(0, 1),
                       new Point(1, 1),
                       new Point(2, 1)
-                  });
+                  ]);
     }
 
-    [Fact]
+    [Test]
     public void GetPoints_Should_Return_All_Points_Inside_Rectangle_With_Negative_Coordinates()
     {
         // Arrange
@@ -339,18 +336,17 @@ public sealed class RectangleExtensionsTests
 
         points.Should()
               .BeEquivalentTo(
-                  new[]
-                  {
+                  [
                       new Point(-2, -1),
                       new Point(-1, -1),
                       new Point(0, -1),
                       new Point(-2, 0),
                       new Point(-1, 0),
                       new Point(0, 0)
-                  });
+                  ]);
     }
 
-    [Fact]
+    [Test]
     public void GetPoints_Should_Return_All_Points_Inside_Square()
     {
         // Arrange
@@ -370,8 +366,7 @@ public sealed class RectangleExtensionsTests
 
         points.Should()
               .BeEquivalentTo(
-                  new[]
-                  {
+                  [
                       new Point(1, 1),
                       new Point(2, 1),
                       new Point(3, 1),
@@ -381,10 +376,10 @@ public sealed class RectangleExtensionsTests
                       new Point(1, 3),
                       new Point(2, 3),
                       new Point(3, 3)
-                  });
+                  ]);
     }
 
-    [Fact]
+    [Test]
     public void GetRandomPoint_Should_Return_Point_Inside_Rectangle()
     {
         // Arrange
@@ -428,7 +423,7 @@ public sealed class RectangleExtensionsTests
         }
     }
 
-    [Fact]
+    [Test]
     public void Intersects_Should_Return_False_When_Rectangles_Do_Not_Intersect()
     {
         // Arrange
@@ -452,7 +447,7 @@ public sealed class RectangleExtensionsTests
                   .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Intersects_Should_Return_True_When_Rectangles_Are_Contained_Within_Each_Other()
     {
         // Arrange
@@ -476,7 +471,7 @@ public sealed class RectangleExtensionsTests
                   .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Intersects_Should_Return_True_When_Rectangles_Intersect()
     {
         // Arrange

@@ -1,8 +1,10 @@
+#region
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.DialogScripts.TrainerScripts;
 
@@ -45,7 +47,12 @@ public class ForgetSkillScript : DialogScriptBase
         }
 
         if (source.SkillBook.Remove(slot))
-            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Skill, Topics.Actions.Forget)
+            Logger.WithTopics(
+                      [
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Skill,
+                          Topics.Actions.Forget
+                      ])
                   .WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
                   .WithProperty(source)

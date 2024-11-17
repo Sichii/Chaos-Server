@@ -1,13 +1,14 @@
+#region
 using Chaos.Common.Abstractions;
 using Chaos.Common.Identity;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class SequentialIdGeneratorTests
 {
-    [Fact]
+    [Test]
     public void NextId_ShouldGenerateSequentialIds()
     {
         // Arrange
@@ -22,7 +23,7 @@ public sealed class SequentialIdGeneratorTests
            .BeGreaterThan(id1);
     }
 
-    [Fact]
+    [Test]
     public void NextId_ShouldStartFromSpecifiedId()
     {
         // Arrange
@@ -41,7 +42,7 @@ public sealed class SequentialIdGeneratorTests
            .BeGreaterThan(id1);
     }
 
-    [Fact]
+    [Test]
     public void NextId_ShouldUseDefaultStartIdWhenNotSpecified()
     {
         // Arrange

@@ -1,5 +1,7 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Panel.Abstractions;
+#endregion
 
 namespace Chaos.Collections.Abstractions;
 
@@ -45,7 +47,7 @@ public abstract class KnowledgeBookBase<T> : PanelBase<T>, IKnowledgeBook<T> whe
         if (IsFull)
             return false;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var firstPossibleSlot = GetFirstSlotInPage(page);
         var lastPossibleSlot = GetLastSlotInPage(page);

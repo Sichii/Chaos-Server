@@ -1,6 +1,8 @@
+#region
 using System.Diagnostics.CodeAnalysis;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Synchronization;
+#endregion
 
 namespace Chaos.Common.Utilities;
 
@@ -34,13 +36,13 @@ public static class ComplexSynchronizationHelper
     public static async Task<IPolyDisposable> WaitAsync(
         TimeSpan overallTimeout,
         TimeSpan individualTimeout,
-        params FifoAutoReleasingSemaphoreSlim[] synchronizers)
+        params IReadOnlyCollection<FifoAutoReleasingSemaphoreSlim> synchronizers)
     {
         synchronizers = synchronizers.Distinct()
                                      .ToArray();
 
         var now = DateTime.UtcNow;
-        var attemptSignature = new int[synchronizers.Length];
+        var attemptSignature = new int[synchronizers.Count];
         var attempts = 0;
 
         while (DateTime.UtcNow.Subtract(now) < overallTimeout)
@@ -73,9 +75,9 @@ public static class ComplexSynchronizationHelper
     }
 
     [ExcludeFromCodeCoverage(Justification = "Just a wrapper class")]
-    private sealed class CompositePolyDisposable(params IPolyDisposable[] disposables) : IPolyDisposable
+    private sealed class CompositePolyDisposable(params IReadOnlyCollection<IPolyDisposable> disposables) : IPolyDisposable
     {
-        private readonly List<IPolyDisposable> Dispoables = disposables.ToList();
+        private readonly IReadOnlyCollection<IPolyDisposable> Dispoables = disposables;
 
         /// <inheritdoc />
         public void Dispose()

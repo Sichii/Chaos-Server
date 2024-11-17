@@ -1,3 +1,4 @@
+#region
 using System.Diagnostics;
 using Chaos.Collections.Abstractions;
 using Chaos.DarkAges.Definitions;
@@ -6,6 +7,7 @@ using Chaos.Models.Board;
 using Chaos.Models.World;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
+#endregion
 
 namespace Chaos.Collections;
 
@@ -26,7 +28,7 @@ public sealed class MailBox : BoardBase
     /// <inheritdoc />
     public override bool Delete(Aisling deletedBy, short postId)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         //check that post exists
         if (!Posts.TryGetValue(postId, out var post))
@@ -42,11 +44,13 @@ public sealed class MailBox : BoardBase
             deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "You lack the permission", false);
 
             Logger.WithTopics(
-                      Topics.Entities.MailBox,
-                      Topics.Actions.Update,
-                      Topics.Entities.Mail,
-                      Topics.Actions.Delete,
-                      Topics.Qualifiers.Cheating)
+                      [
+                          Topics.Entities.MailBox,
+                          Topics.Actions.Update,
+                          Topics.Entities.Mail,
+                          Topics.Actions.Delete,
+                          Topics.Qualifiers.Cheating
+                      ])
                   .WithProperty(deletedBy)
                   .WithProperty(this)
                   .WithProperty(post)
@@ -66,10 +70,12 @@ public sealed class MailBox : BoardBase
         deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "Message deleted", true);
 
         Logger.WithTopics(
-                  Topics.Entities.MailBox,
-                  Topics.Actions.Update,
-                  Topics.Entities.Mail,
-                  Topics.Actions.Delete)
+                  [
+                      Topics.Entities.MailBox,
+                      Topics.Actions.Update,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Delete
+                  ])
               .WithProperty(deletedBy)
               .WithProperty(this)
               .WithProperty(post)
@@ -85,7 +91,7 @@ public sealed class MailBox : BoardBase
     /// <inheritdoc />
     public override void Highlight(Aisling highlightedBy, short postId)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         //if post doesnt exist
         if (!Posts.TryGetValue(postId, out var post))
@@ -101,11 +107,13 @@ public sealed class MailBox : BoardBase
             highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "You lack the permission", false);
 
             Logger.WithTopics(
-                      Topics.Entities.MailBox,
-                      Topics.Actions.Update,
-                      Topics.Entities.Mail,
-                      Topics.Actions.Highlight,
-                      Topics.Qualifiers.Cheating)
+                      [
+                          Topics.Entities.MailBox,
+                          Topics.Actions.Update,
+                          Topics.Entities.Mail,
+                          Topics.Actions.Highlight,
+                          Topics.Qualifiers.Cheating
+                      ])
                   .WithProperty(highlightedBy)
                   .WithProperty(this)
                   .WithProperty(post)
@@ -127,10 +135,12 @@ public sealed class MailBox : BoardBase
         highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "Message highlighted", true);
 
         Logger.WithTopics(
-                  Topics.Entities.MailBox,
-                  Topics.Actions.Update,
-                  Topics.Entities.Mail,
-                  Topics.Actions.Highlight)
+                  [
+                      Topics.Entities.MailBox,
+                      Topics.Actions.Update,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Highlight
+                  ])
               .WithProperty(highlightedBy)
               .WithProperty(this)
               .WithProperty(post)
@@ -149,7 +159,7 @@ public sealed class MailBox : BoardBase
         string message,
         bool highlighted = false)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         //create post
         var post = new Post(
@@ -168,10 +178,12 @@ public sealed class MailBox : BoardBase
         addedBy.Client.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "Message sent", true);
 
         Logger.WithTopics(
-                  Topics.Entities.MailBox,
-                  Topics.Actions.Update,
-                  Topics.Entities.Mail,
-                  Topics.Actions.Add)
+                  [
+                      Topics.Entities.MailBox,
+                      Topics.Actions.Update,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Add
+                  ])
               .WithProperty(addedBy)
               .WithProperty(this)
               .WithProperty(post)
@@ -185,7 +197,7 @@ public sealed class MailBox : BoardBase
     /// <inheritdoc />
     public override void Show(Aisling aisling, short startPostId = short.MaxValue)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (!ShouldShowTo(aisling.Id))
             return;
@@ -197,10 +209,12 @@ public sealed class MailBox : BoardBase
         if (!aisling.IsAdmin && !Key.EqualsI(aisling.Name))
         {
             Logger.WithTopics(
-                      Topics.Entities.MailBox,
-                      Topics.Entities.Mail,
-                      Topics.Actions.Read,
-                      Topics.Qualifiers.Cheating)
+                      [
+                          Topics.Entities.MailBox,
+                          Topics.Entities.Mail,
+                          Topics.Actions.Read,
+                          Topics.Qualifiers.Cheating
+                      ])
                   .WithProperty(aisling)
                   .WithProperty(this)
                   .LogWarning("{@AislingName} attempted to view {@MailboxOwnerName}'s mailbox without permission", aisling.Name, Key);
@@ -214,7 +228,7 @@ public sealed class MailBox : BoardBase
     /// <inheritdoc />
     public override void ShowPost(Aisling aisling, short postId, BoardControls control)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var postIdActual = postId;
 
@@ -248,10 +262,12 @@ public sealed class MailBox : BoardBase
         if (!aisling.IsAdmin && !Key.EqualsI(aisling.Name))
         {
             Logger.WithTopics(
-                      Topics.Entities.MailBox,
-                      Topics.Entities.Mail,
-                      Topics.Actions.Read,
-                      Topics.Qualifiers.Cheating)
+                      [
+                          Topics.Entities.MailBox,
+                          Topics.Entities.Mail,
+                          Topics.Actions.Read,
+                          Topics.Qualifiers.Cheating
+                      ])
                   .WithProperty(aisling)
                   .WithProperty(this)
                   .WithProperty(post)
@@ -272,7 +288,7 @@ public sealed class MailBox : BoardBase
     /// <inheritdoc />
     public override void UnHighlight(Aisling unhighlightedBy, ref Post post)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (!post.IsHighlighted)
             return;
@@ -289,10 +305,12 @@ public sealed class MailBox : BoardBase
             unhighlightedBy.Client.SendAttributes(StatUpdateType.Secondary);
 
         Logger.WithTopics(
-                  Topics.Entities.MailBox,
-                  Topics.Actions.Update,
-                  Topics.Entities.Mail,
-                  Topics.Actions.Highlight)
+                  [
+                      Topics.Entities.MailBox,
+                      Topics.Actions.Update,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Highlight
+                  ])
               .WithProperty(unhighlightedBy)
               .WithProperty(this)
               .WithProperty(post)

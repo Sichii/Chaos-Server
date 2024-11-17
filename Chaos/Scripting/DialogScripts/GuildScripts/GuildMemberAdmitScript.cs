@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Extensions.Common;
@@ -8,6 +9,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 using Chaos.Storage.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.DialogScripts.GuildScripts;
 
@@ -94,7 +96,11 @@ public class GuildMemberAdmitScript : GuildScriptBase
 
         guild.AddMember(aislingToAdmit, source);
 
-        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Join)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Guild,
+                      Topics.Actions.Join
+                  ])
               .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)

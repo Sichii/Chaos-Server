@@ -1,14 +1,15 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.DarkAges.Extensions;
 using Chaos.Testing.Infrastructure.Definitions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class EnumExtensionsTests
 {
-    [Fact]
+    [Test]
     public void GetFlags_ShouldReturnIndividualFlags()
     {
         // Arrange
@@ -21,44 +22,40 @@ public sealed class EnumExtensionsTests
         // Assert
         flags.Should()
              .Contain(
-                 new[]
-                 {
+                 [
                      SampleFlag1.Value1,
                      SampleFlag1.Value3
-                 });
+                 ]);
 
         flags.Should()
-             .NotContain(
-                 new[]
-                 {
-                     SampleFlag1.Value2
-                 });
+             .NotContain([SampleFlag1.Value2]);
     }
 
     // ReSharper disable once ArrangeAttributes
-    [Theory]
-    [InlineData(EquipmentType.NotEquipment, EquipmentSlot.None)]
-    [InlineData(EquipmentType.Weapon, EquipmentSlot.Weapon)]
-    [InlineData(EquipmentType.Armor, EquipmentSlot.Armor)]
-    [InlineData(EquipmentType.OverArmor, EquipmentSlot.Overcoat)]
-    [InlineData(EquipmentType.Shield, EquipmentSlot.Shield)]
-    [InlineData(EquipmentType.Helmet, EquipmentSlot.Helmet)]
-    [InlineData(EquipmentType.OverHelmet, EquipmentSlot.OverHelm)]
-    [InlineData(EquipmentType.Earrings, EquipmentSlot.Earrings)]
-    [InlineData(EquipmentType.Necklace, EquipmentSlot.Necklace)]
-    [InlineData(EquipmentType.Ring, EquipmentSlot.LeftRing, EquipmentSlot.RightRing)]
-    [InlineData(EquipmentType.Gauntlet, EquipmentSlot.LeftGaunt, EquipmentSlot.RightGaunt)]
-    [InlineData(EquipmentType.Belt, EquipmentSlot.Belt)]
-    [InlineData(EquipmentType.Greaves, EquipmentSlot.Greaves)]
-    [InlineData(EquipmentType.Boots, EquipmentSlot.Boots)]
-    [InlineData(
-        EquipmentType.Accessory,
+    //@formatter:off
+    [Test]
+    [Arguments(EquipmentType.NotEquipment, new[]{ EquipmentSlot.None })]
+    [Arguments(EquipmentType.Weapon, new[]{ EquipmentSlot.Weapon })]
+    [Arguments(EquipmentType.Armor, new[]{ EquipmentSlot.Armor })]
+    [Arguments(EquipmentType.OverArmor, new[]{ EquipmentSlot.Overcoat })]
+    [Arguments(EquipmentType.Shield, new[]{ EquipmentSlot.Shield })]
+    [Arguments(EquipmentType.Helmet, new[]{ EquipmentSlot.Helmet })]
+    [Arguments(EquipmentType.OverHelmet, new[]{ EquipmentSlot.OverHelm })]
+    [Arguments(EquipmentType.Earrings, new[]{ EquipmentSlot.Earrings })]
+    [Arguments(EquipmentType.Necklace, new[]{ EquipmentSlot.Necklace })]
+    [Arguments(EquipmentType.Ring, new[]{ EquipmentSlot.LeftRing, EquipmentSlot.RightRing })]
+    [Arguments(EquipmentType.Gauntlet, new[]{ EquipmentSlot.LeftGaunt, EquipmentSlot.RightGaunt })]
+    [Arguments(EquipmentType.Belt, new[]{ EquipmentSlot.Belt })]
+    [Arguments(EquipmentType.Greaves, new[]{ EquipmentSlot.Greaves })]
+    [Arguments(EquipmentType.Boots, new[]{ EquipmentSlot.Boots })]
+    [Arguments(EquipmentType.Accessory, new[]{ 
         EquipmentSlot.Accessory1,
         EquipmentSlot.Accessory2,
-        EquipmentSlot.Accessory3)]
+        EquipmentSlot.Accessory3 })]
+    //@formatter:on
     public void ToEquipmentSlots_Should_Return_Correct_EquipmentSlots_For_EquipmentType(
         EquipmentType equipmentType,
-        params EquipmentSlot[] expectedSlots)
+        IEnumerable<EquipmentSlot> expectedSlots)
     {
         // Act
         var equipmentSlots = equipmentType.ToEquipmentSlots();
@@ -68,7 +65,7 @@ public sealed class EnumExtensionsTests
                       .BeEquivalentTo(expectedSlots);
     }
 
-    [Fact]
+    [Test]
     public void ToEquipmentSlots_Should_Throw_Exception_For_Undefined_EquipmentType()
     {
         // Arrange

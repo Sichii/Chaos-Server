@@ -1,6 +1,7 @@
+#region
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using Chaos.Common.Synchronization;
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Collections.Synchronized;
@@ -13,14 +14,14 @@ namespace Chaos.Collections.Synchronized;
 public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
 {
     private readonly HashSet<T> Set;
-    private readonly AutoReleasingMonitor Sync;
+    private readonly Lock Sync;
 
     /// <inheritdoc cref="ICollection{T}.Count" />
     public int Count
     {
         get
         {
-            using var @lock = Sync.Enter();
+            using var @lock = Sync.EnterScope();
             var ret = Set.Count;
 
             return ret;
@@ -35,7 +36,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// </summary>
     public SynchronizedHashSet(IEnumerable<T>? items = null, IEqualityComparer<T>? comparer = null)
     {
-        Sync = new AutoReleasingMonitor();
+        Sync = new Lock();
         items ??= [];
         comparer ??= EqualityComparer<T>.Default;
 
@@ -47,7 +48,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc />
     public bool Add(T item)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Set.Add(item);
     }
@@ -55,14 +56,14 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc />
     public void Clear()
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
         Set.Clear();
     }
 
     /// <inheritdoc cref="IReadOnlySet{T}.Contains" />
     public bool Contains(T item)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Set.Contains(item);
     }
@@ -70,14 +71,14 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc />
     public void CopyTo(T[] array, int arrayIndex)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
         Set.CopyTo(array, arrayIndex);
     }
 
     /// <inheritdoc />
     public void ExceptWith(IEnumerable<T> other)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
         Set.ExceptWith(other);
     }
 
@@ -88,7 +89,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     {
         List<T> snapshot;
 
-        using (Sync.Enter())
+        using (Sync.EnterScope())
             snapshot = Set.ToList();
 
         foreach (var item in snapshot)
@@ -98,14 +99,14 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc />
     public void IntersectWith(IEnumerable<T> other)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
         Set.IntersectWith(other);
     }
 
     /// <inheritdoc cref="ISet{T}.IsProperSubsetOf" />
     public bool IsProperSubsetOf(IEnumerable<T> other)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Set.IsProperSubsetOf(other);
     }
@@ -113,7 +114,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc cref="ISet{T}.IsProperSupersetOf" />
     public bool IsProperSupersetOf(IEnumerable<T> other)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Set.IsProperSupersetOf(other);
     }
@@ -121,7 +122,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc cref="ISet{T}.IsSubsetOf" />
     public bool IsSubsetOf(IEnumerable<T> other)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Set.IsSubsetOf(other);
     }
@@ -129,7 +130,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc cref="ISet{T}.IsSupersetOf" />
     public bool IsSupersetOf(IEnumerable<T> other)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Set.IsSupersetOf(other);
     }
@@ -137,7 +138,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc cref="ISet{T}.Overlaps" />
     public bool Overlaps(IEnumerable<T> other)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Set.Overlaps(other);
     }
@@ -145,7 +146,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc />
     public bool Remove(T item)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Set.Remove(item);
     }
@@ -153,7 +154,7 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc cref="ISet{T}.SetEquals" />
     public bool SetEquals(IEnumerable<T> other)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Set.SetEquals(other);
     }
@@ -161,21 +162,21 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc />
     public void SymmetricExceptWith(IEnumerable<T> other)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
         Set.SymmetricExceptWith(other);
     }
 
     /// <inheritdoc />
     public void UnionWith(IEnumerable<T> other)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
         Set.UnionWith(other);
     }
 
     /// <inheritdoc cref="HashSet{T}.TryGetValue" />
     public bool TryGetValue(T equalValue, [MaybeNullWhen(false)] out T actualValue)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Set.TryGetValue(equalValue, out actualValue);
     }

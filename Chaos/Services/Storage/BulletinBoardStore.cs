@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.IO.FileSystem;
 using Chaos.Models.Templates;
@@ -9,6 +10,7 @@ using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.Time;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace Chaos.Services.Storage;
 
@@ -45,7 +47,11 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
 
                 if (saveInterval.IntervalElapsed)
                 {
-                    var metricsLogger = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+                    var metricsLogger = Logger.WithTopics(
+                                                  [
+                                                      Topics.Entities.BulletinBoard,
+                                                      Topics.Actions.Save
+                                                  ])
                                               .WithMetrics();
 
                     Logger.LogDebug("Performing save");
@@ -61,14 +67,26 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
                 break;
             } catch (Exception e)
             {
-                Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+                Logger.WithTopics(
+                          [
+                              Topics.Entities.BulletinBoard,
+                              Topics.Actions.Save
+                          ])
                       .LogError(e, "Exception while performing save");
             }
 
-        Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.BulletinBoard,
+                      Topics.Actions.Save
+                  ])
               .LogInformation("Performing final save before shutdown");
 
-        var metricsLoggerA = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+        var metricsLoggerA = Logger.WithTopics(
+                                       [
+                                           Topics.Entities.BulletinBoard,
+                                           Topics.Actions.Save
+                                       ])
                                    .WithMetrics();
 
         var guildsToSave = Cache.Values.ToList();
@@ -94,10 +112,18 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
     /// <inheritdoc />
     protected override BulletinBoard LoadFromFile(string dir, string key)
     {
-        Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Load)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.BulletinBoard,
+                      Topics.Actions.Load
+                  ])
               .LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(BulletinBoard), key);
 
-        var metricsLogger = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Load)
+        var metricsLogger = Logger.WithTopics(
+                                      [
+                                          Topics.Entities.BulletinBoard,
+                                          Topics.Actions.Load
+                                      ])
                                   .WithMetrics();
 
         if (!Exists(key))
@@ -129,11 +155,19 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
     /// <inheritdoc />
     public override void Save(BulletinBoard obj)
     {
-        Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.BulletinBoard,
+                      Topics.Actions.Save
+                  ])
               .WithProperty(obj)
               .LogDebug("Saving {@TypeName} entry with key {@Key}", nameof(BulletinBoard), obj.Key);
 
-        var metricsLogger = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+        var metricsLogger = Logger.WithTopics(
+                                      [
+                                          Topics.Entities.BulletinBoard,
+                                          Topics.Actions.Save
+                                      ])
                                   .WithMetrics()
                                   .WithProperty(obj);
 
@@ -167,11 +201,19 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
     /// <inheritdoc />
     public override async Task SaveAsync(BulletinBoard obj)
     {
-        Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.BulletinBoard,
+                      Topics.Actions.Save
+                  ])
               .WithProperty(obj)
               .LogTrace("Saving {@TypeName} entry with key {@Key}", nameof(BulletinBoard), obj.Key);
 
-        var metricsLogger = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
+        var metricsLogger = Logger.WithTopics(
+                                      [
+                                          Topics.Entities.BulletinBoard,
+                                          Topics.Actions.Save
+                                      ])
                                   .WithMetrics()
                                   .WithProperty(obj);
 

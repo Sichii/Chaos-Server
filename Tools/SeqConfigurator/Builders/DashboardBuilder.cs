@@ -1,7 +1,9 @@
+#region
 using Seq.Api;
 using Seq.Api.Model.Dashboarding;
 using Seq.Api.Model.Signals;
 using SeqConfigurator.Utility;
+#endregion
 
 namespace SeqConfigurator.Builders;
 
@@ -38,7 +40,7 @@ public sealed class DashboardBuilder
         await SeqConnection.Dashboards.AddAsync(dashboard);
     }
 
-    public DashboardBuilder WithCharts(params Action<ChartBuilder>[] builderActions)
+    public DashboardBuilder WithCharts(params IEnumerable<Action<ChartBuilder>> builderActions)
     {
         AsyncComposer.Compose(
             async dashboard =>

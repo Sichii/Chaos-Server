@@ -1,14 +1,15 @@
+#region
 using Chaos.Common.Abstractions;
 using Chaos.Common.Synchronization;
 using Chaos.Common.Utilities;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class ComplexSynchronizationHelperTests
 {
-    [Fact]
+    [Test]
     public async Task WaitAsync_AllSemaphoresAvailable_ReturnsPolyDisposable()
     {
         // Arrange
@@ -35,7 +36,7 @@ public sealed class ComplexSynchronizationHelperTests
                         .Be(0);
     }
 
-    [Fact]
+    [Test]
     public async Task WaitAsync_NotAllSemaphoresAvailable_ThrowsTimeoutException()
     {
         // Arrange

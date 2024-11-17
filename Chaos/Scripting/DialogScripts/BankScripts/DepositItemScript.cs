@@ -1,9 +1,11 @@
-﻿using Chaos.Models.Menu;
+﻿#region
+using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Utilities;
+#endregion
 
 namespace Chaos.Scripting.DialogScripts.BankScripts;
 
@@ -92,7 +94,12 @@ public class DepositItemScript : DialogScriptBase
         switch (depositItemResult)
         {
             case ComplexActionHelper.DepositItemResult.Success:
-                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Item, Topics.Actions.Deposit)
+                Logger.WithTopics(
+                          [
+                              Topics.Entities.Aisling,
+                              Topics.Entities.Item,
+                              Topics.Actions.Deposit
+                          ])
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)

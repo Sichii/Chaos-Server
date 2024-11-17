@@ -1,12 +1,13 @@
+#region
 using Chaos.Geometry.Abstractions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class PointTests
 {
-    [Fact]
+    [Test]
     public void Point_Constructor_CreatesPointWithGivenCoordinates()
     {
         // Arrange
@@ -26,7 +27,7 @@ public sealed class PointTests
              .Be(Y);
     }
 
-    [Fact]
+    [Test]
     public void Point_Deconstructor_CreatesPointWithGivenCoordinates()
     {
         // Arrange
@@ -44,7 +45,7 @@ public sealed class PointTests
          .Be(Y);
     }
 
-    [Fact]
+    [Test]
     public void Point_Equals_ReturnsFalseWhenComparingWithDifferentType()
     {
         // Arrange
@@ -59,7 +60,7 @@ public sealed class PointTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Point_Equals_ReturnsFalseWhenPointsAreNotEqual()
     {
         // Arrange
@@ -74,7 +75,7 @@ public sealed class PointTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Point_Equals_ReturnsTrueWhenPointsAreEqual()
     {
         // Arrange
@@ -91,7 +92,7 @@ public sealed class PointTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Point_From_ReturnsNewPointWithSameValuesWhenPassedPointOfDifferentType()
     {
         // Arrange
@@ -110,7 +111,7 @@ public sealed class PointTests
                 .Be(originalPoint.Y);
     }
 
-    [Fact]
+    [Test]
     public void Point_From_ReturnsSamePointWhenPassedPointOfSameType()
     {
         // Arrange
@@ -124,7 +125,7 @@ public sealed class PointTests
                 .BeEquivalentTo(originalPoint);
     }
 
-    [Fact]
+    [Test]
     public void Point_GetHashCode_ReturnsConsistentHashCode()
     {
         // Arrange
@@ -143,7 +144,7 @@ public sealed class PointTests
                  .Be(EXPECTED_HASH_CODE);
     }
 
-    [Fact]
+    [Test]
     public void Point_TryParse_InvalidInput_ReturnsFalseAndDefaultPoint()
     {
         // Arrange
@@ -160,7 +161,7 @@ public sealed class PointTests
              .Be(default(Point));
     }
 
-    [Fact]
+    [Test]
     public void Point_TryParse_ValidInput_ReturnsTrueAndParsesPoint()
     {
         // Arrange

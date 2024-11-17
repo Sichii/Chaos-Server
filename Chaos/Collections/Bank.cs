@@ -1,6 +1,7 @@
-using Chaos.Common.Synchronization;
+#region
 using Chaos.Models.Panel;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Collections;
 
@@ -8,13 +9,13 @@ public sealed class Bank : IEnumerable<Item>
 {
     private readonly ICloningService<Item> ItemCloner;
     private readonly Dictionary<string, Item> Items;
-    private readonly AutoReleasingMonitor Sync;
+    private readonly Lock Sync;
     public uint Gold { get; private set; }
 
     public Bank(IEnumerable<Item>? items = null)
     {
         items ??= [];
-        Sync = new AutoReleasingMonitor();
+        Sync = new Lock();
         Items = items.ToDictionary(item => item.DisplayName, StringComparer.OrdinalIgnoreCase);
         ItemCloner = null!;
     }
@@ -29,7 +30,7 @@ public sealed class Bank : IEnumerable<Item>
     {
         List<Item> snapshot;
 
-        using (Sync.Enter())
+        using (Sync.EnterScope())
             snapshot = Items.Values.ToList();
 
         return snapshot.GetEnumerator();
@@ -37,21 +38,21 @@ public sealed class Bank : IEnumerable<Item>
 
     public void AddGold(uint amount)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         Gold += amount;
     }
 
     public bool Contains(string itemName)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Items.ContainsKey(itemName);
     }
 
     public int CountOf(string itemName)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (Items.TryGetValue(itemName, out var item))
             return item.Count;
@@ -61,7 +62,7 @@ public sealed class Bank : IEnumerable<Item>
 
     public void Deposit(Item item)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (item.Count < 1)
             throw new ArgumentOutOfRangeException($"{nameof(item)} count must be greater than 0");
@@ -78,7 +79,7 @@ public sealed class Bank : IEnumerable<Item>
 
     public bool RemoveGold(uint amount)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (Gold < amount)
             return false;
@@ -107,7 +108,7 @@ public sealed class Bank : IEnumerable<Item>
         if (amount < 1)
             throw new ArgumentOutOfRangeException($"{nameof(amount)} must be greater than 0");
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         outItems = null;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿#region
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
@@ -15,6 +16,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 using RoslynPad.Editor;
 using RoslynPad.Roslyn;
+#endregion
 
 namespace ChaosTool;
 
@@ -76,14 +78,13 @@ public partial class MainWindow : Window
         namespaces.Add("ChaosTool");
 
         RoslynHost = new CustomRoslynHost(
-            new[]
-            {
+            [
                 Assembly.Load("RoslynPad.Roslyn.Windows"),
                 Assembly.Load("RoslynPad.Editor.Windows"),
                 Assembly.Load("ChaosTool")
 
                 //Assembly.LoadProjection("Chaos")
-            },
+            ],
             RoslynHostReferences.NamespaceDefault.With(
                 assemblyReferences: new[]
                 {
@@ -206,11 +207,10 @@ public partial class MainWindow : Window
                 LanguageVersion.Preview,
                 DocumentationMode.Parse,
                 SourceCodeKind.Script,
-                new[]
-                {
+                [
                     "TRACE",
                     "DEBUG"
-                });
+                ]);
 
         protected override IEnumerable<AnalyzerReference> GetSolutionAnalyzerReferences()
         {

@@ -1,8 +1,9 @@
+#region
 using System.Text;
 using Chaos.IO.Definitions;
 using Chaos.IO.Memory;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.IO.Tests;
 
@@ -10,7 +11,7 @@ public sealed class SpanWriterTests
 {
     private static readonly Encoding Encoding = Encoding.UTF8;
 
-    [Fact]
+    [Test]
     public void WriteBoolean_ShouldWriteBooleanValueToBuffer()
     {
         // Arrange
@@ -27,7 +28,7 @@ public sealed class SpanWriterTests
             .Be(1);
     }
 
-    [Fact]
+    [Test]
     public void WriteByte_ShouldWriteByteValueToBuffer()
     {
         // Arrange
@@ -44,7 +45,7 @@ public sealed class SpanWriterTests
             .Be(0xAB);
     }
 
-    [Fact]
+    [Test]
     public void WriteBytes_ShouldWriteByteArrayToBuffer()
     {
         // Arrange
@@ -68,7 +69,7 @@ public sealed class SpanWriterTests
                   0x44);
     }
 
-    [Fact]
+    [Test]
     public void WriteBytes_ShouldWriteEmptyByteArrayToBuffer()
     {
         // Arrange
@@ -77,7 +78,7 @@ public sealed class SpanWriterTests
         var writer = new SpanWriter(Encoding, ref span);
 
         // Act
-        writer.WriteBytes([]);
+        writer.WriteBytes();
 
         // Assert
         buffer[0]
@@ -85,7 +86,7 @@ public sealed class SpanWriterTests
             .Be(0);
     }
 
-    [Fact]
+    [Test]
     public void WriteData_ShouldWriteByteArrayToBuffer()
     {
         // Arrange
@@ -101,7 +102,7 @@ public sealed class SpanWriterTests
               .Equal("ABC"u8.ToArray());
     }
 
-    [Fact]
+    [Test]
     public void WriteData16_ShouldWriteByteArrayWithLengthPrefixToBuffer()
     {
         // Arrange
@@ -122,7 +123,7 @@ public sealed class SpanWriterTests
                   0x43);
     }
 
-    [Fact]
+    [Test]
     public void WriteData16_ShouldWriteEmptyByteArrayWithLengthPrefixToBuffer()
     {
         // Arrange
@@ -138,7 +139,7 @@ public sealed class SpanWriterTests
               .Equal(0x00, 0x00);
     }
 
-    [Fact]
+    [Test]
     public void WriteData16_ShouldWriteTrimmedData_IfLengthAboveMax()
     {
         //Arrange
@@ -156,7 +157,7 @@ public sealed class SpanWriterTests
               .Be(ushort.MaxValue + 2); // 2 bytes for length, ushort.MaxValue for string
     }
 
-    [Fact]
+    [Test]
     public void WriteData8_ShouldWriteByteArrayWithLengthPrefixToBuffer()
     {
         // Arrange
@@ -176,7 +177,7 @@ public sealed class SpanWriterTests
                   0x43);
     }
 
-    [Fact]
+    [Test]
     public void WriteData8_ShouldWriteEmptyByteArrayWithLengthPrefixToBuffer()
     {
         // Arrange
@@ -192,7 +193,7 @@ public sealed class SpanWriterTests
               .Equal(0x00);
     }
 
-    [Fact]
+    [Test]
     public void WriteData8_ShouldWriteTrimmedData_IfLengthAboveMax()
     {
         //Arrange
@@ -210,7 +211,7 @@ public sealed class SpanWriterTests
               .Be(byte.MaxValue + 1); // 1 byte for length, ushort.MaxValue for string
     }
 
-    [Fact]
+    [Test]
     public void WriteDataWithLineFeed_ShouldEndInLineFeed()
     {
         // Arrange
@@ -236,7 +237,7 @@ public sealed class SpanWriterTests
                   0x0A);
     }
 
-    [Fact]
+    [Test]
     public void WriteInt16_ShouldWriteInt16ValueToBuffer_WhenIsLittleEndianIsFalse()
     {
         // Arrange
@@ -252,7 +253,7 @@ public sealed class SpanWriterTests
               .Equal(0x12, 0x34);
     }
 
-    [Fact]
+    [Test]
     public void WriteInt16_ShouldWriteInt16ValueToBuffer_WhenIsLittleEndianIsTrue()
     {
         // Arrange
@@ -268,7 +269,7 @@ public sealed class SpanWriterTests
               .Equal(0x34, 0x12);
     }
 
-    [Fact]
+    [Test]
     public void WriteInt32_ShouldWriteInt32ValueToBuffer_WhenIsLittleEndianIsFalse()
     {
         // Arrange
@@ -288,7 +289,7 @@ public sealed class SpanWriterTests
                   0x78);
     }
 
-    [Fact]
+    [Test]
     public void WriteInt32_ShouldWriteInt32ValueToBuffer_WhenIsLittleEndianIsTrue()
     {
         // Arrange
@@ -308,7 +309,7 @@ public sealed class SpanWriterTests
                   0x12);
     }
 
-    [Fact]
+    [Test]
     public void WritePoint16_ShouldWriteTwoUInt16ValuesToBuffer()
     {
         // Arrange
@@ -328,7 +329,7 @@ public sealed class SpanWriterTests
                   0x78);
     }
 
-    [Fact]
+    [Test]
     public void WritePoint8_ShouldWriteTwoByteValuesToBuffer()
     {
         // Arrange
@@ -344,7 +345,7 @@ public sealed class SpanWriterTests
               .Equal(0x12, 0x34);
     }
 
-    [Fact]
+    [Test]
     public void WriteSByte_ShouldWriteSByteValueToBuffer()
     {
         // Arrange
@@ -361,7 +362,7 @@ public sealed class SpanWriterTests
             .Be(0x85);
     }
 
-    [Fact]
+    [Test]
     public void WriteString_ShouldWriteStringToBuffer()
     {
         // Arrange
@@ -377,7 +378,7 @@ public sealed class SpanWriterTests
               .Equal(Encoding.GetBytes("Hello, world"));
     }
 
-    [Fact]
+    [Test]
     public void WriteString16_ShouldWriteStringWithLengthPrefixToBuffer()
     {
         // Arrange
@@ -398,7 +399,7 @@ public sealed class SpanWriterTests
                   }.Concat(Encoding.GetBytes("Hello, world!")));
     }
 
-    [Fact]
+    [Test]
     public void WriteString16_ShouldWriteTrimmedString_IfLengthAboveMax()
     {
         //Arrange
@@ -416,7 +417,7 @@ public sealed class SpanWriterTests
               .Be(ushort.MaxValue + 2); // 2 bytes for length, ushort.MaxValue for string
     }
 
-    [Fact]
+    [Test]
     public void WriteString8_ShouldWriteStringWithLengthPrefixToBuffer()
     {
         // Arrange
@@ -436,7 +437,7 @@ public sealed class SpanWriterTests
                   }.Concat(Encoding.GetBytes("Hello, world!")));
     }
 
-    [Fact]
+    [Test]
     public void WriteString8_ShouldWriteTrimmedString_IfLengthAboveMax()
     {
         //Arrange
@@ -454,7 +455,7 @@ public sealed class SpanWriterTests
               .Be(byte.MaxValue + 1); // 1 byte for length, ushort.MaxValue for string
     }
 
-    [Fact]
+    [Test]
     public void WriteUInt16_ShouldWriteUInt16ValueToBuffer_WhenIsLittleEndianIsFalse()
     {
         // Arrange
@@ -470,7 +471,7 @@ public sealed class SpanWriterTests
               .Equal(0x12, 0x34);
     }
 
-    [Fact]
+    [Test]
     public void WriteUInt16_ShouldWriteUInt16ValueToBuffer_WhenIsLittleEndianIsTrue()
     {
         // Arrange
@@ -486,7 +487,7 @@ public sealed class SpanWriterTests
               .Equal(0x34, 0x12);
     }
 
-    [Fact]
+    [Test]
     public void WriteUInt32_ShouldWriteUInt32ValueToBuffer_WhenIsLittleEndianIsFalse()
     {
         // Arrange
@@ -506,7 +507,7 @@ public sealed class SpanWriterTests
                   0x78);
     }
 
-    [Fact]
+    [Test]
     public void WriteUInt32_ShouldWriteUInt32ValueToBuffer_WhenIsLittleEndianIsTrue()
     {
         // Arrange
@@ -526,7 +527,7 @@ public sealed class SpanWriterTests
                   0x12);
     }
 
-    [Fact]
+    [Test]
     public void WriteValue_ShouldWriteToBuffer()
     {
         // Arrange
@@ -578,11 +579,10 @@ public sealed class SpanWriterTests
                  BitConverter.GetBytes(BOOL_VALUE)
                              .Reverse())
              .Concat(
-                 new[]
-                 {
+                 [
                      X8,
                      Y8
-                 })
+                 ])
              .Concat(
                  BitConverter.GetBytes(X16)
                              .Reverse())

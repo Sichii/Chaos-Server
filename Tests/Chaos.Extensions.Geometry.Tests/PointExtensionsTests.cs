@@ -1,15 +1,16 @@
 // ReSharper disable ArrangeAttributes
 
+#region
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions.Definitions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Geometry.Tests;
 
 public sealed class PointExtensionsTests
 {
-    [Fact]
+    [Test]
     public void ConalSearch_MaxDistanceGreaterThanOne_ReturnsAllPointsWithinCone()
     {
         var startingPoint = new Point(0, 0);
@@ -22,8 +23,7 @@ public sealed class PointExtensionsTests
 
         points.Should()
               .BeEquivalentTo(
-                  new[]
-                  {
+                  [
                       new Point(-2, -2),
                       new Point(-1, -1),
                       new Point(0, -2),
@@ -32,10 +32,10 @@ public sealed class PointExtensionsTests
                       new Point(-1, -2),
                       new Point(1, -2),
                       new Point(0, -1)
-                  });
+                  ]);
     }
 
-    [Fact]
+    [Test]
     public void ConalSearch_MaxDistanceOne_ReturnsThreePointsInSpecifiedDirection()
     {
         var startingPoint = new Point(0, 0);
@@ -48,15 +48,14 @@ public sealed class PointExtensionsTests
 
         points.Should()
               .BeEquivalentTo(
-                  new[]
-                  {
+                  [
                       new Point(-1, -1),
                       new Point(0, -1),
                       new Point(1, -1)
-                  });
+                  ]);
     }
 
-    [Fact]
+    [Test]
     public void ConalSearch_MaxDistanceZero_ReturnsEmpty()
     {
         var startingPoint = new Point(0, 0);
@@ -69,19 +68,19 @@ public sealed class PointExtensionsTests
     }
 
     //@formatter:off
-    [Theory]
-    [InlineData(1, 1, Direction.Up, 1, 1, 0)]
-    [InlineData(1, 1, Direction.Up, 2, 1, -1)]
-    [InlineData(1, 1, Direction.Right, 1, 2, 1)]
-    [InlineData(1, 1, Direction.Right, 2, 3, 1)]
-    [InlineData(1, 1, Direction.Down, 1, 1, 2)]
-    [InlineData(1, 1, Direction.Down, 2, 1, 3)]
-    [InlineData(1, 1, Direction.Left, 1, 0, 1)]
-    [InlineData(1, 1, Direction.Left, 2, -1, 1)]
-    [InlineData(0, 0, Direction.Up, 1, 0, -1)]
-    [InlineData(0, 0, Direction.Right, 1, 1, 0)]
-    [InlineData(0, 0, Direction.Down, 1, 0, 1)]
-    [InlineData(0, 0, Direction.Left, 1, -1, 0)]
+    [Test]
+    [Arguments(1, 1, Direction.Up, 1, 1, 0)]
+    [Arguments(1, 1, Direction.Up, 2, 1, -1)]
+    [Arguments(1, 1, Direction.Right, 1, 2, 1)]
+    [Arguments(1, 1, Direction.Right, 2, 3, 1)]
+    [Arguments(1, 1, Direction.Down, 1, 1, 2)]
+    [Arguments(1, 1, Direction.Down, 2, 1, 3)]
+    [Arguments(1, 1, Direction.Left, 1, 0, 1)]
+    [Arguments(1, 1, Direction.Left, 2, -1, 1)]
+    [Arguments(0, 0, Direction.Up, 1, 0, -1)]
+    [Arguments(0, 0, Direction.Right, 1, 1, 0)]
+    [Arguments(0, 0, Direction.Down, 1, 0, 1)]
+    [Arguments(0, 0, Direction.Left, 1, -1, 0)]
     //@formatter:on
     public void DirectionalOffset_ShouldOffsetPointByDistance(
         int startX,
@@ -103,7 +102,7 @@ public sealed class PointExtensionsTests
               .Be(expectedOffsetPoint);
     }
 
-    [Fact]
+    [Test]
     public void DirectionalOffset_ShouldThrowException_WhenDirectionIsInvalid()
     {
         // Arrange
@@ -120,23 +119,23 @@ public sealed class PointExtensionsTests
     }
 
     //@formatter:off
-    [Theory]
-    [InlineData(0, 0, 0, 0, Direction.Invalid)]
-    [InlineData(0, 0, 0, 1, Direction.Up)]
-    [InlineData(0, 0, 0, -1, Direction.Down)]
-    [InlineData(0, 0, -1, 0, Direction.Right)]
-    [InlineData(0, 0, 1, 0, Direction.Left)]
-    [InlineData(0, 0, -1, 1, Direction.Up, Direction.Right)]
-    [InlineData(0, 0, -1, -1, Direction.Down, Direction.Right)]
-    [InlineData(0, 0, 1, 1, Direction.Up, Direction.Left)]
-    [InlineData(0, 0, 1, -1, Direction.Down, Direction.Left)]
+    [Test]
+    [Arguments(0, 0, 0, 0, new[] {Direction.Invalid})]
+    [Arguments(0, 0, 0, 1, new[] {Direction.Up})]
+    [Arguments(0, 0, 0, -1, new[] {Direction.Down})]
+    [Arguments(0, 0, -1, 0, new[] {Direction.Right})]
+    [Arguments(0, 0, 1, 0, new[] {Direction.Left})]
+    [Arguments(0, 0, -1, 1, new[] {Direction.Up, Direction.Right})]
+    [Arguments(0, 0, -1, -1, new[] {Direction.Down, Direction.Right})]
+    [Arguments(0, 0, 1, 1, new[] {Direction.Up, Direction.Left})]
+    [Arguments(0, 0, 1, -1, new[] {Direction.Down, Direction.Left})]
     //@formatter:on
     public void DirectionalRelationTo_VariousPoints_ReturnsExpectedDirection(
         int startX,
         int startY,
         int endX,
         int endY,
-        params Direction[] expected)
+        params IEnumerable<Direction> expected)
     {
         var start = new Point(startX, startY);
         var end = new Point(endX, endY);
@@ -148,19 +147,19 @@ public sealed class PointExtensionsTests
     }
 
     //@formatter:off
-    [Theory]
-    [InlineData(0, 0, 0, 0, 0)]
-    [InlineData(0, 0, 0, 1, 1)]
-    [InlineData(0, 0, 1, 0, 1)]
-    [InlineData(0, 0, 1, 1, 2)]
-    [InlineData(1, 1, 1, 1, 0)]
-    [InlineData(1, 1, 1, 2, 1)]
-    [InlineData(1, 1, 2, 1, 1)]
-    [InlineData(1, 1, 2, 2, 2)]
-    [InlineData(-1, -1, 1, 1, 4)]
-    [InlineData(-1, -1, -1, -1, 0)]
-    [InlineData(-1, -1, -2, -1, 1)]
-    [InlineData(-1, -1, -1, -2, 1)]
+    [Test]
+    [Arguments(0, 0, 0, 0, 0)]
+    [Arguments(0, 0, 0, 1, 1)]
+    [Arguments(0, 0, 1, 0, 1)]
+    [Arguments(0, 0, 1, 1, 2)]
+    [Arguments(1, 1, 1, 1, 0)]
+    [Arguments(1, 1, 1, 2, 1)]
+    [Arguments(1, 1, 2, 1, 1)]
+    [Arguments(1, 1, 2, 2, 2)]
+    [Arguments(-1, -1, 1, 1, 4)]
+    [Arguments(-1, -1, -1, -1, 0)]
+    [Arguments(-1, -1, -2, -1, 1)]
+    [Arguments(-1, -1, -1, -2, 1)]
     //@formatter:on
     public void DistanceFrom_ShouldReturnDistanceBetweenTwoPoints(
         int startX,
@@ -182,19 +181,19 @@ public sealed class PointExtensionsTests
     }
 
     //@formatter:off
-    [Theory]
-    [InlineData(0, 0, 0, 0, 0)]
-    [InlineData(0, 0, 0, 1, 1)]
-    [InlineData(0, 0, 1, 0, 1)]
-    [InlineData(0, 0, 1, 1, 1.4142135623730951)]
-    [InlineData(1, 1, 1, 1, 0)]
-    [InlineData(1, 1, 1, 2, 1)]
-    [InlineData(1, 1, 2, 1, 1)]
-    [InlineData(1, 1, 2, 2, 1.4142135623730951)]
-    [InlineData(-1, -1, 1, 1, 2.8284271247461903)]
-    [InlineData(-1, -1, -1, -1, 0)]
-    [InlineData(-1, -1, -2, -1, 1)]
-    [InlineData(-1, -1, -1, -2, 1)]
+    [Test]
+    [Arguments(0, 0, 0, 0, 0)]
+    [Arguments(0, 0, 0, 1, 1)]
+    [Arguments(0, 0, 1, 0, 1)]
+    [Arguments(0, 0, 1, 1, 1.4142135623730951f)]
+    [Arguments(1, 1, 1, 1, 0)]
+    [Arguments(1, 1, 1, 2, 1)]
+    [Arguments(1, 1, 2, 1, 1)]
+    [Arguments(1, 1, 2, 2, 1.4142135623730951f)]
+    [Arguments(-1, -1, 1, 1, 2.8284271247461903f)]
+    [Arguments(-1, -1, -1, -1, 0)]
+    [Arguments(-1, -1, -2, -1, 1)]
+    [Arguments(-1, -1, -1, -2, 1)]
     //@formatter:on
     public void EuclideanDistanceFrom_ShouldReturnEuclideanDistanceBetweenTwoPoints(
         int startX,
@@ -215,7 +214,7 @@ public sealed class PointExtensionsTests
               .BeApproximately(expectedDistance, 0.000001f);
     }
 
-    [Fact]
+    [Test]
     public void FloodFill_ShouldOnlyReturnStartPoint_WhenNoTouchingPointsFound()
     {
         // Arrange
@@ -234,14 +233,10 @@ public sealed class PointExtensionsTests
 
         // Assert
         result.Should()
-              .BeEquivalentTo(
-                  new[]
-                  {
-                      startPoint
-                  });
+              .BeEquivalentTo([startPoint]);
     }
 
-    [Fact]
+    [Test]
     public void FloodFill_ShouldReturnAllTouchingPoints_WhenFloodFillingFromStartPoint()
     {
         // Arrange
@@ -270,7 +265,7 @@ public sealed class PointExtensionsTests
               .BeEquivalentTo(points);
     }
 
-    [Fact]
+    [Test]
     public void FloodFill_ShouldReturnOnlyReachablePoints_WhenStartingFromInsideReachableArea()
     {
         // Arrange
@@ -301,8 +296,7 @@ public sealed class PointExtensionsTests
         // Assert
         result.Should()
               .BeEquivalentTo(
-                  new[]
-                  {
+                  [
                       new Point(0, 0),
                       new Point(1, 0),
                       new Point(0, 1),
@@ -314,10 +308,10 @@ public sealed class PointExtensionsTests
                       new Point(3, 1),
                       new Point(3, 2),
                       new Point(3, 3)
-                  });
+                  ]);
     }
 
-    [Fact]
+    [Test]
     public void FloodFill_ShouldReturnSinglePoint_WhenStartingWithSinglePoint()
     {
         // Arrange
@@ -333,14 +327,10 @@ public sealed class PointExtensionsTests
 
         // Assert
         result.Should()
-              .BeEquivalentTo(
-                  new[]
-                  {
-                      new Point(0, 0)
-                  });
+              .BeEquivalentTo([new Point(0, 0)]);
     }
 
-    [Fact]
+    [Test]
     public void GenerateCardinalPoints_ShouldGenerateNoPoints_WhenDirectionIsInvalid()
     {
         // Arrange
@@ -354,8 +344,8 @@ public sealed class PointExtensionsTests
               .BeEmpty();
     }
 
-    [Theory]
-    [MemberData(nameof(GenerateCardinalPointsTestData))]
+    [Test]
+    [MethodDataSource(nameof(GenerateCardinalPointsTestData))]
     public void GenerateCardinalPoints_ShouldGeneratePoints(
         int startX,
         int startY,
@@ -374,7 +364,7 @@ public sealed class PointExtensionsTests
               .BeEquivalentTo(expectedPoints);
     }
 
-    [Fact]
+    [Test]
     public void GenerateCardinalPoints_ShouldGeneratePointsInAllDirections_WhenDirectionIsAll()
     {
         // Arrange
@@ -396,7 +386,7 @@ public sealed class PointExtensionsTests
               .BeEquivalentTo(expectedPoints);
     }
 
-    [Fact]
+    [Test]
     public void GenerateCardinalPoints_ShouldGeneratePointsInSingleDirection_WhenDirectionIsNotAll()
     {
         // Arrange
@@ -417,7 +407,7 @@ public sealed class PointExtensionsTests
               .BeEquivalentTo(expectedPoints);
     }
 
-    [Fact]
+    [Test]
     public void GenerateCardinalPoints_ShouldThrowException_WhenRadiusIsNotPositive()
     {
         // Arrange
@@ -432,39 +422,23 @@ public sealed class PointExtensionsTests
             .WithMessage("*radius must be positive*");
     }
 
-    public static IEnumerable<object[]> GenerateCardinalPointsTestData()
-    {
-        yield return
+    public static IEnumerable<(int, int, Direction, int, Point[])> GenerateCardinalPointsTestData()
+        =>
         [
-            0,
-            0,
-            Direction.All,
-            1,
-            new[]
-            {
-                new Point(0, 1),
-                new Point(1, 0),
-                new Point(0, -1),
-                new Point(-1, 0)
-            }
+            (0, 0, Direction.All, 1, [
+                                         new Point(0, 1),
+                                         new Point(1, 0),
+                                         new Point(0, -1),
+                                         new Point(-1, 0)
+                                     ]),
+            (2, 2, Direction.Up, 3, [
+                                        new Point(2, 1),
+                                        new Point(2, 0),
+                                        new Point(2, -1)
+                                    ])
         ];
 
-        yield return
-        [
-            2,
-            2,
-            Direction.Up,
-            3,
-            new[]
-            {
-                new Point(2, 1),
-                new Point(2, 0),
-                new Point(2, -1)
-            }
-        ];
-    }
-
-    [Fact]
+    [Test]
     public void GenerateIntercardinalPoints_ShouldGenerateNoPoints_WhenDirectionIsInvalid()
     {
         // Arrange
@@ -478,7 +452,7 @@ public sealed class PointExtensionsTests
               .BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void GenerateIntercardinalPoints_WithDirectionAll_ReturnsExpectedPoints()
     {
         var start = new Point(0, 0);
@@ -527,7 +501,7 @@ public sealed class PointExtensionsTests
               .Contain(new Point(-3, 3));
     }
 
-    [Fact]
+    [Test]
     public void GenerateIntercardinalPoints_WithDirectionDown_ReturnsExpectedPoints()
     {
         var start = new Point(0, 0);
@@ -570,7 +544,7 @@ public sealed class PointExtensionsTests
               .Contain(new Point(-5, 5));
     }
 
-    [Fact]
+    [Test]
     public void GenerateIntercardinalPoints_WithDirectionInvalid_ReturnsNoPoints()
     {
         var start = new Point(0, 0);
@@ -583,7 +557,7 @@ public sealed class PointExtensionsTests
               .Be(0);
     }
 
-    [Fact]
+    [Test]
     public void GenerateIntercardinalPoints_WithDirectionLeft_ReturnsExpectedPoints()
     {
         var start = new Point(0, 0);
@@ -614,7 +588,7 @@ public sealed class PointExtensionsTests
               .Contain(new Point(-3, 3));
     }
 
-    [Fact]
+    [Test]
     public void GenerateIntercardinalPoints_WithDirectionRight_ReturnsExpectedPoints()
     {
         var start = new Point(0, 0);
@@ -645,7 +619,7 @@ public sealed class PointExtensionsTests
               .Contain(new Point(3, 3));
     }
 
-    [Fact]
+    [Test]
     public void GenerateIntercardinalPoints_WithDirectionUp_ReturnsExpectedPoints()
     {
         var start = new Point(0, 0);
@@ -670,8 +644,8 @@ public sealed class PointExtensionsTests
               .Contain(new Point(2, -2));
     }
 
-    [Theory]
-    [MemberData(nameof(GetDirectPathTestData))]
+    [Test]
+    [MethodDataSource(nameof(GetDirectPathTestData))]
     public void GetDirectPath_ShouldGenerateDirectPath(Point start, Point end, Point[] expectedPath)
     {
         // Act
@@ -682,59 +656,39 @@ public sealed class PointExtensionsTests
               .BeSubsetOf(expectedPath);
     }
 
-    public static IEnumerable<object[]> GetDirectPathTestData()
+    public static IEnumerable<(Point, Point, Point[])> GetDirectPathTestData()
     {
-        yield return
-        [
-            new Point(0, 0),
-            new Point(0, 0),
-            new[]
-            {
-                new Point(0, 0)
-            }
-        ];
+        yield return (new Point(0, 0), new Point(0, 0), [new Point(0, 0)]);
 
-        yield return
-        [
-            new Point(0, 0),
-            new Point(2, 2),
-            new[]
-            {
-                new Point(0, 0),
-                new Point(0, 1),
-                new Point(1, 0),
-                new Point(1, 1),
-                new Point(1, 2),
-                new Point(2, 1),
-                new Point(2, 2)
-            }
-        ];
+        yield return (new Point(0, 0), new Point(2, 2), [
+                                                            new Point(0, 0),
+                                                            new Point(0, 1),
+                                                            new Point(1, 0),
+                                                            new Point(1, 1),
+                                                            new Point(1, 2),
+                                                            new Point(2, 1),
+                                                            new Point(2, 2)
+                                                        ]);
 
-        yield return
-        [
-            new Point(1, 1),
-            new Point(3, 1),
-            new[]
-            {
-                new Point(1, 1),
-                new Point(2, 1),
-                new Point(3, 1)
-            }
-        ];
+        yield return (new Point(1, 1), new Point(3, 1), [
+                                                            new Point(1, 1),
+                                                            new Point(2, 1),
+                                                            new Point(3, 1)
+                                                        ]);
     }
 
     //@formatter:off
-    [Theory]
+    [Test]
     // Positive test cases
-    [InlineData(0, 0, 1, 1, Direction.Up, true)]
-    [InlineData(0, 0, 1, 1, Direction.Left, true)]
-    [InlineData(0, 0, 1, 1, Direction.Right, false)]
-    [InlineData(0, 0, 1, 1, Direction.Down, false)]
-    [InlineData(0, 0, -1, -1, Direction.Up, false)]
-    [InlineData(0, 0, -1, -1, Direction.Left, false)]
-    [InlineData(0, 0, -1, -1, Direction.Right, true)]
-    [InlineData(0, 0, -1, -1, Direction.Down, true)]
-    [InlineData(0, 0, 0, 0, Direction.Invalid, false)]
+    [Arguments(0, 0, 1, 1, Direction.Up, true)]
+    [Arguments(0, 0, 1, 1, Direction.Left, true)]
+    [Arguments(0, 0, 1, 1, Direction.Right, false)]
+    [Arguments(0, 0, 1, 1, Direction.Down, false)]
+    [Arguments(0, 0, -1, -1, Direction.Up, false)]
+    [Arguments(0, 0, -1, -1, Direction.Left, false)]
+    [Arguments(0, 0, -1, -1, Direction.Right, true)]
+    [Arguments(0, 0, -1, -1, Direction.Down, true)]
+    [Arguments(0, 0, 0, 0, Direction.Invalid, false)]
     //@formatter:on
     public void IsInterCardinalTo_Should_Return_Correct_Result(
         int startX,
@@ -757,11 +711,11 @@ public sealed class PointExtensionsTests
     }
 
     //@formatter:off
-    [Theory]
-    [InlineData(0, 0, 0, 1, 0, 1)]   // Offset towards North (Up)
-    [InlineData(0, 0, 1, 0, 1, 0)]   // Offset towards East (Right)
-    [InlineData(0, 0, 0, -1, 0, -1)] // Offset towards South (Down)
-    [InlineData(0, 0, -1, 0, -1, 0)] // Offset towards West (Left)
+    [Test]
+    [Arguments(0, 0, 0, 1, 0, 1)]   // Offset towards North (Up)
+    [Arguments(0, 0, 1, 0, 1, 0)]   // Offset towards East (Right)
+    [Arguments(0, 0, 0, -1, 0, -1)] // Offset towards South (Down)
+    [Arguments(0, 0, -1, 0, -1, 0)] // Offset towards West (Left)
     //@formatter:on
     public void OffsetTowards_Should_Offset_Correctly(
         int startX,
@@ -784,7 +738,7 @@ public sealed class PointExtensionsTests
               .BeEquivalentTo(expectedOffset);
     }
 
-    [Fact]
+    [Test]
     public void OffsetTowards_Should_Return_Correct_Offset()
     {
         // Arrange
@@ -806,25 +760,25 @@ public sealed class PointExtensionsTests
     }
 
     //@formatter:off
-    [Theory]
-    [InlineData(0, 0, 0, 0, 0, 0)]           // Same start and end point
-    [InlineData(0, 0, 0, 5, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5)]           // Vertical line, upwards
-    [InlineData(0, 0, 5, 0, 1, 0, 2, 0, 3, 0, 4, 0, 5, 0)]           // Horizontal line, rightwards
-    [InlineData(0, 0, 5, 5, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5)]       // Diagonal line, ascending
-    [InlineData(5, 5, 0, 0, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1, 0, 0)]   // Diagonal line, descending
-    [InlineData(1, 1, 4, 2, 1, 1, 2, 1, 3, 2, 4, 2)]               // Sloped line, positive slope
-    [InlineData(4, 2, 1, 1, 4, 2, 3, 2, 2, 1, 1, 1)]               // Sloped line, negative slope
-    [InlineData(1, 1, 1, 5, 1, 2, 1, 3, 1, 4, 1, 5)]               // Vertical line, downwards
-    [InlineData(1, 1, 5, 1, 2, 1, 3, 1, 4, 1, 5, 1)]               // Horizontal line, rightwards
-    [InlineData(1, 1, 5, 5, 2, 2, 3, 3, 4, 4, 5, 5)]           // Diagonal line, ascending
-    [InlineData(5, 5, 1, 1, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1)]       // Diagonal line, descending
+    [Test]
+    [Arguments(0, 0, 0, 0, new[] {0, 0})]           // Same start and end point
+    [Arguments(0, 0, 0, 5, new[] {0, 1, 0, 2, 0, 3, 0, 4, 0, 5})]           // Vertical line, upwards
+    [Arguments(0, 0, 5, 0, new[] {1, 0, 2, 0, 3, 0, 4, 0, 5, 0})]           // Horizontal line, rightwards
+    [Arguments(0, 0, 5, 5, new[] {1, 1, 2, 2, 3, 3, 4, 4, 5, 5})]       // Diagonal line, ascending
+    [Arguments(5, 5, 0, 0, new[] {5, 5, 4, 4, 3, 3, 2, 2, 1, 1, 0, 0})]   // Diagonal line, descending
+    [Arguments(1, 1, 4, 2, new[] {1, 1, 2, 1, 3, 2, 4, 2})]               // Sloped line, positive slope
+    [Arguments(4, 2, 1, 1, new[] {4, 2, 3, 2, 2, 1, 1, 1})]               // Sloped line, negative slope
+    [Arguments(1, 1, 1, 5, new[] {1, 2, 1, 3, 1, 4, 1, 5})]               // Vertical line, downwards
+    [Arguments(1, 1, 5, 1, new[] {2, 1, 3, 1, 4, 1, 5, 1})]               // Horizontal line, rightwards
+    [Arguments(1, 1, 5, 5, new[] {2, 2, 3, 3, 4, 4, 5, 5})]           // Diagonal line, ascending
+    [Arguments(5, 5, 1, 1, new[] {5, 5, 4, 4, 3, 3, 2, 2, 1, 1})]       // Diagonal line, descending
     //@formatter:on
     public void RayTraceTo_Should_Generate_All_Points_Between_Start_And_End(
         int startX,
         int startY,
         int endX,
         int endY,
-        params int[] expectedPoints)
+        params IEnumerable<int> expectedPoints)
     {
         // Arrange
         var start = new Point(startX, startY);
@@ -841,16 +795,16 @@ public sealed class PointExtensionsTests
     }
 
     //@formatter:off
-    [Theory]
-    [InlineData(0, 0, 0)]                       // Zero distance, single point
-    [InlineData(0, 0, 1, 0, 0, 1, 0, 0, 1, -1, 0, 0, -1)]    // Distance 1, spiral search
-    [InlineData(0, 0, 2, 0, 0, 1, 0, 0, 1, -1, 0, 0, -1, 1, -1, 2, 0, 1, 1, 0, 2, -1, 1, -2, 0, -1, -1, 0, -2)] // Distance 2, spiral search
+    [Test]
+    [Arguments(0, 0, 0, new int[0])]                       // Zero distance, single point
+    [Arguments(0, 0, 1, new[] {0, 0, 1, 0, 0, 1, -1, 0, 0, -1})]    // Distance 1, spiral search
+    [Arguments(0, 0, 2, new[] {0, 0, 1, 0, 0, 1, -1, 0, 0, -1, 1, -1, 2, 0, 1, 1, 0, 2, -1, 1, -2, 0, -1, -1, 0, -2})] // Distance 2, spiral search
     //@formatter:on
     public void SpiralSearch_Should_Generate_Points_In_Spiral_Pattern(
         int startX,
         int startY,
         int maxRadius,
-        params int[] expectedPoints)
+        params IEnumerable<int> expectedPoints)
     {
         // Arrange
         var start = new Point(startX, startY);
@@ -865,56 +819,68 @@ public sealed class PointExtensionsTests
                                 .Select(pts => new Point(pts[0], pts[1])));
     }
 
-    [Theory]
-    [InlineData(
+    [Test]
+    [Arguments(
         Direction.Down,
-        2,
-        3,
-        3,
-        2,
-        2,
-        2,
-        1,
-        2,
-        2,
-        1)]
-    [InlineData(
+        new[]
+        {
+            2,
+            3,
+            3,
+            2,
+            2,
+            2,
+            1,
+            2,
+            2,
+            1
+        })]
+    [Arguments(
         Direction.Left,
-        1,
-        2,
-        2,
-        1,
-        2,
-        2,
-        2,
-        3,
-        3,
-        2)]
-    [InlineData(
+        new[]
+        {
+            1,
+            2,
+            2,
+            1,
+            2,
+            2,
+            2,
+            3,
+            3,
+            2
+        })]
+    [Arguments(
         Direction.Up,
-        2,
-        1,
-        1,
-        2,
-        2,
-        2,
-        3,
-        2,
-        2,
-        3)]
-    [InlineData(
+        new[]
+        {
+            2,
+            1,
+            1,
+            2,
+            2,
+            2,
+            3,
+            2,
+            2,
+            3
+        })]
+    [Arguments(
         Direction.Right,
-        3,
-        2,
-        2,
-        3,
-        2,
-        2,
-        2,
-        1,
-        1,
-        2)]
-    public void WithConsistentDirectionBias_Should_Order_Points_Correctly(Direction direction, params int[] expectedOrder)
+        new[]
+        {
+            3,
+            2,
+            2,
+            3,
+            2,
+            2,
+            2,
+            1,
+            1,
+            2
+        })]
+    public void WithConsistentDirectionBias_Should_Order_Points_Correctly(Direction direction, params IEnumerable<int> expectedOrder)
     {
         // Arrange
         var points = expectedOrder.Chunk(2)
@@ -930,13 +896,13 @@ public sealed class PointExtensionsTests
     }
 
     //@formatter:off
-    [Theory]
-    [InlineData(Direction.Down, 1, 2, 2, 1, 3, 0)]             // Sort points by Y in ascending order (Up)
-    [InlineData(Direction.Left, 1, 2, 2, 1, 3, 0)]         // Sort points by X in descending order (Right)
-    [InlineData(Direction.Up, 3, 0, 2, 1, 1, 2)]          // Sort points by Y in descending order (Down)
-    [InlineData(Direction.Right, 3, 0, 2, 1, 1, 2)]          // Sort points by X in ascending order (Left)
+    [Test]
+    [Arguments(Direction.Down, new[] {1, 2, 2, 1, 3, 0})]             // Sort points by Y in ascending order (Up)
+    [Arguments(Direction.Left, new[] {1, 2, 2, 1, 3, 0})]         // Sort points by X in descending order (Right)
+    [Arguments(Direction.Up, new[] {3, 0, 2, 1, 1, 2})]          // Sort points by Y in descending order (Down)
+    [Arguments(Direction.Right, new[] {3, 0, 2, 1, 1, 2})]          // Sort points by X in ascending order (Left)
     //@formatter:on
-    public void WithDirectionBias_Should_Order_Points_Correctly(Direction direction, params int[] expectedOrder)
+    public void WithDirectionBias_Should_Order_Points_Correctly(Direction direction, params IEnumerable<int> expectedOrder)
     {
         // Arrange
         var points = expectedOrder.Chunk(2)

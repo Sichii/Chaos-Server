@@ -1,13 +1,15 @@
+#region
 using Chaos.IO.Exceptions;
 using Chaos.IO.FileSystem;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.IO.Tests;
 
+[NotInParallel]
 public sealed class FileExTests
 {
-    [Fact]
+    [Test]
     public void SafeOpenRead_Should_CaptureExceptions_InAggregateException()
     {
         // Arrange
@@ -28,7 +30,7 @@ public sealed class FileExTests
                  .AllBeAssignableTo<FileNotFoundException>();
     }
 
-    [Fact]
+    [Test]
     public void SafeOpenRead_Should_Retry_RetryableExceptions()
     {
         // Arrange
@@ -66,7 +68,7 @@ public sealed class FileExTests
         File.Delete(bakPath);
     }
 
-    [Fact]
+    [Test]
     public void SafeOpenRead_Should_ReturnResult_When_MainAndTempFilesMissing_BackupFileExists()
     {
         // Arrange
@@ -95,7 +97,7 @@ public sealed class FileExTests
         File.Delete(backPath);
     }
 
-    [Fact]
+    [Test]
     public void SafeOpenRead_Should_ReturnResult_When_MainFileExists()
     {
         // Arrange
@@ -123,7 +125,7 @@ public sealed class FileExTests
         File.Delete(path);
     }
 
-    [Fact]
+    [Test]
     public void SafeOpenRead_Should_ReturnResult_When_MainFileMissing_TempFileExists()
     {
         // Arrange
@@ -152,7 +154,7 @@ public sealed class FileExTests
         File.Delete(tempPath);
     }
 
-    [Fact]
+    [Test]
     public void SafeOpenRead_Should_ThrowAggregateException_When_AllFilesMissing()
     {
         // Arrange
@@ -169,7 +171,7 @@ public sealed class FileExTests
            .WithMessage("Failed to read file, temp file, or backup file. See inner exceptions for details. *");
     }
 
-    [Fact]
+    [Test]
     public async Task SafeOpenReadAsync_Should_CaptureExceptions_InAggregateException()
     {
         // Arrange
@@ -188,7 +190,7 @@ public sealed class FileExTests
                                                     .AllBeAssignableTo<FileNotFoundException>();
     }
 
-    [Fact]
+    [Test]
     public async Task SafeOpenReadAsync_Should_Retry_RetryableExceptions()
     {
         // Arrange
@@ -226,7 +228,7 @@ public sealed class FileExTests
         File.Delete(bakPath);
     }
 
-    [Fact]
+    [Test]
     public async Task SafeOpenReadAsync_Should_ReturnResult_When_MainAndTempFilesMissing_BackupFileExists()
     {
         // Arrange
@@ -255,7 +257,7 @@ public sealed class FileExTests
         File.Delete(backPath);
     }
 
-    [Fact]
+    [Test]
     public async Task SafeOpenReadAsync_Should_ReturnResult_When_MainFileExists()
     {
         // Arrange
@@ -283,7 +285,7 @@ public sealed class FileExTests
         File.Delete(path);
     }
 
-    [Fact]
+    [Test]
     public async Task SafeOpenReadAsync_Should_ReturnResult_When_MainFileMissing_TempFileExists()
     {
         // Arrange
@@ -312,7 +314,7 @@ public sealed class FileExTests
         File.Delete(tempPath);
     }
 
-    [Fact]
+    [Test]
     public async Task SafeOpenReadAsync_Should_ThrowAggregateException_When_AllFilesMissing()
     {
         // Arrange
@@ -329,7 +331,7 @@ public sealed class FileExTests
                  .WithMessage("Failed to read file, temp file, or backup file. See inner exceptions for details. *");
     }
 
-    [Fact]
+    [Test]
     public void SafeWriteAllText_Creates_A_New_File_And_Writes_Text_To_It_Successfully()
     {
         // Arrange
@@ -349,7 +351,7 @@ public sealed class FileExTests
             .Be(text);
     }
 
-    [Fact]
+    [Test]
     public void SafeWriteAllText_Handles_Empty_Text_Input_Successfully()
     {
         // Arrange
@@ -365,7 +367,7 @@ public sealed class FileExTests
             .Be(text);
     }
 
-    [Fact]
+    [Test]
     public void SafeWriteAllText_Handles_Long_Text_Input_Successfully()
     {
         // Arrange
@@ -381,7 +383,7 @@ public sealed class FileExTests
             .Be(text);
     }
 
-    [Fact]
+    [Test]
     public void SafeWriteAllText_Overwrites_An_Existing_File_With_New_Text_Successfully()
     {
         // Arrange
@@ -400,7 +402,7 @@ public sealed class FileExTests
             .Be(newText);
     }
 
-    [Fact]
+    [Test]
     public void SafeWriteAllText_Throws_An_Exception_When_The_File_Path_Contains_Invalid_Characters()
     {
         // Arrange
@@ -415,7 +417,7 @@ public sealed class FileExTests
            .Throw<IOException>();
     }
 
-    [Fact]
+    [Test]
     public void SafeWriteAllText_Throws_An_Exception_When_The_File_Path_Is_Null()
     {
         // Arrange
@@ -430,7 +432,7 @@ public sealed class FileExTests
            .Throw<ArgumentNullException>();
     }
 
-    [Fact]
+    [Test]
     public void SafeWriteallText_Writes_All_Text_To_A_File_Successfully()
     {
         // Arrange

@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
@@ -15,6 +16,7 @@ using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Extensions;
 
@@ -96,7 +98,7 @@ public static class ServiceProviderExtensions
                     }
                     case Merchant merchant:
                     {
-                        var hadStock = merchant.ItemsForSale.Any();
+                        var hadStock = merchant.ItemsForSale.Count != 0;
                         var itemsForSale = merchant.ItemsForSale.ToList();
                         merchant.ItemsForSale.Clear();
 
@@ -147,7 +149,7 @@ public static class ServiceProviderExtensions
 
             foreach (var monsterSpawn in mapInstance.MonsterSpawns)
             {
-                if (!monsterSpawn.ExtraLootTables.Any())
+                if (monsterSpawn.ExtraLootTables.Count == 0)
                     continue;
 
                 var lootTables = monsterSpawn.ExtraLootTables
@@ -231,7 +233,11 @@ public static class ServiceProviderExtensions
                 newMap.BaseInstanceId = oldMap.BaseInstanceId;
             } catch (Exception e)
             {
-                logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Reload)
+                logger.WithTopics(
+                          [
+                              Topics.Entities.MapInstance,
+                              Topics.Actions.Reload
+                          ])
                       .WithProperty(oldMap)
                       .LogError(e, "Failed to migrate map {@MapInstanceId} during reload", oldMap.InstanceId);
             }
@@ -273,7 +279,11 @@ public static class ServiceProviderExtensions
                     merchantsToAdd.Add(newMerchant);
                 } catch (Exception e)
                 {
-                    logger.WithTopics(Topics.Entities.Merchant, Topics.Actions.Reload)
+                    logger.WithTopics(
+                              [
+                                  Topics.Entities.Merchant,
+                                  Topics.Actions.Reload
+                              ])
                           .WithProperty(merchant)
                           .WithProperty(mapInstance)
                           .LogError(
@@ -331,7 +341,11 @@ public static class ServiceProviderExtensions
                     monstersToAdd.Add(newMonster);
                 } catch (Exception e)
                 {
-                    logger.WithTopics(Topics.Entities.Monster, Topics.Actions.Reload)
+                    logger.WithTopics(
+                              [
+                                  Topics.Entities.Monster,
+                                  Topics.Actions.Reload
+                              ])
                           .WithProperty(monster)
                           .WithProperty(mapInstance)
                           .LogError(

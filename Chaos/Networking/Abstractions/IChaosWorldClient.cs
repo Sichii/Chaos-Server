@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.DarkAges.Definitions;
@@ -12,6 +13,7 @@ using Chaos.Models.World.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets;
 using Chaos.Services.Storage.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Abstractions;
 
@@ -43,7 +45,7 @@ public interface IChaosWorldClient : IConnectedClient
     void SendDisplayGroupInvite(ServerGroupSwitch serverGroupSwitch, string fromName, DisplayGroupBoxInfo? groupBoxInfo = null);
     void SendDisplayPublicMessage(uint id, PublicMessageType publicMessageType, string message);
     void SendDisplayUnequip(EquipmentSlot equipmentSlot);
-    void SendDoors(IEnumerable<Door> doors);
+    void SendDoors(params IEnumerable<Door> doors);
     void SendEditableProfileRequest();
     void SendEffect(EffectColor effectColor, byte effectIcon);
     void SendEquipment(Item item);
@@ -84,7 +86,7 @@ public interface IChaosWorldClient : IConnectedClient
     void SendServerMessage(ServerMessageType serverMessageType, string message);
     void SendSound(byte sound, bool isMusic);
     void SendUserId();
-    void SendVisibleEntities(IEnumerable<VisibleEntity> objects);
+    void SendVisibleEntities(params IEnumerable<VisibleEntity> objects);
     void SendWorldList(IEnumerable<Aisling> users);
     void SendWorldMap(WorldMap worldMap);
 }

@@ -1,3 +1,4 @@
+#region
 using System.Collections;
 using System.IO;
 using System.Text.Encodings.Web;
@@ -31,6 +32,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace ChaosTool;
 
@@ -93,14 +95,32 @@ public class JsonContext
             IgnoreReadOnlyFields = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             AllowTrailingCommas = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+           Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+           RespectNullableAnnotations = true,
+           RespectRequiredConstructorParameters = true
         };
 
         JsonSerializerOptions.Converters.Add(new PointConverter());
         JsonSerializerOptions.Converters.Add(new LocationConverter());
         JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
-        Context = new SerializationContext(JsonSerializerOptions);
+       Context = new SerializationContext
+       {
+          Options =
+          {
+             WriteIndented = true,
+             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+             NumberHandling = JsonNumberHandling.AllowReadingFromString,
+             PropertyNameCaseInsensitive = true,
+             IgnoreReadOnlyProperties = true,
+             IgnoreReadOnlyFields = true,
+             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+             AllowTrailingCommas = true,
+             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+             RespectNullableAnnotations = true,
+             RespectRequiredConstructorParameters = true
+          }
+       };
 
         var services = new ServiceCollection();
 

@@ -22,6 +22,6 @@ public static class CancellationTokenExtensions
     /// <summary>
     ///     Asynchronously waits until all tasks are completed or canceled
     /// </summary>
-    public static Task WhenAllWithCancellation(this CancellationToken token, params Func<CancellationToken, Task>[] taskFuncs)
+    public static Task WhenAllWithCancellation(this CancellationToken token, params IEnumerable<Func<CancellationToken, Task>> taskFuncs)
         => Task.WhenAll(taskFuncs.Select(task => task(token)));
 }

@@ -1,9 +1,11 @@
+#region
 using Chaos.Extensions;
 using Chaos.Models.World;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 using Chaos.Scripting.MonsterScripts.Abstractions;
 using Chaos.Services.Servers.Options;
+#endregion
 
 namespace Chaos.Scripting.MonsterScripts;
 
@@ -39,12 +41,8 @@ public class DeathScript : MonsterScriptBase
         Aisling[]? rewardTargets = null;
 
         if (rewardTarget != null)
-            rewardTargets = (rewardTarget.Group
-                             ?? (IEnumerable<Aisling>)new[]
-                             {
-                                 rewardTarget
-                             }).ThatAreWithinRange(rewardTarget)
-                               .ToArray();
+            rewardTargets = (rewardTarget.Group ?? (IEnumerable<Aisling>) [rewardTarget]).ThatAreWithinRange(rewardTarget)
+                                                                                         .ToArray();
 
         Subject.Items.AddRange(Subject.LootTable.GenerateLoot());
 

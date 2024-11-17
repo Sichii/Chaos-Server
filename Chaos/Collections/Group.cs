@@ -1,9 +1,10 @@
-using Chaos.Common.Synchronization;
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Services.Servers.Options;
+#endregion
 
 namespace Chaos.Collections;
 
@@ -11,14 +12,14 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 {
     private readonly IChannelService ChannelService;
     private readonly List<Aisling> Members;
-    private readonly AutoReleasingMonitor Sync;
+    private readonly Lock Sync;
     public string ChannelName { get; }
 
     public Aisling Leader
     {
         get
         {
-            using var @lock = Sync.Enter();
+            using var @lock = Sync.EnterScope();
 
             return Members[0];
         }
@@ -56,7 +57,7 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
         sender.SendActiveMessage($"You form a group with {receiver.Name}");
         receiver.SendActiveMessage($"You form a group with {sender.Name}");
 
-        Sync = new AutoReleasingMonitor();
+        Sync = new Lock();
     }
 
     /// <inheritdoc />
@@ -67,7 +68,7 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
     {
         List<Aisling> snapshot;
 
-        using (Sync.Enter())
+        using (Sync.EnterScope())
             snapshot = Members.ToList();
 
         return snapshot.GetEnumerator();
@@ -83,7 +84,7 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 
     public void Add(Aisling aisling)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         foreach (var member in this)
         {
@@ -101,14 +102,14 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 
     public bool Contains(Aisling aisling)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Members.Contains(aisling, WorldEntity.IdComparer);
     }
 
     private void Disband()
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         foreach (var member in this)
         {
@@ -124,7 +125,7 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 
     public void Kick(Aisling aisling)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (Members.Count <= 2)
         {
@@ -144,7 +145,7 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 
     public void Leave(Aisling aisling)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (Members.Count <= 2)
         {
@@ -177,7 +178,7 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 
     private bool Remove(Aisling aisling)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (!Members.Remove(aisling))
             return false;
@@ -191,7 +192,7 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
 
     public override string ToString()
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var groupString = "Group members";
 

@@ -1,3 +1,4 @@
+#region
 using Chaos.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Models.World;
@@ -6,6 +7,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 using Chaos.Utilities;
+#endregion
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 
@@ -30,7 +32,12 @@ public class VerbalDepositItemScript : VerbalBankerScriptBase
                     amount,
                     itemName);
 
-                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Item, Topics.Actions.Deposit)
+                Logger.WithTopics(
+                          [
+                              Topics.Entities.Aisling,
+                              Topics.Entities.Item,
+                              Topics.Actions.Deposit
+                          ])
                       .WithProperty(source)
                       .WithProperty(Subject)
                       .LogInformation(

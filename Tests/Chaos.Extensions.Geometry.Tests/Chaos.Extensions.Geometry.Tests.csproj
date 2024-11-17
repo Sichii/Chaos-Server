@@ -5,4 +5,5 @@
         <ProjectReference Include="..\..\Chaos.Common\Chaos.Common.csproj"/>
         <ProjectReference Include="..\Chaos.Testing.Infrastructure\Chaos.Testing.Infrastructure.csproj"/>
     </ItemGroup>
+
 </Project>

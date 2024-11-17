@@ -1,3 +1,4 @@
+#region
 using System.Diagnostics;
 using System.Runtime;
 using System.Text;
@@ -19,7 +20,6 @@ using Chaos.Models.World.Abstractions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.NLog.Logging.Definitions;
-using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Services.Other;
@@ -33,6 +33,7 @@ using Microsoft.Extensions.Options;
 using NLog;
 using NLog.Extensions.Logging;
 using AppContext = Chaos.AppContext;
+#endregion
 
 var encodingProvider = CodePagesEncodingProvider.Instance;
 Encoding.RegisterProvider(encodingProvider);
@@ -77,8 +78,7 @@ await Task.Delay(2500);
 
 await RunApp(app);
 
-logger.WithTopics(Topics.Actions.Disconnect)
-      .LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
+LoggerExtensions.LogInformation(logger.WithTopics(Topics.Actions.Disconnect), "Waiting 5 seconds for post shutdown tasks to complete");
 
 //wait for everything to shut down
 await Task.Delay(5000);
@@ -414,7 +414,7 @@ static void RegisterStructuredLoggingTransformations()
                                  Type = obj.Template.Type,
                                  Contextual = obj.Template.Contextual,
                                  HasContext = obj.Context is not null,
-                                 HasMenuArgs = obj.MenuArgs.Any()
+                                 HasMenuArgs = obj.MenuArgs.Count != 0
                              });
 
                          builder.RegisterObjectTransformation<Exchange>(

@@ -1,14 +1,15 @@
+#region
 using System.Text;
 using Chaos.DarkAges.Definitions;
 using Chaos.DarkAges.Extensions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class StringBuilderExtensionsTests
 {
-    [Fact]
+    [Test]
     public void AppendColored_NoDefaultColor_ShouldAppendMessageWithoutDefaultColor()
     {
         var sb = new StringBuilder();
@@ -19,7 +20,7 @@ public sealed class StringBuilderExtensionsTests
           .Be($"{MessageColor.Red.ToPrefix()}Hello");
     }
 
-    [Fact]
+    [Test]
     public void AppendColored_ShouldAppendColoredMessageCorrectly()
     {
         var sb = new StringBuilder();
@@ -30,7 +31,7 @@ public sealed class StringBuilderExtensionsTests
           .Be($"{MessageColor.Red.ToPrefix()}Hello{MessageColor.Blue.ToPrefix()}");
     }
 
-    [Fact]
+    [Test]
     public void AppendColorPrefix_ShouldAppendPrefixCorrectly()
     {
         var sb = new StringBuilder();
@@ -41,7 +42,7 @@ public sealed class StringBuilderExtensionsTests
           .Be($"{MessageColor.Red.ToPrefix()}");
     }
 
-    [Fact]
+    [Test]
     public void AppendLineF_ShouldAppendMessageWithLineFeed()
     {
         var sb = new StringBuilder();
@@ -52,7 +53,7 @@ public sealed class StringBuilderExtensionsTests
           .Be("Hello\n");
     }
 
-    [Fact]
+    [Test]
     public void AppendLineFColored_NoDefaultColor_ShouldAppendMessageWithLineFeedWithoutDefaultColor()
     {
         var sb = new StringBuilder();
@@ -63,7 +64,7 @@ public sealed class StringBuilderExtensionsTests
           .Be($"{MessageColor.Red.ToPrefix()}Hello\n");
     }
 
-    [Fact]
+    [Test]
     public void AppendLineFColored_ShouldAppendColoredMessageWithLineFeed()
     {
         var sb = new StringBuilder();

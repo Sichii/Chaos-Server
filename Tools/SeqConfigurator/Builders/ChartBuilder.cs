@@ -1,7 +1,9 @@
+#region
 using Seq.Api;
 using Seq.Api.Model.Dashboarding;
 using Seq.Api.Model.Signals;
 using SeqConfigurator.Utility;
+#endregion
 
 namespace SeqConfigurator.Builders;
 
@@ -35,7 +37,7 @@ public sealed class ChartBuilder
         return this;
     }
 
-    public ChartBuilder WithQuery(params Action<ChartQueryBuilder>[] builderActions)
+    public ChartBuilder WithQuery(params IEnumerable<Action<ChartQueryBuilder>> builderActions)
     {
         AsyncComposer.Compose(
             async chartPart =>

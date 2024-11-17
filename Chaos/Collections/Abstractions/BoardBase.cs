@@ -1,9 +1,10 @@
+#region
 using Chaos.Common.Abstractions;
 using Chaos.Common.Identity;
-using Chaos.Common.Synchronization;
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Board;
 using Chaos.Models.World;
+#endregion
 
 namespace Chaos.Collections.Abstractions;
 
@@ -16,7 +17,7 @@ public abstract class BoardBase : IEnumerable<Post>
     public string Name { get; }
     protected IIdGenerator<short> PostIdGenerator { get; }
     internal ConcurrentDictionary<short, Post> Posts { get; }
-    protected AutoReleasingMonitor Sync { get; }
+    protected Lock Sync { get; }
 
     protected BoardBase(
         ushort boardId,
@@ -29,7 +30,7 @@ public abstract class BoardBase : IEnumerable<Post>
         Key = key;
         Posts = new ConcurrentDictionary<short, Post>();
         PostIdGenerator = new SequentialIdGenerator<short>();
-        Sync = new AutoReleasingMonitor();
+        Sync = new Lock();
         LastShown = new ConcurrentDictionary<uint, DateTime>();
 
         //for existing posts, number them sequentially
@@ -49,7 +50,7 @@ public abstract class BoardBase : IEnumerable<Post>
     /// <inheritdoc />
     public IEnumerator<Post> GetEnumerator()
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var posts = Posts.Values.ToList();
 
@@ -61,14 +62,14 @@ public abstract class BoardBase : IEnumerable<Post>
 
     public virtual bool Contains(short postId)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Posts.ContainsKey(postId);
     }
 
     public virtual bool Contains(Post post)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Contains(post.PostId);
     }
@@ -93,7 +94,7 @@ public abstract class BoardBase : IEnumerable<Post>
 
     public virtual bool TryGet(short postId, [MaybeNullWhen(false)] out Post post)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Posts.TryGetValue(postId, out post);
     }

@@ -1,13 +1,14 @@
+#region
 using System.Text.Json;
 using Chaos.Collections.Common;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class DynamicVarsTests
 {
-    [Fact]
+    [Test]
     public void ContainsKey_ShouldReturnFalse_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -21,7 +22,7 @@ public sealed class DynamicVarsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void ContainsKey_ShouldReturnTrue_WhenKeyExists()
     {
         // Arrange
@@ -41,7 +42,7 @@ public sealed class DynamicVarsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Get_ShouldReturnDefaultValue_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -67,7 +68,7 @@ public sealed class DynamicVarsTests
                      .BeNull();
     }
 
-    [Fact]
+    [Test]
     public void Get_ShouldReturnTypedValue_WhenKeyExists()
     {
         // Arrange
@@ -113,7 +114,7 @@ public sealed class DynamicVarsTests
                      .BeNull();
     }
 
-    [Fact]
+    [Test]
     public void GetRequired_ShouldReturnValue_WhenKeyExists()
     {
         // Arrange
@@ -159,7 +160,7 @@ public sealed class DynamicVarsTests
                      .BeNull();
     }
 
-    [Fact]
+    [Test]
     public void GetRequired_ShouldThrowException_WhenKeyDoesNotExist()
     {
         // Arrange

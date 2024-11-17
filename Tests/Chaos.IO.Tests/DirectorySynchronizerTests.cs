@@ -1,13 +1,15 @@
+#region
 using System.Diagnostics;
 using Chaos.IO.FileSystem;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.IO.Tests;
 
+[NotInParallel]
 public sealed class DirectorySynchronizerTests
 {
-    [Fact]
+    [Test]
     public void SafeExecute_ShouldLockDirectory()
     {
         const string DIRECTORY = "testDir";
@@ -26,7 +28,7 @@ public sealed class DirectorySynchronizerTests
                              .Contain(DIRECTORY);
     }
 
-    [Fact]
+    [Test]
     public async Task SafeExecute_ShouldNotAllowConcurrentExecution()
     {
         const string DIRECTORY = "testDir";
@@ -59,7 +61,7 @@ public sealed class DirectorySynchronizerTests
                  .BeGreaterThan(TimeSpan.FromMilliseconds(200));
     }
 
-    [Fact]
+    [Test]
     public void SafeExecute_ShouldReturnCorrectResult()
     {
         const string DIRECTORY = "testDir";
@@ -70,7 +72,7 @@ public sealed class DirectorySynchronizerTests
               .Be("success");
     }
 
-    [Fact]
+    [Test]
     public void SafeExecuteAsync_ShouldLockDirectory()
     {
         const string DIRECTORY = "testDir";
@@ -86,7 +88,7 @@ public sealed class DirectorySynchronizerTests
                              .Contain(DIRECTORY);
     }
 
-    [Fact]
+    [Test]
     public async Task SafeExecuteAsync_ShouldNotAllowConcurrentExecution()
     {
         const string DIRECTORY = "testDir";
@@ -117,7 +119,7 @@ public sealed class DirectorySynchronizerTests
            .BeGreaterThan(TimeSpan.FromMilliseconds(200), "the tasks should not have been executed concurrently");
     }
 
-    [Fact]
+    [Test]
     public async Task SafeExecuteAsync_ShouldReturnCorrectResult()
     {
         const string DIRECTORY = "testDir";

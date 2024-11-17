@@ -1,5 +1,7 @@
+#region
 using BenchmarkDotNet.Attributes;
 using Chaos.Extensions.Common;
+#endregion
 
 // ReSharper disable All
 
@@ -40,16 +42,29 @@ public class StringProcessorBenchmarks
     [Benchmark]
     public string InjectLongString()
         => LONG_STRING_FORMAT.Inject(
-            1,
-            2,
-            4,
-            1,
-            2,
-            4);
+            [
+                1,
+                2,
+                4,
+                1,
+                2,
+                4
+            ]);
 
     [Benchmark]
-    public string InjectMediumString() => MEDIUM_STRING_FORMAT.Inject(1, 2, 4);
+    public string InjectMediumString()
+        => MEDIUM_STRING_FORMAT.Inject(
+            [
+                1,
+                2,
+                4
+            ]);
 
     [Benchmark]
-    public string InjectShortString() => SHORT_STRING.Inject(1, 2);
+    public string InjectShortString()
+        => SHORT_STRING.Inject(
+            [
+                1,
+                2
+            ]);
 }

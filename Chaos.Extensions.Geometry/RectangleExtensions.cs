@@ -1,8 +1,10 @@
+#region
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+#endregion
 
 namespace Chaos.Extensions.Geometry;
 
@@ -59,14 +61,20 @@ public static class RectangleExtensions
     ///         false
     ///     </c>
     /// </returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Contains<TPoint>(this IRectangle rect, TPoint point) where TPoint: IPoint
+    [OverloadResolutionPriority(1), MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Contains(this IRectangle rect, Point point)
     {
         ArgumentNullException.ThrowIfNull(rect);
 
+        return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
+    }
+
+    /// <inheritdoc cref="Contains(IRectangle, Point)" />
+    public static bool Contains(this IRectangle rect, IPoint point)
+    {
         ArgumentNullException.ThrowIfNull(point);
 
-        return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
+        return rect.Contains(Point.From(point));
     }
 
     /// <summary>
@@ -83,7 +91,8 @@ public static class RectangleExtensions
     /// </param>
     /// <returns>
     /// </returns>
-    public static IEnumerable<Point> GenerateMaze(this IRectangle rect, IPoint start, IPoint end)
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> GenerateMaze(this IRectangle rect, Point start, Point end)
     {
         //neighbor pattern
         List<(int, int)> pattern =
@@ -178,6 +187,16 @@ public static class RectangleExtensions
         static Point OffsetCoordinates(IRectangle rect, IPoint point) => new(point.X + rect.Left, point.Y + rect.Top);
 
         static Point UnOffsetCoordinates(IRectangle rect, IPoint point) => new(point.X - rect.Left, point.Y - rect.Top);
+    }
+
+    /// <inheritdoc cref="GenerateMaze(IRectangle, Point, Point)" />
+    public static IEnumerable<Point> GenerateMaze(this IRectangle rect, IPoint start, IPoint end)
+    {
+        ArgumentNullException.ThrowIfNull(start);
+
+        ArgumentNullException.ThrowIfNull(end);
+
+        return rect.GenerateMaze(Point.From(start), Point.From(end));
     }
 
     /// <summary>

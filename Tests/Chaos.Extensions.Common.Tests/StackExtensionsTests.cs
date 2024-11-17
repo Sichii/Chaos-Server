@@ -1,11 +1,12 @@
+#region
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class StackExtensionsTests
 {
-    [Fact]
+    [Test]
     public void PopUntil_Should_Return_Default_If_No_Item_Satisfies_Predicate()
     {
         // Arrange
@@ -25,7 +26,7 @@ public sealed class StackExtensionsTests
              .BeEmpty(); // The stack should be empty
     }
 
-    [Fact]
+    [Test]
     public void PopUntil_Should_Return_Default_If_Stack_Is_Empty()
     {
         // Arrange
@@ -42,7 +43,7 @@ public sealed class StackExtensionsTests
              .BeEmpty(); // The stack should still be empty
     }
 
-    [Fact]
+    [Test]
     public void PopUntil_Should_Return_First_Item_Satisfying_Predicate()
     {
         // Arrange

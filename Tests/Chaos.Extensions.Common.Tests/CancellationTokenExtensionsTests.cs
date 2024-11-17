@@ -1,11 +1,12 @@
+#region
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class CancellationTokenExtensionsTests
 {
-    [Fact]
+    [Test]
     public async Task WaitTillCanceled_Should_Wait_Until_Cancellation_Requested()
     {
         // Arrange
@@ -27,7 +28,7 @@ public sealed class CancellationTokenExtensionsTests
                    .Be(TaskStatus.RanToCompletion, "because the waiting task should have completed");
     }
 
-    [Fact]
+    [Test]
     public async Task WhenAllWithCancellation_Should_Wait_Until_All_Tasks_Completed_Or_Canceled()
     {
         // Arrange

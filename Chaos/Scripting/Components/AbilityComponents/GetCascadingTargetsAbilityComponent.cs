@@ -1,3 +1,4 @@
+#region
 using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Geometry;
@@ -7,6 +8,7 @@ using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
 using Chaos.Scripting.Components.Execution;
+#endregion
 
 namespace Chaos.Scripting.Components.AbilityComponents;
 
@@ -64,7 +66,7 @@ public struct GetCascadingTargetsAbilityComponent<TEntity> : IConditionalCompone
         vars.SetPoints(stagePoints);
         vars.SetTargets(targetEntities);
 
-        return !options.MustHaveTargets || targetEntities.Any();
+        return !options.MustHaveTargets || (targetEntities.Count != 0);
     }
 
     public interface IGetCascadingTargetsComponentOptions

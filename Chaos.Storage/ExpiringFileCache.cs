@@ -1,6 +1,6 @@
+#region
 using System.Collections;
 using System.Collections.Concurrent;
-using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
@@ -9,6 +9,7 @@ using Chaos.Storage.Abstractions.Definitions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace Chaos.Storage;
 
@@ -64,9 +65,9 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     protected TOptions Options { get; }
 
     /// <summary>
-    ///     The synchronization monitor used to manage concurrent access to the cache.
+    ///     The synchronization object used to manage concurrent access to the cache.
     /// </summary>
-    protected AutoReleasingMonitor Sync { get; }
+    protected Lock Sync { get; }
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="ExpiringFileCache{T, TSchema, TOptions}" /> class.
@@ -83,7 +84,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         LocalLookup = new ConcurrentDictionary<string, T>(StringComparer.OrdinalIgnoreCase);
         Logger = logger;
         EntityRepository = entityRepository;
-        Sync = new AutoReleasingMonitor();
+        Sync = new Lock();
 
         if (!Directory.Exists(Options.Directory))
             Directory.CreateDirectory(Options.Directory);
@@ -94,10 +95,14 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <inheritdoc />
     public void ForceLoad()
     {
-        Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Load)
+        Logger.WithTopics(
+                  [
+                      Topics.Qualifiers.Forced,
+                      Topics.Actions.Load
+                  ])
               .LogInformation("Force loading {@TypeName} cache", typeof(T).Name);
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var pathEndings = Paths.Select(Path.GetFileNameWithoutExtension);
 
@@ -116,7 +121,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     {
         key = ConstructKeyForType(key);
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         try
         {
@@ -138,7 +143,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <inheritdoc />
     public virtual Task ReloadAsync()
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         Paths = LoadPaths();
 
@@ -152,7 +157,11 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
                 entry.Value = CreateFromEntry(entry);
             } catch (Exception e)
             {
-                Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Load)
+                Logger.WithTopics(
+                          [
+                              Topics.Qualifiers.Forced,
+                              Topics.Actions.Load
+                          ])
                       .LogError(
                           e,
                           "Failed to reload {@TypeName} with key {@Key}",

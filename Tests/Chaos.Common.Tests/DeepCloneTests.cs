@@ -1,12 +1,13 @@
+#region
 using Chaos.Common.Utilities;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class DeepCloneTests
 {
-    [Fact]
+    [Test]
     public void Create_CreatesDeepClone()
     {
         // Arrange
@@ -62,7 +63,7 @@ public sealed class DeepCloneTests
              .Be(testObj.NestedClass.IntValue);
     }
 
-    [Fact]
+    [Test]
     public void Create_CreatesDeepCloneOfArray()
     {
         // Arrange
@@ -87,7 +88,7 @@ public sealed class DeepCloneTests
              .Equal(testArray);
     }
 
-    [Fact]
+    [Test]
     public void Create_CreatesDeepCloneOfArrayOfTestClass()
     {
         // Arrange
@@ -174,7 +175,7 @@ public sealed class DeepCloneTests
         }
     }
 
-    [Fact]
+    [Test]
     public void Create_ReturnsNullForNullInput()
     {
         // Act

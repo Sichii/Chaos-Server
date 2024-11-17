@@ -1,13 +1,14 @@
+#region
 using System.Text;
 using Chaos.IO.Compression;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.IO.Tests;
 
 public sealed class ZlibTests
 {
-    [Fact]
+    [Test]
     public void CompressDecompress_ByteArray_ShouldReturnSameDataAfterDecompress()
     {
         // Arrange
@@ -25,7 +26,7 @@ public sealed class ZlibTests
                           .Be(ORIGINAL_DATA);
     }
 
-    [Fact]
+    [Test]
     public void CompressDecompress_ReadOnlySpan_ShouldReturnSameDataAfterDecompress()
     {
         // Arrange
@@ -44,7 +45,7 @@ public sealed class ZlibTests
                           .Be(ORIGINAL_DATA);
     }
 
-    [Fact]
+    [Test]
     public void CompressDecompress_Span_ShouldReturnSameDataAfterDecompress()
     {
         // Arrange

@@ -1,15 +1,16 @@
+#region
 using System.Text;
 using System.Text.Json;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.JsonConverters;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class PolygonConverterTests
 {
-    [Fact]
+    [Test]
     public void Read_ShouldReturnPolygon_WhenInputIsValid()
     {
         const string JSON_STRING = "[\"(1, 2)\", \"(3, 4)\", \"(5, 6)\"]";
@@ -31,7 +32,7 @@ public sealed class PolygonConverterTests
                .BeEquivalentTo(expectedPolygon);
     }
 
-    [Fact]
+    [Test]
     public void Read_ShouldThrowInvalidOperationException_WhenInputIsEmpty()
     {
         const string JSON_STRING = "\"\"";
@@ -57,7 +58,7 @@ public sealed class PolygonConverterTests
           .Be("Expected startArray");
     }
 
-    [Fact]
+    [Test]
     public void Read_ShouldThrowInvalidOperationException_WhenInputIsInvalid()
     {
         const string JSON_STRING = "[\"invalid\", \"(1, 2)\"]";
@@ -83,7 +84,7 @@ public sealed class PolygonConverterTests
           .Be("Invalid point format");
     }
 
-    [Fact]
+    [Test]
     public void Write_ShouldWriteJson_WhenPolygonIsValid()
     {
         var polygon = new Polygon(

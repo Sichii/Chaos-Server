@@ -1,7 +1,9 @@
+#region
 using Chaos.Definitions;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+#endregion
 
 namespace Chaos.Extensions;
 
@@ -73,24 +75,25 @@ public static class AoeShapeExtensions
         int range,
         IEnumerable<IPoint> allPossiblePoints)
     {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(allPossiblePoints);
+
+        switch (shape)
         {
-            switch (shape)
-            {
-                case AoeShape.None:
-                    return [];
-                case AoeShape.AllAround:
-                case AoeShape.Front:
-                case AoeShape.FrontalDiamond:
-                    return allPossiblePoints.Where(pt => pt.ManhattanDistanceFrom(source) == range);
+            case AoeShape.None:
+                return [];
+            case AoeShape.AllAround:
+            case AoeShape.Front:
+            case AoeShape.FrontalDiamond:
+                return allPossiblePoints.Where(pt => pt.ManhattanDistanceFrom(source) == range);
 
-                case AoeShape.FrontalCone:
-                    var travelsOnXAxis = aoeDirection is Direction.Left or Direction.Right;
-                    var nextOffset = source.DirectionalOffset(aoeDirection, range);
+            case AoeShape.FrontalCone:
+                var travelsOnXAxis = aoeDirection is Direction.Left or Direction.Right;
+                var nextOffset = source.DirectionalOffset(aoeDirection, range);
 
-                    return allPossiblePoints.Where(pt => travelsOnXAxis ? pt.X == nextOffset.X : pt.Y == nextOffset.Y);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                return allPossiblePoints.Where(pt => travelsOnXAxis ? pt.X == nextOffset.X : pt.Y == nextOffset.Y);
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 }

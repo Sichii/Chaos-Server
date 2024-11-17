@@ -1,11 +1,12 @@
+#region
 using Chaos.Collections.Abstractions;
-using Chaos.Common.Synchronization;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
+#endregion
 
 namespace Chaos.Collections;
 
@@ -14,13 +15,13 @@ public sealed class EffectsBar : IEffectsBar
     private readonly Creature Affected;
     private readonly Aisling? AffectedAisling;
     private readonly Dictionary<string, IEffect> Effects;
-    private readonly AutoReleasingMonitor Sync;
+    private readonly Lock Sync;
 
     public EffectsBar(Creature affected, IEnumerable<IEffect>? effects = null)
     {
         Affected = affected;
         AffectedAisling = Affected as Aisling;
-        Sync = new AutoReleasingMonitor();
+        Sync = new Lock();
         effects ??= [];
 
         Effects = new Dictionary<string, IEffect>(StringComparer.OrdinalIgnoreCase);
@@ -31,7 +32,7 @@ public sealed class EffectsBar : IEffectsBar
 
     public void Apply(Creature source, IEffect effect)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         effect.Subject = Affected;
 
@@ -48,14 +49,14 @@ public sealed class EffectsBar : IEffectsBar
     /// <inheritdoc />
     public bool Contains(string effectName)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return Effects.ContainsKey(effectName) || Effects.Values.Any(effect => effect.ScriptKey.EqualsI(effectName));
     }
 
     public void Dispel(string effectName)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (Effects.TryRemove(effectName, out var effect))
         {
@@ -71,7 +72,7 @@ public sealed class EffectsBar : IEffectsBar
     {
         List<IEffect> snapshot;
 
-        using (Sync.Enter())
+        using (Sync.EnterScope())
             snapshot = Effects.Values.ToList();
 
         return snapshot.GetEnumerator();
@@ -94,7 +95,7 @@ public sealed class EffectsBar : IEffectsBar
 
     public void Terminate(string effectName)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (Effects.TryRemove(effectName, out var effect))
         {
@@ -107,7 +108,7 @@ public sealed class EffectsBar : IEffectsBar
     /// <inheritdoc />
     public bool TryGetEffect(string effectName, [MaybeNullWhen(false)] out IEffect effect)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (Effects.TryGetValue(effectName, out effect))
             return true;
@@ -122,7 +123,7 @@ public sealed class EffectsBar : IEffectsBar
         if (Effects.Count == 0)
             return;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
         var shouldResetDisplay = false;
 
         foreach (var effect in Effects.Values.ToList())

@@ -1,6 +1,7 @@
+#region
 using System.Collections.Immutable;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Cryptography.Tests;
 
@@ -46,13 +47,13 @@ public sealed class TableTests
         return [..table];
     }
 
-    [Fact]
+    [Test]
     public void Table_ShouldMatch_GeneratedTable16()
         => Tables.TABLE16
                  .Should()
                  .BeEquivalentTo(GenerateTable16(), opt => opt.WithStrictOrdering());
 
-    [Fact]
+    [Test]
     public void Table_ShouldMatch_GeneratedTable32()
         => Tables.TABLE32
                  .Should()

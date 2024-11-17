@@ -1,16 +1,17 @@
+#region
 using System.Text;
 using System.Text.Json;
 using Chaos.Collections.Common;
 using Chaos.Common.Converters;
 using Chaos.Testing.Infrastructure.Extensions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class DynamicVarsConverterTests
 {
-    [Fact]
+      [Test]
     public void Read_ShouldDeserializeDictionaryAndCreateDynamicVars()
     {
         // Arrange
@@ -47,7 +48,7 @@ public sealed class DynamicVarsConverterTests
               .Be("value2");
     }
 
-    [Fact]
+      [Test]
     public void Write_ShouldSerializeDynamicVarsAsDictionary()
     {
         // Arrange

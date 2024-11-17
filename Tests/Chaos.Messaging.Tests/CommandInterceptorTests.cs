@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Testing.Infrastructure.Mocks;
@@ -5,7 +6,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using Xunit;
+#endregion
 
 // ReSharper disable ArrangeAttributes
 
@@ -31,12 +32,12 @@ public sealed class CommandInterceptorTests
             LoggerMock.Object);
     }
 
-    [Fact]
+    [Test]
     public void ConstructsSuccessfully()
         => CommandInterceptor.Should()
                              .NotBeNull();
 
-    [Fact]
+    [Test]
     public async Task HandleCommandAsync_AdminCommandWithIsAdmin_ShouldSucceed()
     {
         var commandSubjectMock = MockCommandSubject.Create("Test", true);
@@ -48,7 +49,7 @@ public sealed class CommandInterceptorTests
         LoggerMock.VerifyLogEvent(LogLevel.Information, "ICommandSubjectProxy Test executed /adminCommand");
     }
 
-    [Fact]
+    [Test]
     public async Task HandleCommandAsync_AdminCommandWithoutIsAdmin_ShouldFail()
     {
         var commandSubjectMock = MockCommandSubject.Create("Test", false);
@@ -59,7 +60,7 @@ public sealed class CommandInterceptorTests
         LoggerMock.VerifyLogEvent(LogLevel.Warning, "Non-Admin ICommandSubjectProxy Test tried to execute admin command /adminCommand");
     }
 
-    [Fact]
+    [Test]
     public async Task HandleCommandAsync_Exception_ShouldLog()
     {
         var commandSubjectMock = MockCommandSubject.Create("Test", true);
@@ -71,7 +72,7 @@ public sealed class CommandInterceptorTests
         LoggerMock.VerifyLogEvent(LogLevel.Error, "ICommandSubjectProxy Test failed to execute /exception", "wathapn");
     }
 
-    [Fact]
+    [Test]
     public async Task HandleCommandAsync_HelpCommand_BuildsHelpTextCorrectly()
     {
         var commandSubjectMock = MockCommandSubject.Create("Test", true);
@@ -83,7 +84,7 @@ public sealed class CommandInterceptorTests
         LoggerMock.VerifyLogEvent(LogLevel.Information, "ICommandSubjectProxy Test executed /help");
     }
 
-    [Fact]
+    [Test]
     public async Task HandleCommandAsync_InvalidCommand_DoesNothing()
     {
         var commandSubjectMock = MockCommandSubject.Create("Test", true);
@@ -93,7 +94,7 @@ public sealed class CommandInterceptorTests
         LoggerMock.VerifyNoOtherCalls();
     }
 
-    [Fact]
+    [Test]
     public async Task HandleCommandAsync_NoCommand_DoesNothing()
     {
         var commandSubjectMock = MockCommandSubject.Create("Test", true);
@@ -103,9 +104,9 @@ public sealed class CommandInterceptorTests
         LoggerMock.VerifyNoOtherCalls();
     }
 
-    [Theory]
-    [InlineData("/test", true)]
-    [InlineData("?test", false)]
+    [Test]
+    [Arguments("/test", true)]
+    [Arguments("?test", false)]
     public void IsCommand_DetectsCommandCorrectly(string commandStr, bool expectedResult)
     {
         var result = CommandInterceptor.IsCommand(commandStr);

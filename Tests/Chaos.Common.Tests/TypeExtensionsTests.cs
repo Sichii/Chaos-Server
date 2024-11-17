@@ -1,7 +1,8 @@
+#region
 using Chaos.Extensions.Common;
 using Chaos.Testing.Infrastructure.Definitions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable ArrangeAttributes
 
@@ -9,7 +10,7 @@ namespace Chaos.Common.Tests;
 
 public sealed class TypeExtensionsTests
 {
-    [Fact]
+    [Test]
     public void IsFlagEnum_ShouldReturnFalse_WhenTypeIsEnumWithoutFlagsAttribute()
     {
         // Arrange
@@ -23,7 +24,7 @@ public sealed class TypeExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void IsFlagEnum_ShouldReturnFalse_WhenTypeIsNotEnum()
     {
         // Arrange
@@ -37,7 +38,7 @@ public sealed class TypeExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void IsFlagEnum_ShouldReturnTrue_WhenTypeIsFlagEnum()
     {
         // Arrange
@@ -51,10 +52,10 @@ public sealed class TypeExtensionsTests
               .BeTrue();
     }
 
-    [Theory]
-    [InlineData(typeof(object))]
-    [InlineData(typeof(DateTime))]
-    [InlineData(typeof(Enum))]
+    [Test]
+    [Arguments(typeof(object))]
+    [Arguments(typeof(DateTime))]
+    [Arguments(typeof(Enum))]
     public void IsPrimitive_ShouldReturnFalse_WhenTypeIsNotPrimitiveValueType(Type type)
     {
         // Act
@@ -65,11 +66,11 @@ public sealed class TypeExtensionsTests
               .BeFalse();
     }
 
-    [Theory]
-    [InlineData(typeof(int))]
-    [InlineData(typeof(double))]
-    [InlineData(typeof(decimal))]
-    [InlineData(typeof(bool))]
+    [Test]
+    [Arguments(typeof(int))]
+    [Arguments(typeof(double))]
+    [Arguments(typeof(decimal))]
+    [Arguments(typeof(bool))]
     public void IsPrimitive_ShouldReturnTrue_WhenTypeIsPrimitiveValueType(Type type)
     {
         // Act
@@ -80,7 +81,7 @@ public sealed class TypeExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void IsPrimitive_ShouldReturnTrue_WhenTypeIsString()
     {
         // Arrange

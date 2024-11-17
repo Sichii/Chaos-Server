@@ -1,11 +1,12 @@
+#region
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class TimeSpanExtensionsTests
 {
-    [Fact]
+    [Test]
     public void ToReadableString_Should_Not_Show_Days_When_Flag_Set()
     {
         // Arrange
@@ -23,7 +24,7 @@ public sealed class TimeSpanExtensionsTests
               .Be("2 hours 3 mins 4 secs");
     }
 
-    [Fact]
+    [Test]
     public void ToReadableString_Should_Not_Show_Hours_When_Flag_Set()
     {
         // Arrange
@@ -41,7 +42,7 @@ public sealed class TimeSpanExtensionsTests
               .Be("2 days");
     }
 
-    [Fact]
+    [Test]
     public void ToReadableString_Should_Not_Show_Minutes_When_Flag_Set()
     {
         // Arrange
@@ -59,7 +60,7 @@ public sealed class TimeSpanExtensionsTests
               .Be("1 hour");
     }
 
-    [Fact]
+    [Test]
     public void ToReadableString_Should_Not_Show_Seconds_When_Flag_Set()
     {
         // Arrange
@@ -77,7 +78,7 @@ public sealed class TimeSpanExtensionsTests
               .Be("45 mins");
     }
 
-    [Fact]
+    [Test]
     public void ToReadableString_Should_Return_Empty_String_When_TimeSpan_Is_Zero()
     {
         // Arrange
@@ -91,7 +92,7 @@ public sealed class TimeSpanExtensionsTests
               .Be(string.Empty);
     }
 
-    [Fact]
+    [Test]
     public void ToReadableString_Should_Return_Human_Readable_Format_With_Milliseconds()
     {
         // Arrange
@@ -110,7 +111,7 @@ public sealed class TimeSpanExtensionsTests
               .Be("10 secs 500ms");
     }
 
-    [Fact]
+    [Test]
     public void ToReadableString_Should_Return_Human_Readable_Format_Without_Milliseconds()
     {
         // Arrange

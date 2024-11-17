@@ -1,14 +1,15 @@
+#region
 using System.Text;
 using System.Text.Json;
 using Chaos.Geometry.JsonConverters;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class LocationConverterTests
 {
-    [Fact]
+    [Test]
     public void Read_ShouldReturnLocation_WhenInputIsValid()
     {
         const string JSON_STRING = "\"Example: (1, 2)\"";
@@ -22,7 +23,7 @@ public sealed class LocationConverterTests
                 .BeEquivalentTo(new Location("Example", 1, 2));
     }
 
-    [Fact]
+    [Test]
     public void Read_ShouldThrowInvalidOperationException_WhenInputIsEmpty()
     {
         const string JSON_STRING = "\"\"";
@@ -48,7 +49,7 @@ public sealed class LocationConverterTests
           .Be("Expected a string");
     }
 
-    [Fact]
+    [Test]
     public void Read_ShouldThrowInvalidOperationException_WhenInputIsInvalid()
     {
         const string JSON_STRING = "\"invalid\"";
@@ -74,7 +75,7 @@ public sealed class LocationConverterTests
           .Be("Invalid string format for location. \"invalid\"");
     }
 
-    [Fact]
+    [Test]
     public void Write_ShouldWriteJson_WhenLocationIsValid()
     {
         var location = new Location("Example", 1, 2);

@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.IO.FileSystem;
 using Chaos.Models.Legend;
@@ -11,6 +12,7 @@ using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace Chaos.Services.Storage;
 
@@ -50,10 +52,18 @@ public sealed class AislingStore(
 
     public async Task<Aisling> LoadAsync(string name)
     {
-        Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Load)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Aisling,
+                      Topics.Actions.Load
+                  ])
               .LogDebug("Loading aisling {@AislingName}", name);
 
-        var metricsLogger = Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Load)
+        var metricsLogger = Logger.WithTopics(
+                                      [
+                                          Topics.Entities.Aisling,
+                                          Topics.Actions.Load
+                                      ])
                                   .WithMetrics();
 
         var directory = Path.Combine(Options.Directory, name.ToLower());
@@ -84,11 +94,19 @@ public sealed class AislingStore(
 
     public async Task SaveAsync(Aisling aisling)
     {
-        Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Save)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Aisling,
+                      Topics.Actions.Save
+                  ])
               .WithProperty(aisling)
               .LogDebug("Saving {@AislingName}", aisling.Name);
 
-        var metricsLogger = Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Save)
+        var metricsLogger = Logger.WithTopics(
+                                      [
+                                          Topics.Entities.Aisling,
+                                          Topics.Actions.Save
+                                      ])
                                   .WithMetrics()
                                   .WithProperty(aisling);
 

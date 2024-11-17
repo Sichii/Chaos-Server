@@ -1,5 +1,6 @@
+#region
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Common.Tests;
 
@@ -7,7 +8,7 @@ public sealed class CollectionExtensionsTests
 {
     private readonly IComparer<int> _intComparer = Comparer<int>.Default;
 
-    [Fact]
+    [Test]
     public void AddRange_ShouldAddMultipleItemsToCollection()
     {
         // Arrange
@@ -43,7 +44,7 @@ public sealed class CollectionExtensionsTests
                     .BeEquivalentTo(expectedCollection, "because all items should be added to the collection");
     }
 
-    [Fact]
+    [Test]
     public void AddRange_WithNullCollection_ShouldThrowArgumentNullException()
     {
         // Arrange
@@ -65,7 +66,7 @@ public sealed class CollectionExtensionsTests
            .WithMessage("*collection*", "because a null collection should cause an ArgumentNullException");
     }
 
-    [Fact]
+    [Test]
     public void BinarySearch_EmptyCollection_ReturnsComplementOfZero()
     {
         // ReSharper disable once CollectionNeverUpdated.Local
@@ -77,7 +78,7 @@ public sealed class CollectionExtensionsTests
              .Be(~0, "because the collection is empty");
     }
 
-    [Fact]
+    [Test]
     public void BinarySearch_ItemLargerThanAllElements_ReturnsComplementOfCollectionCount()
     {
         IList<int> collection = new List<int>
@@ -95,7 +96,7 @@ public sealed class CollectionExtensionsTests
              .Be(~5, "because 11 is larger than all elements in the collection");
     }
 
-    [Fact]
+    [Test]
     public void BinarySearch_ItemNotPresentButHasGreaterElements_ReturnsComplementOfNextLargerItemIndex()
     {
         IList<int> collection = new List<int>
@@ -113,7 +114,7 @@ public sealed class CollectionExtensionsTests
              .Be(~3, "because 6 is not present and 7 (at index 3) is the next larger item");
     }
 
-    [Fact]
+    [Test]
     public void BinarySearch_ItemPresent_ReturnsItemIndex()
     {
         IList<int> collection = new List<int>
@@ -131,7 +132,7 @@ public sealed class CollectionExtensionsTests
              .Be(2, "because the item 5 is at index 2");
     }
 
-    [Fact]
+    [Test]
     public void BinarySearch_SingleItemCollection_ItemNotPresent_ReturnsComplementOfCollectionCount()
     {
         IList<int> collection = new List<int>
@@ -145,7 +146,7 @@ public sealed class CollectionExtensionsTests
              .Be(~1, "because the item is not present and it's larger than the single item in the collection");
     }
 
-    [Fact]
+    [Test]
     public void BinarySearch_SingleItemCollection_ItemPresent_ReturnsZero()
     {
         IList<int> collection = new List<int>
@@ -159,7 +160,7 @@ public sealed class CollectionExtensionsTests
              .Be(0, "because there's a single item and it matches the search");
     }
 
-    [Fact]
+    [Test]
     public void Replace_EmptyCollection_DoesNotModifyCollectionAndReturnsFalse()
     {
         var collection = new List<string>();
@@ -172,7 +173,7 @@ public sealed class CollectionExtensionsTests
                   .BeEmpty("because the collection should remain empty");
     }
 
-    [Fact]
+    [Test]
     public void Replace_ItemNotPresent_DoesNotModifyCollectionAndReturnsFalse()
     {
         var collection = new List<string>
@@ -192,7 +193,7 @@ public sealed class CollectionExtensionsTests
                   .Equal(originalList, "because the collection should not be modified");
     }
 
-    [Fact]
+    [Test]
     public void Replace_ItemPresent_ReplacesItemAndReturnsTrue()
     {
         var collection = new List<string>
@@ -212,7 +213,7 @@ public sealed class CollectionExtensionsTests
             .Be("mango", "because 'banana' should be replaced with 'mango'");
     }
 
-    [Fact]
+    [Test]
     public void Replace_MultipleInstancesOfItem_OnlyFirstIsReplacedAndReturnsTrue()
     {
         var collection = new List<string>
@@ -237,7 +238,7 @@ public sealed class CollectionExtensionsTests
             .Be("banana", "because the second instance of 'banana' should remain unchanged");
     }
 
-    [Fact]
+    [Test]
     public void ReplaceBy_EmptyCollection_DoesNotModifyCollectionAndReturnsFalse()
     {
         var collection = new List<int>();
@@ -250,7 +251,7 @@ public sealed class CollectionExtensionsTests
                   .BeEmpty("because the collection should remain empty");
     }
 
-    [Fact]
+    [Test]
     public void ReplaceBy_ItemMatchingPredicate_ReplacesItemAndReturnsTrue()
     {
         var collection = new List<int>
@@ -272,7 +273,7 @@ public sealed class CollectionExtensionsTests
             .Be(8, "because '3' should be replaced with '8'");
     }
 
-    [Fact]
+    [Test]
     public void ReplaceBy_MultipleItemsMatchingPredicate_OnlyFirstIsReplacedAndReturnsTrue()
     {
         var collection = new List<int>
@@ -298,7 +299,7 @@ public sealed class CollectionExtensionsTests
             .Be(3, "because the second instance of '3' should remain unchanged");
     }
 
-    [Fact]
+    [Test]
     public void ReplaceBy_NoItemMatchingPredicate_DoesNotModifyCollectionAndReturnsFalse()
     {
         var collection = new List<int>

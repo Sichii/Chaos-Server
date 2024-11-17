@@ -1,7 +1,9 @@
+#region
 using System.Buffers.Binary;
 using System.Runtime.InteropServices;
 using System.Text;
 using Chaos.IO.Definitions;
+#endregion
 
 namespace Chaos.IO.Memory;
 
@@ -227,7 +229,7 @@ public ref struct SpanWriter
     /// <param name="buffer">
     ///     The byte array to write.
     /// </param>
-    public void WriteBytes(params byte[] buffer)
+    public void WriteBytes(params ReadOnlySpan<byte> buffer)
     {
         GrowIfNeeded(buffer.Length);
 

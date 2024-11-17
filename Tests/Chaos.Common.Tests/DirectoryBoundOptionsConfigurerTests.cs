@@ -1,14 +1,15 @@
+#region
 using Chaos.Common.Abstractions;
 using Chaos.Common.Configuration;
 using FluentAssertions;
 using Moq;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class DirectoryBoundOptionsConfigurerTests
 {
-    [Fact]
+    [Test]
     public void PostConfigure_ShouldHandleNullName()
     {
         // This test is mainly to ensure that the method can handle a null name without crashing
@@ -34,7 +35,7 @@ public sealed class DirectoryBoundOptionsConfigurerTests
            .NotThrow();
     }
 
-    [Fact]
+    [Test]
     public void PostConfigure_ShouldSetBaseDirectoryFromStagingDirectory()
     {
         // Arrange

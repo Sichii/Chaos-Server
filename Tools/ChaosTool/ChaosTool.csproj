@@ -6,7 +6,7 @@
         <AssemblyName>ChaosTool</AssemblyName>
         <RootNamespace>ChaosTool</RootNamespace>
         <ApplicationIcon>..\..\Chaos\Resources\chaos.ico</ApplicationIcon>
-        <TargetFramework>net8.0-windows</TargetFramework>
+        <TargetFramework>net9.0-windows</TargetFramework>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,6 +16,7 @@
         <PackageReference Include="Namotion.Reflection"/>
         <PackageReference Include="RoslynPad.Editor.Windows"/>
         <PackageReference Include="ShowMeTheXAML.MSBuild"/>
+        <PackageReference Include="System.Text.Json"/>
     </ItemGroup>
 
     <ItemGroup>

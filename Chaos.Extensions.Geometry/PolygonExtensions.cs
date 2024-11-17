@@ -1,5 +1,8 @@
+#region
+using System.Runtime.CompilerServices;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
+#endregion
 
 namespace Chaos.Extensions.Geometry;
 
@@ -63,7 +66,8 @@ public static class PolygonExtensions
     ///     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     ///     SOFTWARE.
     /// </remarks>
-    public static bool Contains<TPoint>(this IPolygon polygon, TPoint point) where TPoint: IPoint
+    [OverloadResolutionPriority(1)]
+    public static bool Contains(this IPolygon polygon, Point point)
     {
         var inside = false;
         var vertices = polygon.Vertices;
@@ -84,6 +88,14 @@ public static class PolygonExtensions
         }
 
         return inside;
+    }
+
+    /// <inheritdoc cref="Contains(IPolygon, Point)" />
+    public static bool Contains(this IPolygon polygon, IPoint point)
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        return polygon.Contains(Point.From(point));
     }
 
     /// <summary>

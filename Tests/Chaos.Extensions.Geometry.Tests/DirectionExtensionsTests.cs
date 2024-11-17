@@ -1,6 +1,7 @@
+#region
 using Chaos.Geometry.Abstractions.Definitions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable ArrangeAttributes
 
@@ -8,8 +9,8 @@ namespace Chaos.Extensions.Geometry.Tests;
 
 public sealed class DirectionExtensionsTests
 {
-    [Theory]
-    [InlineData(
+    [Test]
+    [Arguments(
         Direction.Up,
         new[]
         {
@@ -18,7 +19,7 @@ public sealed class DirectionExtensionsTests
             Direction.Down,
             Direction.Left
         })]
-    [InlineData(
+    [Arguments(
         Direction.Right,
         new[]
         {
@@ -27,7 +28,7 @@ public sealed class DirectionExtensionsTests
             Direction.Left,
             Direction.Up
         })]
-    [InlineData(
+    [Arguments(
         Direction.Down,
         new[]
         {
@@ -36,7 +37,7 @@ public sealed class DirectionExtensionsTests
             Direction.Up,
             Direction.Right
         })]
-    [InlineData(
+    [Arguments(
         Direction.Left,
         new[]
         {
@@ -45,7 +46,7 @@ public sealed class DirectionExtensionsTests
             Direction.Right,
             Direction.Down
         })]
-    [InlineData(
+    [Arguments(
         Direction.All,
         new[]
         {
@@ -64,12 +65,12 @@ public sealed class DirectionExtensionsTests
                   .ContainInOrder(expectedDirections);
     }
 
-    [Theory]
-    [InlineData(Direction.Up, Direction.Left, Direction.Right)]
-    [InlineData(Direction.Right, Direction.Up, Direction.Down)]
-    [InlineData(Direction.Down, Direction.Right, Direction.Left)]
-    [InlineData(Direction.Left, Direction.Down, Direction.Up)]
-    [InlineData(Direction.Invalid, Direction.Invalid, Direction.Invalid)]
+    [Test]
+    [Arguments(Direction.Up, Direction.Left, Direction.Right)]
+    [Arguments(Direction.Right, Direction.Up, Direction.Down)]
+    [Arguments(Direction.Down, Direction.Right, Direction.Left)]
+    [Arguments(Direction.Left, Direction.Down, Direction.Up)]
+    [Arguments(Direction.Invalid, Direction.Invalid, Direction.Invalid)]
     public void GetSideDirections_ShouldReturnCorrectSideDirections(Direction direction, Direction expectedSide1, Direction expectedSide2)
     {
         // Act
@@ -83,12 +84,12 @@ public sealed class DirectionExtensionsTests
              .Be(expectedSide2);
     }
 
-    [Theory]
-    [InlineData(Direction.Up, Direction.Down)]
-    [InlineData(Direction.Right, Direction.Left)]
-    [InlineData(Direction.Down, Direction.Up)]
-    [InlineData(Direction.Left, Direction.Right)]
-    [InlineData(Direction.Invalid, Direction.Invalid)]
+    [Test]
+    [Arguments(Direction.Up, Direction.Down)]
+    [Arguments(Direction.Right, Direction.Left)]
+    [Arguments(Direction.Down, Direction.Up)]
+    [Arguments(Direction.Left, Direction.Right)]
+    [Arguments(Direction.Invalid, Direction.Invalid)]
     public void Reverse_ShouldReturnCorrectReverseDirection(Direction direction, Direction expectedReverse)
     {
         // Act

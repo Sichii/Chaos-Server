@@ -1,3 +1,4 @@
+#region
 using System.Collections;
 using System.IO;
 using System.Text.Json;
@@ -7,6 +8,7 @@ using Chaos.Storage.Abstractions;
 using Chaos.Storage.Abstractions.Definitions;
 using JetBrains.Annotations;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace ChaosTool.Model.Abstractions;
 
@@ -63,11 +65,11 @@ public abstract class RepositoryBase<T>(IEntityRepository entityRepository, IOpt
     internal virtual async Task LoadAsync()
     {
         //load paths only once
-        if (!Paths.Any())
+        if (Paths.Count == 0)
             Paths.UnionWith(GetPaths());
 
         //allow reloading of objects
-        if (Objects.Any())
+        if (Objects.Count != 0)
             Objects.Clear();
 
         await Parallel.ForEachAsync(

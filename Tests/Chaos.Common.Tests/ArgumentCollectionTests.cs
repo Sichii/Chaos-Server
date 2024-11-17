@@ -1,12 +1,13 @@
+#region
 using Chaos.Collections.Common;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class ArgumentCollectionTests
 {
-    [Fact]
+    [Test]
     public void Add_WithArguments_ShouldAddArgumentsToCollection()
     {
         // Arrange
@@ -14,19 +15,18 @@ public sealed class ArgumentCollectionTests
 
         // Act
         argumentCollection.Add(
-            new[]
-            {
+            [
                 "arg1",
                 "arg2",
                 "arg3"
-            });
+            ]);
 
         // Assert
         argumentCollection.Should()
                           .Equal("arg1", "arg2", "arg3");
     }
 
-    [Fact]
+    [Test]
     public void Add_WithString_ShouldParseArgumentsFromSpaceDelimitedStringAndAddToCollection()
     {
         // Arrange
@@ -41,7 +41,7 @@ public sealed class ArgumentCollectionTests
                           .Equal("arg1", "arg2", "arg3");
     }
 
-    [Fact]
+    [Test]
     public void Add_WithStringAndDelimiter_ShouldSplitStringIntoArgumentsAndAddToCollection()
     {
         // Arrange
@@ -54,17 +54,16 @@ public sealed class ArgumentCollectionTests
     }
 
     // Argument at index is empty
-    [Fact]
+    [Test]
     public void Argument_At_Index_Is_Empty()
     {
         // Arrange
         var arguments = new ArgumentCollection(
-            new[]
-            {
+            [
                 "",
                 "2",
                 "3"
-            });
+            ]);
 
         // Act
         var result = arguments.TryGet<string>(0, out var value);
@@ -78,7 +77,7 @@ public sealed class ArgumentCollectionTests
     }
 
     // Arguments list is empty
-    [Fact]
+    [Test]
     public void Arguments_List_Is_Empty()
     {
         // Arrange
@@ -95,7 +94,7 @@ public sealed class ArgumentCollectionTests
              .Be(default);
     }
 
-    [Fact]
+    [Test]
     public void Constructor_WithArguments_ShouldInitializeCollectionWithArguments()
     {
         // Arrange
@@ -114,7 +113,7 @@ public sealed class ArgumentCollectionTests
                           .Equal(arguments);
     }
 
-    [Fact]
+    [Test]
     public void Constructor_WithDelimiter_ShouldSplitStringsIntoArguments()
     {
         // Arrange
@@ -129,7 +128,7 @@ public sealed class ArgumentCollectionTests
                           .Equal("arg1", "arg2", "arg3");
     }
 
-    [Fact]
+    [Test]
     public void Constructor_WithString_ShouldParseArgumentsFromSpaceDelimitedString()
     {
         // Arrange
@@ -143,7 +142,7 @@ public sealed class ArgumentCollectionTests
                           .Equal("arg1", "arg2", "arg3");
     }
 
-    [Fact]
+    [Test]
     public void Count_ShouldReturnNumberOfArguments()
     {
         // Arrange
@@ -157,7 +156,7 @@ public sealed class ArgumentCollectionTests
              .Be(3);
     }
 
-    [Fact]
+    [Test]
     public void Handles_Invalid_ValueType_Conversion_Gracefully()
     {
         // Arrange
@@ -178,7 +177,7 @@ public sealed class ArgumentCollectionTests
              .Be(default);
     }
 
-    [Fact]
+    [Test]
     public void Handles_Null_Conversion_Type_Gracefully()
     {
         // Arrange
@@ -196,7 +195,7 @@ public sealed class ArgumentCollectionTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Handles_Nullable_Primitive_Conversion_Gracefully()
     {
         // Arrange
@@ -226,17 +225,16 @@ public sealed class ArgumentCollectionTests
     }
 
     // Index is negative
-    [Fact]
+    [Test]
     public void Index_Is_Negative()
     {
         // Arrange
         var arguments = new ArgumentCollection(
-            new[]
-            {
+            [
                 "1",
                 "2",
                 "3"
-            });
+            ]);
 
         // Act
         var result = arguments.TryGet<int>(-1, out var value);
@@ -250,17 +248,16 @@ public sealed class ArgumentCollectionTests
     }
 
     // Returns false if argument cannot be converted to specified type
-    [Fact]
+    [Test]
     public void Returns_False_If_Argument_Cannot_Be_Converted_To_Specified_Type()
     {
         // Arrange
         var arguments = new ArgumentCollection(
-            new[]
-            {
+            [
                 "1",
                 "2",
                 "3"
-            });
+            ]);
 
         // Act
         var result = arguments.TryGet<bool>(1, out var value);
@@ -274,17 +271,16 @@ public sealed class ArgumentCollectionTests
     }
 
     // Returns false if index is out of range
-    [Fact]
+    [Test]
     public void Returns_False_If_Index_Is_Out_Of_Range()
     {
         // Arrange
         var arguments = new ArgumentCollection(
-            new[]
-            {
+            [
                 "1",
                 "2",
                 "3"
-            });
+            ]);
 
         // Act
         var result = arguments.TryGet<int>(3, out var value);
@@ -298,17 +294,16 @@ public sealed class ArgumentCollectionTests
     }
 
     // Returns true if argument exists at given index and is convertible to specified type
-    [Fact]
+    [Test]
     public void Returns_True_If_Argument_Exists_At_Given_Index_And_Is_Convertible_To_Specified_Type()
     {
         // Arrange
         var arguments = new ArgumentCollection(
-            new[]
-            {
+            [
                 "1",
                 "2",
                 "3"
-            });
+            ]);
 
         // Act
         var result = arguments.TryGet<int>(1, out var value);
@@ -322,17 +317,16 @@ public sealed class ArgumentCollectionTests
     }
 
     // Successfully retrieves argument at given index and converts to specified type
-    [Fact]
+    [Test]
     public void Successfully_Retrieves_Argument_At_Given_Index_And_Converts_To_Specified_Type()
     {
         // Arrange
         var arguments = new ArgumentCollection(
-            new[]
-            {
+            [
                 "1",
                 "2",
                 "3"
-            });
+            ]);
 
         // Act
         var result = arguments.TryGet<int>(1, out var value);
@@ -346,17 +340,16 @@ public sealed class ArgumentCollectionTests
     }
 
     // Supports conversion to ArgumentCollection type
-    [Fact]
+    [Test]
     public void Supports_Conversion_To_ArgumentCollection_Type()
     {
         // Arrange
         var arguments = new ArgumentCollection(
-            new[]
-            {
+            [
                 "1",
                 "2",
                 "3"
-            });
+            ]);
 
         // Act
         var result = arguments.TryGet<ArgumentCollection>(0, out var value);
@@ -369,7 +362,7 @@ public sealed class ArgumentCollectionTests
              .BeEquivalentTo(arguments);
     }
 
-    [Fact]
+    [Test]
     public void ToString_ShouldReturnStringRepresentationOfArguments()
     {
         // Arrange

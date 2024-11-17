@@ -1,26 +1,19 @@
+#region
 using Chaos.Geometry.Abstractions;
+#endregion
 
 namespace Chaos.Geometry;
 
 /// <summary>
 ///     Represents a circle in two-dimensional space.
 /// </summary>
-public readonly struct Circle : ICircle, IEquatable<ICircle>
+public sealed class Circle : ICircle, IEquatable<ICircle>
 {
     /// <inheritdoc />
     public IPoint Center { get; }
 
     /// <inheritdoc />
     public int Radius { get; }
-
-    /// <summary>
-    ///     Compares two circles
-    /// </summary>
-    public static bool operator ==(Circle left, ICircle right) => left.Equals(right);
-
-    /// <summary>
-    /// </summary>
-    public static bool operator !=(Circle left, ICircle right) => !(left == right);
 
     /// <summary>
     ///     Creates a new circle
@@ -45,4 +38,13 @@ public readonly struct Circle : ICircle, IEquatable<ICircle>
 
     /// <inheritdoc />
     public override int GetHashCode() => HashCode.Combine(Center, Radius);
+
+    /// <summary>
+    ///     Compares two circles
+    /// </summary>
+    public static bool operator ==(Circle left, ICircle right) => left.Equals(right);
+
+    /// <summary>
+    /// </summary>
+    public static bool operator !=(Circle left, ICircle right) => !(left == right);
 }

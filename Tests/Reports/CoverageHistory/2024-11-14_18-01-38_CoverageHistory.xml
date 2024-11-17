@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<coverage version="1.0" date="2024-11-14_18-01-38" tag="">
+  <assembly name="Chaos.Common">
+    <class name="Chaos.Collections.Common.ArgumentCollection" coveredlines="67" coverablelines="73" totallines="236" coveredbranches="17" totalbranches="22" coveredcodeelements="11" totalcodeelements="12" />
+    <class name="Chaos.Collections.Common.CounterCollection" coveredlines="36" coverablelines="40" totallines="117" coveredbranches="16" totalbranches="20" coveredcodeelements="11" totalcodeelements="13" />
+    <class name="Chaos.Collections.Common.DynamicVars" coveredlines="25" coverablelines="38" totallines="109" coveredbranches="8" totalbranches="8" coveredcodeelements="7" totalcodeelements="10" />
+    <class name="Chaos.Collections.Common.EnumCollection" coveredlines="30" coverablelines="32" totallines="195" coveredbranches="9" totalbranches="10" coveredcodeelements="9" totalcodeelements="10" />
+    <class name="Chaos.Collections.Common.FlagCollection" coveredlines="50" coverablelines="51" totallines="244" coveredbranches="18" totalbranches="18" coveredcodeelements="11" totalcodeelements="12" />
+    <class name="Chaos.Collections.Common.StaticVars" coveredlines="20" coverablelines="24" totallines="82" coveredbranches="9" totalbranches="10" coveredcodeelements="7" totalcodeelements="7" />
+    <class name="Chaos.Collections.Synchronized.SynchronizedHashSet.&lt;GetEnumerator&gt;d__14&lt;T&gt;" coveredlines="6" coverablelines="6" totallines="181" coveredbranches="2" totalbranches="2" coveredcodeelements="1" totalcodeelements="1" />
+    <class name="Chaos.Collections.Synchronized.SynchronizedHashSet&lt;T&gt;" coveredlines="77" coverablelines="79" totallines="181" coveredbranches="4" totalbranches="4" coveredcodeelements="19" totalcodeelements="21" />
+    <class name="Chaos.Collections.Synchronized.SynchronizedList&lt;T&gt;" coveredlines="51" coverablelines="52" totallines="139" coveredbranches="2" totalbranches="2" coveredcodeelements="13" totalcodeelements="14" />
+    <class name="Chaos.Collections.Synchronized.SynchronizedList.&lt;GetEnumerator&gt;d__15&lt;T&gt;" coveredlines="0" coverablelines="6" totallines="139" coveredbranches="0" totalbranches="2" coveredcodeelements="0" totalcodeelements="1" />
+    <class name="Chaos.Common.Comparers.LambdaComparer.&lt;&gt;c__DisplayClass5_0&lt;T, TSelected&gt;" coveredlines="0" coverablelines="7" totallines="42" coveredbranches="0" totalbranches="4" coveredcodeelements="0" totalcodeelements="0" />
+    <class name="Chaos.Common.Comparers.LambdaComparer&lt;T&gt;" coveredlines="0" coverablelines="12" totallines="42" coveredbranches="0" totalbranches="2" coveredcodeelements="0" totalcodeelements="4" />
+    <class name="Chaos.Common.Comparers.MostDerivedTypeComparer" coveredlines="0" coverablelines="14" totallines="33" coveredbranches="0" totalbranches="10" coveredcodeelements="0" totalcodeelements="3" />
+    <class name="Chaos.Common.Comparers.NaturalStringComparer" coveredlines="0" coverablelines="36" totallines="56" coveredbranches="0" totalbranches="28" coveredcodeelements="0" totalcodeelements="1" />
+    <class name="Chaos.Common.Configuration.DirectoryBoundOptionsConfigurer&lt;T&gt;" coveredlines="3" coverablelines="3" totallines="26" coveredbranches="0" totalbranches="0" coveredcodeelements="3" totalcodeelements="3" />
+    <class name="Chaos.Common.Converters.CounterCollectionConverter" coveredlines="8" coverablelines="8" totallines="27" coveredbranches="0" totalbranches="0" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Common.Converters.DynamicVarsConverter" coveredlines="9" coverablelines="9" totallines="27" coveredbranches="4" totalbranches="4" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Common.Converters.EnumCollectionConverter" coveredlines="38" coverablelines="38" totallines="63" coveredbranches="18" totalbranches="20" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Common.Converters.EnumerableConverter&lt;T, TObj&gt;" coveredlines="8" coverablelines="8" totallines="32" coveredbranches="0" totalbranches="0" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Common.Converters.FlagCollectionConverter" coveredlines="38" coverablelines="38" totallines="63" coveredbranches="18" totalbranches="20" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Common.Converters.PrimitiveConverter" coveredlines="12" coverablelines="22" totallines="104" coveredbranches="8" totalbranches="12" coveredcodeelements="3" totalcodeelements="5" />
+    <class name="Chaos.Common.Identity.EphemeralRandomIdGenerator&lt;T&gt;" coveredlines="10" coverablelines="10" totallines="39" coveredbranches="4" totalbranches="4" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Common.Identity.EphemeralRandomIdGenerator.&lt;&gt;c__DisplayClass4_0&lt;T&gt;" coveredlines="1" coverablelines="1" totallines="39" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="0" />
+    <class name="Chaos.Common.Identity.PersistentIdGenerator&lt;T&gt;" coveredlines="16" coverablelines="21" totallines="82" coveredbranches="3" totalbranches="6" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Common.Identity.PersistentIdGenerator.&lt;PersistentSaveAsync&gt;d__11&lt;T&gt;" coveredlines="12" coverablelines="14" totallines="82" coveredbranches="2" totalbranches="2" coveredcodeelements="1" totalcodeelements="1" />
+    <class name="Chaos.Common.Identity.SequentialIdGenerator&lt;T&gt;" coveredlines="8" coverablelines="8" totallines="39" coveredbranches="1" totalbranches="2" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Common.Synchronization.AutoReleasingReaderWriterLockSlim" coveredlines="0" coverablelines="66" totallines="214" coveredbranches="0" totalbranches="18" coveredcodeelements="0" totalcodeelements="20" />
+    <class name="Chaos.Common.Synchronization.AutoReleasingReaderWriterLockSlim.AutoReleasingSubscription" coveredlines="0" coverablelines="14" totallines="214" coveredbranches="0" totalbranches="4" coveredcodeelements="0" totalcodeelements="3" />
+    <class name="Chaos.Common.Synchronization.AutoReleasingReaderWriterLockSlim.UpgradeableLockSubscription" coveredlines="0" coverablelines="18" totallines="214" coveredbranches="0" totalbranches="6" coveredcodeelements="0" totalcodeelements="4" />
+    <class name="Chaos.Common.Synchronization.AutoReleasingSemaphoreSlim" coveredlines="12" coverablelines="13" totallines="50" coveredbranches="2" totalbranches="2" coveredcodeelements="5" totalcodeelements="6" />
+    <class name="Chaos.Common.Synchronization.AutoReleasingSemaphoreSlim.AutoReleasingSubscription" coveredlines="6" coverablelines="7" totallines="50" coveredbranches="2" totalbranches="2" coveredcodeelements="2" totalcodeelements="3" />
+    <class name="Chaos.Common.Synchronization.FifoAutoReleasingSemaphoreSlim" coveredlines="39" coverablelines="52" totallines="154" coveredbranches="4" totalbranches="4" coveredcodeelements="10" totalcodeelements="13" />
+    <class name="Chaos.Common.Synchronization.FifoAutoReleasingSemaphoreSlim.AutoReleasingSubscription" coveredlines="14" coverablelines="19" totallines="154" coveredbranches="4" totalbranches="4" coveredcodeelements="3" totalcodeelements="4" />
+    <class name="Chaos.Common.Synchronization.FifoSemaphoreSlim" coveredlines="27" coverablelines="27" totallines="90" coveredbranches="4" totalbranches="4" coveredcodeelements="8" totalcodeelements="8" />
+    <class name="Chaos.Common.Synchronization.InterlockedObject&lt;T&gt;" coveredlines="5" coverablelines="5" totallines="32" coveredbranches="0" totalbranches="0" coveredcodeelements="5" totalcodeelements="5" />
+    <class name="Chaos.Common.Utilities.AsyncHelpers" coveredlines="0" coverablelines="77" totallines="128" coveredbranches="0" totalbranches="8" coveredcodeelements="0" totalcodeelements="12" />
+    <class name="Chaos.Common.Utilities.AsyncHelpers.ExclusiveSynchronizationContext" coveredlines="0" coverablelines="27" totallines="128" coveredbranches="0" totalbranches="8" coveredcodeelements="0" totalcodeelements="8" />
+    <class name="Chaos.Common.Utilities.AsyncHelpers.&lt;&gt;c__DisplayClass1_0.&lt;&lt;RunSync&gt;b__0&gt;d&lt;T&gt;" coveredlines="0" coverablelines="77" totallines="128" coveredbranches="0" totalbranches="8" coveredcodeelements="0" totalcodeelements="12" />
+    <class name="Chaos.Common.Utilities.ComplexSynchronizationHelper.&lt;&gt;c" coveredlines="28" coverablelines="28" totallines="106" coveredbranches="14" totalbranches="14" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Common.Utilities.DecimalRandomizer" coveredlines="27" coverablelines="31" totallines="143" coveredbranches="9" totalbranches="10" coveredcodeelements="4" totalcodeelements="5" />
+    <class name="Chaos.Common.Utilities.DecimalRandomizer.&lt;&gt;c__0&lt;T&gt;" coveredlines="27" coverablelines="31" totallines="143" coveredbranches="9" totalbranches="10" coveredcodeelements="4" totalcodeelements="5" />
+    <class name="Chaos.Common.Utilities.DeepClone" coveredlines="67" coverablelines="72" totallines="159" coveredbranches="21" totalbranches="28" coveredcodeelements="5" totalcodeelements="5" />
+    <class name="Chaos.Common.Utilities.IntegerRandomizer" coveredlines="37" coverablelines="49" totallines="212" coveredbranches="9" totalbranches="14" coveredcodeelements="6" totalcodeelements="6" />
+    <class name="Chaos.Common.Utilities.IntegerRandomizer.&lt;&gt;c__0&lt;T&gt;" coveredlines="37" coverablelines="49" totallines="212" coveredbranches="9" totalbranches="14" coveredcodeelements="6" totalcodeelements="6" />
+    <class name="Chaos.Common.Utilities.KeyMapper&lt;T&gt;" coveredlines="8" coverablelines="14" totallines="60" coveredbranches="2" totalbranches="6" coveredcodeelements="4" totalcodeelements="5" />
+    <class name="Chaos.Common.Utilities.KeyMapper.&lt;&gt;c&lt;T&gt;" coveredlines="1" coverablelines="1" totallines="60" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="0" />
+    <class name="Chaos.Common.Utilities.MathEx" coveredlines="16" coverablelines="18" totallines="126" coveredbranches="2" totalbranches="4" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Common.Utilities.Randomizer" coveredlines="26" coverablelines="28" totallines="105" coveredbranches="12" totalbranches="14" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Common.Utilities.Randomizer.&lt;&gt;c__1&lt;T&gt;" coveredlines="26" coverablelines="28" totallines="105" coveredbranches="12" totalbranches="14" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Common.Utilities.ShallowCopy&lt;T&gt;" coveredlines="36" coverablelines="38" totallines="117" coveredbranches="10" totalbranches="26" coveredcodeelements="5" totalcodeelements="5" />
+    <class name="Chaos.Common.Utilities.ShallowCopy.&lt;&gt;c&lt;T&gt;" coveredlines="4" coverablelines="10" totallines="117" coveredbranches="4" totalbranches="16" coveredcodeelements="0" totalcodeelements="0" />
+    <class name="Chaos.Common.Utilities.TypeSwitch" coveredlines="17" coverablelines="20" totallines="94" coveredbranches="4" totalbranches="4" coveredcodeelements="9" totalcodeelements="13" />
+    <class name="Chaos.Common.Utilities.TypeSwitch.FrozenTypeSwitch" coveredlines="0" coverablelines="3" totallines="94" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="4" />
+    <class name="Chaos.Common.Utilities.TypeSwitchExpression.FrozenTypeSwitchExpression&lt;TResult, T&gt;" coveredlines="0" coverablelines="3" totallines="156" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="4" />
+    <class name="Chaos.Common.Utilities.TypeSwitchExpression.&lt;&gt;c__DisplayClass8_0&lt;TResult, T&gt;" coveredlines="2" coverablelines="8" totallines="156" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="4" />
+    <class name="Chaos.Common.Utilities.TypeSwitchExpression&lt;TResult&gt;" coveredlines="21" coverablelines="28" totallines="156" coveredbranches="4" totalbranches="4" coveredcodeelements="10" totalcodeelements="14" />
+    <class name="Chaos.Common.Utilities.TypeSwitchExpression.&lt;&gt;c&lt;TResult&gt;" coveredlines="2" coverablelines="8" totallines="156" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="4" />
+    <class name="Chaos.Extensions.Common.ArrayExtensions" coveredlines="22" coverablelines="24" totallines="60" coveredbranches="10" totalbranches="12" coveredcodeelements="3" totalcodeelements="3" />
+    <class name="Chaos.Extensions.Common.ArrayExtensions.ArrayTraverse" coveredlines="16" coverablelines="17" totallines="60" coveredbranches="7" totalbranches="8" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Extensions.Common.RandomExtensions" coveredlines="87" coverablelines="90" totallines="156" coveredbranches="43" totalbranches="46" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Extensions.Common.TypeExtensions" coveredlines="5" coverablelines="5" totallines="58" coveredbranches="10" totalbranches="10" coveredcodeelements="2" totalcodeelements="2" />
+  </assembly>
+  <assembly name="Chaos.Common.Abstractions">
+    <class name="Chaos.Common.Abstractions.IIdGenerator&lt;T&gt;" coveredlines="0" coverablelines="1" totallines="22" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="1" />
+  </assembly>
+  <assembly name="Chaos.Cryptography">
+    <class name="Chaos.Cryptography.Crypto" coveredlines="41" coverablelines="222" totallines="406" coveredbranches="26" totalbranches="127" coveredcodeelements="12" totalcodeelements="22" />
+    <class name="Chaos.Cryptography.Tables" coveredlines="192" coverablelines="192" totallines="207" coveredbranches="0" totalbranches="0" coveredcodeelements="1" totalcodeelements="1" />
+  </assembly>
+  <assembly name="Chaos.DarkAges">
+    <class name="Chaos.DarkAges.Extensions.ChaosDialogTypeExtensions" coveredlines="25" coverablelines="25" totallines="62" coveredbranches="19" totalbranches="19" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.DarkAges.Extensions.EnumExtensions.&lt;ToEquipmentSlots&gt;d__0" coveredlines="37" coverablelines="37" totallines="93" coveredbranches="16" totalbranches="16" coveredcodeelements="1" totalcodeelements="1" />
+    <class name="Chaos.DarkAges.Extensions.MessageColorExtensions" coveredlines="1" coverablelines="1" totallines="21" coveredbranches="1" totalbranches="2" coveredcodeelements="1" totalcodeelements="1" />
+    <class name="Chaos.DarkAges.Extensions.StringBuilderExtensions" coveredlines="23" coverablelines="23" totallines="106" coveredbranches="4" totalbranches="4" coveredcodeelements="4" totalcodeelements="4" />
+  </assembly>
+  <assembly name="Chaos.Extensions.Common">
+    <class name="Chaos.Extensions.Common.ActionExtensions" coveredlines="0" coverablelines="8" totallines="22" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="1" />
+    <class name="Chaos.Extensions.Common.ArrayExtensions" coveredlines="20" coverablelines="20" totallines="44" coveredbranches="10" totalbranches="10" coveredcodeelements="3" totalcodeelements="3" />
+    <class name="Chaos.Extensions.Common.ArrayExtensions.&lt;Flatten&gt;d__0&lt;T&gt;" coveredlines="20" coverablelines="20" totallines="44" coveredbranches="10" totalbranches="10" coveredcodeelements="3" totalcodeelements="3" />
+    <class name="Chaos.Extensions.Common.CancellationTokenExtensions" coveredlines="8" coverablelines="8" totallines="27" coveredbranches="0" totalbranches="0" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Extensions.Common.CollectionExtensions" coveredlines="41" coverablelines="42" totallines="166" coveredbranches="16" totalbranches="18" coveredcodeelements="4" totalcodeelements="5" />
+    <class name="Chaos.Extensions.Common.DictionaryExtensions" coveredlines="1" coverablelines="1" totallines="43" coveredbranches="2" totalbranches="2" coveredcodeelements="1" totalcodeelements="1" />
+    <class name="Chaos.Extensions.Common.EnumerableExtensions" coveredlines="26" coverablelines="31" totallines="161" coveredbranches="15" totalbranches="24" coveredcodeelements="3" totalcodeelements="7" />
+    <class name="Chaos.Extensions.Common.EnumerableExtensions.&lt;&gt;c__3&lt;T&gt;" coveredlines="26" coverablelines="31" totallines="161" coveredbranches="15" totalbranches="24" coveredcodeelements="3" totalcodeelements="7" />
+    <class name="Chaos.Extensions.Common.EnumExtensions" coveredlines="5" coverablelines="17" totallines="44" coveredbranches="4" totalbranches="10" coveredcodeelements="1" totalcodeelements="2" />
+    <class name="Chaos.Extensions.Common.EnumExtensions.&lt;GetFlags&gt;d__1&lt;T&gt;" coveredlines="5" coverablelines="17" totallines="44" coveredbranches="4" totalbranches="10" coveredcodeelements="1" totalcodeelements="2" />
+    <class name="Chaos.Extensions.Common.FunctionExtensions" coveredlines="0" coverablelines="7" totallines="22" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="1" />
+    <class name="Chaos.Extensions.Common.ObjectExtensions" coveredlines="11" coverablelines="26" totallines="60" coveredbranches="4" totalbranches="4" coveredcodeelements="1" totalcodeelements="3" />
+    <class name="Chaos.Extensions.Common.ServiceCollectionExtensions.&lt;&gt;c__DisplayClass1_0&lt;T, TImpl&gt;" coveredlines="0" coverablelines="2" totallines="57" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="0" />
+    <class name="Chaos.Extensions.Common.ServiceCollectionExtensions.&lt;&gt;c__DisplayClass0_0&lt;T&gt;" coveredlines="0" coverablelines="2" totallines="57" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="0" />
+    <class name="Chaos.Extensions.Common.SpanExtensions" coveredlines="3" coverablelines="3" totallines="70" coveredbranches="0" totalbranches="0" coveredcodeelements="3" totalcodeelements="3" />
+    <class name="Chaos.Extensions.Common.StackExtensions" coveredlines="6" coverablelines="6" totallines="32" coveredbranches="4" totalbranches="4" coveredcodeelements="1" totalcodeelements="1" />
+    <class name="Chaos.Extensions.Common.StreamExtensions" coveredlines="0" coverablelines="15" totallines="39" coveredbranches="0" totalbranches="6" coveredcodeelements="0" totalcodeelements="2" />
+    <class name="Chaos.Extensions.Common.StringExtensions" coveredlines="192" coverablelines="197" totallines="572" coveredbranches="68" totalbranches="72" coveredcodeelements="17" totalcodeelements="17" />
+    <class name="Chaos.Extensions.Common.TimeSpanExtensions" coveredlines="25" coverablelines="28" totallines="77" coveredbranches="25" totalbranches="28" coveredcodeelements="1" totalcodeelements="1" />
+    <class name="Chaos.Extensions.Common.TypeExtensions" coveredlines="68" coverablelines="83" totallines="183" coveredbranches="42" totalbranches="64" coveredcodeelements="7" totalcodeelements="9" />
+  </assembly>
+  <assembly name="Chaos.Extensions.Geometry">
+    <class name="Chaos.Extensions.Geometry.CircleExtensions" coveredlines="147" coverablelines="175" totallines="504" coveredbranches="53" totalbranches="64" coveredcodeelements="9" totalcodeelements="12" />
+    <class name="Chaos.Extensions.Geometry.CircleExtensions.&lt;GetOutline&gt;d__5&lt;TCircle&gt;" coveredlines="147" coverablelines="175" totallines="504" coveredbranches="53" totalbranches="64" coveredcodeelements="9" totalcodeelements="12" />
+    <class name="Chaos.Extensions.Geometry.DirectionExtensions" coveredlines="28" coverablelines="28" totallines="64" coveredbranches="16" totalbranches="16" coveredcodeelements="3" totalcodeelements="3" />
+    <class name="Chaos.Extensions.Geometry.LocationExtensions" coveredlines="6" coverablelines="6" totallines="39" coveredbranches="2" totalbranches="2" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Extensions.Geometry.PointExtensions" coveredlines="226" coverablelines="235" totallines="629" coveredbranches="124" totalbranches="138" coveredcodeelements="16" totalcodeelements="16" />
+    <class name="Chaos.Extensions.Geometry.PointExtensions.&lt;&lt;FloodFill&gt;g__GetNeighbors|4_0&gt;d&lt;T&gt;" coveredlines="226" coverablelines="235" totallines="629" coveredbranches="124" totalbranches="138" coveredcodeelements="16" totalcodeelements="16" />
+    <class name="Chaos.Extensions.Geometry.PointExtensions.&lt;&gt;c__13&lt;TPoint&gt;" coveredlines="226" coverablelines="235" totallines="629" coveredbranches="124" totalbranches="138" coveredcodeelements="16" totalcodeelements="16" />
+    <class name="Chaos.Extensions.Geometry.PointExtensions.&lt;GetDirectPath&gt;d__7&lt;TPoint1, TPoint2&gt;" coveredlines="226" coverablelines="235" totallines="629" coveredbranches="124" totalbranches="138" coveredcodeelements="16" totalcodeelements="16" />
+    <class name="Chaos.Extensions.Geometry.PolygonExtensions" coveredlines="32" coverablelines="32" totallines="114" coveredbranches="20" totalbranches="20" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Extensions.Geometry.RectangleExtensions" coveredlines="94" coverablelines="120" totallines="342" coveredbranches="50" totalbranches="58" coveredcodeelements="10" totalcodeelements="12" />
+  </assembly>
+  <assembly name="Chaos.Geometry">
+    <class name="Chaos.Geometry.Circle" coveredlines="11" coverablelines="11" totallines="48" coveredbranches="5" totalbranches="6" coveredcodeelements="8" totalcodeelements="8" />
+    <class name="Chaos.Geometry.EqualityComparers.CircleEqualityComparer" coveredlines="9" coverablelines="13" totallines="33" coveredbranches="6" totalbranches="10" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Geometry.EqualityComparers.LocationEqualityComparer" coveredlines="13" coverablelines="16" totallines="38" coveredbranches="5" totalbranches="8" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Geometry.EqualityComparers.PointEqualityComparer" coveredlines="9" coverablelines="11" totallines="30" coveredbranches="6" totalbranches="8" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Geometry.EqualityComparers.RectangleEqualityComparer" coveredlines="13" coverablelines="17" totallines="38" coveredbranches="10" totalbranches="14" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Geometry.JsonConverters.LocationConverter" coveredlines="10" coverablelines="10" totallines="32" coveredbranches="4" totalbranches="4" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Geometry.JsonConverters.PointConverter" coveredlines="10" coverablelines="10" totallines="32" coveredbranches="4" totalbranches="4" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Geometry.JsonConverters.PolygonConverter" coveredlines="23" coverablelines="23" totallines="53" coveredbranches="8" totalbranches="8" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Geometry.JsonConverters.RectangleConverter" coveredlines="38" coverablelines="39" totallines="75" coveredbranches="3" totalbranches="4" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Geometry.Location" coveredlines="36" coverablelines="39" totallines="143" coveredbranches="9" totalbranches="14" coveredcodeelements="17" totalcodeelements="18" />
+    <class name="Chaos.Geometry.Point" coveredlines="40" coverablelines="42" totallines="184" coveredbranches="16" totalbranches="18" coveredcodeelements="20" totalcodeelements="20" />
+    <class name="Chaos.Geometry.Polygon" coveredlines="44" coverablelines="47" totallines="99" coveredbranches="23" totalbranches="26" coveredcodeelements="8" totalcodeelements="9" />
+    <class name="Chaos.Geometry.Rectangle" coveredlines="51" coverablelines="59" totallines="144" coveredbranches="12" totalbranches="18" coveredcodeelements="21" totalcodeelements="24" />
+  </assembly>
+  <assembly name="Chaos.Geometry.Abstractions">
+    <class name="Chaos.Geometry.Abstractions.ILocation" coveredlines="1" coverablelines="1" totallines="15" coveredbranches="0" totalbranches="0" coveredcodeelements="1" totalcodeelements="1" />
+    <class name="Chaos.Geometry.Abstractions.IPoint" coveredlines="1" coverablelines="1" totallines="20" coveredbranches="0" totalbranches="0" coveredcodeelements="1" totalcodeelements="1" />
+  </assembly>
+  <assembly name="Chaos.IO">
+    <class name="Chaos.IO.Compression.Zlib" coveredlines="31" coverablelines="31" totallines="102" coveredbranches="0" totalbranches="0" coveredcodeelements="6" totalcodeelements="6" />
+    <class name="Chaos.IO.Exceptions.RetryableException" coveredlines="1" coverablelines="1" totallines="13" coveredbranches="0" totalbranches="0" coveredcodeelements="1" totalcodeelements="1" />
+    <class name="Chaos.IO.FileSystem.DirectorySynchronizer" coveredlines="52" coverablelines="52" totallines="128" coveredbranches="4" totalbranches="4" coveredcodeelements="8" totalcodeelements="8" />
+    <class name="Chaos.IO.FileSystem.DirectorySynchronizer.&lt;SafeExecuteAsync&gt;d__9&lt;T&gt;" coveredlines="52" coverablelines="52" totallines="128" coveredbranches="4" totalbranches="4" coveredcodeelements="8" totalcodeelements="8" />
+    <class name="Chaos.IO.FileSystem.FileEx" coveredlines="98" coverablelines="118" totallines="218" coveredbranches="12" totalbranches="16" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.IO.FileSystem.FileEx.&lt;SafeOpenReadAsync&gt;d__1&lt;T&gt;" coveredlines="98" coverablelines="118" totallines="218" coveredbranches="12" totalbranches="16" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.IO.FileSystem.PathEx" coveredlines="30" coverablelines="30" totallines="76" coveredbranches="10" totalbranches="10" coveredcodeelements="1" totalcodeelements="1" />
+    <class name="Chaos.IO.Json.JsonValidator" coveredlines="0" coverablelines="14" totallines="45" coveredbranches="0" totalbranches="2" coveredcodeelements="0" totalcodeelements="1" />
+  </assembly>
+  <assembly name="Chaos.Messaging">
+    <class name="Chaos.Messaging.ChannelDetails" coveredlines="18" coverablelines="18" totallines="35" coveredbranches="0" totalbranches="0" coveredcodeelements="13" totalcodeelements="13" />
+    <class name="Chaos.Messaging.ChannelService" coveredlines="166" coverablelines="181" totallines="325" coveredbranches="76" totalbranches="94" coveredcodeelements="10" totalcodeelements="12" />
+    <class name="Chaos.Messaging.ChannelServiceOptions" coveredlines="5" coverablelines="5" totallines="32" coveredbranches="0" totalbranches="0" coveredcodeelements="10" totalcodeelements="10" />
+    <class name="Chaos.Messaging.ChannelServiceOptionsConfigurer" coveredlines="0" coverablelines="9" totallines="25" coveredbranches="0" totalbranches="4" coveredcodeelements="0" totalcodeelements="2" />
+    <class name="Chaos.Messaging.CommandAttribute" coveredlines="9" coverablelines="9" totallines="43" coveredbranches="0" totalbranches="0" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Messaging.CommandDescriptor" coveredlines="2" coverablelines="2" totallines="17" coveredbranches="0" totalbranches="0" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Messaging.CommandInterceptor.&lt;&gt;c&lt;T, TOptions&gt;" coveredlines="93" coverablelines="95" totallines="194" coveredbranches="13" totalbranches="16" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Messaging.CommandInterceptor&lt;T, TOptions&gt;" coveredlines="30" coverablelines="30" totallines="194" coveredbranches="12" totalbranches="12" coveredcodeelements="3" totalcodeelements="3" />
+    <class name="Chaos.Messaging.SubscriberDetails" coveredlines="9" coverablelines="10" totallines="21" coveredbranches="2" totalbranches="2" coveredcodeelements="6" totalcodeelements="7" />
+  </assembly>
+  <assembly name="Chaos.NLog.Logging">
+    <class name="Chaos.NLog.Logging.Definitions.Topics.Actions" coveredlines="7" coverablelines="44" totallines="105" coveredbranches="0" totalbranches="0" coveredcodeelements="7" totalcodeelements="44" />
+    <class name="Chaos.NLog.Logging.Definitions.Topics.Entities" coveredlines="4" coverablelines="33" totallines="105" coveredbranches="0" totalbranches="0" coveredcodeelements="4" totalcodeelements="33" />
+    <class name="Chaos.NLog.Logging.Definitions.Topics.Qualifiers" coveredlines="0" coverablelines="4" totallines="105" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="4" />
+    <class name="Chaos.NLog.Logging.Definitions.Topics.Servers" coveredlines="0" coverablelines="3" totallines="105" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="3" />
+    <class name="Chaos.NLog.Logging.Extensions.LoggerExtensions" coveredlines="11" coverablelines="17" totallines="64" coveredbranches="5" totalbranches="8" coveredcodeelements="2" totalcodeelements="3" />
+    <class name="Chaos.NLog.Logging.LogEvent" coveredlines="31" coverablelines="52" totallines="109" coveredbranches="6" totalbranches="14" coveredcodeelements="4" totalcodeelements="11" />
+    <class name="Chaos.NLog.Logging.LogEvent.&lt;&gt;c__14&lt;TState&gt;" coveredlines="31" coverablelines="52" totallines="109" coveredbranches="6" totalbranches="14" coveredcodeelements="4" totalcodeelements="11" />
+  </assembly>
+  <assembly name="Chaos.Scripting.Abstractions">
+    <class name="Chaos.Scripting.Abstractions.CompositeScriptBase.&lt;GetScripts&gt;d__9&lt;TScript, T&gt;" coveredlines="19" coverablelines="19" totallines="95" coveredbranches="13" totalbranches="14" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Scripting.Abstractions.CompositeScriptBase&lt;TScript&gt;" coveredlines="18" coverablelines="23" totallines="95" coveredbranches="11" totalbranches="14" coveredcodeelements="5" totalcodeelements="8" />
+    <class name="Chaos.Scripting.Abstractions.CompositeScriptBase.&lt;GetEnumerator&gt;d__7&lt;TScript&gt;" coveredlines="19" coverablelines="19" totallines="95" coveredbranches="13" totalbranches="14" coveredcodeelements="2" totalcodeelements="2" />
+    <class name="Chaos.Scripting.Abstractions.ConfigurableScriptBase&lt;T&gt;" coveredlines="27" coverablelines="29" totallines="89" coveredbranches="8" totalbranches="8" coveredcodeelements="4" totalcodeelements="4" />
+    <class name="Chaos.Scripting.Abstractions.ConfigurableScriptBase.&lt;&gt;c&lt;T&gt;" coveredlines="1" coverablelines="1" totallines="89" coveredbranches="0" totalbranches="0" coveredcodeelements="0" totalcodeelements="0" />
+    <class name="Chaos.Scripting.Abstractions.ScriptBase" coveredlines="11" coverablelines="12" totallines="44" coveredbranches="6" totalbranches="8" coveredcodeelements="6" totalcodeelements="6" />
+    <class name="Chaos.Scripting.Abstractions.SubjectiveScriptBase&lt;T&gt;" coveredlines="1" coverablelines="2" totallines="23" coveredbranches="0" totalbranches="0" coveredcodeelements="1" totalcodeelements="2" />
+  </assembly>
+  <assembly name="Chaos.Storage.Abstractions">
+    <class name="Chaos.Storage.Abstractions.DirectoryBackupService&lt;TOptions&gt;" coveredlines="49" coverablelines="69" totallines="188" coveredbranches="11" totalbranches="14" coveredcodeelements="5" totalcodeelements="5" />
+    <class name="Chaos.Storage.Abstractions.DirectoryBackupService.&lt;&gt;c__DisplayClass8_1&lt;TOptions&gt;" coveredlines="9" coverablelines="54" totallines="188" coveredbranches="0" totalbranches="4" coveredcodeelements="0" totalcodeelements="1" />
+  </assembly>
+</coverage>

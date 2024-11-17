@@ -1,5 +1,6 @@
+#region
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable ArrangeAttributes
 
@@ -7,155 +8,20 @@ namespace Chaos.Extensions.Common.Tests;
 
 public sealed class StringExtensionsTests
 {
-    public static IEnumerable<object?[]> FuzzySearchTestData
-        => new List<object?[]>
-        {
-            new object?[]
-            {
-                new[]
-                {
-                    "kitten",
-                    "sitting",
-                    "mittens"
-                },
-                "sitten",
-                0.6m,
-                0.33m,
-                default(int?),
-                true,
-                "kitten"
-            },
-            new object?[]
-            {
-                new[]
-                {
-                    "kitten",
-                    "sitting",
-                    "mittens"
-                },
-                "sitten",
-                0.6m,
-                0.33m,
-                default(int?),
-                false,
-                "kitten"
-            },
-            new object?[]
-            {
-                new[]
-                {
-                    "kitten",
-                    "Sitting",
-                    "mittens"
-                },
-                "sitteng",
-                0.6m,
-                0.33m,
-                default(int?),
-                true,
-                "kitten"
-            },
-            new object?[]
-            {
-                new[]
-                {
-                    "kitten",
-                    "Sitting",
-                    "mittens"
-                },
-                "sitteng",
-                0.6m,
-                0.33m,
-                default(int?),
-                false,
-                "Sitting"
-            },
-            new object?[]
-            {
-                new[]
-                {
-                    "Written",
-                    "writing",
-                    "kitten"
-                },
-                "ritten",
-                0.6m,
-                0.33m,
-                default(int?),
-                true,
-                "Written"
-            },
-            new object?[]
-            {
-                new[]
-                {
-                    "Written",
-                    "writing",
-                    "kitten"
-                },
-                "ritten",
-                0.6m,
-                0.33m,
-                default(int?),
-                false,
-                "Written"
-            },
-            new object?[]
-            {
-                new[]
-                {
-                    "apple",
-                    "banana",
-                    "cherry"
-                },
-                "peach",
-                0,
-                1,
-                default(int?),
-                true,
-                "cherry"
-            },
-            new object?[]
-            {
-                new[]
-                {
-                    "apple",
-                    "banana",
-                    "cherry"
-                },
-                "peach",
-                0,
-                1,
-                default(int?),
-                true,
-                "cherry"
-            },
-            new object?[]
-            {
-                Array.Empty<string>(),
-                "peach",
-                0,
-                1,
-                default(int?),
-                true,
-                default(string)
-            }
-        };
-
-    //@formatter:off
-    [Theory]
-    [InlineData("night", "nacht", true, 0.25)]
-    [InlineData("night", "nacht", false, 0.25)]
-    [InlineData("context", "contact", true, 0.5)]
-    [InlineData("context", "contact", false, 0.5)]
-    [InlineData("Context", "contact", true, 0.3333)]
-    [InlineData("Context", "contact", false, 0.5)]
-    [InlineData("Stick", "sticks", true, 0.6667)]
-    [InlineData("Stick", "sticks", false, 0.8889)]
-    [InlineData("sticks", "Stick", true, 0.6667)]
-    [InlineData("sticks", "Stick", false, 0.8889)]
-    [InlineData("", "", true, 0)]
-    [InlineData("", "", false, 0)]
+//@formatter:off
+    [Test]
+    [Arguments("night", "nacht", true, 0.25)]
+    [Arguments("night", "nacht", false, 0.25)]
+    [Arguments("context", "contact", true, 0.5)]
+    [Arguments("context", "contact", false, 0.5)]
+    [Arguments("Context", "contact", true, 0.3333)]
+    [Arguments("Context", "contact", false, 0.5)]
+    [Arguments("Stick", "sticks", true, 0.6667)]
+    [Arguments("Stick", "sticks", false, 0.8889)]
+    [Arguments("sticks", "Stick", true, 0.6667)]
+    [Arguments("sticks", "Stick", false, 0.8889)]
+    [Arguments("", "", true, 0)]
+    [Arguments("", "", false, 0)]
     //@formatter:on
     public void CalculateDiceCoefficientTests(
         string string1,
@@ -172,17 +38,17 @@ public sealed class StringExtensionsTests
     }
 
     //@formatter:off
-    [Theory]
-    [InlineData("kitten", "sitting", true, 3)]
-    [InlineData("kitten", "sitting", false, 3)]
-    [InlineData("Kitten", "sitting", true, 3)]
-    [InlineData("Kitten", "sitting", false, 3)]
-    [InlineData("Saturday", "Sunday", true, 3)]
-    [InlineData("Saturday", "Sunday", false, 3)]
-    [InlineData("Saturday", "SUNDAY", true, 7)]
-    [InlineData("Saturday", "SUNDAY", false, 3)]
-    [InlineData("", "", true, 0)]
-    [InlineData("", "", false, 0)]
+    [Test]
+    [Arguments("kitten", "sitting", true, 3)]
+    [Arguments("kitten", "sitting", false, 3)]
+    [Arguments("Kitten", "sitting", true, 3)]
+    [Arguments("Kitten", "sitting", false, 3)]
+    [Arguments("Saturday", "Sunday", true, 3)]
+    [Arguments("Saturday", "Sunday", false, 3)]
+    [Arguments("Saturday", "SUNDAY", true, 7)]
+    [Arguments("Saturday", "SUNDAY", false, 3)]
+    [Arguments("", "", true, 0)]
+    [Arguments("", "", false, 0)]
     //@formatter:on
     public void CalculateLevenshteinDistanceTests(
         string str1,
@@ -198,7 +64,7 @@ public sealed class StringExtensionsTests
               .Be(expected);
     }
 
-    [Fact]
+    [Test]
     public void CenterAlign_Should_Return_Empty_String_If_Width_Is_Zero()
     {
         // Arrange
@@ -213,7 +79,7 @@ public sealed class StringExtensionsTests
               .BeEmpty(); // Expected result: ""
     }
 
-    [Fact]
+    [Test]
     public void CenterAlign_Should_Return_Input_String_If_Width_Is_Less_Than_String_Length()
     {
         // Arrange
@@ -228,7 +94,7 @@ public sealed class StringExtensionsTests
               .Be("Hel"); // Expected result: "Hel"
     }
 
-    [Fact]
+    [Test]
     public void CenterAlign_Should_Return_String_Centered_In_Field()
     {
         // Arrange
@@ -243,7 +109,7 @@ public sealed class StringExtensionsTests
               .Be("  Hello   "); // Expected result: "  Hello   "
     }
 
-    [Fact]
+    [Test]
     public void ContainsI_Should_Return_False_If_String_Does_Not_Contain_Substring_Case_Insensitive()
     {
         // Arrange
@@ -258,7 +124,7 @@ public sealed class StringExtensionsTests
               .BeFalse(); // Expected result: false
     }
 
-    [Fact]
+    [Test]
     public void ContainsI_Should_Return_True_If_String_Contains_Substring_Case_Insensitive()
     {
         // Arrange
@@ -273,7 +139,7 @@ public sealed class StringExtensionsTests
               .BeTrue(); // Expected result: true
     }
 
-    [Fact]
+    [Test]
     public void EndsWithI_Should_Return_False_If_String_Does_Not_End_With_Specified_Substring_Case_Insensitive()
     {
         // Arrange
@@ -288,7 +154,7 @@ public sealed class StringExtensionsTests
               .BeFalse(); // Expected result: false
     }
 
-    [Fact]
+    [Test]
     public void EndsWithI_Should_Return_True_If_String_Ends_With_Specified_Substring_Case_Insensitive()
     {
         // Arrange
@@ -303,7 +169,7 @@ public sealed class StringExtensionsTests
               .BeTrue(); // Expected result: true
     }
 
-    [Fact]
+    [Test]
     public void EqualsI_Should_Return_False_If_Strings_Are_Not_Equal_Case_Insensitive()
     {
         // Arrange
@@ -318,7 +184,7 @@ public sealed class StringExtensionsTests
               .BeFalse(); // Expected result: false
     }
 
-    [Fact]
+    [Test]
     public void EqualsI_Should_Return_True_If_Strings_Are_Equal_Case_Insensitive()
     {
         // Arrange
@@ -333,7 +199,7 @@ public sealed class StringExtensionsTests
               .BeTrue(); // Expected result: true
     }
 
-    [Fact]
+    [Test]
     public void FirstUpper_Should_Capitalize_First_Letter_In_Non_Empty_String()
     {
         // Arrange
@@ -347,7 +213,7 @@ public sealed class StringExtensionsTests
               .Be("Hello world"); // Expected result: "Hello world"
     }
 
-    [Fact]
+    [Test]
     public void FirstUpper_Should_Throw_ArgumentException_When_Input_Is_Empty()
     {
         // Arrange
@@ -361,7 +227,7 @@ public sealed class StringExtensionsTests
               .Throw<ArgumentException>(); // Expected result: ArgumentException
     }
 
-    [Fact]
+    [Test]
     public void FirstUpper_Should_Throw_ArgumentNullException_When_Input_Is_Null()
     {
         // Arrange
@@ -375,13 +241,13 @@ public sealed class StringExtensionsTests
               .Throw<ArgumentNullException>(); // Expected result: ArgumentNullException
     }
 
-    [Theory]
-    [InlineData("Hello\r\nWorld", "Hello\nWorld")]
-    [InlineData("Hello\nWorld", "Hello\nWorld")]
-    [InlineData("Hello\rWorld", "Hello\nWorld")]
-    [InlineData("Hello\r\n\r\nWorld", "Hello\n\nWorld")]
-    [InlineData("Hello\r\nWorld\n", "Hello\nWorld")]
-    [InlineData("Hello\r\nWorld\r\n", "Hello\nWorld")]
+    [Test]
+    [Arguments("Hello\r\nWorld", "Hello\nWorld")]
+    [Arguments("Hello\nWorld", "Hello\nWorld")]
+    [Arguments("Hello\rWorld", "Hello\nWorld")]
+    [Arguments("Hello\r\n\r\nWorld", "Hello\n\nWorld")]
+    [Arguments("Hello\r\nWorld\n", "Hello\nWorld")]
+    [Arguments("Hello\r\nWorld\r\n", "Hello\nWorld")]
     public void FixLineEndings_ShouldReplaceLineEndingsCorrectly(string input, string expectedOutput)
     {
         // Act
@@ -392,8 +258,8 @@ public sealed class StringExtensionsTests
               .Be(expectedOutput);
     }
 
-    [Theory]
-    [InlineData(
+    [Test]
+    [Arguments(
         new[]
         {
             "Hello World",
@@ -403,7 +269,7 @@ public sealed class StringExtensionsTests
         "Helo World",
         false,
         true)]
-    [InlineData(
+    [Arguments(
         new[]
         {
             "apple",
@@ -413,7 +279,7 @@ public sealed class StringExtensionsTests
         "Hello World",
         false,
         false)]
-    [InlineData(
+    [Arguments(
         new[]
         {
             "Hello World",
@@ -423,7 +289,7 @@ public sealed class StringExtensionsTests
         "HELLO World",
         true,
         false)]
-    [InlineData(
+    [Arguments(
         new[]
         {
             "Hello World",
@@ -447,8 +313,8 @@ public sealed class StringExtensionsTests
               .Be(expected);
     }
 
-    [Theory]
-    [MemberData(nameof(FuzzySearchTestData))]
+    [Test]
+    [MethodDataSource(nameof(FuzzySearchTestData))]
     public void FuzzySearchByTests(
         IEnumerable<string> strings,
         string str,
@@ -472,8 +338,54 @@ public sealed class StringExtensionsTests
               .Be(expected);
     }
 
-    [Theory]
-    [MemberData(nameof(FuzzySearchTestData))]
+    public static IEnumerable<(IEnumerable<string>, string, decimal, decimal, int?, bool, string? expected)> FuzzySearchTestData()
+        =>
+        [
+            ([
+                 "kitten",
+                 "sitting",
+                 "mittens"
+             ], "sitten", 0.6m, 0.33m, default, true, "kitten"),
+            ([
+                 "kitten",
+                 "sitting",
+                 "mittens"
+             ], "sitten", 0.6m, 0.33m, default, false, "kitten"),
+            ([
+                 "kitten",
+                 "Sitting",
+                 "mittens"
+             ], "sitteng", 0.6m, 0.33m, default, true, "kitten"),
+            ([
+                 "kitten",
+                 "Sitting",
+                 "mittens"
+             ], "sitteng", 0.6m, 0.33m, default, false, "Sitting"),
+            ([
+                 "Written",
+                 "writing",
+                 "kitten"
+             ], "ritten", 0.6m, 0.33m, default, true, "Written"),
+            ([
+                 "Written",
+                 "writing",
+                 "kitten"
+             ], "ritten", 0.6m, 0.33m, default, false, "Written"),
+            ([
+                 "apple",
+                 "banana",
+                 "cherry"
+             ], "peach", 0, 1, default, true, "cherry"),
+            ([
+                 "apple",
+                 "banana",
+                 "cherry"
+             ], "peach", 0, 1, default, true, "cherry"),
+            (Array.Empty<string>(), "peach", 0, 1, default, true, default)
+        ];
+
+    [Test]
+    [MethodDataSource(nameof(FuzzySearchTestData))]
     public void FuzzySearchTests(
         IEnumerable<string> strings,
         string str,
@@ -496,19 +408,19 @@ public sealed class StringExtensionsTests
               .Be(expected);
     }
 
-    [Fact]
+    [Test]
     public void Inject_MissingParameters_ThrowsArgumentException()
     {
         // Arrange
         const string INPUT = "Hello, {One} and {Two}!";
 
         // Act and Assert
-        INPUT.Invoking(x => x.Inject("World"))
+        INPUT.Invoking<string>(x => x.Inject("World"))
              .Should()
              .Throw<ArgumentException>();
     }
 
-    [Fact]
+    [Test]
     public void Inject_MultiplePlaceholders_ReturnsStringWithReplacedPlaceholders()
     {
         // Arrange
@@ -516,14 +428,18 @@ public sealed class StringExtensionsTests
         const string EXPECTED = "Hello, World and Universe!";
 
         // Act
-        var result = INPUT.Inject("World", "Universe");
+        var result = INPUT.Inject(
+            [
+                "World",
+                "Universe"
+            ]);
 
         // Assert
         result.Should()
               .Be(EXPECTED);
     }
 
-    [Fact]
+    [Test]
     public void Inject_NonPlaceholderBraces_ReturnsStringWithReplacedBraces()
     {
         // Arrange
@@ -538,7 +454,7 @@ public sealed class StringExtensionsTests
               .Be(EXPECTED);
     }
 
-    [Fact]
+    [Test]
     public void Inject_NoPlaceholders_ReturnsSameString()
     {
         // Arrange
@@ -552,7 +468,7 @@ public sealed class StringExtensionsTests
               .Be(INPUT);
     }
 
-    [Fact]
+    [Test]
     public void Inject_OnePlaceholder_ReturnsStringWithReplacedPlaceholder()
     {
         // Arrange
@@ -567,7 +483,7 @@ public sealed class StringExtensionsTests
               .Be(EXPECTED);
     }
 
-    [Fact]
+    [Test]
     public void ReplaceI_Should_Not_Modify_String_When_OldValue_Not_Found()
     {
         // Arrange
@@ -583,7 +499,7 @@ public sealed class StringExtensionsTests
               .Be("Hello World"); // Expected result: "Hello World"
     }
 
-    [Fact]
+    [Test]
     public void ReplaceI_Should_Replace_All_Occurrences_Case_Insensitive()
     {
         // Arrange
@@ -599,7 +515,7 @@ public sealed class StringExtensionsTests
               .Be("Hi Hi World"); // Expected result: "Hi Hi World"
     }
 
-    [Fact]
+    [Test]
     public void StartsWithI_Should_Return_False_When_String_Does_Not_Start_With_Value_Case_Insensitive()
     {
         // Arrange
@@ -614,7 +530,7 @@ public sealed class StringExtensionsTests
               .BeFalse(); // Expected result: false
     }
 
-    [Fact]
+    [Test]
     public void StartsWithI_Should_Return_True_When_String_Starts_With_Value_Case_Insensitive()
     {
         // Arrange

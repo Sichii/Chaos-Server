@@ -1,10 +1,11 @@
+#region
 using System.IO.Compression;
 using Chaos.Storage.Abstractions.Tests.Mocks;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using Xunit;
+#endregion
 
 namespace Chaos.Storage.Abstractions.Tests;
 
@@ -40,7 +41,7 @@ public sealed class DirectoryBackupServiceTests : IDisposable
             // Clean up test directory after each test run
             Directory.Delete(TestDirectory, true);
 
-    [Fact]
+    [Test]
     public async Task HandleBackupRetention_Should_Delete_Old_Backups()
     {
         // Arrange
@@ -58,7 +59,7 @@ public sealed class DirectoryBackupServiceTests : IDisposable
             .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public async Task HandleBackupRetention_Should_Not_Delete_Backups_Within_Retention_Period()
     {
         // Arrange
@@ -80,7 +81,7 @@ public sealed class DirectoryBackupServiceTests : IDisposable
             .BeTrue("because the backup is within the retention period and should not be deleted");
     }
 
-    [Fact]
+    [Test]
     public async Task TakeBackupAsync_Should_Create_Backup_File_If_Directory_Exists_And_Verify_Its_Contents()
     {
         // Arrange
@@ -118,7 +119,7 @@ public sealed class DirectoryBackupServiceTests : IDisposable
                                                                             .Be(FILE2_CONTENT);
     }
 
-    [Fact]
+    [Test]
     public async Task TakeBackupAsync_Should_Not_Create_Backup_If_Directory_Does_Not_Exist()
     {
         // Arrange

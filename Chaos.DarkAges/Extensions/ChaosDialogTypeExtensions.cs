@@ -1,4 +1,6 @@
+#region
 using Chaos.DarkAges.Definitions;
+#endregion
 
 namespace Chaos.DarkAges.Extensions;
 
@@ -8,7 +10,7 @@ namespace Chaos.DarkAges.Extensions;
 public static class ChaosDialogTypeExtensions
 {
     /// <summary>
-    ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="value" />
+    ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="DialogType" />
     /// </summary>
     /// <param name="value">
     ///     The value to convert
@@ -33,7 +35,7 @@ public static class ChaosDialogTypeExtensions
         };
 
     /// <summary>
-    ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="value" />
+    ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="MenuType" />
     /// </summary>
     /// <param name="value">
     ///     The value to convert

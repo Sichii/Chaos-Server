@@ -1,12 +1,13 @@
+#region
 using Chaos.Common.Synchronization;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class FifoSemaphoreSlimTests
 {
-    [Fact]
+    [Test]
     public async Task WaitAsync_ShouldAcquireSemaphoreInOrder()
     {
         // Arrange
@@ -37,7 +38,7 @@ public sealed class FifoSemaphoreSlimTests
              .Be(10);
     }
 
-    [Fact]
+    [Test]
     public async Task WaitAsync_WithTimeout_ShouldAcquireSemaphoreInOrderWithinTimeout()
     {
         // Arrange
@@ -68,7 +69,7 @@ public sealed class FifoSemaphoreSlimTests
              .Be(10);
     }
 
-    [Fact]
+    [Test]
     public async Task WaitAsync_WithTimeout_ShouldNotAcquireSemaphoreIfTimeoutExpires()
     {
         // Arrange

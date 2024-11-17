@@ -1,5 +1,5 @@
+#region
 using Chaos.Collections;
-using Chaos.Common.Synchronization;
 using Chaos.DarkAges.Definitions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
@@ -7,6 +7,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
+#endregion
 
 namespace Chaos.Services.Other;
 
@@ -16,12 +17,12 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
     private readonly ILogger<GroupService> Logger = logger;
     private readonly HashSet<TimedRequest> PendingInvites = [];
     private readonly HashSet<TimedRequest> PendingRequests = [];
-    private readonly AutoReleasingMonitor Sync = new();
+    private readonly Lock Sync = new();
 
     /// <inheritdoc />
     public void AcceptInvite(Aisling sender, Aisling receiver)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
         var key = new TimedRequest(sender.Name, receiver.Name);
 
         if (!PendingInvites.TryGetValue(key, out var invite))
@@ -83,7 +84,7 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
     /// <inheritdoc />
     public void AcceptRequestToJoin(Aisling sender, Aisling receiver)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
         var key = new TimedRequest(sender.Name, receiver.Name);
 
         if (!PendingRequests.TryGetValue(key, out var request))
@@ -137,7 +138,7 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
     {
         var key = new TimedRequest(sender.Name, receiver.Name);
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var isInvite = PendingInvites.TryGetValue(key, out var pendingInvite);
         var isRequest = PendingRequests.TryGetValue(key, out var pendingRequest);
@@ -158,7 +159,7 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
     /// <inheritdoc />
     public void Invite(Aisling sender, Aisling receiver)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (!sender.Options.AllowGroup)
         {
@@ -185,7 +186,12 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
         //if the target is ignoring the sender, log a warning
         //dont return here, let things play out, there should be another check to prevent sending an invite
         if (receiver.IgnoreList.Contains(sender.Name))
-            Logger.WithTopics(Topics.Entities.Group, Topics.Actions.Invite, Topics.Qualifiers.Harassment)
+            Logger.WithTopics(
+                      [
+                          Topics.Entities.Group,
+                          Topics.Actions.Invite,
+                          Topics.Qualifiers.Harassment
+                      ])
                   .WithProperty(sender)
                   .WithProperty(receiver)
                   .LogWarning(
@@ -220,7 +226,7 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
 
     public void RequestToJoin(Aisling sender, Aisling receiver)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (!sender.Options.AllowGroup)
         {
@@ -271,7 +277,12 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
         //if the target is ignoring the sender, log a warning
         //dont return here, let things play out, there should be another check to prevent sending an invite
         if (receiver.IgnoreList.Contains(sender.Name))
-            Logger.WithTopics(Topics.Entities.Group, Topics.Actions.Invite, Topics.Qualifiers.Harassment)
+            Logger.WithTopics(
+                      [
+                          Topics.Entities.Group,
+                          Topics.Actions.Invite,
+                          Topics.Qualifiers.Harassment
+                      ])
                   .WithProperty(sender)
                   .WithProperty(receiver)
                   .LogWarning(

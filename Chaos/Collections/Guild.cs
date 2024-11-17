@@ -1,4 +1,4 @@
-using Chaos.Common.Synchronization;
+#region
 using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
@@ -6,6 +6,7 @@ using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Services.Servers.Options;
+#endregion
 
 namespace Chaos.Collections;
 
@@ -14,7 +15,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     private readonly IChannelService ChannelService;
     private readonly IClientRegistry<IChaosWorldClient> ClientRegistry;
     private readonly List<GuildRank> GuildHierarchy;
-    private readonly AutoReleasingMonitor Sync;
+    private readonly Lock Sync;
     public string ChannelName { get; }
     public string Guid { get; }
     public string Name { get; }
@@ -30,15 +31,15 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
         ChannelName = $"!guild-{Name}-{Guid}";
         ChannelService = channelService;
         ClientRegistry = clientRegistry;
-        Sync = new AutoReleasingMonitor();
+        Sync = new Lock();
 
-        GuildHierarchy = new List<GuildRank>
-        {
-            new("Leader", 0),
-            new("Council", 1),
-            new("Member", 2),
-            new("Applicant", 3)
-        };
+        GuildHierarchy =
+        [
+            new GuildRank("Leader", 0),
+            new GuildRank("Council", 1),
+            new GuildRank("Member", 2),
+            new GuildRank("Applicant", 3)
+        ];
 
         ChannelService.RegisterChannel(
             null,
@@ -77,7 +78,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     {
         ArgumentNullException.ThrowIfNull(aisling);
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (aisling.Guild is not null)
         {
@@ -105,7 +106,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     {
         ArgumentNullException.ThrowIfNull(aisling);
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var rank = UnsafeRankof(aisling.Name);
 
@@ -120,7 +121,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
 
     public void ChangeRank(Aisling aisling, int newTier, Aisling by)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (aisling.Guild is null)
             throw new InvalidOperationException(
@@ -156,7 +157,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
         ArgumentNullException.ThrowIfNull(newRankName);
         ArgumentNullException.ThrowIfNull(currentRankName);
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (!UnsafeTryGetRank(currentRankName, out var rank))
             return;
@@ -166,7 +167,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
 
     public void Disband()
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         foreach (var aisling in GetOnlineMembers())
         {
@@ -191,7 +192,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     {
         List<string> names;
 
-        using (Sync.Enter())
+        using (Sync.EnterScope())
             names = GuildHierarchy.SelectMany(x => x.GetMemberNames())
                                   .ToList();
 
@@ -202,7 +203,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     {
         List<Aisling> onlineMembers;
 
-        using (Sync.Enter())
+        using (Sync.EnterScope())
             onlineMembers = GuildHierarchy.SelectMany(x => x.GetOnlineMembers(ClientRegistry))
                                           .ToList();
 
@@ -211,7 +212,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
 
     public ICollection<GuildRank> GetRanks()
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return GuildHierarchy.Select(DeepClone.CreateRequired)
                              .ToList();
@@ -219,14 +220,14 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
 
     public bool HasMember(string memberName)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return GuildHierarchy.Any(x => x.HasMember(memberName));
     }
 
     public void Initialize(IEnumerable<GuildRank> guildHierarchy)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         GuildHierarchy.Clear();
         GuildHierarchy.AddRange(guildHierarchy);
@@ -236,7 +237,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     {
         ArgumentException.ThrowIfNullOrEmpty(memberName);
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var rank = UnsafeRankof(memberName);
 
@@ -267,7 +268,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     {
         ArgumentNullException.ThrowIfNull(aisling);
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var memberName = aisling.Name;
         var rank = UnsafeRankof(memberName);
@@ -296,7 +297,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
 
     public GuildRank RankOf(string name)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var ret = UnsafeRankof(name);
 
@@ -311,7 +312,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
         guildRank = null;
         ArgumentNullException.ThrowIfNull(rankName);
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (!UnsafeTryGetRank(rankName, out var rank))
             return false;
@@ -325,7 +326,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     {
         guildRank = null;
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         if (!UnsafeTryGetRank(tier, out var rank))
             return false;
@@ -337,7 +338,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
 
     private GuildRank? UnsafeRankof(string memberName)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         return GuildHierarchy.FirstOrDefault(rank => rank.HasMember(memberName));
     }
@@ -346,7 +347,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     {
         ArgumentNullException.ThrowIfNull(rankName);
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         guildRank = GuildHierarchy.FirstOrDefault(rank => rank.Name.EqualsI(rankName));
 
@@ -355,7 +356,7 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
 
     private bool UnsafeTryGetRank(int tier, [MaybeNullWhen(false)] out GuildRank guildRank)
     {
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         guildRank = GuildHierarchy.FirstOrDefault(rank => rank.Tier == tier);
 

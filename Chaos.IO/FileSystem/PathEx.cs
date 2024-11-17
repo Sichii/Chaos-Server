@@ -42,18 +42,33 @@ public static class PathEx
         if (string.IsNullOrEmpty(parentPath))
             throw new ArgumentNullException(nameof(parentPath));
 
-        path = Path.GetFullPath(path);
-        parentPath = Path.GetFullPath(parentPath);
+        var pathSpan = Path.GetFullPath(path)
+                           .AsSpan();
 
-        var pathParts = path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-        var parentPathParts = parentPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+        var parentPathSpan = Path.GetFullPath(parentPath)
+                                 .AsSpan();
 
-        if (pathParts.Length < parentPathParts.Length)
-            return false;
+        var pathParts = pathSpan.SplitAny(
+            [
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar
+            ]);
 
-        for (var i = 0; i < parentPathParts.Length; i++)
-            if (!parentPathParts[i]
-                    .Equals(pathParts[i], StringComparison.OrdinalIgnoreCase))
+        var parentPathParts = parentPathSpan.SplitAny(
+            [
+                Path.DirectorySeparatorChar,
+                Path.AltDirectorySeparatorChar
+            ]);
+
+        while (parentPathParts.MoveNext())
+            if (pathParts.MoveNext())
+            {
+                var parentPathPart = parentPathSpan[parentPathParts.Current];
+                var pathPart = pathSpan[pathParts.Current];
+
+                if (!pathPart.Equals(parentPathPart, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            } else
                 return false;
 
         return true;

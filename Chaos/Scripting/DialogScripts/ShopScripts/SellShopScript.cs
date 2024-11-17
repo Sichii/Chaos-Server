@@ -1,3 +1,4 @@
+#region
 using Chaos.Models.Abstractions;
 using Chaos.Models.Menu;
 using Chaos.Models.World;
@@ -5,6 +6,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Utilities;
+#endregion
 
 namespace Chaos.Scripting.DialogScripts.ShopScripts;
 
@@ -77,10 +79,12 @@ public class SellShopScript : DialogScriptBase
         {
             case ComplexActionHelper.SellItemResult.Success:
                 Logger.WithTopics(
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Item,
-                          Topics.Entities.Gold,
-                          Topics.Actions.Sell)
+                          [
+                              Topics.Entities.Aisling,
+                              Topics.Entities.Item,
+                              Topics.Entities.Gold,
+                              Topics.Actions.Sell
+                          ])
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)

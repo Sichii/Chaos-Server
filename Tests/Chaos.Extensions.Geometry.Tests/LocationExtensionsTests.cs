@@ -1,7 +1,8 @@
+#region
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions.Definitions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable ArrangeAttributes
 
@@ -10,11 +11,11 @@ namespace Chaos.Extensions.Geometry.Tests;
 public sealed class LocationExtensionsTests
 {
     //@formatter:off
-    [Theory]
-    [InlineData(0, 0, Direction.Up, 1, 0, -1)]
-    [InlineData(0, 0, Direction.Right, 1, 1, 0)]
-    [InlineData(0, 0, Direction.Down, 1, 0, 1)]
-    [InlineData(0, 0, Direction.Left, 1, -1, 0)]
+    [Test]
+    [Arguments(0, 0, Direction.Up, 1, 0, -1)]
+    [Arguments(0, 0, Direction.Right, 1, 1, 0)]
+    [Arguments(0, 0, Direction.Down, 1, 0, 1)]
+    [Arguments(0, 0, Direction.Left, 1, -1, 0)]
     //@formatter:on
     public void DirectionalOffset_ShouldReturnExpectedLocation(
         int startX,
@@ -45,7 +46,7 @@ public sealed class LocationExtensionsTests
                       .Be(expectedY);
     }
 
-    [Fact]
+    [Test]
     public void EnsureSameMap_ShouldNotThrowException_WhenLocationsAreOnSameMap()
     {
         // Arrange
@@ -61,7 +62,7 @@ public sealed class LocationExtensionsTests
            .NotThrow<InvalidOperationException>();
     }
 
-    [Fact]
+    [Test]
     public void EnsureSameMap_ShouldThrowException_WhenLocationsAreOnDifferentMaps()
     {
         // Arrange
@@ -79,7 +80,7 @@ public sealed class LocationExtensionsTests
            .WithMessage("* is not on the same map as *");
     }
 
-    [Fact]
+    [Test]
     public void OnSameMapAs_ShouldReturnFalse_WhenLocationsAreOnDifferentMaps()
     {
         // Arrange
@@ -96,7 +97,7 @@ public sealed class LocationExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void OnSameMapAs_ShouldReturnTrue_WhenLocationsAreOnSameMap()
     {
         // Arrange

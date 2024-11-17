@@ -1,3 +1,4 @@
+#region
 using System.Collections.Concurrent;
 using System.Net;
 using System.Security.Cryptography;
@@ -13,6 +14,7 @@ using Chaos.Security.Options;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace Chaos.Security;
 
@@ -67,12 +69,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
 
         var ipStr = ipAddress.ToString();
 
-        await File.AppendAllLinesAsync(
-            BlacklistPath,
-            new[]
-            {
-                ipStr
-            });
+        await File.AppendAllLinesAsync(BlacklistPath, [ipStr]);
 
         var whiteList = (await File.ReadAllLinesAsync(WhitelistPath)).ToList();
         whiteList.RemoveAll(str => str.EqualsI(ipStr));
@@ -102,7 +99,11 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         if (!result.Success)
         {
             if (result.Code == CredentialValidationResult.FailureCode.TooManyAttempts)
-                Logger.WithTopics(Topics.Entities.Client, Topics.Actions.Validation)
+                Logger.WithTopics(
+                          [
+                              Topics.Entities.Client,
+                              Topics.Actions.Validation
+                          ])
                       .LogWarning(
                           "{@ClientIp} has exceeded the maximum number of credential attempts while attempting to change password",
                           ipAddress.ToString());
@@ -178,7 +179,11 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         var result = await InnerValidateCredentialsAsync(ipAddress, name, password);
 
         if (result is { Success: false, Code: CredentialValidationResult.FailureCode.TooManyAttempts })
-            Logger.WithTopics(Topics.Entities.Client, Topics.Actions.Validation)
+            Logger.WithTopics(
+                      [
+                          Topics.Entities.Client,
+                          Topics.Actions.Validation
+                      ])
                   .LogWarning(
                       "{@ClientIp} has exceeded the maximum number of credential attempts while attempting to log in",
                       ipAddress.ToString());
@@ -345,18 +350,14 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     /// </param>
     private CredentialValidationResult ValidateUserNameRules(string name)
     {
-        if (Options.ValidCharactersRegex.Matches(name)
-                   .Count
-            != 1)
+        if (!Options.ValidCharactersRegex.IsMatch(name))
             return new CredentialValidationResult
             {
                 Code = CredentialValidationResult.FailureCode.InvalidUsername,
                 FailureMessage = "Invalid characters detected in username"
             };
 
-        if (Options.ValidFormatRegex.Matches(name)
-                   .Count
-            != 1)
+        if (!Options.ValidFormatRegex.IsMatch(name))
             return new CredentialValidationResult
             {
                 Code = CredentialValidationResult.FailureCode.InvalidUsername,

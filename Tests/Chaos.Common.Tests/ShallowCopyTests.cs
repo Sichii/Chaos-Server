@@ -1,12 +1,13 @@
+#region
 using Chaos.Common.Utilities;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class ShallowCopyTests
 {
-    [Fact]
+    [Test]
     public void Copy_ShouldReflectChangesInOriginal()
     {
         // Arrange
@@ -37,7 +38,7 @@ public sealed class ShallowCopyTests
             .Be(original.MockCopyableSub.SubValue); // Reference type
     }
 
-    [Fact]
+    [Test]
     public void Create_ShouldReturnShallowCopy()
     {
         // Arrange
@@ -68,7 +69,7 @@ public sealed class ShallowCopyTests
             .BeSameAs(original.MockCopyableSub);
     }
 
-    [Fact]
+    [Test]
     public void Merge_ShouldShallowMergeObjects()
     {
         // Arrange

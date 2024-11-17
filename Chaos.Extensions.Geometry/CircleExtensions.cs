@@ -1,7 +1,9 @@
+#region
 using System.Runtime.CompilerServices;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+#endregion
 
 namespace Chaos.Extensions.Geometry;
 
@@ -25,13 +27,10 @@ public static class CircleExtensions
     /// <returns>
     ///     The first point of intersection between the line and the circle, or null if they do not intersect.
     /// </returns>
-    public static Point? CalculateIntersectionEntryPoint<TCircle, TPoint>(this TCircle circle, TPoint lineStart, TPoint lineEnd)
-        where TCircle: ICircle
-        where TPoint: IPoint
+    [OverloadResolutionPriority(1)] //prefer to not box structs
+    public static Point? CalculateIntersectionEntryPoint(this ICircle circle, Point lineStart, Point lineEnd)
     {
         ArgumentNullException.ThrowIfNull(circle);
-        ArgumentNullException.ThrowIfNull(lineStart);
-        ArgumentNullException.ThrowIfNull(lineEnd);
 
         var xDiff = Math.Abs(lineEnd.X - lineStart.X);
         var yDiff = Math.Abs(lineEnd.Y - lineStart.Y);
@@ -72,6 +71,15 @@ public static class CircleExtensions
         }
     }
 
+    /// <inheritdoc cref="CalculateIntersectionEntryPoint(ICircle, Point, Point)" />
+    public static Point? CalculateIntersectionEntryPoint(this ICircle circle, IPoint lineStart, IPoint lineEnd)
+    {
+        ArgumentNullException.ThrowIfNull(lineStart);
+        ArgumentNullException.ThrowIfNull(lineEnd);
+
+        return CalculateIntersectionEntryPoint(circle, Point.From(lineStart), Point.From(lineEnd));
+    }
+
     /// <summary>
     ///     Determines whether this circle fully encompasses another circle.
     /// </summary>
@@ -101,8 +109,7 @@ public static class CircleExtensions
     ///     other
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Contains<TCircle>(this TCircle circle, TCircle other, DistanceType distanceType = DistanceType.Euclidean)
-        where TCircle: ICircle
+    public static bool Contains(this ICircle circle, ICircle other, DistanceType distanceType = DistanceType.Euclidean)
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -144,14 +151,10 @@ public static class CircleExtensions
     /// <exception cref="System.ArgumentNullException">
     ///     point
     /// </exception>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Contains<TCircle, TPoint>(this TCircle circle, TPoint point, DistanceType distanceType = DistanceType.Euclidean)
-        where TCircle: ICircle
-        where TPoint: IPoint
+    [OverloadResolutionPriority(1), MethodImpl(MethodImplOptions.AggressiveInlining)] //prefer to not box structs
+    public static bool Contains(this ICircle circle, Point point, DistanceType distanceType = DistanceType.Euclidean)
     {
         ArgumentNullException.ThrowIfNull(circle);
-
-        ArgumentNullException.ThrowIfNull(point);
 
         return distanceType switch
         {
@@ -159,6 +162,15 @@ public static class CircleExtensions
             DistanceType.Euclidean => point.EuclideanDistanceFrom(circle.Center) <= circle.Radius,
             _                      => throw new ArgumentOutOfRangeException(nameof(distanceType), distanceType, null)
         };
+    }
+
+    /// <inheritdoc cref="Contains(ICircle, Point, DistanceType)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Contains(this ICircle circle, IPoint point, DistanceType distanceType = DistanceType.Euclidean)
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        return Contains(circle, Point.From(point), distanceType);
     }
 
     /// <summary>
@@ -180,15 +192,21 @@ public static class CircleExtensions
     /// <exception cref="System.ArgumentNullException">
     ///     other
     /// </exception>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double EuclideanEdgeDistanceFrom<TCircle, TPoint>(this TCircle circle, TPoint other) where TCircle: ICircle
-        where TPoint: IPoint
+    [OverloadResolutionPriority(1), MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double EuclideanEdgeDistanceFrom(this ICircle circle, Point other)
     {
         ArgumentNullException.ThrowIfNull(circle);
 
+        return Math.Max(0.0f, circle.Center.EuclideanDistanceFrom(other) - circle.Radius);
+    }
+
+    /// <inheritdoc cref="EuclideanEdgeDistanceFrom(ICircle, Point)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double EuclideanEdgeDistanceFrom(this ICircle circle, IPoint other)
+    {
         ArgumentNullException.ThrowIfNull(other);
 
-        return Math.Max(0.0f, circle.Center.EuclideanDistanceFrom(other) - circle.Radius);
+        return EuclideanEdgeDistanceFrom(circle, Point.From(other));
     }
 
     /// <summary>
@@ -211,7 +229,7 @@ public static class CircleExtensions
     ///     other
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double EuclideanEdgeToEdgeDistanceFrom<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
+    public static double EuclideanEdgeToEdgeDistanceFrom(this ICircle circle, ICircle other)
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -232,7 +250,7 @@ public static class CircleExtensions
     /// <exception cref="System.ArgumentNullException">
     ///     circle
     /// </exception>
-    public static IEnumerable<Point> GetOutline<TCircle>(this TCircle circle) where TCircle: ICircle
+    public static IEnumerable<Point> GetOutline(this ICircle circle)
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -301,7 +319,7 @@ public static class CircleExtensions
     /// <exception cref="System.ArgumentNullException">
     ///     circle
     /// </exception>
-    public static IEnumerable<Point> GetPoints<TCircle>(this TCircle circle) where TCircle: ICircle
+    public static IEnumerable<Point> GetPoints(this ICircle circle)
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -349,7 +367,7 @@ public static class CircleExtensions
     /// </param>
     /// <returns>
     /// </returns>
-    public static Point GetRandomPoint<TCircle>(this TCircle circle) where TCircle: ICircle
+    public static Point GetRandomPoint(this ICircle circle)
     {
         var rngA = Random.Shared.NextDouble();
         var rngR = Random.Shared.NextDouble();
@@ -390,8 +408,7 @@ public static class CircleExtensions
     ///     other
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Intersects<TCircle>(this TCircle circle, TCircle other, DistanceType distanceType = DistanceType.Euclidean)
-        where TCircle: ICircle
+    public static bool Intersects(this ICircle circle, ICircle other, DistanceType distanceType = DistanceType.Euclidean)
     {
         ArgumentNullException.ThrowIfNull(circle);
 
@@ -462,15 +479,21 @@ public static class CircleExtensions
     /// <exception cref="System.ArgumentNullException">
     ///     other
     /// </exception>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int ManhattanEdgeDistanceFrom<TCircle, TPoint>(this TCircle circle, TPoint other) where TCircle: ICircle
-        where TPoint: IPoint
+    [OverloadResolutionPriority(1), MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int ManhattanEdgeDistanceFrom(this ICircle circle, Point other)
     {
         ArgumentNullException.ThrowIfNull(circle);
 
+        return Math.Max(0, circle.Center.ManhattanDistanceFrom(other) - circle.Radius);
+    }
+
+    /// <inheritdoc cref="ManhattanEdgeDistanceFrom(ICircle, Point)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int ManhattanEdgeDistanceFrom(this ICircle circle, IPoint other)
+    {
         ArgumentNullException.ThrowIfNull(other);
 
-        return Math.Max(0, circle.Center.ManhattanDistanceFrom(other) - circle.Radius);
+        return ManhattanEdgeDistanceFrom(circle, Point.From(other));
     }
 
     /// <summary>
@@ -493,7 +516,7 @@ public static class CircleExtensions
     ///     other
     /// </exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float ManhattanEdgeToEdgeDistanceFrom<TCircle>(this TCircle circle, TCircle other) where TCircle: ICircle
+    public static float ManhattanEdgeToEdgeDistanceFrom(this ICircle circle, ICircle other)
     {
         ArgumentNullException.ThrowIfNull(circle);
 

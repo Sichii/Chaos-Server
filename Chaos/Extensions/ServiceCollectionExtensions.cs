@@ -1,3 +1,4 @@
+#region
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text.Encodings.Web;
@@ -57,6 +58,7 @@ using ItemMapperProfile = Chaos.Site.Services.MapperProfiles.ItemMapperProfile;
 using SkillMapperProfile = Chaos.Site.Services.MapperProfiles.SkillMapperProfile;
 using SpellMapperProfile = Chaos.Site.Services.MapperProfiles.SpellMapperProfile;
 using MonsterMapperProfile = Chaos.Site.Services.MapperProfiles.MonsterMapperProfile;
+#endregion
 
 namespace Chaos.Extensions;
 
@@ -78,7 +80,9 @@ public static class ServiceCollectionExtensions
             IgnoreReadOnlyFields = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             AllowTrailingCommas = true,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+            RespectNullableAnnotations = true,
+            RespectRequiredConstructorParameters = true
         };
 
         JsonSerializerOptions.Converters.Add(new PointConverter());

@@ -1,16 +1,17 @@
+#region
 using System.Text;
 using System.Text.Json;
 using Chaos.Collections.Common;
 using Chaos.Common.Converters;
 using Chaos.Testing.Infrastructure.Extensions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class CounterCollectionConverterTests
 {
-    [Fact]
+      [Test]
     public void Read_ShouldDeserializeDictionaryAndCreateCounterCollection()
     {
         // Arrange
@@ -45,7 +46,7 @@ public sealed class CounterCollectionConverterTests
                 .Be(2);
     }
 
-    [Fact]
+      [Test]
     public void Write_ShouldSerializeCounterCollectionAsDictionary()
     {
         // Arrange

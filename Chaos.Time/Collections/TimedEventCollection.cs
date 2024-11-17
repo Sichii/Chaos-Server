@@ -1,10 +1,11 @@
+#region
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
-using Chaos.Common.Synchronization;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
 using Chaos.Time.Converters;
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Collections.Time;
@@ -17,7 +18,7 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
 {
     private readonly Dictionary<string, Event> Events;
     private readonly IIntervalTimer Interval;
-    private readonly AutoReleasingMonitor Sync;
+    private readonly Lock Sync;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="TimedEventCollection" /> class
@@ -29,7 +30,7 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     {
         events ??= Array.Empty<Event>();
         Events = new Dictionary<string, Event>(StringComparer.OrdinalIgnoreCase);
-        Sync = new AutoReleasingMonitor();
+        Sync = new Lock();
         Interval = new IntervalTimer(TimeSpan.FromSeconds(1));
 
         foreach (var timedEvent in events)
@@ -44,7 +45,7 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     {
         List<KeyValuePair<string, Event>> snapShot;
 
-        using (Sync.Enter())
+        using (Sync.EnterScope())
             snapShot = Events.ToList();
 
         return snapShot.GetEnumerator();
@@ -57,7 +58,7 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
 
         if (Interval.IntervalElapsed)
         {
-            using var sync = Sync.Enter();
+            using var sync = Sync.EnterScope();
 
             foreach (var kvp in Events.ToList())
             {
@@ -90,7 +91,7 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     /// </exception>
     public void AddEvent(string eventId, TimeSpan duration, bool autoConsume = false)
     {
-        using var sync = Sync.Enter();
+        using var sync = Sync.EnterScope();
 
         var timedEvent = new Event(eventId, duration, autoConsume);
 
@@ -129,7 +130,7 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     /// </remarks>
     public bool HasActiveEvent(string eventId, [MaybeNullWhen(false)] out Event @event)
     {
-        using var sync = Sync.Enter();
+        using var sync = Sync.EnterScope();
 
         if (!Events.TryGetValue(eventId, out @event))
             return false;
@@ -157,7 +158,7 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     /// </returns>
     public bool TryConsumeEvent(string eventId, [MaybeNullWhen(false)] out Event @event)
     {
-        using var sync = Sync.Enter();
+        using var sync = Sync.EnterScope();
 
         @event = null;
 

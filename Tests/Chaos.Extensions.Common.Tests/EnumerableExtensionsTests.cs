@@ -1,11 +1,12 @@
+#region
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class EnumerableExtensionsTests
 {
-    [Fact]
+    [Test]
     public void ContainsI_Should_Return_False_When_Sequence_Does_Not_Contain_String()
     {
         // Arrange
@@ -25,7 +26,7 @@ public sealed class EnumerableExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void ContainsI_Should_Return_False_When_Sequence_Is_Empty()
     {
         // Arrange
@@ -40,7 +41,7 @@ public sealed class EnumerableExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void ContainsI_Should_Return_True_When_Sequence_Contains_String()
     {
         // Arrange
@@ -61,8 +62,8 @@ public sealed class EnumerableExtensionsTests
     }
 
     // ReSharper disable once ArrangeAttributes
-    [Theory]
-    [InlineData(
+    [Test]
+    [Arguments(
         new[]
         {
             3,
@@ -75,7 +76,7 @@ public sealed class EnumerableExtensionsTests
         },
         5,
         6)]
-    [InlineData(
+    [Arguments(
         new[]
         {
             3,
@@ -98,8 +99,8 @@ public sealed class EnumerableExtensionsTests
     }
 
     // ReSharper disable once ArrangeAttributes
-    [Theory]
-    [InlineData(
+    [Test]
+    [Arguments(
         new[]
         {
             3,
@@ -112,7 +113,7 @@ public sealed class EnumerableExtensionsTests
         },
         5,
         3)]
-    [InlineData(
+    [Arguments(
         new[]
         {
             3,

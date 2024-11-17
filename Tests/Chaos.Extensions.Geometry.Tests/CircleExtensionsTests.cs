@@ -1,13 +1,14 @@
+#region
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Geometry.Tests;
 
 public sealed class CircleExtensionsTests
 {
-    [Fact]
+    [Test]
     public void CalculateIntersectionEntryPoint_Should_Return_Intersection_Point_When_Line_Intersects_Circle()
     {
         // Arrange
@@ -27,7 +28,7 @@ public sealed class CircleExtensionsTests
                          .Be(expectedIntersectionPoint);
     }
 
-    [Fact]
+    [Test]
     public void CalculateIntersectionEntryPoint_Should_Return_Linestart_When_Line_Starts_Inside_Circle()
     {
         // Arrange
@@ -47,7 +48,7 @@ public sealed class CircleExtensionsTests
                          .Be(expectedIntersectionPoint);
     }
 
-    [Fact]
+    [Test]
     public void CalculateIntersectionEntryPoint_Should_Return_Null_When_Line_Does_Not_Intersect_Circle()
     {
         // Arrange
@@ -63,7 +64,7 @@ public sealed class CircleExtensionsTests
                          .BeNull();
     }
 
-    [Fact]
+    [Test]
     public void Contains_WhenCirclesIntersect_ShouldReturnFalse()
     {
         var circle = new Circle(new Point(5, 5), 5);
@@ -74,7 +75,7 @@ public sealed class CircleExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Contains_WhenLargerCircleOutside_ShouldReturnFalse()
     {
         var circle = new Circle(new Point(5, 5), 3);
@@ -85,7 +86,7 @@ public sealed class CircleExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Contains_WhenNullCircle_ShouldThrowArgumentNullException()
     {
         var circle = new Circle(new Point(5, 5), 3);
@@ -97,7 +98,7 @@ public sealed class CircleExtensionsTests
            .Throw<ArgumentNullException>();
     }
 
-    [Fact]
+    [Test]
     public void Contains_WhenNullPoint_ShouldThrowArgumentNullException()
     {
         var circle = new Circle(new Point(5, 5), 3);
@@ -109,7 +110,7 @@ public sealed class CircleExtensionsTests
            .Throw<ArgumentNullException>();
     }
 
-    [Fact]
+    [Test]
     public void Contains_WhenPointIsCenter_ShouldReturnTrue()
     {
         var circle = new Circle(new Point(5, 5), 3);
@@ -120,7 +121,7 @@ public sealed class CircleExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Contains_WhenPointIsInside_ShouldReturnTrue()
     {
         var circle = new Circle(new Point(5, 5), 5);
@@ -131,7 +132,7 @@ public sealed class CircleExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Contains_WhenPointIsOnEdge_ShouldReturnTrue()
     {
         var circle = new Circle(new Point(5, 5), 5);
@@ -142,7 +143,7 @@ public sealed class CircleExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Contains_WhenPointIsOutside_ShouldReturnFalse()
     {
         var circle = new Circle(new Point(5, 5), 3);
@@ -153,7 +154,7 @@ public sealed class CircleExtensionsTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Contains_WhenSameCircle_ShouldReturnTrue()
     {
         var circle = new Circle(new Point(5, 5), 3);
@@ -163,7 +164,7 @@ public sealed class CircleExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Contains_WhenSmallerCircleInside_ShouldReturnTrue()
     {
         var circle = new Circle(new Point(5, 5), 5);
@@ -174,7 +175,7 @@ public sealed class CircleExtensionsTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void EdgeDistanceFrom_Should_Return_Positive_Value_When_Other_Point_Is_Outside_Circle()
     {
         // Arrange
@@ -189,7 +190,7 @@ public sealed class CircleExtensionsTests
                     .BeGreaterThan(0);
     }
 
-    [Fact]
+    [Test]
     public void EdgeDistanceFrom_Should_Return_Zero_When_Other_Point_Is_Center_Of_Circle()
     {
         // Arrange
@@ -204,7 +205,7 @@ public sealed class CircleExtensionsTests
                     .Be(0);
     }
 
-    [Fact]
+    [Test]
     public void EdgeDistanceFrom_Should_Return_Zero_When_Other_Point_Is_Inside_Circle()
     {
         // Arrange
@@ -219,7 +220,7 @@ public sealed class CircleExtensionsTests
                     .Be(0);
     }
 
-    [Fact]
+    [Test]
     public void EdgeToEdgeDistanceFrom_Should_Return_Positive_Value_When_Circles_Do_Not_Overlap()
     {
         // Arrange
@@ -234,7 +235,7 @@ public sealed class CircleExtensionsTests
                           .BeGreaterThan(0);
     }
 
-    [Fact]
+    [Test]
     public void EdgeToEdgeDistanceFrom_Should_Return_Zero_When_Circles_Overlap()
     {
         // Arrange
@@ -249,7 +250,7 @@ public sealed class CircleExtensionsTests
                           .Be(0);
     }
 
-    [Fact]
+    [Test]
     public void EdgeToEdgeDistanceFrom_Should_Return_Zero_When_Circles_Touch_Each_Other()
     {
         // Arrange
@@ -264,7 +265,7 @@ public sealed class CircleExtensionsTests
                           .Be(0);
     }
 
-    [Fact]
+    [Test]
     public void GetOutline_GivenCircle_ShouldReturnCorrectOutline()
     {
         var circle = new Circle(new Point(0, 0), 1);
@@ -286,7 +287,7 @@ public sealed class CircleExtensionsTests
                    });
     }
 
-    [Fact]
+    [Test]
     public void GetOutline_GivenCircleWithCenterOffset_ShouldReturnCorrectOutline()
     {
         var circle = new Circle(new Point(1, 1), 1);
@@ -308,7 +309,7 @@ public sealed class CircleExtensionsTests
                    });
     }
 
-    [Fact]
+    [Test]
     public void GetOutline_GivenLargeCircle_ShouldReturnCorrectOutline()
     {
         var circle = new Circle(new Point(0, 0), 2);
@@ -334,7 +335,7 @@ public sealed class CircleExtensionsTests
                    });
     }
 
-    [Fact]
+    [Test]
     public void GetPoints_GivenCircleWithRadiusOne_ShouldReturnFivePoints()
     {
         var circle = new Circle(new Point(0, 0), 1);
@@ -357,7 +358,7 @@ public sealed class CircleExtensionsTests
                   });
     }
 
-    [Fact]
+    [Test]
     public void GetPoints_GivenCircleWithRadiusTwo_ShouldReturnThirteenPoints()
     {
         var circle = new Circle(new Point(0, 0), 2);
@@ -388,7 +389,7 @@ public sealed class CircleExtensionsTests
                   });
     }
 
-    [Fact]
+    [Test]
     public void GetPoints_GivenCircleWithZeroRadius_ShouldReturnOnlyCenterPoint()
     {
         var circle = new Circle(new Point(0, 0), 0);
@@ -400,14 +401,10 @@ public sealed class CircleExtensionsTests
               .HaveCount(1);
 
         points.Should()
-              .BeEquivalentTo(
-                  new[]
-                  {
-                      new Point(0, 0)
-                  });
+              .BeEquivalentTo([new Point(0, 0)]);
     }
 
-    [Fact]
+    [Test]
     public void GetRandomPoint_Should_Generate_Points_Within_Circle()
     {
         // Arrange
@@ -430,7 +427,7 @@ public sealed class CircleExtensionsTests
         }
     }
 
-    [Fact]
+    [Test]
     public void GetRandomPoint_Should_Generate_Random_Points()
     {
         // Arrange
@@ -448,7 +445,7 @@ public sealed class CircleExtensionsTests
            .HaveCount(25);
     }
 
-    [Fact]
+    [Test]
     public void Intersects_ShouldReturnFalse_WhenCirclesDoNotIntersect()
     {
         // Arrange
@@ -463,7 +460,7 @@ public sealed class CircleExtensionsTests
                   .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Intersects_ShouldReturnTrue_WhenCircleContainsAnotherCircle()
     {
         // Arrange
@@ -478,7 +475,7 @@ public sealed class CircleExtensionsTests
                   .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Intersects_ShouldReturnTrue_WhenCirclesIntersect()
     {
         // Arrange

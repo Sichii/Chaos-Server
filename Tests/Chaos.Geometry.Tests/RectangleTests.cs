@@ -1,12 +1,13 @@
+#region
 using Chaos.Geometry.Abstractions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class RectangleTests
 {
-    [Fact]
+    [Test]
     public void Constructor_AdjustsWidthAndHeightForOddNumbers()
     {
         // Arrange
@@ -43,7 +44,7 @@ public sealed class RectangleTests
                  .Be(13);
     }
 
-    [Fact]
+    [Test]
     public void Constructor_CreatesRectangleWithCorrectCenterAndDimensions()
     {
         // Arrange
@@ -80,7 +81,7 @@ public sealed class RectangleTests
                  .Be(12);
     }
 
-    [Fact]
+    [Test]
     public void Rectangle_Constructor_CreatesRectangleWithGivenValues()
     {
         // Arrange
@@ -141,7 +142,7 @@ public sealed class RectangleTests
                      });
     }
 
-    [Fact]
+    [Test]
     public void Rectangle_Equals_ReturnsFalseWhenComparingWithDifferentType()
     {
         // Arrange
@@ -161,7 +162,7 @@ public sealed class RectangleTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Rectangle_Equals_ReturnsFalseWhenRectanglesAreNotEqual()
     {
         // Arrange
@@ -185,7 +186,7 @@ public sealed class RectangleTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Rectangle_Equals_ReturnsTrueWhenRectanglesAreEqual()
     {
         // Arrange
@@ -209,7 +210,7 @@ public sealed class RectangleTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Rectangle_GetEnumerator_ReturnsVerticesEnumerator()
     {
         // Arrange
@@ -235,7 +236,7 @@ public sealed class RectangleTests
                       .ContainInOrder(expectedVertices);
     }
 
-    [Fact]
+    [Test]
     public void Rectangle_GetHashCode_ReturnsConsistentHashCode()
     {
         // Arrange

@@ -1,12 +1,13 @@
+#region
 using Chaos.Geometry.EqualityComparers;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class RectangleEqualityComparerTests
 {
-    [Fact]
+    [Test]
     public void Equals_ReturnsFalse_WhenRectanglesAreNotEqual()
     {
         // Arrange
@@ -30,7 +31,7 @@ public sealed class RectangleEqualityComparerTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Equals_ReturnsTrue_WhenRectanglesAreEqual()
     {
         // Arrange
@@ -54,7 +55,7 @@ public sealed class RectangleEqualityComparerTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ReturnsDifferentHashCode_WhenRectanglesAreNotEqual()
     {
         // Arrange
@@ -79,7 +80,7 @@ public sealed class RectangleEqualityComparerTests
                  .NotBe(hashCode2);
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ReturnsSameHashCode_WhenRectanglesAreEqual()
     {
         // Arrange

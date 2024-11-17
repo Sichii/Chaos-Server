@@ -1,3 +1,4 @@
+#region
 using System.Diagnostics;
 using Chaos.DarkAges.Definitions;
 using Chaos.Formulae;
@@ -10,6 +11,7 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.LevelUp;
 using Chaos.Services.Servers.Options;
+#endregion
 
 namespace Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 
@@ -27,7 +29,7 @@ public class DefaultExperienceDistributionScript(ILogger<DefaultExperienceDistri
     public static IExperienceDistributionScript Create() => FunctionalScriptRegistry.Instance.Get<IExperienceDistributionScript>(Key);
 
     /// <inheritdoc />
-    public virtual void DistributeExperience(Creature killedCreature, params Aisling[] aislings)
+    public virtual void DistributeExperience(Creature killedCreature, params ICollection<Aisling> aislings)
     {
         var exp = ExperienceFormula.Calculate(killedCreature, aislings);
 
@@ -41,7 +43,12 @@ public class DefaultExperienceDistributionScript(ILogger<DefaultExperienceDistri
         {
             var stackTrace = new StackTrace(true).ToString();
 
-            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Experience, Topics.Actions.Add)
+            Logger.WithTopics(
+                      [
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Experience,
+                          Topics.Actions.Add
+                      ])
                   .WithProperty(aisling)
                   .WithProperty(stackTrace)
                   .LogError("Tried to give {Amount:N0} experience to {@AislingName}", amount, aisling.Name);
@@ -57,7 +64,12 @@ public class DefaultExperienceDistributionScript(ILogger<DefaultExperienceDistri
 
         aisling.SendActiveMessage($"You have gained {amount:N0} experience!");
 
-        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Experience, Topics.Actions.Add)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Experience,
+                      Topics.Actions.Add
+                  ])
               .WithProperty(aisling)
               .LogInformation("Aisling {@AislingName} has gained {Amount:N0} experience", aisling.Name, amount);
 
@@ -90,7 +102,12 @@ public class DefaultExperienceDistributionScript(ILogger<DefaultExperienceDistri
         {
             var stackTrace = new StackTrace(true).ToString();
 
-            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Experience, Topics.Actions.Remove)
+            Logger.WithTopics(
+                      [
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Experience,
+                          Topics.Actions.Remove
+                      ])
                   .WithProperty(aisling)
                   .WithProperty(stackTrace)
                   .LogError("Tried to take {Amount:N0} experience from {@AislingName}", amount, aisling.Name);
@@ -104,7 +121,12 @@ public class DefaultExperienceDistributionScript(ILogger<DefaultExperienceDistri
         if (!aisling.UserStatSheet.TrySubtractTotalExp(amount))
             return false;
 
-        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Experience, Topics.Actions.Remove)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Experience,
+                      Topics.Actions.Remove
+                  ])
               .WithProperty(aisling)
               .LogInformation("Aisling {@AislingName} has lost {Amount:N0} experience", aisling.Name, amount);
 

@@ -1,12 +1,13 @@
+#region
 using Chaos.Common.Utilities;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class MathExTests
 {
-    [Fact]
+    [Test]
     public void CalculatePercent_ShouldCalculatePercentBetweenTwoNumbers()
     {
         // Arrange
@@ -21,7 +22,7 @@ public sealed class MathExTests
               .Be(25);
     }
 
-    [Fact]
+    [Test]
     public void CalculatePercent_ShouldCalculatePercentBetweenTwoNumbers_ForDifferentNumericTypes()
     {
         // Arrange
@@ -36,7 +37,7 @@ public sealed class MathExTests
               .Be(25.0m);
     }
 
-    [Fact]
+    [Test]
     public void GetPercentOf_ShouldCalculatePercentageOfNumber()
     {
         // Arrange
@@ -51,7 +52,7 @@ public sealed class MathExTests
               .Be(10);
     }
 
-    [Fact]
+    [Test]
     public void GetPercentOf_ShouldCalculatePercentageOfNumber_ForDifferentNumericTypes()
     {
         // Arrange
@@ -66,7 +67,7 @@ public sealed class MathExTests
               .Be(10.0m);
     }
 
-    [Fact]
+    [Test]
     public void ScaleRange_ShouldScaleNumberFromOneRangeToAnother()
     {
         // Arrange
@@ -89,7 +90,7 @@ public sealed class MathExTests
               .Be(5);
     }
 
-    [Fact]
+    [Test]
     public void ScaleRange_ShouldScaleNumberFromOneRangeToAnother_ForDifferentNumericTypes()
     {
         // Arrange
@@ -112,7 +113,7 @@ public sealed class MathExTests
               .Be(5.0m);
     }
 
-    [Fact]
+    [Test]
     public void ScaleRange_ShouldScaleNumberFromOneRangeToAnother_WithNumericTypes()
     {
         // Arrange

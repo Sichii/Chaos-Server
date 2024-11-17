@@ -1,12 +1,13 @@
+#region
 using Chaos.Geometry.EqualityComparers;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class LocationEqualityComparerTests
 {
-    [Fact]
+    [Test]
     public void Equals_ReturnsFalse_WhenLocationsAreNotEqual()
     {
         // Arrange
@@ -21,7 +22,7 @@ public sealed class LocationEqualityComparerTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Equals_ReturnsTrue_WhenLocationsAreEqual()
     {
         // Arrange
@@ -36,7 +37,7 @@ public sealed class LocationEqualityComparerTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ReturnsDifferentHashCode_WhenLocationsAreNotEqual()
     {
         // Arrange
@@ -52,7 +53,7 @@ public sealed class LocationEqualityComparerTests
                  .NotBe(hashCode2);
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ReturnsSameHashCode_WhenLocationsAreEqual()
     {
         // Arrange

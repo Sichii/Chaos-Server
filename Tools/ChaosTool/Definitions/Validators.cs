@@ -1,16 +1,17 @@
-﻿using System.IO;
+﻿#region
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using System.Windows.Input;
+#endregion
 
 namespace ChaosTool.Definitions;
 
+// ReSharper disable once PartialTypeWithSinglePart
 public static partial class Validators
 {
-    private static readonly Regex NotANumberPattern = NotANumberRegex();
-
     [GeneratedRegex("[^0-9]+", RegexOptions.Compiled)]
-    private static partial Regex NotANumberRegex();
+    private static partial Regex NotANumberPattern { get; }
 
     public static void NumberValidationTextBox(object sender, TextCompositionEventArgs e) => e.Handled = NotANumberPattern.IsMatch(e.Text);
 

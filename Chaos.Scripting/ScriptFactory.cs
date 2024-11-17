@@ -1,3 +1,4 @@
+#region
 using System.Collections.Frozen;
 using Chaos.Extensions.Common;
 using Chaos.NLog.Logging.Definitions;
@@ -5,6 +6,7 @@ using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+#endregion
 
 namespace Chaos.Scripting;
 
@@ -81,7 +83,11 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
 
                     if (instance is not TScript tScript)
                     {
-                        Logger.WithTopics(Topics.Entities.Script, Topics.Actions.Create)
+                        Logger.WithTopics(
+                                  [
+                                      Topics.Entities.Script,
+                                      Topics.Actions.Create
+                                  ])
                               .WithProperty(subject)
                               .LogError("Script obtained from key {@ScriptKey} is not of type {@TypeName}", scriptKey, TypeName);
 
@@ -108,7 +114,11 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
             var scriptKey = ScriptBase.GetScriptKey(type);
             ret[scriptKey] = type;
 
-            Logger.WithTopics(Topics.Entities.Script, Topics.Actions.Load)
+            Logger.WithTopics(
+                      [
+                          Topics.Entities.Script,
+                          Topics.Actions.Load
+                      ])
                   .LogTrace(
                       "Cached {@TypeName} of type {@Type} with key {@ScriptKey}",
                       TypeName,
@@ -116,7 +126,11 @@ public sealed class ScriptFactory<TScript, TScripted> : IScriptFactory<TScript, 
                       scriptKey);
         }
 
-        Logger.WithTopics(Topics.Entities.Script, Topics.Actions.Load)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Script,
+                      Topics.Actions.Load
+                  ])
               .LogInformation("{Count} {@TScriptName}s loaded", ret.Count, TypeName);
 
         return ret;

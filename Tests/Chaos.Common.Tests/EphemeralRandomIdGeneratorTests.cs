@@ -1,12 +1,13 @@
+#region
 using Chaos.Common.Identity;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class EphemeralRandomIdGeneratorTests
 {
-    [Fact]
+    [Test]
     public void NextId_ShouldGenerateIdsOfCorrectType()
     {
         // Arrange
@@ -20,7 +21,7 @@ public sealed class EphemeralRandomIdGeneratorTests
           .BeOfType(typeof(int));
     }
 
-    [Fact]
+    [Test]
     public void NextId_ShouldGenerateNonSequentialIds()
     {
         // Arrange
@@ -36,7 +37,7 @@ public sealed class EphemeralRandomIdGeneratorTests
            .NotBeInAscendingOrder();
     }
 
-    [Fact]
+    [Test]
     public void NextId_ShouldGenerateUniqueIds()
     {
         // Arrange

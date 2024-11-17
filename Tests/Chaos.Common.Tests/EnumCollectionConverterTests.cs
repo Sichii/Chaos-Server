@@ -1,3 +1,4 @@
+#region
 using System.Text;
 using System.Text.Json;
 using Chaos.Collections.Common;
@@ -5,13 +6,13 @@ using Chaos.Common.Converters;
 using Chaos.Testing.Infrastructure.Definitions;
 using Chaos.Testing.Infrastructure.Extensions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class EnumCollectionConverterTests
 {
-    [Fact]
+      [Test]
     public void Read_ShouldDeserializeDictionaryAndCreateEnumCollection()
     {
         // Arrange
@@ -49,7 +50,7 @@ public sealed class EnumCollectionConverterTests
                       .Be(SampleEnum2.Value2);
     }
 
-    [Fact]
+      [Test]
     public void Write_ShouldSerializeEnumCollectionAsDictionary()
     {
         // Arrange

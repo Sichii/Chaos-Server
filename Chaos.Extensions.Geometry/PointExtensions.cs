@@ -1,8 +1,10 @@
-﻿using System.Runtime.CompilerServices;
+﻿#region
+using System.Runtime.CompilerServices;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Geometry.EqualityComparers;
+#endregion
 
 namespace Chaos.Extensions.Geometry;
 
@@ -34,8 +36,8 @@ public static class PointExtensions
     ///     starting point. This is because the forward edges and the center of the cone both extend the same number of spaces
     ///     in the given direction.
     /// </remarks>
-    public static IEnumerable<Point> ConalSearch<TPoint>(this TPoint point, Direction direction, int maxDistance)
-        where TPoint: struct, IPoint
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> ConalSearch(this Point point, Direction direction, int maxDistance)
     {
         if (direction == Direction.Invalid)
             throw new ArgumentOutOfRangeException(nameof(direction), "Direction cannot be invalid");
@@ -49,6 +51,14 @@ public static class PointExtensions
             foreach (var pt in edge1.GetDirectPath(edge2))
                 yield return pt;
         }
+    }
+
+    /// <inheritdoc cref="ConalSearch(Point, Direction, int)" />
+    public static IEnumerable<Point> ConalSearch(this IPoint point, Direction direction, int maxDistance)
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        return ConalSearch(Point.From(point), direction, maxDistance);
     }
 
     /// <summary>
@@ -70,10 +80,9 @@ public static class PointExtensions
     /// </returns>
     /// <exception cref="ArgumentOutOfRangeException">
     /// </exception>
-    public static Point DirectionalOffset<TPoint>(this TPoint point, Direction direction, int distance = 1) where TPoint: IPoint
+    [OverloadResolutionPriority(1)]
+    public static Point DirectionalOffset(this Point point, Direction direction, int distance = 1)
     {
-        ArgumentNullException.ThrowIfNull(point);
-
         if (direction == Direction.Invalid)
             throw new ArgumentOutOfRangeException(nameof(direction));
 
@@ -86,6 +95,14 @@ public static class PointExtensions
             Direction.Left  => new Point(point.X - distance, point.Y),
             _               => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
         };
+    }
+
+    /// <inheritdoc cref="DirectionalOffset(Point, Direction, int)" />
+    public static Point DirectionalOffset(this IPoint point, Direction direction, int distance = 1)
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        return DirectionalOffset(Point.From(point), direction, distance);
     }
 
     /// <summary>
@@ -102,13 +119,9 @@ public static class PointExtensions
     ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" />  <paramref name="other" /> would need to face
     ///     to be facing <paramref name="point" />
     /// </returns>
-    public static Direction DirectionalRelationTo<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
-        where TPoint2: IPoint
+    [OverloadResolutionPriority(1)]
+    public static Direction DirectionalRelationTo(this Point point, Point other)
     {
-        ArgumentNullException.ThrowIfNull(point);
-
-        ArgumentNullException.ThrowIfNull(other);
-
         var direction = Direction.Invalid;
         var degree = 0;
 
@@ -143,6 +156,16 @@ public static class PointExtensions
         return direction;
     }
 
+    /// <inheritdoc cref="DirectionalRelationTo(Point, Point)" />
+    public static Direction DirectionalRelationTo(this IPoint point, IPoint other)
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        ArgumentNullException.ThrowIfNull(other);
+
+        return DirectionalRelationTo(Point.From(point), Point.From(other));
+    }
+
     /// <summary>
     ///     Determines the distances between this <see cref="Chaos.Geometry.Abstractions.IPoint" /> and another
     ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
@@ -155,17 +178,69 @@ public static class PointExtensions
     /// <returns>
     ///     The manhattan distance between the two given points
     /// </returns>
+    [OverloadResolutionPriority(1), MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double EuclideanDistanceFrom(this Point point, Point other)
+    {
+        var xDiff = other.X - point.X;
+        var yDiff = other.Y - point.Y;
+
+        return Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+    }
+
+    /// <inheritdoc cref="EuclideanDistanceFrom(Point, Point)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static double EuclideanDistanceFrom<TPoint>(this TPoint point, TPoint other) where TPoint: IPoint
+    public static double EuclideanDistanceFrom(this IPoint point, IPoint other)
     {
         ArgumentNullException.ThrowIfNull(point);
 
         ArgumentNullException.ThrowIfNull(other);
 
-        var xDiff = other.X - point.X;
-        var yDiff = other.Y - point.Y;
+        return EuclideanDistanceFrom(Point.From(point), Point.From(other));
+    }
 
-        return Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+    /// <summary>
+    ///     Flood fills in a given point set starting at a given point
+    /// </summary>
+    /// <param name="points">
+    ///     All possible points
+    /// </param>
+    /// <param name="start">
+    ///     The starting point
+    /// </param>
+    /// <returns>
+    ///     A sequence of all touching points contained within the given sequence starting with the given start point
+    /// </returns>
+    public static IEnumerable<Point> FloodFill(this IEnumerable<Point> points, Point start)
+    {
+        var allPoints = points.ToHashSet();
+
+        var shape = new HashSet<Point>
+        {
+            start
+        };
+
+        var discoveryQueue = new Stack<Point>();
+        discoveryQueue.Push(start);
+
+        yield return start;
+
+        while (discoveryQueue.TryPop(out var popped))
+            foreach (var neighbor in GetNeighbors(popped, allPoints))
+                if (shape.Add(neighbor))
+                {
+                    yield return neighbor;
+
+                    discoveryQueue.Push(neighbor);
+                }
+
+        yield break;
+
+        static IEnumerable<Point> GetNeighbors(Point point, HashSet<Point> localAllPoints)
+        {
+            foreach (var cardinalPoint in point.GenerateCardinalPoints())
+                if (localAllPoints.TryGetValue(cardinalPoint, out var existingPoint))
+                    yield return existingPoint;
+        }
     }
 
     /// <summary>
@@ -212,8 +287,8 @@ public static class PointExtensions
         static IEnumerable<IPoint> GetNeighbors(IPoint point, HashSet<IPoint> localAllPoints)
         {
             foreach (var cardinalPoint in point.GenerateCardinalPoints())
-                if (localAllPoints.TryGetValue(cardinalPoint, out var adjacentDoor))
-                    yield return adjacentDoor;
+                if (localAllPoints.TryGetValue(cardinalPoint, out var existingPoint))
+                    yield return existingPoint;
         }
     }
 
@@ -243,14 +318,13 @@ public static class PointExtensions
     /// var points = new Point(0, 0).GenerateCardinalPoints();
     /// </code>
     /// </example>
-    public static IEnumerable<Point> GenerateCardinalPoints<TPoint>(this TPoint start, Direction direction = Direction.All, int radius = 1)
-        where TPoint: IPoint
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> GenerateCardinalPoints(this Point start, Direction direction = Direction.All, int radius = 1)
     {
         if (direction == Direction.Invalid)
             yield break;
 
-        if (radius <= 0)
-            throw new ArgumentOutOfRangeException($"{nameof(radius)} must be positive");
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(radius);
 
         for (var i = 1; i <= radius; i++)
             if (direction == Direction.All)
@@ -261,6 +335,14 @@ public static class PointExtensions
                 yield return start.DirectionalOffset(Direction.Left, i);
             } else
                 yield return start.DirectionalOffset(direction, i);
+    }
+
+    /// <inheritdoc cref="GenerateCardinalPoints(Point, Direction, int)" />
+    public static IEnumerable<Point> GenerateCardinalPoints(this IPoint start, Direction direction = Direction.All, int radius = 1)
+    {
+        ArgumentNullException.ThrowIfNull(start);
+
+        return GenerateCardinalPoints(Point.From(start), direction, radius);
     }
 
     /// <summary>
@@ -302,10 +384,8 @@ public static class PointExtensions
     ///     var points = new Point(0, 0).GenerateInterCardinalPoints(Direction.All, 3);
     /// </code>
     /// </example>
-    public static IEnumerable<Point> GenerateIntercardinalPoints<TPoint>(
-        this TPoint start,
-        Direction direction = Direction.All,
-        int radius = 1) where TPoint: IPoint
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> GenerateIntercardinalPoints(this Point start, Direction direction = Direction.All, int radius = 1)
     {
         if (direction == Direction.Invalid)
             yield break;
@@ -345,6 +425,14 @@ public static class PointExtensions
             }
     }
 
+    /// <inheritdoc cref="GenerateIntercardinalPoints(Point, Direction, int)" />
+    public static IEnumerable<Point> GenerateIntercardinalPoints(this IPoint start, Direction direction = Direction.All, int radius = 1)
+    {
+        ArgumentNullException.ThrowIfNull(start);
+
+        return GenerateIntercardinalPoints(Point.From(start), direction, radius);
+    }
+
     /// <summary>
     ///     Creates an enumerable list of points representing a path between two given points, and returns it.
     /// </summary>
@@ -357,11 +445,11 @@ public static class PointExtensions
     /// <remarks>
     ///     Does not return the start point, only the points between the start and end, as well as the end point itself
     /// </remarks>
-    public static IEnumerable<Point> GetDirectPath<TPoint1, TPoint2>(this TPoint1 start, TPoint2 end) where TPoint1: IPoint
-        where TPoint2: IPoint
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> GetDirectPath(this Point start, Point end)
     {
-        var current = Point.From(start);
-        var endPoint = Point.From(end);
+        var current = start;
+        var endPoint = end;
 
         yield return current;
 
@@ -371,6 +459,16 @@ public static class PointExtensions
 
             yield return Point.From(current);
         }
+    }
+
+    /// <inheritdoc cref="GetDirectPath(Point, Point)" />
+    public static IEnumerable<Point> GetDirectPath(this IPoint start, IPoint end)
+    {
+        ArgumentNullException.ThrowIfNull(start);
+
+        ArgumentNullException.ThrowIfNull(end);
+
+        return GetDirectPath(Point.From(start), Point.From(end));
     }
 
     /// <summary>
@@ -394,12 +492,9 @@ public static class PointExtensions
     ///         false
     ///     </c>
     /// </returns>
-    public static bool IsInterCardinalTo<TPoint>(this TPoint point, TPoint other, Direction direction) where TPoint: IPoint
+    [OverloadResolutionPriority(1)]
+    public static bool IsInterCardinalTo(this Point point, Point other, Direction direction)
     {
-        ArgumentNullException.ThrowIfNull(point);
-
-        ArgumentNullException.ThrowIfNull(other);
-
         var xDiff = point.X - other.X;
         var yDiff = point.Y - other.Y;
 
@@ -417,6 +512,16 @@ public static class PointExtensions
         };
     }
 
+    /// <inheritdoc cref="IsInterCardinalTo(Point, Point, Direction)" />
+    public static bool IsInterCardinalTo(this IPoint point, IPoint other, Direction direction)
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        ArgumentNullException.ThrowIfNull(other);
+
+        return IsInterCardinalTo(Point.From(point), Point.From(other), direction);
+    }
+
     /// <summary>
     ///     Determines the distances between this <see cref="Chaos.Geometry.Abstractions.IPoint" /> and another
     ///     <see cref="Chaos.Geometry.Abstractions.IPoint" />
@@ -429,15 +534,18 @@ public static class PointExtensions
     /// <returns>
     ///     The manhattan distance between the two given points
     /// </returns>
+    [OverloadResolutionPriority(1), MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int ManhattanDistanceFrom(this Point point, Point other) => Math.Abs(point.X - other.X) + Math.Abs(point.Y - other.Y);
+
+    /// <inheritdoc cref="ManhattanDistanceFrom(Point, Point)" />
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int ManhattanDistanceFrom<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
-        where TPoint2: IPoint
+    public static int ManhattanDistanceFrom(this IPoint point, IPoint other)
     {
         ArgumentNullException.ThrowIfNull(point);
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return Math.Abs(point.X - other.X) + Math.Abs(point.Y - other.Y);
+        return ManhattanDistanceFrom(Point.From(point), Point.From(other));
     }
 
     /// <summary>
@@ -452,16 +560,22 @@ public static class PointExtensions
     /// <returns>
     ///     A new <see cref="Chaos.Geometry.Point" /> that has been offset in the direction of <paramref name="other" />
     /// </returns>
-    public static Point OffsetTowards<TPoint1, TPoint2>(this TPoint1 point, TPoint2 other) where TPoint1: IPoint
-                                                                                           where TPoint2: IPoint
+    [OverloadResolutionPriority(1)]
+    public static Point OffsetTowards(this Point point, Point other)
+    {
+        var direction = other.DirectionalRelationTo(point);
+
+        return point.DirectionalOffset(direction);
+    }
+
+    /// <inheritdoc cref="OffsetTowards(Point, Point)" />
+    public static Point OffsetTowards(this IPoint point, IPoint other)
     {
         ArgumentNullException.ThrowIfNull(point);
 
         ArgumentNullException.ThrowIfNull(other);
 
-        var direction = other.DirectionalRelationTo(point);
-
-        return point.DirectionalOffset(direction);
+        return OffsetTowards(Point.From(point), Point.From(other));
     }
 
     /// <summary>
@@ -480,7 +594,8 @@ public static class PointExtensions
     ///     drawn perfectly between the two points. Any point the line crosses over will be returned.
     ///     <br />
     /// </remarks>
-    public static IEnumerable<Point> RayTraceTo<TPoint>(this TPoint start, TPoint end) where TPoint: IPoint
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> RayTraceTo(this Point start, Point end)
     {
         var x0 = start.X;
         var y0 = start.Y;
@@ -513,6 +628,16 @@ public static class PointExtensions
         }
     }
 
+    /// <inheritdoc cref="RayTraceTo(Point, Point)" />
+    public static IEnumerable<Point> RayTraceTo(this IPoint start, IPoint end)
+    {
+        ArgumentNullException.ThrowIfNull(start);
+
+        ArgumentNullException.ThrowIfNull(end);
+
+        return RayTraceTo(Point.From(start), Point.From(end));
+    }
+
     /// <summary>
     ///     Lazily generates points around a given point. The search expands outwards from the given point until it reaches the
     ///     specified max distance
@@ -526,7 +651,8 @@ public static class PointExtensions
     /// <remarks>
     ///     The search starts from <see cref="Chaos.Geometry.Abstractions.Definitions.Direction.Up" /> and searches clock-wise
     /// </remarks>
-    public static IEnumerable<Point> SpiralSearch<TPoint>(this TPoint point, int maxRadius = byte.MaxValue) where TPoint: IPoint
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> SpiralSearch(this Point point, int maxRadius = byte.MaxValue)
     {
         var currentPoint = Point.From(point);
         var radius = 1;
@@ -571,6 +697,45 @@ public static class PointExtensions
         }
     }
 
+    /// <inheritdoc cref="SpiralSearch(Point, int)" />
+    public static IEnumerable<Point> SpiralSearch(this IPoint point, int maxRadius = byte.MaxValue)
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        return SpiralSearch(Point.From(point), maxRadius);
+    }
+
+    /// <summary>
+    ///     Orders points by their X or Y values, based on the direction given. The output of this method will always order
+    ///     points in the same order.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> WithConsistentDirectionBias(this IEnumerable<Point> points, Direction direction)
+    {
+        ArgumentNullException.ThrowIfNull(points);
+
+        if (direction is Direction.Invalid or Direction.All)
+            throw new ArgumentOutOfRangeException(nameof(direction));
+
+        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+        return direction switch
+        {
+            Direction.Up => points.OrderBy(p => p.Y)
+                                  .ThenBy(p => p.X),
+            Direction.Right => points.OrderByDescending(p => p.X)
+                                     .ThenByDescending(p => p.Y),
+            Direction.Down => points.OrderByDescending(p => p.Y)
+                                    .ThenByDescending(p => p.X),
+            Direction.Left => points.OrderBy(p => p.X)
+                                    .ThenBy(p => p.Y),
+            _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+        };
+    }
+
     /// <summary>
     ///     Orders points by their X or Y values, based on the direction given. The output of this method will always order
     ///     points in the same order.
@@ -599,6 +764,32 @@ public static class PointExtensions
             Direction.Left => points.OrderBy(p => p.X)
                                     .ThenBy(p => p.Y),
             _ => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
+        };
+    }
+
+    /// <summary>
+    ///     Orders points by their X or Y values, based on the direction given.
+    /// </summary>
+    /// <exception cref="ArgumentNullException">
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> WithDirectionBias(this IEnumerable<Point> points, Direction direction)
+    {
+        ArgumentNullException.ThrowIfNull(points);
+
+        if (direction is Direction.Invalid or Direction.All)
+            throw new ArgumentOutOfRangeException(nameof(direction));
+
+        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+        return direction switch
+        {
+            Direction.Up    => points.OrderBy(p => p.Y),
+            Direction.Right => points.OrderByDescending(p => p.X),
+            Direction.Down  => points.OrderByDescending(p => p.Y),
+            Direction.Left  => points.OrderBy(p => p.X),
+            _               => throw new ArgumentOutOfRangeException(nameof(direction), direction, null)
         };
     }
 

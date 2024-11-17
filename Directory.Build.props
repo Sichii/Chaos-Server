@@ -1,7 +1,7 @@
 <Project>
     <PropertyGroup>
-        <LangVersion>12.0</LangVersion>
-        <TargetFramework>net8.0</TargetFramework>
+        <LangVersion>13.0</LangVersion>
+        <TargetFramework>net9.0</TargetFramework>
         <TieredPGO>true</TieredPGO>
         <TieredCompilation>true</TieredCompilation>
         <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
@@ -15,7 +15,7 @@
     <PropertyGroup>
         <Company>Chaotic Minds</Company>
         <NeutralLanguage>en</NeutralLanguage>
-        <Copyright>Copyright @ Sichi 2018-2023</Copyright>
+        <Copyright>Copyright @ Sichi 2024</Copyright>
         <PackageProjectUrl>https://docs.chaos-server.net/</PackageProjectUrl>
         <RepositoryUrl>https://github.com/Sichii/Chaos-Server</RepositoryUrl>
         <IncludeSymbols>true</IncludeSymbols>

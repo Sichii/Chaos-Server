@@ -1,14 +1,15 @@
+#region
 using System.Text;
 using System.Text.Json;
 using Chaos.Geometry.JsonConverters;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class RectangleConverterTests
 {
-    [Fact]
+    [Test]
     public void Read_ShouldReturnRectangle_WhenInputIsValid()
     {
         const string JSON_STRING = "{\"Top\": 1, \"Left\": 2, \"Width\": 3, \"Height\": 4}";
@@ -27,7 +28,7 @@ public sealed class RectangleConverterTests
                          4));
     }
 
-    [Fact]
+    [Test]
     public void Read_ShouldThrowInvalidOperationException_WhenInputIsInvalid()
     {
         const string JSON_STRING = "{\"Left\": \"abcd\"}";
@@ -48,7 +49,7 @@ public sealed class RectangleConverterTests
           .NotBeNull();
     }
 
-    [Fact]
+    [Test]
     public void Write_ShouldWriteJson_WhenRectangleIsValid()
     {
         var rectangle = new Rectangle(

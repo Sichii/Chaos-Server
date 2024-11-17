@@ -1,8 +1,10 @@
+#region
 using Chaos.Collections;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.Templates;
 using Chaos.Models.World.Abstractions;
+#endregion
 
 namespace Chaos.Models.World;
 
@@ -47,7 +49,7 @@ public sealed class Door(
     }
 
     public override bool ShouldRegisterClick(uint fromId)
-        => !LastClicked.Any()
+        => LastClicked.IsEmpty
            || (DateTime.UtcNow.Subtract(LastClicked.Values.Max())
                        .TotalMilliseconds
                > 1500);

@@ -1,7 +1,8 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.Testing.Infrastructure.Definitions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable UnusedMember.Local
 
@@ -9,7 +10,7 @@ namespace Chaos.Common.Tests;
 
 public sealed class FlagCollectionTests
 {
-    [Fact]
+    [Test]
     public void AddFlag_ShouldAddFlagToExistingFlagOfTheSameType_WhenTypeIsFlagEnum()
     {
         // Arrange
@@ -31,7 +32,7 @@ public sealed class FlagCollectionTests
                   .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void AddFlag_ShouldSetFlag_WhenTypeIsFlagEnumAndFlagDoesNotExist()
     {
         // Arrange
@@ -47,7 +48,7 @@ public sealed class FlagCollectionTests
                   .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void AddFlag_ShouldThrowException_WhenTypeIsNotFlagEnum()
     {
         // Arrange
@@ -63,7 +64,7 @@ public sealed class FlagCollectionTests
            .WithMessage($"Enum of type {typeof(SampleEnum1).FullName} is not a flag enum. Use the enum collection.");
     }
 
-    [Fact]
+    [Test]
     public void GetFlag_ShouldReturnFlagValue_WhenTypeIsFlagEnumAndFlagExists()
     {
         // Arrange
@@ -79,7 +80,7 @@ public sealed class FlagCollectionTests
               .Be(FLAG);
     }
 
-    [Fact]
+    [Test]
     public void GetFlag_ShouldThrowException_WhenFlagDoesNotExist()
     {
         // Arrange
@@ -94,7 +95,7 @@ public sealed class FlagCollectionTests
            .WithMessage($"Enum of type {typeof(SampleFlag1).FullName} was not found in the collection");
     }
 
-    [Fact]
+    [Test]
     public void GetFlag_ShouldThrowException_WhenTypeIsNotFlagEnum()
     {
         // Arrange
@@ -109,7 +110,7 @@ public sealed class FlagCollectionTests
            .WithMessage($"Enum of type {typeof(SampleEnum1).FullName} is not a flag enum. Use the enum collection.");
     }
 
-    [Fact]
+    [Test]
     public void HasFlag_ShouldReturnFalse_WhenTypeIsFlagEnumAndFlagDoesNotExist()
     {
         // Arrange
@@ -124,7 +125,7 @@ public sealed class FlagCollectionTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void HasFlag_ShouldReturnTrue_WhenTypeIsFlagEnumAndFlagExists()
     {
         // Arrange
@@ -140,7 +141,7 @@ public sealed class FlagCollectionTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void HasFlag_ShouldThrowException_WhenTypeIsNotFlagEnum()
     {
         // Arrange
@@ -156,7 +157,7 @@ public sealed class FlagCollectionTests
            .WithMessage($"Enum of type {typeof(SampleEnum1).FullName} is not a flag enum. Use the enum collection.");
     }
 
-    [Fact]
+    [Test]
     public void RemoveFlag_ShouldNotThrowException_WhenTypeIsNotFlagEnum()
     {
         // Arrange
@@ -171,7 +172,7 @@ public sealed class FlagCollectionTests
            .NotThrow();
     }
 
-    [Fact]
+    [Test]
     public void RemoveFlag_ShouldRemoveFlagFromExistingFlagOfTheSameType_WhenTypeIsFlagEnum()
     {
         // Arrange
@@ -197,7 +198,7 @@ public sealed class FlagCollectionTests
                   .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void TryGetFlag_ShouldReturnFalse_WhenTypeIsFlagEnumAndFlagDoesNotExist()
     {
         // Arrange
@@ -211,7 +212,7 @@ public sealed class FlagCollectionTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void TryGetFlag_ShouldReturnTrueAndSetFlagValue_WhenTypeIsFlagEnumAndFlagExists()
     {
         // Arrange
@@ -230,7 +231,7 @@ public sealed class FlagCollectionTests
              .Be(FLAG);
     }
 
-    [Fact]
+    [Test]
     public void TryGetFlag_ShouldThrowException_WhenTypeIsNotFlagEnum()
     {
         // Arrange

@@ -1,9 +1,10 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
 using Moq;
-using Xunit;
+#endregion
 
 namespace Chaos.Messaging.Tests;
 
@@ -12,7 +13,7 @@ public sealed class SubscriberDetailsTests
     private readonly Mock<IChannelSubscriber> MockChannelSubscriber1 = MockChannelSubscriber.Create();
     private readonly Mock<IChannelSubscriber> MockChannelSubscriber2 = MockChannelSubscriber.Create();
 
-    [Fact]
+    [Test]
     public void GetHashCode_ShouldBeBasedOnSubscriber()
     {
         var details1 = new SubscriberDetails(MockChannelSubscriber1.Object);
@@ -23,7 +24,7 @@ public sealed class SubscriberDetailsTests
                 .Be(details2.GetHashCode());
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ShouldDifferForDifferentSubscribers()
     {
         var details1 = new SubscriberDetails(MockChannelSubscriber1.Object);
@@ -34,7 +35,7 @@ public sealed class SubscriberDetailsTests
                 .NotBe(details2.GetHashCode());
     }
 
-    [Fact]
+    [Test]
     public void SubscriberDetails_EqualityShouldBeBasedOnSubscriber()
     {
         var details1 = new SubscriberDetails(MockChannelSubscriber1.Object, MessageColor.Blue);
@@ -45,7 +46,7 @@ public sealed class SubscriberDetailsTests
                 .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void SubscriberDetails_EqualityShouldFailForDifferentSubscribers()
     {
         var details1 = new SubscriberDetails(MockChannelSubscriber1.Object);
@@ -56,7 +57,7 @@ public sealed class SubscriberDetailsTests
                 .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void SubscriberDetails_EqualityShouldNotBeBasedOnColorOverride()
     {
         var details1 = new SubscriberDetails(MockChannelSubscriber1.Object, MessageColor.Blue);
@@ -67,13 +68,13 @@ public sealed class SubscriberDetailsTests
                 .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void SubscriberDetails_ShouldNotBeEqualToNull()
         => new SubscriberDetails(MockChannelSubscriber1.Object).Equals(null)
                                                                .Should()
                                                                .BeFalse();
 
-    [Fact]
+    [Test]
     public void SubscriberDetails_ShouldStoreProvidedValues()
     {
         var details = new SubscriberDetails(MockChannelSubscriber1.Object, MessageColor.Blue);

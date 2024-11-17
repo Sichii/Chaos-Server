@@ -1,3 +1,4 @@
+#region
 using Chaos.Common.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
@@ -8,6 +9,7 @@ using Chaos.Schemas.Templates;
 using Chaos.Scripting.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -60,7 +62,7 @@ public sealed class SkillMapperProfile(ISimpleCache simpleCache, IScriptProvider
         {
             UniqueId = obj.UniqueId,
             ElapsedMs = obj.Elapsed.HasValue ? Convert.ToInt32(obj.Elapsed.Value.TotalMilliseconds) : null,
-            ScriptKeys = extraScriptKeys.Any() ? extraScriptKeys : null,
+            ScriptKeys = extraScriptKeys.Count != 0 ? extraScriptKeys : null,
             TemplateKey = obj.Template.TemplateKey,
             Slot = obj.Slot,
             Level = obj.Template.LevelsUp ? obj.Level : null,

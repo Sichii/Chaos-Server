@@ -1,3 +1,4 @@
+#region
 using Chaos.Cryptography;
 using Chaos.Definitions;
 using Chaos.Models.Map;
@@ -10,6 +11,7 @@ using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace Chaos.Services.Storage;
 
@@ -42,10 +44,18 @@ public sealed class ExpiringMapTemplateCache : ExpiringFileCache<MapTemplate, Ma
         var key = entry.Key.ToString();
         var keyActual = DeconstructKeyForType(key!);
 
-        Logger.WithTopics(Topics.Entities.MapTemplate, Topics.Actions.Load)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.MapTemplate,
+                      Topics.Actions.Load
+                  ])
               .LogDebug("Creating new {@TypeName} entry with key {@Key}", nameof(MapTemplate), key);
 
-        var metricsLogger = Logger.WithTopics(Topics.Entities.MapTemplate, Topics.Actions.Load)
+        var metricsLogger = Logger.WithTopics(
+                                      [
+                                          Topics.Entities.MapTemplate,
+                                          Topics.Actions.Load
+                                      ])
                                   .WithMetrics();
 
         if (Options.Expires)

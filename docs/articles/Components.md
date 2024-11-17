@@ -92,7 +92,8 @@ public class MyComponent : IComponent
 
 Components can share variables with each other via the `ComponentVars` object. Some examples of this
 are `vars.GetPoints()` and `vars.GetTargets<T>()`. These are populated by another component,
-the [GetTargetsComponent](<xref:Chaos.Scripting.Components.GetTargetsComponent`1>). The only caveat is, any
+the [GetTargetsComponent](<xref:Chaos.Scripting.Components.AbilityComponents.GetTargetsAbilityComponent`1>). The only
+caveat is, any
 components that use variables populated by another component must be executed after that component.
 
 ```csharp

@@ -1,3 +1,4 @@
+#region
 using Chaos.Common.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
@@ -6,6 +7,7 @@ using Chaos.Scripting.Components.Abstractions;
 using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.ReactorTileScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.Components.AbilityComponents;
 
@@ -33,10 +35,7 @@ public struct CascadingAbilityComponent<TTileScript> : IComponent where TTileScr
                 context.TargetMap,
                 point,
                 false,
-                new[]
-                {
-                    scriptKey
-                },
+                [scriptKey],
                 options.CascadeScriptVars,
                 context.Source);
 

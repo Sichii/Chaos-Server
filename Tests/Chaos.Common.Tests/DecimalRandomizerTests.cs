@@ -1,7 +1,8 @@
+#region
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable ArrangeAttributes
 
@@ -9,7 +10,7 @@ namespace Chaos.Common.Tests;
 
 public sealed class DecimalRandomizerTests
 {
-    [Fact]
+    [Test]
     public void PickRandomWeightedSingleOrDefault_ChoicesAndWeights_ShouldOccasionallyReturnNull()
     {
         var choices = new List<string>
@@ -39,7 +40,7 @@ public sealed class DecimalRandomizerTests
                  .BeInRange(1, 5000);
     }
 
-    [Fact]
+    [Test]
     public void PickRandomWeightedSingleOrDefault_WeightedChoices_ShouldOccasionallyReturnNull()
     {
         var weightedChoices = new List<KeyValuePair<string, decimal>>
@@ -64,7 +65,7 @@ public sealed class DecimalRandomizerTests
                  .BeInRange(1, 5000);
     }
 
-    [Fact]
+    [Test]
     public void RollChance_GivenChance_ShouldReturnTrueAtLeastOnce()
     {
         var success = false;
@@ -81,7 +82,7 @@ public sealed class DecimalRandomizerTests
                .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void RollRange_GivenBaseAndVariance_ShouldReturnNumberWithinRange()
     {
         const decimal BASE_VALUE = 100m;
@@ -96,10 +97,10 @@ public sealed class DecimalRandomizerTests
         }
     }
 
-    [Theory]
-    [InlineData(100, 0.1, 90)]
-    [InlineData(100, 0.5, 50)]
-    [InlineData(100, 1, 0)]
+    [Test]
+    [Arguments(100, 0.1, 90)]
+    [Arguments(100, 0.5, 50)]
+    [Arguments(100, 1, 0)]
     public void RollRange_NegativeRandomization_ReturnsWithinExpectedRange(decimal baseValue, decimal variancePct, decimal expectedMin)
     {
         // Repeat the test 1000 times to make sure we cover as many random values as possible
@@ -112,10 +113,10 @@ public sealed class DecimalRandomizerTests
         }
     }
 
-    [Theory]
-    [InlineData(100, 0.1, 110)]
-    [InlineData(100, 0.5, 150)]
-    [InlineData(100, 1, 200)]
+    [Test]
+    [Arguments(100, 0.1, 110)]
+    [Arguments(100, 0.5, 150)]
+    [Arguments(100, 1, 200)]
     public void RollRange_PositiveRandomization_ReturnsWithinExpectedRange(decimal baseValue, decimal variancePct, decimal expectedMax)
     {
         // Repeat the test 1000 times to make sure we cover as many random values as possible

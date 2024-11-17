@@ -1,12 +1,13 @@
+#region
 using Chaos.Common.Utilities;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class RandomizerTests
 {
-    [Fact]
+    [Test]
     public void PickRandom_ShouldBeAbleToReturnAnyElementFromCollection()
     {
         var sampleList = new List<int>
@@ -30,7 +31,7 @@ public sealed class RandomizerTests
                    .BeEquivalentTo(sampleList);
     }
 
-    [Fact]
+    [Test]
     public void PickRandom_ShouldReturnElementFromCollection()
     {
         var sampleList = new List<int>
@@ -52,7 +53,7 @@ public sealed class RandomizerTests
         }
     }
 
-    [Fact]
+    [Test]
     public void PickRandomWeighted_DecimalWeights_ReturnsElementsInProportionalDistribution()
     {
         // Arrange
@@ -98,7 +99,7 @@ public sealed class RandomizerTests
         }
     }
 
-    [Fact]
+    [Test]
     public void PickRandomWeighted_IEnumerableOfChoicesAndWeights_ReturnsElementsInProportionalDistribution()
     {
         // Arrange
@@ -151,7 +152,7 @@ public sealed class RandomizerTests
         }
     }
 
-    [Fact]
+    [Test]
     public void PickRandomWeighted_IntWeights_ReturnsElementsInProportionalDistribution()
     {
         // Arrange

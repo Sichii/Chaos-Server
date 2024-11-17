@@ -1,12 +1,13 @@
+#region
 using Chaos.Scripting.Abstractions.Tests.Mocks;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Scripting.Abstractions.Tests;
 
 public sealed class ConfigurableScriptTests
 {
-    [Fact]
+      [Test]
     public void Ctor_DoesNotSetPropertiesIfNoScriptVarsForKey()
     {
         // Arrange
@@ -28,7 +29,7 @@ public sealed class ConfigurableScriptTests
               .Be(0);
     }
 
-    [Fact]
+      [Test]
     public void Ctor_SetsPropertiesFromScriptVars()
     {
         // Arrange
@@ -50,7 +51,7 @@ public sealed class ConfigurableScriptTests
               .Be(42);
     }
 
-    [Fact]
+      [Test]
     public void Ctor_WithFactory_SetsPropertiesFromScriptVars()
     {
         // Arrange
@@ -72,7 +73,7 @@ public sealed class ConfigurableScriptTests
               .Be(42);
     }
 
-    [Fact]
+      [Test]
     public void Ctor_WithFactory_ThrowsIfFactoryReturnsNull()
     {
         // Arrange

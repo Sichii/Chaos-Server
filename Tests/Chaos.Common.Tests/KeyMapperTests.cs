@@ -1,15 +1,16 @@
+#region
 using System.Numerics;
 using Chaos.Common.Abstractions;
 using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
 using Moq;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class KeyMapperTests
 {
-    [Fact]
+    [Test]
     public void GetId_ShouldInvokeIdGeneratorOnlyOncePerUniqueKey()
     {
         // Arrange
@@ -29,7 +30,7 @@ public sealed class KeyMapperTests
         idGeneratorMock.Verify(g => g.NextId, Times.Once);
     }
 
-    [Fact]
+    [Test]
     public void GetId_ShouldReturnSameIdForSameKey()
     {
         // Arrange
@@ -50,7 +51,7 @@ public sealed class KeyMapperTests
            .Be(id2);
     }
 
-    [Fact]
+    [Test]
     public void GetId_ShouldReturnUniqueIdsForDifferentKeys()
     {
         // Arrange

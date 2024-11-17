@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
@@ -14,6 +15,7 @@ using Chaos.Scripting.DialogScripts;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Utilities;
+#endregion
 
 namespace Chaos.Models.Menu;
 
@@ -141,7 +143,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         }
     }
 
-    public void InjectTextParameters(params object[] parameters) => Text = Text.Inject(parameters);
+    public void InjectTextParameters(params ReadOnlySpan<object> parameters) => Text = Text.Inject(parameters);
 
     public void Next(Aisling source, byte? optionIndex = null)
     {
@@ -310,7 +312,7 @@ public sealed record Dialog : IScripted<IDialogScript>
                 DialogKey = dialogKey
             });
 
-    public void AddOptions(params (string OptionText, string DialogKey)[] options)
+    public void AddOptions(params IEnumerable<(string OptionText, string DialogKey)> options)
         => Options.AddRange(
             options.Select(
                 option => new DialogOption

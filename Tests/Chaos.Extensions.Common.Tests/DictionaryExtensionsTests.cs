@@ -1,11 +1,12 @@
+#region
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class DictionaryExtensionsTests
 {
-    [Fact]
+    [Test]
     public void TryRemove_EmptyDictionary_ReturnsFalseAndValueIsDefault()
     {
         var dictionary = new Dictionary<int, string>();
@@ -19,7 +20,7 @@ public sealed class DictionaryExtensionsTests
                     .BeNull("because there's no associated value in an empty dictionary");
     }
 
-    [Fact]
+    [Test]
     public void TryRemove_KeyDoesNotExistInDictionary_ReturnsFalseAndValueIsDefault()
     {
         var dictionary = new Dictionary<int, string>
@@ -41,7 +42,7 @@ public sealed class DictionaryExtensionsTests
                     .BeNull("because there's no associated value for the non-existent key");
     }
 
-    [Fact]
+    [Test]
     public void TryRemove_KeyExistsInDictionary_ReturnsTrueAndRemovesKeyValue()
     {
         var dictionary = new Dictionary<int, string>

@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Models.Menu;
@@ -7,6 +8,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 using Chaos.Storage.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.DialogScripts.GuildScripts;
 
@@ -97,7 +99,11 @@ public class GuildRankModifyScript : GuildScriptBase
 
         guild.ChangeRankName(currentRankName, newRankName);
 
-        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Update)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Guild,
+                      Topics.Actions.Update
+                  ])
               .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)

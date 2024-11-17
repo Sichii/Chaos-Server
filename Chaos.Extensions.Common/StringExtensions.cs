@@ -1,4 +1,6 @@
+#region
 using JetBrains.Annotations;
+#endregion
 
 namespace Chaos.Extensions.Common;
 
@@ -91,11 +93,14 @@ public static class StringExtensions
     /// </returns>
     public static decimal CalculateSorensenCoefficient(this string string1, string string2, bool caseSensitive = false)
     {
+        if (string.IsNullOrEmpty(string1) || string.IsNullOrEmpty(string2))
+            return 0m;
+
         var span1 = string1.AsSpan();
         var span2 = string2.AsSpan();
         var intersections = 0;
         var totalBigrams = string1.Length + string2.Length - 2;
-        Span<int> targetBigrams = stackalloc int[span2.Length * 2];
+        Span<int> targetBigrams = stackalloc int[span2.Length - 1];
 
         //encode all target bigrams as single values
         for (var i = 0; i < (span2.Length - 1); i++)
@@ -344,16 +349,16 @@ public static class StringExtensions
                                              })
                                          .ToList();
 
-            //if no good match was found, return null
-            if (!possibleMatches.Any())
-                return null;
+            return possibleMatches.Count switch
+            {
+                //if no good match was found, return null
+                0 => null,
 
-            //if there's only 1 match, return it
-            if (possibleMatches.Count == 1)
-                return possibleMatches[0].String;
-
-            return possibleMatches.MaxBy(CalculateHeuristic)
-                                  .String;
+                //if there's only 1 match, return it
+                1 => possibleMatches[0].String,
+                _ => possibleMatches.MaxBy(CalculateHeuristic)
+                                    .String
+            };
 
             //based on the 2 values, calculate a heuristic to determine the best match
             decimal CalculateHeuristic((string String, decimal Coefficient, int Distance) x)
@@ -416,7 +421,7 @@ public static class StringExtensions
 
         var lookup = items.ToDictionary(selector);
 
-        if (!lookup.Any())
+        if (lookup.Count == 0)
             return default;
 
         var match = lookup.Keys.FuzzySearch(
@@ -444,7 +449,7 @@ public static class StringExtensions
     /// <returns>
     ///     A string where the placeholders are replaced with the given parameters
     /// </returns>
-    public static string Inject([StructuredMessageTemplate] this string str1, params object[] parameters)
+    public static string Inject([StructuredMessageTemplate] this string str1, params ReadOnlySpan<object> parameters)
     {
         var paramsTotalLength = 0;
         var paramStrs = new string[parameters.Length];

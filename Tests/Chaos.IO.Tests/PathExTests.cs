@@ -1,12 +1,13 @@
+#region
 using Chaos.IO.FileSystem;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.IO.Tests;
 
 public sealed class PathExTests
 {
-    [Fact]
+    [Test]
     public void IsSubPathOf_ShouldReturnFalse_WhenPathHasLessPartsThanParentPath()
     {
         // Arrange
@@ -21,7 +22,7 @@ public sealed class PathExTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void IsSubPathOf_ShouldReturnFalse_WhenPathIsNotSubPathOfParentPath()
     {
         // Arrange
@@ -36,7 +37,7 @@ public sealed class PathExTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void IsSubPathOf_ShouldReturnTrue_WhenPathIsSubPathOfParentPath()
     {
         // Arrange
@@ -51,7 +52,7 @@ public sealed class PathExTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void IsSubPathOf_ShouldThrow_WhenParentPathIsEmpty()
     {
         // Arrange
@@ -66,7 +67,7 @@ public sealed class PathExTests
               .ThrowExactly<ArgumentNullException>();
     }
 
-    [Fact]
+    [Test]
     public void IsSubPathOf_ShouldThrow_WhenParentPathIsNull()
     {
         // Arrange
@@ -81,7 +82,7 @@ public sealed class PathExTests
               .ThrowExactly<ArgumentNullException>();
     }
 
-    [Fact]
+    [Test]
     public void IsSubPathOf_ShouldThrow_WhenPathIsEmpty()
     {
         // Arrange
@@ -96,7 +97,7 @@ public sealed class PathExTests
               .ThrowExactly<ArgumentNullException>();
     }
 
-    [Fact]
+    [Test]
     public void IsSubPathOf_ShouldThrow_WhenPathIsNull()
     {
         // Arrange

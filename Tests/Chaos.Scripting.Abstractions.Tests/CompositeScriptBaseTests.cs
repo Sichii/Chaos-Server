@@ -1,12 +1,13 @@
+#region
 using Chaos.Scripting.Abstractions.Tests.Mocks;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Scripting.Abstractions.Tests;
 
 public sealed class CompositeScriptTests
 {
-    [Fact]
+    [Test]
     public void Add_AddsScriptToComponents()
     {
         // Arrange
@@ -22,7 +23,7 @@ public sealed class CompositeScriptTests
                        .Contain(scriptMock);
     }
 
-    [Fact]
+    [Test]
     public void GetEnumerator_ReturnsAllScripts()
     {
         // Arrange
@@ -39,14 +40,13 @@ public sealed class CompositeScriptTests
 
         scripts.Should()
                .Contain(
-                   new[]
-                   {
+                   [
                        scriptMock1,
                        scriptMock2
-                   });
+                   ]);
     }
 
-    [Fact]
+    [Test]
     public void GetEnumerator_YieldsCompositeScriptsAndSubscripts()
     {
         // Arrange
@@ -78,7 +78,7 @@ public sealed class CompositeScriptTests
                          script2);
     }
 
-    [Fact]
+    [Test]
     public void GetScript_ReturnsFirstInstanceOfType()
     {
         // Arrange
@@ -98,7 +98,7 @@ public sealed class CompositeScriptTests
                  .Be(scriptMock1);
     }
 
-    [Fact]
+    [Test]
     public void GetScripts_ReturnsAllInstancesOfType()
     {
         // Arrange
@@ -116,14 +116,13 @@ public sealed class CompositeScriptTests
         // Assert
         components.Should()
                   .Contain(
-                      new[]
-                      {
+                      [
                           scriptMock1,
                           scriptMock2
-                      });
+                      ]);
     }
 
-    [Fact]
+    [Test]
     public void Remove_RemovesScriptFromComponents()
     {
         // Arrange
@@ -140,7 +139,7 @@ public sealed class CompositeScriptTests
                        .NotContain(scriptMock);
     }
 
-    [Fact]
+    [Test]
     public void Remove_RemovesScriptFromNestedComponents()
     {
         // Arrange

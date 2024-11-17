@@ -1,3 +1,4 @@
+#region
 using System.Text;
 using System.Text.Json;
 using Chaos.Collections.Common;
@@ -5,7 +6,7 @@ using Chaos.Common.Converters;
 using Chaos.Testing.Infrastructure.Definitions;
 using Chaos.Testing.Infrastructure.Extensions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable UnusedMember.Local
 
@@ -13,7 +14,7 @@ namespace Chaos.Common.Tests;
 
 public sealed class FlagCollectionConverterTests
 {
-    [Fact]
+      [Test]
     public void Read_ShouldDeserializeJsonObjectAndCreateFlagCollection()
     {
         // Arrange
@@ -41,7 +42,7 @@ public sealed class FlagCollectionConverterTests
               .BeTrue();
     }
 
-    [Fact]
+      [Test]
     public void Write_ShouldSerializeFlagCollectionAsJsonObject()
     {
         // Arrange

@@ -1,12 +1,13 @@
+#region
 using Chaos.Common.Synchronization;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class AutoReleasingSemaphoreSlimTests
 {
-    [Fact]
+    [Test]
     public async Task WaitAsync_ShouldAcquireSemaphoreAndReleaseOnDisposeAsync()
     {
         // Arrange

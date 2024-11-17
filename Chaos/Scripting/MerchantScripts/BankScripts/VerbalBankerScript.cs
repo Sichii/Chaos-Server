@@ -1,20 +1,22 @@
+#region
 using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MerchantScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 
 public class VerbalBankerScript : CompositeMerchantScript
 {
-    private static readonly ICollection<string> ScriptKeys = new[]
-    {
+    private static readonly ICollection<string> ScriptKeys =
+    [
         GetScriptKey(typeof(VerbalDepositGoldScript)),
         GetScriptKey(typeof(VerbalWithdrawGoldScript)),
         GetScriptKey(typeof(VerbalGoldCheckScript)),
         GetScriptKey(typeof(VerbalDepositItemScript)),
         GetScriptKey(typeof(VerbalWithdrawItemScript)),
         GetScriptKey(typeof(VerbalItemCheckScript))
-    };
+    ];
 
     public VerbalBankerScript(IScriptProvider scriptProvider, Merchant subject)
     {

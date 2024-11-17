@@ -1,12 +1,13 @@
+#region
 using Chaos.Common.Synchronization;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class InterlockedObjectTests
 {
-    [Fact]
+    [Test]
     public void Get_WithInitializedObject_ReturnsObject()
     {
         // Arrange
@@ -22,7 +23,7 @@ public sealed class InterlockedObjectTests
               .BeSameAs(expected);
     }
 
-    [Fact]
+    [Test]
     public void Get_WithNullObject_ReturnsNull()
     {
         // Arrange
@@ -36,7 +37,7 @@ public sealed class InterlockedObjectTests
               .BeNull();
     }
 
-    [Fact]
+    [Test]
     public void Set_SetsObject()
     {
         // Arrange
@@ -53,7 +54,7 @@ public sealed class InterlockedObjectTests
               .BeSameAs(expected);
     }
 
-    [Fact]
+    [Test]
     public void SetIfNull_WithNonNullObject_DoesNotSetObject()
     {
         // Arrange
@@ -74,7 +75,7 @@ public sealed class InterlockedObjectTests
                          .BeSameAs(existing);
     }
 
-    [Fact]
+    [Test]
     public void SetIfNull_WithNullObject_SetsObject()
     {
         // Arrange
@@ -93,7 +94,7 @@ public sealed class InterlockedObjectTests
                          .BeSameAs(expected);
     }
 
-    [Fact]
+    [Test]
     public void TryRemove_WithMatchingObject_RemovesObject()
     {
         // Arrange
@@ -113,7 +114,7 @@ public sealed class InterlockedObjectTests
                          .BeNull();
     }
 
-    [Fact]
+    [Test]
     public void TryRemove_WithNonMatchingObject_DoesNotRemoveObject()
     {
         // Arrange
@@ -134,7 +135,7 @@ public sealed class InterlockedObjectTests
                          .BeSameAs(existing);
     }
 
-    [Fact]
+    [Test]
     public void TryReplace_WithMatchingObject_ReplacesObject()
     {
         // Arrange
@@ -155,7 +156,7 @@ public sealed class InterlockedObjectTests
                          .BeSameAs(replacement);
     }
 
-    [Fact]
+    [Test]
     public void TryReplace_WithNonMatchingObject_DoesNotReplaceObject()
     {
         // Arrange

@@ -1,7 +1,8 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.Testing.Infrastructure.Definitions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable UnusedMember.Local
 
@@ -9,7 +10,7 @@ namespace Chaos.Common.Tests;
 
 public sealed class EnumCollectionTests
 {
-    [Fact]
+    [Test]
     public void HasValue_ShouldReturnFalse_WhenEnumTypeNotInCollection()
     {
         var result = new EnumCollection().HasValue(typeof(SampleEnum1), SampleEnum1.Value2);
@@ -18,7 +19,7 @@ public sealed class EnumCollectionTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void HasValue_ShouldReturnFalse_WhenEnumValueDoesNotMatch()
     {
         // Arrange
@@ -32,7 +33,7 @@ public sealed class EnumCollectionTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void HasValue_ShouldReturnTrue_WhenEnumValueMatches()
     {
         // Arrange
@@ -46,7 +47,7 @@ public sealed class EnumCollectionTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void HasValue_ShouldThrowInvalidOperationException_ForFlagEnums()
     {
         Action action = () => new EnumCollection().HasValue(typeof(SampleFlag1), SampleFlag1.Value1);
@@ -56,7 +57,7 @@ public sealed class EnumCollectionTests
               .WithMessage("*flag enum*");
     }
 
-    [Fact]
+    [Test]
     public void Remove_ShouldNotThrowException_WhenTypeDoesNotExist()
     {
         // Arrange
@@ -70,7 +71,7 @@ public sealed class EnumCollectionTests
            .NotThrow();
     }
 
-    [Fact]
+    [Test]
     public void Remove_ShouldRemoveEnum_WhenTypeExists()
     {
         // Arrange
@@ -86,7 +87,7 @@ public sealed class EnumCollectionTests
                   .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Set_ShouldSetEnumValue_WhenTypeIsNotFlagEnum()
     {
         // Arrange
@@ -105,7 +106,7 @@ public sealed class EnumCollectionTests
              .Be(ENUM_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Set_ShouldThrowException_WhenTypeIsFlagEnum()
     {
         // Arrange
@@ -121,7 +122,7 @@ public sealed class EnumCollectionTests
            .WithMessage($"Enum of type {typeof(SampleFlag1).FullName} is a flag enum. Use the flag collection.");
     }
 
-    [Fact]
+    [Test]
     public void TryGetValue_ShouldReturnFalse_WhenTypeDoesNotExist()
     {
         // Arrange
@@ -135,7 +136,7 @@ public sealed class EnumCollectionTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void TryGetValue_ShouldReturnTrueAndSetValue_WhenTypeExists()
     {
         // Arrange

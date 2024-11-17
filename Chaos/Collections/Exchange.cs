@@ -1,10 +1,11 @@
+#region
 using Chaos.Common.Identity;
-using Chaos.Common.Synchronization;
 using Chaos.Models.World;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Observers;
 using Humanizer;
+#endregion
 
 namespace Chaos.Collections;
 
@@ -15,7 +16,7 @@ public sealed class Exchange
     private readonly Aisling Aisling2;
     private readonly Inventory Aisling2Items;
     private readonly ILogger<Exchange> Logger;
-    private readonly AutoReleasingMonitor Sync;
+    private readonly Lock Sync;
     private bool Aisling1Accept;
     private int Aisling1Gold;
     private bool Aisling2Accept;
@@ -33,12 +34,12 @@ public sealed class Exchange
         Aisling1Items.AddObserver(new ExchangeObserver(Aisling1, Aisling2));
         Aisling2Items = new Inventory();
         Aisling2Items.AddObserver(new ExchangeObserver(Aisling2, Aisling1));
-        Sync = new AutoReleasingMonitor();
+        Sync = new Lock();
     }
 
     public void Accept(Aisling aisling)
     {
-        using var sync = Sync.Enter();
+        using var sync = Sync.EnterScope();
 
         var otherUser = GetOther(aisling);
         (var gold, var items, var accepted) = InnerGetVars(aisling);
@@ -66,14 +67,19 @@ public sealed class Exchange
 
     public void Activate()
     {
-        using var sync = Sync.Enter();
+        using var sync = Sync.EnterScope();
 
         IsActive = true;
 
         Aisling1.Client.SendExchangeStart(Aisling2);
         Aisling2.Client.SendExchangeStart(Aisling1);
 
-        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Exchange, Topics.Actions.Create)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Exchange,
+                      Topics.Actions.Create
+                  ])
               .WithProperty(this)
               .LogDebug(
                   "Exchange {@ExchangeId} started between {@AislingName1} and {@AislingName2}",
@@ -84,7 +90,7 @@ public sealed class Exchange
 
     public void AddItem(Aisling aisling, byte slot)
     {
-        using var sync = Sync.Enter();
+        using var sync = Sync.EnterScope();
 
         var otherUser = GetOther(aisling);
         (_, var userItems, var userAccepted) = InnerGetVars(aisling);
@@ -124,10 +130,12 @@ public sealed class Exchange
             userItems.TryAddToNextSlot(item);
 
             Logger.WithTopics(
-                      Topics.Entities.Aisling,
-                      Topics.Entities.Exchange,
-                      Topics.Entities.Item,
-                      Topics.Actions.Add)
+                      [
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Exchange,
+                          Topics.Entities.Item,
+                          Topics.Actions.Add
+                      ])
                   .WithProperty(aisling)
                   .WithProperty(item)
                   .WithProperty(this)
@@ -141,7 +149,7 @@ public sealed class Exchange
 
     public void AddStackableItem(Aisling aisling, byte slot, byte amount)
     {
-        using var sync = Sync.Enter();
+        using var sync = Sync.EnterScope();
 
         var otherUser = GetOther(aisling);
         (_, var userItems, var userAccepted) = InnerGetVars(aisling);
@@ -189,10 +197,12 @@ public sealed class Exchange
             userItems.TryAddToNextSlot(removedItem);
 
             Logger.WithTopics(
-                      Topics.Entities.Aisling,
-                      Topics.Entities.Exchange,
-                      Topics.Entities.Item,
-                      Topics.Actions.Add)
+                      [
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Exchange,
+                          Topics.Entities.Item,
+                          Topics.Actions.Add
+                      ])
                   .WithProperty(aisling)
                   .WithProperty(removedItem)
                   .WithProperty(this)
@@ -206,7 +216,7 @@ public sealed class Exchange
 
     public void Cancel(Aisling aisling)
     {
-        using var sync = Sync.Enter();
+        using var sync = Sync.EnterScope();
 
         var otherUser = GetOther(aisling);
         (var gold, var items, _) = InnerGetVars(aisling);
@@ -221,7 +231,12 @@ public sealed class Exchange
         aisling.Client.SendExchangeCancel(false);
         otherUser.Client.SendExchangeCancel(true);
 
-        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Exchange, Topics.Actions.Canceled)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Exchange,
+                      Topics.Actions.Canceled
+                  ])
               .WithProperty(aisling)
               .WithProperty(this)
               .LogDebug("Exchange {@ExchangeId} was canceled by aisling {@AislingName}", ExchangeId, aisling.Name);
@@ -242,10 +257,12 @@ public sealed class Exchange
         aisling.TryGiveGold(gold);
 
         Logger.WithTopics(
-                  Topics.Entities.Aisling,
-                  Topics.Entities.Exchange,
-                  Topics.Entities.Gold,
-                  Topics.Actions.Accepted)
+                  [
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Exchange,
+                      Topics.Entities.Gold,
+                      Topics.Actions.Accepted
+                  ])
               .WithProperty(aisling)
               .WithProperty(this)
               .LogInformation(
@@ -260,10 +277,12 @@ public sealed class Exchange
 
             if (aisling.Inventory.TryAddToNextSlot(item))
                 Logger.WithTopics(
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Exchange,
-                          Topics.Entities.Item,
-                          Topics.Actions.Accepted)
+                          [
+                              Topics.Entities.Aisling,
+                              Topics.Entities.Exchange,
+                              Topics.Entities.Item,
+                              Topics.Actions.Accepted
+                          ])
                       .WithProperty(aisling)
                       .WithProperty(item)
                       .WithProperty(this)
@@ -274,10 +293,12 @@ public sealed class Exchange
                           aisling.Name);
             else
                 Logger.WithTopics(
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Exchange,
-                          Topics.Entities.Item,
-                          Topics.Actions.Accepted)
+                          [
+                              Topics.Entities.Aisling,
+                              Topics.Entities.Exchange,
+                              Topics.Entities.Item,
+                              Topics.Actions.Accepted
+                          ])
                       .WithProperty(aisling)
                       .WithProperty(item)
                       .WithProperty(this)
@@ -308,7 +329,7 @@ public sealed class Exchange
 
     public void SetGold(Aisling aisling, int amount)
     {
-        using var sync = Sync.Enter();
+        using var sync = Sync.EnterScope();
 
         var otherUser = GetOther(aisling);
         var uuserVars = InnerGetVars(aisling);
@@ -326,10 +347,12 @@ public sealed class Exchange
             InnerSetGold(aisling, amount);
 
             Logger.WithTopics(
-                      Topics.Entities.Aisling,
-                      Topics.Entities.Exchange,
-                      Topics.Entities.Gold,
-                      Topics.Actions.Update)
+                      [
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Exchange,
+                          Topics.Entities.Gold,
+                          Topics.Actions.Update
+                      ])
                   .WithProperty(aisling)
                   .WithProperty(this)
                   .LogInformation(

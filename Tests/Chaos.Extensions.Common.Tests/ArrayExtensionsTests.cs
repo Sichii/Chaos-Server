@@ -1,11 +1,12 @@
+#region
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class ArrayExtensionsTests
 {
-    [Fact]
+    [Test]
     public void Flatten_Should_Return_Elements_In_Correct_Order()
     {
         // Arrange
@@ -35,8 +36,7 @@ public sealed class ArrayExtensionsTests
         // Assert
         flattenedArray.Should()
                       .BeEquivalentTo(
-                          new[]
-                          {
+                          [
                               1,
                               2,
                               3,
@@ -46,12 +46,12 @@ public sealed class ArrayExtensionsTests
                               7,
                               8,
                               9
-                          },
+                          ],
                           options => options.WithStrictOrdering(),
                           "because the array should be flattened left to right, top to bottom");
     }
 
-    [Fact]
+    [Test]
     public void Flatten_Should_Return_Elements_In_Correct_Order_For_Jagged_Array()
     {
         // Arrange
@@ -82,8 +82,7 @@ public sealed class ArrayExtensionsTests
         // Assert
         flattenedArray.Should()
                       .BeEquivalentTo(
-                          new[]
-                          {
+                          [
                               1,
                               2,
                               3,
@@ -93,12 +92,12 @@ public sealed class ArrayExtensionsTests
                               7,
                               8,
                               9
-                          },
+                          ],
                           options => options.WithStrictOrdering(),
                           "because the array should be flattened left to right, top to bottom");
     }
 
-    [Fact]
+    [Test]
     public void ShuffleInPlace_Should_Randomize_Elements_In_List()
     {
         // Arrange

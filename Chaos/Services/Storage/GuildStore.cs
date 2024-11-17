@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.IO.FileSystem;
 using Chaos.NLog.Logging.Definitions;
@@ -7,6 +8,7 @@ using Chaos.Services.Storage.Abstractions;
 using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace Chaos.Services.Storage;
 
@@ -83,10 +85,18 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
     /// <inheritdoc />
     protected override Guild LoadFromFile(string dir, string key)
     {
-        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Load)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Guild,
+                      Topics.Actions.Load
+                  ])
               .LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(Guild), key);
 
-        var metricsLogger = Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Load)
+        var metricsLogger = Logger.WithTopics(
+                                      [
+                                          Topics.Entities.Guild,
+                                          Topics.Actions.Load
+                                      ])
                                   .WithMetrics();
 
         if (!Directory.Exists(dir))
@@ -105,13 +115,12 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
         var tier3 = EntityRepository.LoadAndMap<GuildRank, GuildRankSchema>(tier3Path);
 
         guild.Initialize(
-            new[]
-            {
+            [
                 tier0,
                 tier1,
                 tier2,
                 tier3
-            });
+            ]);
 
         metricsLogger.LogDebug("Loaded new {@TypeName} entry with {@Key}", nameof(Guild), key);
 
@@ -121,11 +130,19 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
     /// <inheritdoc />
     public override void Save(Guild obj)
     {
-        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Save)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Guild,
+                      Topics.Actions.Save
+                  ])
               .WithProperty(obj)
               .LogDebug("Saving {@TypeName} entry with key {@Key}", nameof(Guild), obj.Name);
 
-        var metricsLogger = Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Save)
+        var metricsLogger = Logger.WithTopics(
+                                      [
+                                          Topics.Entities.Guild,
+                                          Topics.Actions.Save
+                                      ])
                                   .WithMetrics()
                                   .WithProperty(obj);
 
@@ -150,11 +167,19 @@ public class GuildStore : PeriodicSaveStoreBase<Guild, GuildStoreOptions>
     /// <inheritdoc />
     public override async Task SaveAsync(Guild obj)
     {
-        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Save)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.Guild,
+                      Topics.Actions.Save
+                  ])
               .WithProperty(obj)
               .LogTrace("Saving {@TypeName} entry with key {@Key}", nameof(Guild), obj.Name);
 
-        var metricsLogger = Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Save)
+        var metricsLogger = Logger.WithTopics(
+                                      [
+                                          Topics.Entities.Guild,
+                                          Topics.Actions.Save
+                                      ])
                                   .WithMetrics()
                                   .WithProperty(obj);
 

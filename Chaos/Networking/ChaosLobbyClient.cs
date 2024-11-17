@@ -1,3 +1,4 @@
+#region
 using System.Net.Sockets;
 using System.Text;
 using Chaos.Cryptography.Abstractions;
@@ -9,6 +10,7 @@ using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace Chaos.Networking;
 
@@ -68,10 +70,12 @@ public sealed class ChaosLobbyClient : LobbyClientBase, IChaosLobbyClient
 
         if (LogRawPackets)
             Logger.WithTopics(
-                      Topics.Servers.LobbyServer,
-                      Topics.Qualifiers.Raw,
-                      Topics.Entities.Packet,
-                      Topics.Actions.Receive)
+                      [
+                          Topics.Servers.LobbyServer,
+                          Topics.Qualifiers.Raw,
+                          Topics.Entities.Packet,
+                          Topics.Actions.Receive
+                      ])
                   .WithProperty(this)
                   .LogTrace("[Rcv] {@Packet}", packet.ToString());
 

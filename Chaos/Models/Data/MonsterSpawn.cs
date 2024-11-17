@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.Extensions.Common;
@@ -9,6 +10,7 @@ using Chaos.Models.Templates;
 using Chaos.Models.World;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Models.Data;
 
@@ -77,7 +79,7 @@ public sealed class MonsterSpawn : IDeltaUpdatable
                 spawnPoint,
                 ExtraScriptKeys);
 
-            FinalLootTable ??= ExtraLootTables.Any()
+            FinalLootTable ??= ExtraLootTables.Count != 0
                 ? new CompositeLootTable(ExtraLootTables.Append(monster.LootTable))
                 : monster.LootTable;
 

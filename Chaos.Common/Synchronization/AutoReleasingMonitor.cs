@@ -3,6 +3,7 @@ namespace Chaos.Common.Synchronization;
 /// <summary>
 ///     An object that offers subscription-style blocking synchronization by abusing the using pattern.
 /// </summary>
+[Obsolete("Use System.Threading.Lock instead")]
 public sealed class AutoReleasingMonitor
 {
     private readonly object Root;
@@ -37,18 +38,6 @@ public sealed class AutoReleasingMonitor
     }
 
     /// <summary>
-    ///     The same as <see cref="System.Threading.Monitor.Enter(object)" />. Returns a disposable object that when disposed
-    ///     will exit the lock via <see cref="System.Threading.Monitor.Exit(object)" />. Will first check if the current thread
-    ///     owns the lock in order to avoid an exception.
-    /// </summary>
-    public IDisposable EnterWithSafeExit()
-    {
-        Monitor.Enter(Root);
-
-        return new SafeAutoReleasingSubscription(Root);
-    }
-
-    /// <summary>
     ///     The same as <see cref="System.Threading.Monitor.Exit(object)" />
     /// </summary>
     public void Exit() => Monitor.Exit(Root);
@@ -69,7 +58,7 @@ public sealed class AutoReleasingMonitor
     public IDisposable? TryEnter(int timeoutMs)
     {
         if (Monitor.TryEnter(Root, timeoutMs))
-            return new SafeAutoReleasingSubscription(Root);
+            return new AutoReleasingSubscription(Root);
 
         return default;
     }
@@ -80,20 +69,6 @@ public sealed class AutoReleasingMonitor
         private int Disposed;
 
         internal AutoReleasingSubscription(object root) => Root = root;
-
-        public void Dispose()
-        {
-            if (Interlocked.CompareExchange(ref Disposed, 1, 0) == 0)
-                Monitor.Exit(Root);
-        }
-    }
-
-    private sealed record SafeAutoReleasingSubscription : IDisposable
-    {
-        private readonly object Root;
-        private int Disposed;
-
-        internal SafeAutoReleasingSubscription(object root) => Root = root;
 
         public void Dispose()
         {

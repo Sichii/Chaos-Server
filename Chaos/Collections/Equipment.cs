@@ -1,7 +1,9 @@
+#region
 using Chaos.Collections.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.DarkAges.Extensions;
 using Chaos.Models.Panel;
+#endregion
 
 namespace Chaos.Collections;
 
@@ -26,7 +28,7 @@ public sealed class Equipment : PanelBase<Item>, IEquipment
             throw new InvalidOperationException(
                 $"Item {item.DisplayName} ({item.UniqueId}) has equipment type of {EquipmentType.NotEquipment}");
 
-        using var @lock = Sync.Enter();
+        using var @lock = Sync.EnterScope();
 
         var possibleSlots = equipmentType.ToEquipmentSlots();
         byte bSlot = 0;

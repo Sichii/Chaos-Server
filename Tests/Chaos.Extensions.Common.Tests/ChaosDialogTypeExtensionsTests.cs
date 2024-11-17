@@ -1,7 +1,8 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.DarkAges.Extensions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable ArrangeAttributes
 
@@ -9,14 +10,14 @@ namespace Chaos.Extensions.Common.Tests;
 
 public sealed class ChaosDialogTypeExtensionsTests
 {
-    [Theory]
-    [InlineData(ChaosDialogType.Normal, DialogType.Normal)]
-    [InlineData(ChaosDialogType.DialogMenu, DialogType.DialogMenu)]
-    [InlineData(ChaosDialogType.DialogTextEntry, DialogType.TextEntry)]
-    [InlineData(ChaosDialogType.Speak, DialogType.Speak)]
-    [InlineData(ChaosDialogType.CreatureMenu, DialogType.CreatureMenu)]
-    [InlineData(ChaosDialogType.Protected, DialogType.Protected)]
-    [InlineData(ChaosDialogType.CloseDialog, DialogType.CloseDialog)]
+    [Test]
+    [Arguments(ChaosDialogType.Normal, DialogType.Normal)]
+    [Arguments(ChaosDialogType.DialogMenu, DialogType.DialogMenu)]
+    [Arguments(ChaosDialogType.DialogTextEntry, DialogType.TextEntry)]
+    [Arguments(ChaosDialogType.Speak, DialogType.Speak)]
+    [Arguments(ChaosDialogType.CreatureMenu, DialogType.CreatureMenu)]
+    [Arguments(ChaosDialogType.Protected, DialogType.Protected)]
+    [Arguments(ChaosDialogType.CloseDialog, DialogType.CloseDialog)]
     public void ToDialogType_Should_Convert_Correctly(ChaosDialogType chaosDialogType, DialogType? expectedDialogType)
     {
         // Act
@@ -27,7 +28,7 @@ public sealed class ChaosDialogTypeExtensionsTests
                   .Be(expectedDialogType);
     }
 
-    [Fact]
+    [Test]
     public void ToDialogType_Should_ReturnNull_For_Undefined_ChaosDialogType()
     {
         // Arrange
@@ -44,17 +45,17 @@ public sealed class ChaosDialogTypeExtensionsTests
             .BeNull();
     }
 
-    [Theory]
-    [InlineData(ChaosDialogType.Menu, MenuType.Menu)]
-    [InlineData(ChaosDialogType.MenuWithArgs, MenuType.MenuWithArgs)]
-    [InlineData(ChaosDialogType.MenuTextEntry, MenuType.TextEntry)]
-    [InlineData(ChaosDialogType.MenuTextEntryWithArgs, MenuType.TextEntryWithArgs)]
-    [InlineData(ChaosDialogType.ShowItems, MenuType.ShowItems)]
-    [InlineData(ChaosDialogType.ShowPlayerItems, MenuType.ShowPlayerItems)]
-    [InlineData(ChaosDialogType.ShowSpells, MenuType.ShowSpells)]
-    [InlineData(ChaosDialogType.ShowSkills, MenuType.ShowSkills)]
-    [InlineData(ChaosDialogType.ShowPlayerSpells, MenuType.ShowPlayerSpells)]
-    [InlineData(ChaosDialogType.ShowPlayerSkills, MenuType.ShowPlayerSkills)]
+    [Test]
+    [Arguments(ChaosDialogType.Menu, MenuType.Menu)]
+    [Arguments(ChaosDialogType.MenuWithArgs, MenuType.MenuWithArgs)]
+    [Arguments(ChaosDialogType.MenuTextEntry, MenuType.TextEntry)]
+    [Arguments(ChaosDialogType.MenuTextEntryWithArgs, MenuType.TextEntryWithArgs)]
+    [Arguments(ChaosDialogType.ShowItems, MenuType.ShowItems)]
+    [Arguments(ChaosDialogType.ShowPlayerItems, MenuType.ShowPlayerItems)]
+    [Arguments(ChaosDialogType.ShowSpells, MenuType.ShowSpells)]
+    [Arguments(ChaosDialogType.ShowSkills, MenuType.ShowSkills)]
+    [Arguments(ChaosDialogType.ShowPlayerSpells, MenuType.ShowPlayerSpells)]
+    [Arguments(ChaosDialogType.ShowPlayerSkills, MenuType.ShowPlayerSkills)]
     public void ToMenuType_Should_Convert_Correctly(ChaosDialogType chaosDialogType, MenuType? expectedMenuType)
     {
         // Act
@@ -65,7 +66,7 @@ public sealed class ChaosDialogTypeExtensionsTests
                 .Be(expectedMenuType);
     }
 
-    [Fact]
+    [Test]
     public void ToMenuType_Should_ReturnNull_For_Undefined_ChaosDialogType()
     {
         // Arrange

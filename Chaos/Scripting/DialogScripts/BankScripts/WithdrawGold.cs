@@ -1,9 +1,11 @@
-﻿using Chaos.Models.Menu;
+﻿#region
+using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.DialogScripts.Abstractions;
 using Chaos.Utilities;
+#endregion
 
 namespace Chaos.Scripting.DialogScripts.BankScripts;
 
@@ -34,7 +36,12 @@ public class WithdrawGoldScript : DialogScriptBase
         switch (withdrawResult)
         {
             case ComplexActionHelper.WithdrawGoldResult.Success:
-                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Withdraw)
+                Logger.WithTopics(
+                          [
+                              Topics.Entities.Aisling,
+                              Topics.Entities.Gold,
+                              Topics.Actions.Withdraw
+                          ])
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)

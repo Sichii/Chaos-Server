@@ -1,12 +1,13 @@
+#region
 using Chaos.Geometry.EqualityComparers;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class CircleEqualityComparerTests
 {
-    [Fact]
+    [Test]
     public void Equals_ReturnsFalse_WhenCirclesAreNotEqual()
     {
         // Arrange
@@ -21,7 +22,7 @@ public sealed class CircleEqualityComparerTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Equals_ReturnsTrue_WhenCirclesAreEqual()
     {
         // Arrange
@@ -36,7 +37,7 @@ public sealed class CircleEqualityComparerTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ReturnsDifferentHashCode_WhenCirclesAreNotEqual()
     {
         // Arrange
@@ -52,7 +53,7 @@ public sealed class CircleEqualityComparerTests
                  .NotBe(hashCode2);
     }
 
-    [Fact]
+    [Test]
     public void GetHashCode_ReturnsSameHashCode_WhenCirclesAreEqual()
     {
         // Arrange

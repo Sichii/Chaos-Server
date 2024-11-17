@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Extensions;
@@ -18,6 +19,7 @@ using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace Chaos.Services.Storage;
 
@@ -74,7 +76,11 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                         Get(mapInstance.InstanceId);
             } catch (Exception e)
             {
-                Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Processing)
+                Logger.WithTopics(
+                          [
+                              Topics.Entities.MapInstance,
+                              Topics.Actions.Processing
+                          ])
                       .LogError(
                           e,
                           "Exception in {@ClassName} while attempting to persist maps that are in use",
@@ -100,10 +106,18 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         var entryKeyActual = DeconstructKeyForType(entryKey!);
         var shardId = string.IsNullOrEmpty(loadFromFileKeyOverride) ? null : entryKeyActual;
 
-        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Load)
+        Logger.WithTopics(
+                  [
+                      Topics.Entities.MapInstance,
+                      Topics.Actions.Load
+                  ])
               .LogDebug("Creating new {@TypeName} entry with key {@Key}", nameof(MapInstance), loadInstanceId);
 
-        var metricsLogger = Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Load)
+        var metricsLogger = Logger.WithTopics(
+                                      [
+                                          Topics.Entities.MapInstance,
+                                          Topics.Actions.Load
+                                      ])
                                   .WithMetrics();
 
         if (Options.Expires)
@@ -246,7 +260,11 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                 entry.Value = mapInstance.IsShard ? InnerCreateFromEntry(entry, instanceId) : InnerCreateFromEntry(entry);
             } catch (Exception e)
             {
-                Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Reload)
+                Logger.WithTopics(
+                          [
+                              Topics.Entities.MapInstance,
+                              Topics.Actions.Reload
+                          ])
                       .WithProperty(mapInstance)
                       .LogError(e, "Failed to reload map instance with key {@Key}", key);
 

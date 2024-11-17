@@ -1,12 +1,13 @@
+#region
 using Chaos.Collections.Common;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class CounterCollectionTests
 {
-    [Fact]
+    [Test]
     public void AddOrIncrement_ShouldAddNewCounterWithInitialValue_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -20,7 +21,7 @@ public sealed class CounterCollectionTests
              .Be(1);
     }
 
-    [Fact]
+    [Test]
     public void AddOrIncrement_ShouldIncrementExistingCounterByOne_WhenKeyExists()
     {
         // Arrange
@@ -35,7 +36,7 @@ public sealed class CounterCollectionTests
              .Be(6);
     }
 
-    [Fact]
+    [Test]
     public void Constructor_ShouldInitializeCountersFromEnumerable()
     {
         // Arrange
@@ -84,7 +85,7 @@ public sealed class CounterCollectionTests
               .Be(30);
     }
 
-    [Fact]
+    [Test]
     public void ContainsKey_ShouldReturnFalse_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -98,7 +99,7 @@ public sealed class CounterCollectionTests
                    .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void ContainsKey_ShouldReturnTrue_WhenKeyExists()
     {
         // Arrange
@@ -113,7 +114,7 @@ public sealed class CounterCollectionTests
                    .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void CounterGreaterThanOrEqualTo_ShouldReturnFalse_WhenCounterValueIsLessThanValue()
     {
         // Arrange
@@ -128,7 +129,7 @@ public sealed class CounterCollectionTests
                               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void CounterGreaterThanOrEqualTo_ShouldReturnTrue_WhenCounterValueIsGreaterThanOrEqualToValue()
     {
         // Arrange
@@ -143,7 +144,7 @@ public sealed class CounterCollectionTests
                               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void CounterLessThanOrEqualTo_ShouldReturnFalse_WhenCounterValueIsGreaterThanValue()
     {
         // Arrange
@@ -158,7 +159,7 @@ public sealed class CounterCollectionTests
                            .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void CounterLessThanOrEqualTo_ShouldReturnTrue_WhenCounterValueIsLessThanOrEqualToValue()
     {
         // Arrange
@@ -173,7 +174,7 @@ public sealed class CounterCollectionTests
                            .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void GetEnumerator_ShouldEnumerateAllCounters()
     {
         // Arrange
@@ -199,7 +200,7 @@ public sealed class CounterCollectionTests
                    .Contain(new KeyValuePair<string, int>("key3", 5));
     }
 
-    [Fact]
+    [Test]
     public void Remove_ShouldRemoveCounterAndReturnItsValue_WhenKeyExists()
     {
         // Arrange
@@ -218,7 +219,7 @@ public sealed class CounterCollectionTests
                          .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Set_ShouldAddNewCounterWithSpecifiedValue_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -236,7 +237,7 @@ public sealed class CounterCollectionTests
              .Be(5);
     }
 
-    [Fact]
+    [Test]
     public void Set_ShouldSetCounterValue_WhenKeyExists()
     {
         // Arrange
@@ -255,7 +256,7 @@ public sealed class CounterCollectionTests
              .Be(10);
     }
 
-    [Fact]
+    [Test]
     public void TryDecrement_ShouldDecrementCounterValueByOneAndReturnTrue_WhenKeyExistsAndValueIsPositive()
     {
         // Arrange
@@ -273,7 +274,7 @@ public sealed class CounterCollectionTests
                 .Be(4);
     }
 
-    [Fact]
+    [Test]
     public void TryDecrement_ShouldReturnFalse_WhenDecrementWouldResultInNegativeValue()
     {
         // Arrange
@@ -288,7 +289,7 @@ public sealed class CounterCollectionTests
                     .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void TryDecrement_ShouldReturnFalse_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -302,7 +303,7 @@ public sealed class CounterCollectionTests
                     .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void TryDecrementWithValue_ShouldDecrementCounterValueBySpecifiedValueAndReturnTrue_WhenKeyExistsAndValueIsPositive()
     {
         // Arrange
@@ -320,7 +321,7 @@ public sealed class CounterCollectionTests
                 .Be(7);
     }
 
-    [Fact]
+    [Test]
     public void TryDecrementWithValue_ShouldReturnFalse_WhenDecrementWouldResultInNegativeValue()
     {
         // Arrange
@@ -335,7 +336,7 @@ public sealed class CounterCollectionTests
                     .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void TryDecrementWithValue_ShouldReturnFalse_WhenKeyDoesNotExist()
     {
         // Arrange

@@ -1,12 +1,13 @@
+#region
 using Chaos.Geometry.Abstractions;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class PolygonTests
 {
-    [Fact]
+    [Test]
     public void Polygon_Constructor_CreatesPolygonWithEmptyVertices()
     {
         // Act
@@ -22,7 +23,7 @@ public sealed class PolygonTests
                .BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void Polygon_Constructor_CreatesPolygonWithGivenVertices()
     {
         // Arrange
@@ -46,7 +47,7 @@ public sealed class PolygonTests
                .ContainInOrder(vertices);
     }
 
-    [Fact]
+    [Test]
     public void Polygon_Equals_ReturnsFalseWhenComparingWithDifferentType()
     {
         // Arrange
@@ -68,7 +69,7 @@ public sealed class PolygonTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Polygon_Equals_ReturnsFalseWhenPolygonsAreNotEqual()
     {
         // Arrange
@@ -97,7 +98,7 @@ public sealed class PolygonTests
               .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Polygon_Equals_ReturnsFalseWhenPolygonsHaveDifferentVertexCounts()
     {
         // Arrange
@@ -129,7 +130,7 @@ public sealed class PolygonTests
                .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Polygon_Equals_ReturnsFalseWhenPolygonsHaveDifferentVertices()
     {
         // Arrange
@@ -162,7 +163,7 @@ public sealed class PolygonTests
                .BeFalse();
     }
 
-    [Fact]
+    [Test]
     public void Polygon_Equals_ReturnsTrueWhenPolygonsAreEqual()
     {
         // Arrange
@@ -184,7 +185,7 @@ public sealed class PolygonTests
               .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Polygon_Equals_ReturnsTrueWhenPolygonsHaveSameVerticesInDifferentOrder()
     {
         // Arrange
@@ -217,7 +218,7 @@ public sealed class PolygonTests
                .BeTrue();
     }
 
-    [Fact]
+    [Test]
     public void Polygon_GetEnumerator_ReturnsVerticesEnumerator()
     {
         // Arrange
@@ -238,7 +239,7 @@ public sealed class PolygonTests
                       .ContainInOrder(vertices);
     }
 
-    [Fact]
+    [Test]
     public void Polygon_GetHashCode_ReturnsConsistentHashCode()
     {
         // Arrange

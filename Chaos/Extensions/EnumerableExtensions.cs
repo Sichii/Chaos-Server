@@ -1,3 +1,4 @@
+#region
 using System.Runtime.CompilerServices;
 using Chaos.Definitions;
 using Chaos.Extensions.Geometry;
@@ -7,6 +8,7 @@ using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Extensions;
 
@@ -51,11 +53,12 @@ public static class EnumerableExtensions
         => objs.Where(obj => obj.WithinRange(point, range));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, int range = 15, params IPoint[] points) where T: MapEntity
+    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, int range = 15, params IEnumerable<IPoint> points)
+        where T: MapEntity
         => objs.Where(obj => points.Any(point => obj.WithinRange(point, range)));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, int range = 15, params ILocation[] locations)
+    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, int range = 15, params IEnumerable<ILocation> locations)
         where T: MapEntity
         => objs.Where(obj => locations.Any(point => obj.WithinRange(point, range)));
 

@@ -1,7 +1,8 @@
+#region
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable ArrangeAttributes
 
@@ -9,7 +10,7 @@ namespace Chaos.Common.Tests;
 
 public sealed class IntegerRandomizerTests
 {
-    [Fact]
+    [Test]
     public void PickRandomWeightedSingleOrDefault_ReturnsValidResult()
     {
         var weightedChoices = new List<KeyValuePair<string, int>>
@@ -63,9 +64,9 @@ public sealed class IntegerRandomizerTests
                  .BeGreaterThan(0);
     }
 
-    [Theory]
-    [InlineData(100, 50)]
-    [InlineData(50, 1000)]
+    [Test]
+    [Arguments(100, 50)]
+    [Arguments(50, 1000)]
     public void RollChance_ReturnsBoolean(int successChance, int testCount)
     {
         var successCount = 0;
@@ -83,10 +84,10 @@ public sealed class IntegerRandomizerTests
                                          .BeApproximately(successChance, 10);
     }
 
-    [Theory]
-    [InlineData(10)]
-    [InlineData(100)]
-    [InlineData(500)]
+    [Test]
+    [Arguments(10)]
+    [Arguments(100)]
+    [Arguments(500)]
     public void RollDouble_ReturnsNumberInRange(int maxPer)
     {
         for (var i = 0; i < 1000; i++)
@@ -100,10 +101,10 @@ public sealed class IntegerRandomizerTests
         }
     }
 
-    [Theory]
-    [InlineData(100, 10, 90)]
-    [InlineData(100, 50, 50)]
-    [InlineData(100, 100, 0)]
+    [Test]
+    [Arguments(100, 10, 90)]
+    [Arguments(100, 50, 50)]
+    [Arguments(100, 100, 0)]
     public void RollRange_NegativeRandomization_ReturnsWithinExpectedRange(int baseValue, int variancePct, int expectedMin)
     {
         // Repeat the test 1000 times to make sure we cover as many random values as possible
@@ -118,10 +119,10 @@ public sealed class IntegerRandomizerTests
         }
     }
 
-    [Theory]
-    [InlineData(100, 10, 110)]
-    [InlineData(100, 50, 150)]
-    [InlineData(100, 100, 200)]
+    [Test]
+    [Arguments(100, 10, 110)]
+    [Arguments(100, 50, 150)]
+    [Arguments(100, 100, 200)]
     public void RollRange_PositiveRandomization_ReturnsWithinExpectedRange(int baseValue, int variancePct, int expectedMax)
     {
         // Repeat the test 1000 times to make sure we cover as many random values as possible
@@ -136,10 +137,10 @@ public sealed class IntegerRandomizerTests
         }
     }
 
-    [Theory]
-    [InlineData(100, 10, 90)]
-    [InlineData(100, 50, 50)]
-    [InlineData(100, 100, 0)]
+    [Test]
+    [Arguments(100, 10, 90)]
+    [Arguments(100, 50, 50)]
+    [Arguments(100, 100, 0)]
     public void RollRangeLong_NegativeRandomization_ReturnsWithinExpectedRange(long baseValue, int variancePct, long expectedMin)
     {
         // Repeat the test 1000 times to make sure we cover as many random values as possible
@@ -154,10 +155,10 @@ public sealed class IntegerRandomizerTests
         }
     }
 
-    [Theory]
-    [InlineData(100, 10, 110)]
-    [InlineData(100, 50, 150)]
-    [InlineData(100, 100, 200)]
+    [Test]
+    [Arguments(100, 10, 110)]
+    [Arguments(100, 50, 150)]
+    [Arguments(100, 100, 200)]
     public void RollRangeLong_PositiveRandomization_ReturnsWithinExpectedRange(long baseValue, int variancePct, long expectedMax)
     {
         // Repeat the test 1000 times to make sure we cover as many random values as possible
@@ -172,10 +173,10 @@ public sealed class IntegerRandomizerTests
         }
     }
 
-    [Theory]
-    [InlineData(100)]
-    [InlineData(200)]
-    [InlineData(500)]
+    [Test]
+    [Arguments(100)]
+    [Arguments(200)]
+    [Arguments(500)]
     public void RollSingle_ReturnsNumberInRange(int max)
     {
         for (var i = 0; i < 1000; i++)

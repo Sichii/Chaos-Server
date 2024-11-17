@@ -1,5 +1,6 @@
+#region
 using FluentAssertions;
-using Xunit;
+#endregion
 
 // ReSharper disable ArrangeAttributes
 
@@ -7,10 +8,10 @@ namespace Chaos.Extensions.Common.Tests;
 
 public sealed class SpanExtensionsTests
 {
-    [Theory]
-    [InlineData("HelloWorld", "HELLO", true)]
-    [InlineData("HelloWorld", "WRLD", false)]
-    [InlineData("HelloWorld", "World", true)]
+    [Test]
+    [Arguments("HelloWorld", "HELLO", true)]
+    [Arguments("HelloWorld", "WRLD", false)]
+    [Arguments("HelloWorld", "World", true)]
     public void ContainsI_ShouldWorkCorrectly(string source, string toCheck, bool expectedResult)
     {
         var span = source.AsSpan();
@@ -22,10 +23,10 @@ public sealed class SpanExtensionsTests
               .Be(expectedResult);
     }
 
-    [Theory]
-    [InlineData("HelloWorld", "WORLD", true)]
-    [InlineData("HelloWorld", "world", true)]
-    [InlineData("HelloWorld", "Hello", false)]
+    [Test]
+    [Arguments("HelloWorld", "WORLD", true)]
+    [Arguments("HelloWorld", "world", true)]
+    [Arguments("HelloWorld", "Hello", false)]
     public void EndsWithI_ShouldWorkCorrectly(string source, string toCheck, bool expectedResult)
     {
         var span = source.AsSpan();
@@ -37,10 +38,10 @@ public sealed class SpanExtensionsTests
               .Be(expectedResult);
     }
 
-    [Theory]
-    [InlineData("HelloWorld", "HELLO", true)]
-    [InlineData("HelloWorld", "hello", true)]
-    [InlineData("HelloWorld", "World", false)]
+    [Test]
+    [Arguments("HelloWorld", "HELLO", true)]
+    [Arguments("HelloWorld", "hello", true)]
+    [Arguments("HelloWorld", "World", false)]
     public void StartsWithI_ShouldWorkCorrectly(string source, string toCheck, bool expectedResult)
     {
         var span = source.AsSpan();

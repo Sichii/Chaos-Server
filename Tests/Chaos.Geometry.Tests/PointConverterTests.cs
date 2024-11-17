@@ -1,14 +1,15 @@
+#region
 using System.Text;
 using System.Text.Json;
 using Chaos.Geometry.JsonConverters;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Geometry.Tests;
 
 public sealed class PointConverterTests
 {
-    [Fact]
+    [Test]
     public void Read_ShouldReturnPoint_WhenInputIsValid()
     {
         const string JSON_STRING = "\"(1, 2)\"";
@@ -22,7 +23,7 @@ public sealed class PointConverterTests
              .BeEquivalentTo(new Point(1, 2));
     }
 
-    [Fact]
+    [Test]
     public void Read_ShouldThrowInvalidOperationException_WhenInputIsEmpty()
     {
         const string JSON_STRING = "\"\"";
@@ -48,7 +49,7 @@ public sealed class PointConverterTests
           .Be("Expected a string");
     }
 
-    [Fact]
+    [Test]
     public void Read_ShouldThrowInvalidOperationException_WhenInputIsInvalid()
     {
         const string JSON_STRING = "\"invalid\"";
@@ -74,7 +75,7 @@ public sealed class PointConverterTests
           .Be("Invalid string format for point. \"invalid\"");
     }
 
-    [Fact]
+    [Test]
     public void Write_ShouldWriteJson_WhenPointIsValid()
     {
         var point = new Point(1, 2);

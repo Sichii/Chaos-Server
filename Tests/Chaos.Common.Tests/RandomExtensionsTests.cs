@@ -1,13 +1,14 @@
+#region
 using System.Numerics;
 using Chaos.Extensions.Common;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Common.Tests;
 
 public sealed class RandomExtensionsTests
 {
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForByte()
     {
         const byte MIN_VALUE = 10;
@@ -15,7 +16,7 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForDecimal()
     {
         const decimal MIN_VALUE = -1.5m;
@@ -23,7 +24,7 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForDouble()
     {
         const double MIN_VALUE = -1.5;
@@ -31,7 +32,7 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForFloat()
     {
         const float MIN_VALUE = -1.5f;
@@ -39,7 +40,7 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForInt()
     {
         const int MIN_VALUE = -1000;
@@ -47,7 +48,7 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForLong()
     {
         const long MIN_VALUE = -10000;
@@ -55,7 +56,7 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForSByte()
     {
         const sbyte MIN_VALUE = -10;
@@ -63,7 +64,7 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForShort()
     {
         const short MIN_VALUE = -100;
@@ -71,7 +72,7 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForUInt()
     {
         const uint MIN_VALUE = 1000;
@@ -79,7 +80,7 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForULong()
     {
         const ulong MIN_VALUE = 10000;
@@ -87,7 +88,7 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenMinAndMax_ForUShort()
     {
         const ushort MIN_VALUE = 100;
@@ -95,37 +96,37 @@ public sealed class RandomExtensionsTests
         RunRangeTest(MIN_VALUE, MAX_VALUE);
     }
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndMaxValue_ForByte() => RunTest(byte.MinValue, byte.MaxValue);
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndMaxValue_ForInt() => RunTest(int.MinValue, int.MaxValue);
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndMaxValue_ForLong() => RunTest(long.MinValue, long.MaxValue);
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndMaxValue_ForSByte() => RunTest(sbyte.MinValue, sbyte.MaxValue);
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndMaxValue_ForShort() => RunTest(short.MinValue, short.MaxValue);
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndMaxValue_ForUInt() => RunTest(uint.MinValue, uint.MaxValue);
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndMaxValue_ForULong() => RunTest(ulong.MinValue, ulong.MaxValue);
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndMaxValue_ForUShort() => RunTest(ushort.MinValue, ushort.MaxValue);
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndOne_ForDecimal() => RunTest(decimal.Zero, decimal.One);
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndOne_ForDouble() => RunTest(0d, 1d);
 
-    [Fact]
+    [Test]
     public void Next_ShouldReturnRandomNumberBetweenZeroAndOne_ForFloat() => RunTest(0f, 1f);
 
     private void RunRangeTest<T>(T minValue, T maxValue) where T: INumber<T>

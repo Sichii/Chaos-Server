@@ -1,3 +1,4 @@
+#region
 using Chaos.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Models.Abstractions;
@@ -8,6 +9,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.ShopScripts.Abstractions;
 using Chaos.Utilities;
+#endregion
 
 namespace Chaos.Scripting.MerchantScripts.ShopScripts;
 
@@ -91,10 +93,12 @@ public class VerbalSellShopScript : VerbalShopScriptBase
                     totalCost);
 
                 Logger.WithTopics(
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Item,
-                          Topics.Entities.Gold,
-                          Topics.Actions.Sell)
+                          [
+                              Topics.Entities.Aisling,
+                              Topics.Entities.Item,
+                              Topics.Entities.Gold,
+                              Topics.Actions.Sell
+                          ])
                       .WithProperty(source)
                       .WithProperty(item)
                       .WithProperty(SellShopSource)

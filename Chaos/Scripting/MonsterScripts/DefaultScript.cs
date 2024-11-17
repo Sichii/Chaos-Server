@@ -1,13 +1,15 @@
+#region
 using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MonsterScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.MonsterScripts;
 
 public class DefaultScript : CompositeMonsterScript
 {
-    private static readonly ICollection<string> ScriptKeys = new[]
-    {
+    private static readonly ICollection<string> ScriptKeys =
+    [
         GetScriptKey(typeof(DefaultBehaviorsScript)),
         GetScriptKey(typeof(AggroTargetingScript)),
         GetScriptKey(typeof(ContributionScript)),
@@ -16,7 +18,7 @@ public class DefaultScript : CompositeMonsterScript
         GetScriptKey(typeof(MoveToTargetScript)),
         GetScriptKey(typeof(WanderingScript)),
         GetScriptKey(typeof(DeathScript))
-    };
+    ];
 
     /// <inheritdoc />
     public DefaultScript(IScriptProvider scriptProvider, Monster subject)

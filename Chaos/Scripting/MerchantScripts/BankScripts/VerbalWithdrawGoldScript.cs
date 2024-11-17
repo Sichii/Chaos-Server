@@ -1,3 +1,4 @@
+#region
 using Chaos.Definitions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
@@ -5,6 +6,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.MerchantScripts.BankScripts.Abstractions;
 using Chaos.Utilities;
+#endregion
 
 namespace Chaos.Scripting.MerchantScripts.BankScripts;
 
@@ -69,7 +71,12 @@ public class VerbalWithdrawGoldScript : VerbalBankerScriptBase
                     amount,
                     "gold");
 
-                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Withdraw)
+                Logger.WithTopics(
+                          [
+                              Topics.Entities.Aisling,
+                              Topics.Entities.Gold,
+                              Topics.Actions.Withdraw
+                          ])
                       .WithProperty(source)
                       .WithProperty(Subject)
                       .LogInformation("Aisling {@AislingName} withdrew {Amount} gold from the bank", source, amount);

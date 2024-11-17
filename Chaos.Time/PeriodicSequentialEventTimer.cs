@@ -1,4 +1,6 @@
+#region
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Time;
 
@@ -9,7 +11,7 @@ namespace Chaos.Time;
 /// </summary>
 public class PeriodicSequentialEventTimer : ISequentialTimer
 {
-    private readonly List<IIntervalTimer> OrderedTimers;
+    private readonly IReadOnlyList<IIntervalTimer> OrderedTimers;
     private int CurrentTimerIndex;
 
     /// <inheritdoc />
@@ -21,12 +23,14 @@ public class PeriodicSequentialEventTimer : ISequentialTimer
     /// <summary>
     ///     Initializes a new instance of the <see cref="PeriodicSequentialEventTimer" /> class
     /// </summary>
-    public PeriodicSequentialEventTimer(params IIntervalTimer[] orderedTimers) => OrderedTimers = orderedTimers.ToList();
+    public PeriodicSequentialEventTimer(params IReadOnlyList<IIntervalTimer> orderedTimers) => OrderedTimers = orderedTimers;
 
     /// <inheritdoc />
     public void Reset()
     {
-        OrderedTimers.ForEach(timer => timer.Reset());
+        foreach (var timer in OrderedTimers)
+            timer.Reset();
+
         CurrentTimerIndex = 0;
     }
 

@@ -1,12 +1,13 @@
+#region
 using System.ComponentModel;
 using FluentAssertions;
-using Xunit;
+#endregion
 
 namespace Chaos.Extensions.Common.Tests;
 
 public sealed class ObjectExtensionsTests
 {
-    [Fact]
+    [Test]
     public void GetDescription_InvalidMemberName_ReturnsEmptyString()
     {
         var description = typeof(SampleEnum).GetDescription("InvalidName");
@@ -15,7 +16,7 @@ public sealed class ObjectExtensionsTests
                    .BeEmpty();
     }
 
-    [Fact]
+    [Test]
     public void GetDescription_MemberWithDescription_ReturnsDescriptionText()
     {
         var description = typeof(SampleEnum).GetDescription(SampleEnum.WithDescription);
@@ -24,7 +25,7 @@ public sealed class ObjectExtensionsTests
                    .Be("This is a sample description");
     }
 
-    [Fact]
+    [Test]
     public void GetDescription_MemberWithoutDescription_ReturnsEmptyString()
     {
         var description = typeof(SampleEnum).GetDescription(SampleEnum.WithoutDescription);

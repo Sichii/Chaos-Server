@@ -1,7 +1,9 @@
+#region
 using Seq.Api;
 using Seq.Api.Model.Dashboarding;
 using Seq.Api.Model.Shared;
 using SeqConfigurator.Utility;
+#endregion
 
 namespace SeqConfigurator.Builders;
 
@@ -45,7 +47,7 @@ public sealed class ChartQueryBuilder
         return this;
     }
 
-    public ChartQueryBuilder WithGroupBy(params string[] groupByClauses)
+    public ChartQueryBuilder WithGroupBy(params IEnumerable<string> groupByClauses)
     {
         AsyncComposer.Compose(
             chartQuery =>
@@ -78,7 +80,7 @@ public sealed class ChartQueryBuilder
         return this;
     }
 
-    public ChartQueryBuilder WithOrderBy(params string[] orderByClauses)
+    public ChartQueryBuilder WithOrderBy(params IEnumerable<string> orderByClauses)
     {
         AsyncComposer.Compose(
             chartQuery =>
@@ -89,7 +91,7 @@ public sealed class ChartQueryBuilder
         return this;
     }
 
-    public ChartQueryBuilder WithSelect(params (string Label, string SelectClause)[] columns)
+    public ChartQueryBuilder WithSelect(params IEnumerable<(string Label, string SelectClause)> columns)
     {
         AsyncComposer.Compose(
             chartQuery =>
