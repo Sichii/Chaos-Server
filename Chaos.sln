@@ -14,6 +14,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{698D32AB-9BC9-4B0A-B5DD-19D98C0358DB}"
 	ProjectSection(SolutionItems) = preProject
 		Tools\Directory.Build.props = Tools\Directory.Build.props
+		Tools\do-release.bat = Tools\do-release.bat
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmarks", "Tools\Benchmarks\Benchmarks.csproj", "{CAF46A23-C840-4278-BEF3-A65C4D51806C}"
