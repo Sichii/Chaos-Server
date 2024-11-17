@@ -20,6 +20,7 @@ using Chaos.Models.World.Abstractions;
 using Chaos.Networking.Abstractions;
 using Chaos.Networking.Entities;
 using Chaos.NLog.Logging.Definitions;
+using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Services.Other;
@@ -78,7 +79,8 @@ await Task.Delay(2500);
 
 await RunApp(app);
 
-LoggerExtensions.LogInformation(logger.WithTopics(Topics.Actions.Disconnect), "Waiting 5 seconds for post shutdown tasks to complete");
+logger.WithTopics(Topics.Actions.Disconnect)
+      .LogInformation("Waiting 5 seconds for post shutdown tasks to complete");
 
 //wait for everything to shut down
 await Task.Delay(5000);
