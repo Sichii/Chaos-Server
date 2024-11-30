@@ -1,9 +1,11 @@
+#region
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.EqualityComparers;
 using Chaos.Models.Map;
 using Chaos.Models.Templates.Abstractions;
 using Chaos.Scripting.Abstractions;
+#endregion
 
 namespace Chaos.Models.Templates;
 

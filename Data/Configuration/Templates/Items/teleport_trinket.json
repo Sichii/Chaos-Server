@@ -1,10 +1,11 @@
 {
   "buyCost": 1000,
   "category": "trinket",
-  "noTrade": true,
   "color": "Default",
   "gender": "Unisex",
   "maxStacks": 1,
+  "modifiers": {},
+  "noTrade": true,
   "pantsColor": "Default",
   "sellValue": 500,
   "weight": 1,

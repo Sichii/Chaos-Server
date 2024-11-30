@@ -45,20 +45,20 @@ public class JsonContext
     private static bool IsInitialized;
 
     private static readonly TypeSwitchExpression<IEnumerable> RepositoryExpression = new TypeSwitchExpression<IEnumerable>()
-                                                                                     .Case<DialogTemplateSchema>(() => DialogTemplates!)
-                                                                                     .Case<ItemTemplateSchema>(() => ItemTemplates!)
-                                                                                     .Case<LootTableSchema>(() => LootTables!)
+                                                                                     .Case<DialogTemplateSchema>(() => DialogTemplates)
+                                                                                     .Case<ItemTemplateSchema>(() => ItemTemplates)
+                                                                                     .Case<LootTableSchema>(() => LootTables)
                                                                                      .Case<MapInstanceRepository.MapInstanceComposite>(
-                                                                                        () => MapInstances!)
-                                                                                     .Case<MapTemplateSchema>(() => MapTemplates!)
-                                                                                     .Case<MerchantTemplateSchema>(() => MerchantTemplates!)
-                                                                                     .Case<MonsterTemplateSchema>(() => MonsterTemplates!)
+                                                                                        () => MapInstances)
+                                                                                     .Case<MapTemplateSchema>(() => MapTemplates)
+                                                                                     .Case<MerchantTemplateSchema>(() => MerchantTemplates)
+                                                                                     .Case<MonsterTemplateSchema>(() => MonsterTemplates)
                                                                                      .Case<ReactorTileTemplateSchema>(
-                                                                                        () => ReactorTileTemplates!)
-                                                                                     .Case<SkillTemplateSchema>(() => SkillTemplates!)
-                                                                                     .Case<SpellTemplateSchema>(() => SpellTemplates!)
-                                                                                     .Case<WorldMapNodeSchema>(() => WorldMapNodes!)
-                                                                                     .Case<WorldMapSchema>(() => WorldMaps!)
+                                                                                        () => ReactorTileTemplates)
+                                                                                     .Case<SkillTemplateSchema>(() => SkillTemplates)
+                                                                                     .Case<SpellTemplateSchema>(() => SpellTemplates)
+                                                                                     .Case<WorldMapNodeSchema>(() => WorldMapNodes)
+                                                                                     .Case<WorldMapSchema>(() => WorldMaps)
                                                                                      .Default(() => throw new ArgumentOutOfRangeException())
                                                                                      .Freeze();
 
@@ -104,23 +104,7 @@ public class JsonContext
         JsonSerializerOptions.Converters.Add(new LocationConverter());
         JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
-       Context = new SerializationContext
-       {
-          Options =
-          {
-             WriteIndented = true,
-             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
-             NumberHandling = JsonNumberHandling.AllowReadingFromString,
-             PropertyNameCaseInsensitive = true,
-             IgnoreReadOnlyProperties = true,
-             IgnoreReadOnlyFields = true,
-             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-             AllowTrailingCommas = true,
-             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-             RespectNullableAnnotations = true,
-             RespectRequiredConstructorParameters = true
-          }
-       };
+       Context = new SerializationContext(JsonSerializerOptions);
 
         var services = new ServiceCollection();
 

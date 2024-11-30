@@ -35,7 +35,7 @@ public struct GetCascadingTargetsAbilityComponent<TEntity> : IConditionalCompone
                                            options.Range,
                                            direction,
                                            null,
-                                           options.IncludeSourcePoint)
+                                           options.ExcludeSourcePoint)
                                        .Cast<IPoint>();
 
             if (options.IgnoreWalls)
@@ -71,9 +71,9 @@ public struct GetCascadingTargetsAbilityComponent<TEntity> : IConditionalCompone
 
     public interface IGetCascadingTargetsComponentOptions
     {
+        bool ExcludeSourcePoint { get; init; }
         TargetFilter Filter { get; init; }
         bool IgnoreWalls { get; init; }
-        bool IncludeSourcePoint { get; init; }
         bool MustHaveTargets { get; init; }
         int Range { get; init; }
         AoeShape Shape { get; init; }

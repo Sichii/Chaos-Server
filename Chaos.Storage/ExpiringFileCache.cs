@@ -106,18 +106,31 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
 
         var pathEndings = Paths.Select(Path.GetFileNameWithoutExtension);
 
-        foreach (var pathEnding in pathEndings)
+        Parallel.ForEach(pathEndings, GetWithoutLock);
+
+        return;
+
+        void GetWithoutLock(string? key)
+        {
+            if (string.IsNullOrEmpty(key))
+                return;
+
+            key = ConstructKeyForType(key);
+
             try
             {
-                Get(pathEnding!);
+                Cache.GetOrCreate(key, CreateFromEntry);
             } catch
             {
-                //ignored
+                Cache.Remove(key);
+
+                throw;
             }
+        }
     }
 
     /// <inheritdoc />
-    public virtual T Get(string key)
+    public T Get(string key)
     {
         key = ConstructKeyForType(key);
 

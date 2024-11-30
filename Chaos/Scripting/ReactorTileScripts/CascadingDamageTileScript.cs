@@ -1,3 +1,4 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Definitions;
 using Chaos.Models.Data;
@@ -11,6 +12,7 @@ using Chaos.Scripting.FunctionalScripts.ApplyDamage;
 using Chaos.Scripting.ReactorTileScripts.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.ReactorTileScripts;
 
@@ -107,7 +109,7 @@ public sealed class CascadingDamageTileScript : ConfigurableReactorTileScriptBas
     public int Range { get; init; }
 
     /// <inheritdoc />
-    public bool IncludeSourcePoint { get; init; }
+    public bool ExcludeSourcePoint { get; init; }
 
     /// <inheritdoc />
     public bool MustHaveTargets { get; init; }
