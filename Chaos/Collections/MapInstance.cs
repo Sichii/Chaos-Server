@@ -1,5 +1,6 @@
 #region
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Chaos.Common.Synchronization;
 using Chaos.DarkAges.Definitions;
@@ -86,16 +87,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         SimpleCache = simpleCache;
         ProcessingQueue = new ConcurrentQueue<Action>();
 
-        var walkableArea = template.Height * template.Width
-                           - template.Tiles
-                                     .Flatten()
-                                     .Count(t => t.IsWall);
-
-        Objects = new MapEntityCollection(
-            logger,
-            template.Width,
-            template.Height,
-            walkableArea);
+        Objects = new MapEntityCollection(logger, template.Width, template.Height);
 
         MapInstanceCtx = CancellationTokenSource.CreateLinkedTokenSource(ServerShutdownToken);
         MonsterSpawns = [];
@@ -272,16 +264,16 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         if (!source.WithinRange(point))
             return;
 
-        var door = Objects.AtPoint<Door>(point)
-                          .ThatAreObservedBy(source)
-                          .TopOrDefault();
+        var door = GetEntitiesAtPoints<Door>(point)
+                   .ThatAreObservedBy(source)
+                   .TopOrDefault();
 
         if (door != null)
             door.OnClicked(source);
         else
         {
-            var obj = Objects.AtPoint<ReactorTile>(point)
-                             .TopOrDefault();
+            var obj = GetEntitiesAtPoints<ReactorTile>(point)
+                .TopOrDefault();
 
             obj?.OnClicked(source);
         }
@@ -306,7 +298,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public IEnumerable<ReactorTile> GetDistinctReactorsAtPoint(IPoint point)
     {
         //get reactors in order of oldest to newest
-        var reactors = GetEntitiesAtPoint<ReactorTile>(point)
+        var reactors = GetEntitiesAtPoints<ReactorTile>(point)
             .OrderBy(entity => entity.Creation);
         var distinctTemplateKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -318,9 +310,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public IEnumerable<T> GetEntities<T>() where T: MapEntity => Objects.Values<T>();
 
-    public IEnumerable<T> GetEntitiesAtPoint<T>(IPoint point) where T: MapEntity => Objects.AtPoint<T>(point);
+    public IEnumerable<T> GetEntitiesAtPoints<T>(params IEnumerable<IPoint> points) where T: MapEntity
+        => GetEntitiesAtPoints<T>(points.Select(Point.From));
 
-    public IEnumerable<T> GetEntitiesAtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity => Objects.AtPoints<T>(points);
+    [OverloadResolutionPriority(1)]
+    public IEnumerable<T> GetEntitiesAtPoints<T>(params IEnumerable<Point> points) where T: MapEntity => Objects.AtPoints<T>(points);
 
     public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 15) where T: MapEntity
         => Objects.WithinRange<T>(point, range);
@@ -673,8 +667,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     }
 
     public bool IsBlockingReactor(IPoint point)
-        => Objects.AtPoint<ReactorTile>(point)
-                  .Any(reactor => reactor.ShouldBlockPathfinding);
+        => GetEntitiesAtPoints<ReactorTile>(point)
+            .Any(reactor => reactor.ShouldBlockPathfinding);
 
     public bool IsInSharedLanternVision(VisibleEntity entity)
     {
@@ -686,8 +680,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     }
 
     public bool IsReactor(IPoint point)
-        => Objects.AtPoint<ReactorTile>(point)
-                  .Any();
+        => GetEntitiesAtPoints<ReactorTile>(point)
+            .Any();
 
     /// <summary>
     ///     Determines if a point is walkable
@@ -707,8 +701,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     {
         ignoreBlockingReactors ??= creatureType == CreatureType.Aisling;
 
-        var creatures = Objects.AtPoint<Creature>(point)
-                               .ToList();
+        var creatures = GetEntitiesAtPoints<Creature>(point)
+            .ToList();
 
         if (!ignoreBlockingReactors.Value && IsBlockingReactor(point))
             return false;
@@ -729,7 +723,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         if (Template.IsWall(point))
             return true;
 
-        var door = GetEntitiesAtPoint<Door>(point)
+        var door = GetEntitiesAtPoints<Door>(point)
             .FirstOrDefault();
 
         return door?.Closed ?? false;
@@ -835,37 +829,39 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         Objects.Add(mapEntity.Id, mapEntity);
     }
 
-    public async void StartAsync()
-    {
-        var linkedCancellationToken = MapInstanceCtx.Token;
+    public void StartAsync()
+        => Task.Run(
+            async () =>
+            {
+                var linkedCancellationToken = MapInstanceCtx.Token;
 
-        while (true)
-        {
-            if (linkedCancellationToken.IsCancellationRequested)
-                return;
+                while (true)
+                {
+                    if (linkedCancellationToken.IsCancellationRequested)
+                        return;
 
-            try
-            {
-                await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken);
-            } catch (OperationCanceledException)
-            {
-                return;
-            }
+                    try
+                    {
+                        await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken);
+                    } catch (OperationCanceledException)
+                    {
+                        return;
+                    }
 
-            try
-            {
-                await UpdateMapAsync(DeltaTime.GetDelta);
-            } catch (Exception e)
-            {
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.MapInstance,
-                              Topics.Actions.Update
-                          ])
-                      .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
-            }
-        }
-    }
+                    try
+                    {
+                        await UpdateMapAsync(DeltaTime.GetDelta);
+                    } catch (Exception e)
+                    {
+                        Logger.WithTopics(
+                                  [
+                                      Topics.Entities.MapInstance,
+                                      Topics.Actions.Update
+                                  ])
+                              .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
+                    }
+                }
+            });
 
     public void Stop() => MapInstanceCtx.Cancel();
 

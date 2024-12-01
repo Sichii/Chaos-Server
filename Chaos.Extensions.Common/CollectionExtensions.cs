@@ -1,4 +1,6 @@
+#region
 using System.Diagnostics.CodeAnalysis;
+#endregion
 
 namespace Chaos.Extensions.Common;
 
@@ -67,6 +69,27 @@ public static class CollectionExtensions
 
         return
             ~left; // Item not found. Bitwise complement of the index of the next element that is larger than item, or if there is no larger element, the bitwise complement of collection.Count
+    }
+
+    /// <summary>
+    ///     Gets the index of an item in a collection, ignoring case
+    /// </summary>
+    /// <param name="collection">
+    ///     This collection
+    /// </param>
+    /// <param name="str">
+    ///     The string to find the index of
+    /// </param>
+    /// <returns>
+    ///     The index of the given string, if it was found, otherwise -1
+    /// </returns>
+    public static int IndexOfI(this IList<string> collection, string str)
+    {
+        for (var i = 0; i < collection.Count; i++)
+            if (string.Equals(collection[i], str, StringComparison.OrdinalIgnoreCase))
+                return i;
+
+        return -1;
     }
 
     /// <summary>
@@ -155,6 +178,39 @@ public static class CollectionExtensions
 
                 break;
             }
+
+        if (index == -1)
+            return false;
+
+        collection[index] = newItem;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Replaces a string in a collection with a new string
+    /// </summary>
+    /// <param name="collection">
+    ///     This collection
+    /// </param>
+    /// <param name="item">
+    ///     The string to replace
+    /// </param>
+    /// <param name="newItem">
+    ///     The new string that replaces the old string
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if a matching string was found and replaced, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    public static bool ReplaceI(this IList<string> collection, string item, string newItem)
+    {
+        var index = collection.IndexOfI(item);
 
         if (index == -1)
             return false;

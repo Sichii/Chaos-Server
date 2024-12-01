@@ -1,6 +1,8 @@
+#region
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+#endregion
 
 namespace Chaos.Extensions.Common;
 
@@ -100,23 +102,6 @@ public static class EnumerableExtensions
         => enumerable.OrderByDescending(e => e, comparer);
 
     /// <summary>
-    ///     Attempts to cast the IEnumerable to use a different generic type, otherwise checks each element for the given type
-    /// </summary>
-    /// <param name="enumerable">
-    ///     The enumerable to iterate
-    /// </param>
-    /// <typeparam name="TReturn">
-    /// </typeparam>
-    [ExcludeFromCodeCoverage]
-    public static IEnumerable<TReturn> SafeCast<TReturn>(this IEnumerable enumerable)
-    {
-        if (enumerable is IEnumerable<TReturn> casted)
-            return casted;
-
-        return enumerable.OfType<TReturn>();
-    }
-
-    /// <summary>
     ///     Randomizes the order of the elements in a sequence
     /// </summary>
     [ExcludeFromCodeCoverage(Justification = "Impossible to test randomness without creating an occasionally failing test")]
@@ -139,23 +124,4 @@ public static class EnumerableExtensions
     /// </summary>
     public static IOrderedEnumerable<T> ThenByDescending<T>(this IOrderedEnumerable<T> orderedEnumerable, IComparer<T> comparer)
         => orderedEnumerable.ThenByDescending(e => e, comparer);
-
-    /// <summary>
-    ///     Casts the given IEnumerable and then converts it to a List
-    /// </summary>
-    /// <param name="enumerable">
-    ///     The enumerable to cast and convert
-    /// </param>
-    /// <typeparam name="TReturn">
-    ///     The type to cast the IEnumerable to
-    /// </typeparam>
-    [ExcludeFromCodeCoverage]
-    public static List<TReturn> ToListCast<TReturn>(this IEnumerable enumerable)
-    {
-        if (enumerable is List<TReturn> list)
-            return list;
-
-        return enumerable.SafeCast<TReturn>()
-                         .ToList();
-    }
 }

@@ -1,6 +1,9 @@
+#region
+using System.Collections.Concurrent;
+using Chaos.Collections.Synchronized;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.EqualityComparers;
+#endregion
 
 namespace Chaos.Collections.Specialized;
 
@@ -12,7 +15,7 @@ namespace Chaos.Collections.Specialized;
 public sealed class SpatialHash<T> where T: IPoint
 {
     private readonly IEqualityComparer<T>? Comparer;
-    private readonly Dictionary<IPoint, HashSet<T>> Hash = new(PointEqualityComparer.Instance);
+    private readonly ConcurrentDictionary<Point, SynchronizedHashSet<T>> MapOfHashMaps = new();
 
     /// <summary>
     ///     Initializes a new instance of <see cref="SpatialHash{T}" />.
@@ -32,19 +35,19 @@ public sealed class SpatialHash<T> where T: IPoint
     {
         var key = Point.From(item);
 
-        if (!Hash.TryGetValue(key, out var set))
+        if (!MapOfHashMaps.TryGetValue(key, out var hashMap))
         {
-            set = new HashSet<T>(Comparer);
-            Hash.Add(key, set);
+            hashMap = new SynchronizedHashSet<T>(comparer: Comparer);
+            MapOfHashMaps.TryAdd(key, hashMap);
         }
 
-        set.Add(item);
+        hashMap.Add(item);
     }
 
     /// <summary>
     ///     Clears the SpatialHash.
     /// </summary>
-    public void Clear() => Hash.Clear();
+    public void Clear() => MapOfHashMaps.Clear();
 
     /// <summary>
     ///     Queries the SpatialHash for items at a given point.
@@ -55,10 +58,10 @@ public sealed class SpatialHash<T> where T: IPoint
     /// <returns>
     ///     All items located at the given point
     /// </returns>
-    public IEnumerable<T> Query(IPoint point)
+    public IEnumerable<T> Query(Point point)
     {
-        if (Hash.TryGetValue(point, out var set))
-            return set;
+        if (MapOfHashMaps.TryGetValue(point, out var hashMap))
+            return hashMap;
 
         return [];
     }
@@ -82,13 +85,13 @@ public sealed class SpatialHash<T> where T: IPoint
     {
         var key = Point.From(item);
 
-        if (!Hash.TryGetValue(key, out var set))
+        if (!MapOfHashMaps.TryGetValue(key, out var hashMap))
             return false;
 
-        if (set.Remove(item))
+        if (hashMap.Remove(item))
         {
-            if (set.Count == 0)
-                Hash.Remove(key);
+            if (hashMap.Count == 0)
+                MapOfHashMaps.Remove(key, out _);
 
             return true;
         }

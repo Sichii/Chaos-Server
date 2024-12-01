@@ -1,7 +1,10 @@
+#region
+using Chaos.Extensions.Common;
 using Chaos.Models.Data;
 using Chaos.Scripting.Components.Abstractions;
 using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.EffectScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.Components.EffectComponents;
 
@@ -22,8 +25,8 @@ public struct HierarchicalEffectComponent : IConditionalComponent
         if (conflictingEffect is null)
             return true;
 
-        var thisRank = options.EffectNameHierarchy.IndexOf(options.Name);
-        var conflictingRank = options.EffectNameHierarchy.IndexOf(conflictingEffect.Name);
+        var thisRank = options.EffectNameHierarchy.IndexOfI(options.Name);
+        var conflictingRank = options.EffectNameHierarchy.IndexOfI(conflictingEffect.Name);
 
         if (thisRank <= conflictingRank)
         {

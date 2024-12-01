@@ -1,9 +1,11 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Geometry;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Scripting.SkillScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.SkillScripts;
 
@@ -24,7 +26,7 @@ public class ThrowScript : SkillScriptBase
     {
         var throwDirection = context.Source.Direction;
         var thrownPoint = context.Source.DirectionalOffset(throwDirection);
-        var thrownAislings = context.TargetMap.GetEntitiesAtPoint<Aisling>(thrownPoint);
+        var thrownAislings = context.TargetMap.GetEntitiesAtPoints<Aisling>(thrownPoint);
         var targetPoint = thrownPoint.DirectionalOffset(throwDirection);
 
         //potential points are the throw point, and the 3 points around it

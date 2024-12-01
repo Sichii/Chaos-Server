@@ -1073,7 +1073,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (!localClient.Aisling.WithinRange(localArgs.SourcePoint, Options.PickupRange))
                 return default;
 
-            var possibleObjs = map.GetEntitiesAtPoint<GroundEntity>(localArgs.SourcePoint)
+            var possibleObjs = map.GetEntitiesAtPoints<GroundEntity>(localArgs.SourcePoint)
                                   .OrderByDescending(obj => obj.Creation)
                                   .ToList();
 

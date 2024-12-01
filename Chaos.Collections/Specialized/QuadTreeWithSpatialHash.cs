@@ -1,4 +1,7 @@
+#region
+using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
+#endregion
 
 namespace Chaos.Collections.Specialized;
 
@@ -46,7 +49,7 @@ public sealed class QuadTreeWithSpatialHash<T> : QuadTree<T> where T: IPoint
     }
 
     /// <inheritdoc />
-    public override IEnumerable<T> Query(IPoint point) => SpatialHash.Query(point);
+    public override IEnumerable<T> Query(Point point) => SpatialHash.Query(point);
 
     /// <inheritdoc />
     public override bool Remove(T entity)

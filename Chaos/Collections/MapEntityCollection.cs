@@ -1,4 +1,6 @@
+#region
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Chaos.Collections.Specialized;
 using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
@@ -8,6 +10,7 @@ using Chaos.Geometry.EqualityComparers;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Collections;
 
@@ -28,13 +31,7 @@ public sealed class MapEntityCollection : IDeltaUpdatable
     private readonly UpdatableCollection Updatables;
     private readonly TypeSwitchExpression<IEnumerable> ValuesCases;
 
-    private readonly int WalkableArea;
-
-    public MapEntityCollection(
-        ILogger logger,
-        int mapWidth,
-        int mapHeight,
-        int walkableArea)
+    public MapEntityCollection(ILogger logger, int mapWidth, int mapHeight)
     {
         Bounds = new Rectangle(
             0,
@@ -52,7 +49,6 @@ public sealed class MapEntityCollection : IDeltaUpdatable
         Reactors = new HashSet<ReactorTile>(WorldEntity.IdComparer);
         Doors = new HashSet<Door>(WorldEntity.IdComparer);
         Updatables = new UpdatableCollection(logger);
-        WalkableArea = walkableArea;
 
         //setup Values<T> cases
         ValuesCases = new TypeSwitchExpression<IEnumerable>().Case<Aisling>(Aislings)
@@ -122,13 +118,17 @@ public sealed class MapEntityCollection : IDeltaUpdatable
 
     public void AddToPointLookup(MapEntity mapEntity) => QuadTree.Insert(mapEntity);
 
-    public IEnumerable<T> AtPoint<T>(IPoint point) where T: MapEntity
+    [OverloadResolutionPriority(1)]
+    private IEnumerable<T> AtPoint<T>(Point point) where T: MapEntity
         => Bounds.Contains(point)
-            ? QuadTree.Query(Point.From(point))
+            ? QuadTree.Query(point)
                       .OfType<T>()
             : [];
 
-    public IEnumerable<T> AtPoints<T>(IEnumerable<IPoint> points) where T: MapEntity => points.SelectMany(AtPoint<T>);
+    [OverloadResolutionPriority(1)]
+    public IEnumerable<T> AtPoints<T>(params IEnumerable<Point> points) where T: MapEntity => points.SelectMany(AtPoint<T>);
+
+    public IEnumerable<T> AtPoints<T>(params IEnumerable<IPoint> points) where T: MapEntity => AtPoints<T>(points.Select(Point.From));
 
     public void Clear()
     {

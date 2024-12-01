@@ -1,3 +1,4 @@
+#region
 using System.Collections;
 using Chaos.Collections.ObjectPool;
 using Chaos.Extensions.Geometry;
@@ -5,6 +6,7 @@ using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Microsoft.Extensions.ObjectPool;
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Collections.Specialized;
@@ -278,7 +280,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     /// <returns>
     ///     All items located at the specified point
     /// </returns>
-    public virtual IEnumerable<T> Query(IPoint point)
+    public virtual IEnumerable<T> Query(Point point)
     {
         if ((Count > 0) && Bounds.Contains(point))
         {
