@@ -720,12 +720,21 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public bool IsWall(IPoint point)
     {
-        if (Template.IsWall(point))
-            return true;
-
         var door = GetEntitiesAtPoints<Door>(point)
             .FirstOrDefault();
 
+        //if there's an open door (even if that door is considered a wall)
+        //allow them to walk on the spot
+        if (door is { Closed: false })
+            return false;
+
+        //if the spot is a wall (or a closed door)
+        //prevent them from walking
+        if (Template.IsWall(point))
+            return true;
+
+        //if there's a closed door return false
+        //otherwise return true
         return door?.Closed ?? false;
     }
 
