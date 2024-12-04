@@ -268,38 +268,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         var skillBookObserver = new SkillBookObserver(this);
         var equipmentObserver = new EquipmentObserver(this);
 
-        Inventory.AddObserver(inventoryObserver);
-        SpellBook.AddObserver(spellBookObserver);
-        SkillBook.AddObserver(skillBookObserver);
-        Equipment.AddObserver(equipmentObserver);
-
-        //trigger observers
-        foreach (var item in Equipment)
-            equipmentObserver.OnAdded(item);
-
-        foreach (var item in Inventory)
-            inventoryObserver.OnAdded(item);
-
-        foreach (var spell in SpellBook)
-        {
-            spellBookObserver.OnAdded(spell);
-
-            if (spell.Elapsed.HasValue)
-                Client.SendCooldown(spell);
-        }
-
-        foreach (var skill in SkillBook)
-        {
-            skillBookObserver.OnAdded(skill);
-
-            if (skill.Elapsed.HasValue)
-            {
-                if (skill.Template.IsAssail)
-                    continue;
-
-                Client.SendCooldown(skill);
-            }
-        }
+        BeginObservingPanel(Inventory, inventoryObserver);
+        BeginObservingPanel(SpellBook, spellBookObserver);
+        BeginObservingPanel(SkillBook, skillBookObserver);
+        BeginObservingPanel(Equipment, equipmentObserver);
 
         foreach (var effect in Effects)
         {
@@ -308,6 +280,32 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
 
         Effects.ResetDisplay();
+    }
+
+    private void BeginObservingPanel<T>(IPanel<T> panel, Observers.Abstractions.IObserver<T> observer)
+    {
+        panel.AddObserver(observer);
+
+        var objs = panel.ToList();
+        panel.Clear();
+
+        foreach (var obj in objs)
+        {
+            panel.ForceAdd(obj);
+            observer.OnAdded(obj);
+
+            switch (obj)
+            {
+                case Spell { Elapsed: not null } spell:
+                    Client.SendCooldown(spell);
+
+                    break;
+                case Skill { Elapsed: not null, Template.IsAssail: false } skill:
+                    Client.SendCooldown(skill);
+
+                    break;
+            }
+        }
     }
 
     public bool CanCarry(params IEnumerable<Item> items) => CanCarry(items.Select(item => (item, item.Count)));

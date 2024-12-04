@@ -21,7 +21,7 @@ public abstract class MetaNodeCollection<TNode> where TNode: IMetaNode
     /// <summary>
     ///     Creates a new instance of <see cref="MetaNodeCollection{TNode}" />
     /// </summary>
-    protected MetaNodeCollection() => Nodes = new List<TNode>();
+    protected MetaNodeCollection() => Nodes = [];
 
     /// <summary>
     ///     Adds a node to the collection

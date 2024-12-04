@@ -66,6 +66,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         Observers.Add(observer);
     }
 
+    /// <inheritdoc />
+    void IPanel<T>.Clear() => Array.Clear(Objects);
+
     public virtual bool Contains(T obj)
     {
         using var @lock = Sync.EnterScope();
@@ -97,6 +100,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
 
         return this.Any(obj => obj.Template.TemplateKey.EqualsI(templateKey));
     }
+
+    /// <inheritdoc />
+    void IPanel<T>.ForceAdd(T obj) => Objects[obj.Slot] = obj;
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

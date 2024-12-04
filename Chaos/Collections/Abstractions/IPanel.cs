@@ -1,5 +1,7 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Collections.Abstractions;
 
@@ -9,10 +11,12 @@ public interface IPanel<T> : IEnumerable<T>, IDeltaUpdatable
     bool IsFull { get; }
     PanelType PanelType { get; }
     void AddObserver(Observers.Abstractions.IObserver<T> observer);
+    void Clear();
     bool Contains(T obj);
     bool Contains(byte slot);
     bool Contains(string name);
     bool ContainsByTemplateKey(string templateKey);
+    void ForceAdd(T obj);
     bool IsValidSlot(byte slot);
     T? this[byte slot] { get; }
     T? this[string name] { get; }
