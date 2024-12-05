@@ -1,11 +1,9 @@
 # Caching
 
-Chaos starts up with nothing loaded. When something is requested, be it a SkillTemplate, ItemTemplate, or even a
-MapInstance, it is
-fetched and cached for a period of time. If that cached object
-is not accessed again within that period of time, it is removed from the cache. This is done to significantly reduce the
-memory and cpu
-usage of the server.
+Chaos starts up with nothing loaded (well... it loads some things to generate metadata, but ignore this for now). When
+something is requested, be it a SkillTemplate, ItemTemplate, or even a MapInstance, it is fetched and cached for a
+period of time. If that cached object is not accessed again within that period of time, it is removed from the cache.
+This is done to significantly reduce the memory and cpu usage of the server.
 
 Chaos utilizes the [ISimpleCache](<xref:Chaos.Storage.Abstractions.ISimpleCache`1>) interface. Default implementations
 of this interface use
@@ -17,30 +15,24 @@ See [ExpiringFileCacheOptions](<xref:Chaos.Storage.ExpiringFileCacheOptions>) fo
 ## Schema Objects
 
 These default caching implementations rely on `Chaos.Schemas` objects as an intermediary for serialization. Think of
-these schema objects as
-DTOs(Data Transfer Objects). They are intended to be bags of properties with no functionality. They exist only to be
-serialized or
-deserialized.
+these schema objects as DTOs(Data Transfer Objects). They are intended to be bags of properties with no functionality.
+They exist only to be serialized or deserialized.
 
 ## Object mapping
 
 In many cases, the schema objects are not the same as the actual objects that Chaos uses for interactions. In most
-scenarios, it doesn't
-make a lot of sense to serialize every detail of an object. Many of the basic properties of an item are already saved
-via a template that
-you have created. That template serves as the building block of that object. In cases like this, we really only need to
-serialize a way to
-unique identify that template. This is where object mapping comes in.
+scenarios, it doesn't make a lot of sense to serialize every detail of an object. Many of the basic properties of an
+item are already saved via a template that you have created. That template serves as the building block of that object.
+In cases like this, we really only need to serialize a way to uniquely identify that template. This is where object
+mapping comes in.
 
 Chaos utilizes [IMapperProfiles](<xref:Chaos.TypeMapper.Abstractions.IMapperProfile`2>) to map between the schema
-objects and the actual
-objects. Profiles can utilize other services freely, and if nested mapping is needed they can access each other through
-the [ITypeMapper](<xref:Chaos.TypeMapper.Abstractions.ITypeMapper>) service.
+objects and the actual objects. Profiles can utilize other services freely, and if nested mapping is needed they can
+access each other through the [ITypeMapper](<xref:Chaos.TypeMapper.Abstractions.ITypeMapper>) service.
 
 > [!NOTE]
 > By default, all profiles in the solution are loaded into the IoC container at startup by
-> the [Mapper](<xref:Chaos.TypeMapper.Mapper>)
-> service.
+> the [Mapper](<xref:Chaos.TypeMapper.Mapper>) service.
 
 ## Serialization
 

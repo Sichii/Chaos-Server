@@ -10,8 +10,7 @@ This section is serialized into [LoginOptions](<xref:Chaos.Services.Servers.Opti
 ### Port
 
 The port the server will listen on. Default is 4201, if this value is changed, the client will need to be edited to
-connect to a different
-port.
+connect to a different port.
 
 ### WorldRedirect
 
@@ -41,9 +40,12 @@ reserved redirect ids.
 
 ### NoticeMessage
 
-This is the message that will be displayed to the player when they log in. This is a good place to put a message about
-the server being down
-for maintenance, or a message about the server being in beta.
+This is the message that will be displayed to the player when they connect to your login server. This is a good place to
+put a message about the server being down for maintenance, or a message about the server being in beta.
+
+> [!TIP]
+> Color codes can be used in this message. {=a, {=b, etc  
+> Use \n for newlines
 
 ### StartingMapInstanceId
 

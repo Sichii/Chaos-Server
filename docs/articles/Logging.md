@@ -10,7 +10,7 @@ built in log target.
 
 Chaos makes great use of object destructuring, combined with NLogs object transformers. If there is a desire to swap the
 logging provider to something like [Serilog](https://serilog.net/), you will need to replace this behavior with
-the `.Destructure.ByTransforming<T>`feature. You will also need to find a suitable replacement for
+the `.Destructure.ByTransforming<T>`feature in `Program.cs`. You will also need to find a suitable replacement for
 the [LogEvent](<xref:Chaos.NLog.Logging.LogEvent>) class.
 
 This structured/destructured style of logging data can be more easily viewed via logging tools
@@ -22,6 +22,10 @@ Seq is by far the simpler of these two tools, and due to this there is a built i
 To quickly and easily enable Seq, set the configuration value `Logging:UseSeq` to `true`, and enter the details of
 your Seq instance in the `appsettings.seq.json` files. They are preconfigured to use the default values for a local Seq
 instance.
+
+There is also a tool in thie repo that can be used to configure seq for use with chaos-server. Look for
+Tools\SeqConfigurator. Simply replace the hostname and apikey at the top of `Program.cs` and run the tool. It will add a
+dashboard and signals related to logging topics.
 
 ## ElasticSearch
 

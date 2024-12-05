@@ -9,10 +9,6 @@
             },
             "animatePoints": true,
             "sound": 1,
-            "mustHaveTargets": true,
-            "range": 0,
-            "includeSourcePoint": true,
-            "shape": "none",
             "maxTriggers": 1,
             "baseDamage": 500,
             "filter": "hostileOnly, aliveOnly, othersOnly"

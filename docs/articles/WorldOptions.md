@@ -45,7 +45,7 @@ workload due garbage
 collection and JIT recompilation/OSR.
 
 > [!CAUTION]
-> I suggest a hard cap of 60 with a good default value of 30
+> I strong suggest not going above 30, which is the default value
 
 > [!TIP]
 > If desired you can set this to 3 to emulate the original game
@@ -68,7 +68,7 @@ ground items, including items dropped by players.
 
 ---
 
-A channel is a membership of players that can send message to each other. Think global and trade chat in other games,
+A channel is a membership of players that can send messages to each other. Think global and trade chat in other games,
 but
 also group and guild chat in Dark Ages. These settings represent the parts of those systems that are configurable.
 
@@ -110,14 +110,12 @@ channel had it's own color. To keep that color, specify "Default" as the color, 
 ### AislingAssailIntervalMs
 
 All creatures have an AssailInterval. AssailInterval is essentially the cooldown in milliseconds for skills marked as
-assails. This value is
-modified by the
-AtkSpeedPct attribute and can be modified to be 3x faster or slower than the base value. This property sets the base
-interval for all
-aislings.
+assails. This value is modified by the AtkSpeedPct attribute and can be modified to be up to 5x faster or slower than
+the base value. AtkSpeedPct will also scale the animation speed of the assail. This property sets the base interval for
+all aislings.
 
 > [!TIP]
-> A good starting value is 1500
+> A good starting value is 1000-1500
 
 ### DropRange
 
@@ -135,14 +133,12 @@ This is the maximum amount of gold a player can hold in their inventory.
 ### MaximumAislingAc
 
 This is the maximum amount of AC a player can have. damage formulas can be changed, but with the default damage formula,
-higher AC = more
-damage taken.
+higher AC = more damage taken.
 
 ### MaxLevel
 
 This is the level cap for players. Level formulas can be changed, but with the default level formula, if you reach this
-level you will stop
-gaining experience.
+level you will stop gaining experience.
 
 ### ClearOrangeBarTimerSecs
 
@@ -186,14 +182,12 @@ This is the maximum distance from a player that they can initiate a trade with a
 ### MaximumMonsterAc
 
 This is the maximum amount of AC a monster can have. damage formulas can be changed, but with the default damage
-formula, higher AC = more
-damage taken.
+formula, higher AC = more damage taken.
 
 ### MinimumMonsterAc
 
 This is the minimum amount of AC a monster can have. damage formulas can be changed, but with the default damage
-formula, lower AC = less
-damage taken.
+formula, lower AC = less damage taken.
 
 > [!WARNING]
 > With the default damage formula, AC is a percentile, so -100 AC would make them invulnerable.
@@ -205,10 +199,8 @@ damage taken.
 ### MaxActionsPerSecond
 
 It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown could
-become a huge burden
-on the server. This value is used to control the maximum number of actions a player can take in a second. An action is
-defined as using any
-spell, skill, or item. This includes equipping items.
+become a huge burden on the server. This value is used to control the maximum number of actions a player can take in a
+second. An action is defined as using any spell, skill, or item. This includes equipping items.
 
 > [!TIP]
 > A good range of values for this would be 5 - 15
@@ -227,8 +219,7 @@ The maximum number of spells a player can cast in a second.
 
 > [!NOTE]
 > This can be used to somewhat emulate the original game with a setting of 3, but keep in mind this server responds
-> immediately, not in a
-> 3updates per 1 second loop
+> immediately, not in a 3updates per 1 second loop
 
 ### MaxItemsPerSecond
 
@@ -237,20 +228,16 @@ The maximum number of items a player can use in a second. Includes equipping ite
 ### MaxChantTimeBurdenMs
 
 When players cast spells, each spell line takes approximately 1000ms to chant. The amount of time a spell will take to
-cast can be predicted
-to be 1000ms * (NumSpellLines).
+cast can be predicted to be 1000ms * (NumSpellLines).
 
 Due to latency and jitter, players will often cast spells for slightly more or less than the expected amount of time.
-With big latency
-spikes, the observed amount of time could be far off than the expected value. To be able to tolerate this while also
-prohibiting "speed
-casting", the server will allow spell casts that occur too quickly and add up a time burden.
+With big latency spikes, the observed amount of time could be far off from the expected value. To be able to tolerate
+this while also prohibiting "speed casting", the server will allow spell casts that occur too quickly and add up a time
+burden.
 
 Each time a player casts a spell that completes faster than expected, the difference in time will be added to the time
-burden. This burden
-will accumulate with every consecutive spell that occurs too quickly, and be subtracted from if a spell completes too
-slowly. The time
-burden will also decrease while not casting spells.
+burden. This burden will accumulate with every consecutive spell that occurs too quickly, and be subtracted from if a
+spell completes too slowly. The time burden will also decrease while not casting spells.
 
 If the time burden exceeds MaxChantTimeBurdenMs, the spell cast will be ignored.
 
@@ -272,8 +259,7 @@ When this is enabled it will prevent players from utilizing more nefarious metho
 ### RefreshIntervalMs
 
 This is the quickest interval in milliseconds that players will be allowed to refresh their client. This will not
-include refreshes utilized
-by the server, such as for refreshing a player's position if they walk into a wall.
+include refreshes utilized by the server, such as for refreshing a player's position if they walk into a wall.
 
 > [!TIP]
 > A good value here would be 1000

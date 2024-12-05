@@ -1,8 +1,8 @@
 # Commands
 
 Commands are a way to execute some code within the game by using the chat window. Commands have some configuration that
-can be changed in the `appsettings.json` file. The prefix can be changed
-via `Options:AislingCommandInterceptorOptions:Prefix`
+can be changed in the `appsettings.json` file. The prefix can be changed via
+`Options:AislingCommandInterceptorOptions:Prefix`
 
 New commands are created by inheriting from the [ICommand<T>](<xref:Chaos.Messaging.Abstractions.ICommand`1>) interface,
 and adding the [CommandAttribute](<xref:Chaos.Messaging.CommandAttribute>) attribute to the class. In the attribute is

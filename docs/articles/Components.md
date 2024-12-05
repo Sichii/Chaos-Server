@@ -93,8 +93,7 @@ public class MyComponent : IComponent
 Components can share variables with each other via the `ComponentVars` object. Some examples of this
 are `vars.GetPoints()` and `vars.GetTargets<T>()`. These are populated by another component,
 the [GetTargetsComponent](<xref:Chaos.Scripting.Components.AbilityComponents.GetTargetsAbilityComponent`1>). The only
-caveat is, any
-components that use variables populated by another component must be executed after that component.
+caveat is, any components that use variables populated by another component must be executed after that component.
 
 ```csharp
 public class MyComponent : IComponent
@@ -147,5 +146,5 @@ be found in the [Scripting article](Scripting.md).
 
 Another important thing to notice is that the `GetTargetsComponent<T>` is an `IConditionalComponent`. These types of
 components are executed via `ExecuteAndCheck<TComponent>()`. If the conditional part of the component fails, it causes
-the execution of `ExecuteAndCheck<TComponent>()` to return `null`. By using the `Save Navigation Operator (?)`, we can
+the execution of `ExecuteAndCheck<TComponent>()` to return `null`. By using the `Safe Navigation Operator (?)`, we can
 cause all of the method invocations that come after it to not occur if it returns `null`.

@@ -9,7 +9,7 @@ Dalib has far more functionality than what is presented in this application.
 ## Usage
 
 Clone the [ChaosAssetManager](https://github.com/Sichii/ChaosAssetManager) repo  
-Also clone the [dalib](https://github.com/Sichii/dalib)
+Also clone the [dalib](https://github.com/Sichii/dalib) repo
 
 They must be cloned into the same directory, like so:
 
@@ -21,12 +21,12 @@ They must be cloned into the same directory, like so:
    ┗📄dalib.sln
 </pre>
 
-Alternatively, clone them wherever you want and fix the references in the ChaosAssetManager project.
+Alternatively, clone them wherever you want and fix the reference to dalib in the ChaosAssetManager project.
 
 ## Features
 
 - view, patch, compile, decompile all dat files
-- convert to/from any dat file format (except .hea)
+- convert to/from any dat file format (except .HEA)
 - effect editor for for .EFA and .EPF files (allows you to center the effects as they would be displayed in game)
 - metafile editor
 - palette remapper
@@ -34,5 +34,5 @@ Alternatively, clone them wherever you want and fix the references in the ChaosA
 ## Future Features
 
 - mpf creator
-- map editor maybe
+- map editor
 - anything else creators request that might be generally useful

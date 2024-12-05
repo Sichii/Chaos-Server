@@ -15,7 +15,7 @@ port.
 
 ### Servers
 
-When a client connects to a server, the first thing is displays to the player is a list of available login servers to
+When a client connects to a server, the first thing it displays to the player is a list of available login servers to
 connect to.  
 When the original game first launched, there were 3 servers, and you would select the server you wanted to connect to at
 the lobby. For each

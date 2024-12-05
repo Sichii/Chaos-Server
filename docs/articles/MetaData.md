@@ -8,23 +8,21 @@ via `Options:MetaDataStoreOptions`.
 
 ## MetaDataCacheOptions
 
-The `MetaDataCacheOptions` class contains configuration for the `MetaDataCache` class. The following properties are
+The `MetaDataStoreOptions` class contains configuration for the `MetaDataStore` class. The following properties are
 available:  
 [!code-csharp[](../../Chaos/Services/Storage/Options/MetaDataStoreOptions.cs)]
 
 ### Mutators
 
-Mutators are used to modify Item metadata before it is finalized. For example, if you implement a system in your server
-for enchanting
-items, the enchanted items would not be completely new items. You could achieve those enchantments by setting the values
-on Item.cs and
-letting them serialize as overrides to the template values. To have these items show up in metadata, you would create a
-mutator that
-simulates enchantments through non-destructive mutation of an item meta node.
+Mutators are used to modify item metadata before it is finalized. For example, if you implement a system in your server
+for enchanting items, the enchanted items would not be completely new items. You could achieve those enchantments by
+setting the values on Item.cs and letting them serialize as overrides to the template values. To have these items show
+up in metadata, you would create a mutator that simulates enchantments through non-destructive mutation of an item meta
+node.
 
 Implement your own mutator as implementations of
 the [IItemMetaNodeMutator](<xref:Chaos.MetaData.Abstractions.IItemMetaNodeMutator`1>) interface and add it to
-the `MetaDataCacheOptions` via the `Chaos.Services.Configuration.OptionsConfigurer`
+the `MetaDataStoreOptions` via the `Chaos.Services.Configuration.OptionsConfigurer`
 
 ### Example
 
@@ -32,20 +30,18 @@ Here is an example of a mutator that generates mutations of items similarly to t
 
 [!code-csharp[](../../Chaos/Scripting/ItemScripts/Enchantments/MagicPrefixScript.cs)]
 
-This mutator is then added to the `MetaDataCacheOptions` in `Chaos.Services.Configuration.OptionsConfigurer`
+This mutator is then added to the `MetaDataStoreOptions` in `Chaos.Services.Configuration.OptionsConfigurer`
 
 [!code-csharp[](../../Chaos/Services/Configuration/OptionsConfigurer.cs#L59-65)]
 
 > [!NOTE]
 > You can have both Prefix and Suffix mutators. When metadata is generated, it will create a cross product of all prefix
-> and suffix
-> mutations
+> and suffix mutations
 
 ## Item MetaData
 
 Item metadata is shown when a player hovers over an item in a shop or the bank. Item metadata is pulled from the details
-in
-the `ItemTemplate`s that you have already created.
+in the `ItemTemplate`s that you have already created.
 
 ### Item MetaData Mapping
 
@@ -61,12 +57,10 @@ the `ItemTemplate`s that you have already created.
 ## Ability MetaData
 
 Ability metadata is shown per-class in the character's profile under the `Skills` tab. Ability metadata is pulled from
-the details in
-the `SkillTemplate`s and `SpellTemplate`s that you have already created. Each `SClass` metadata file is for a specific
-class. They follow
-the pattern laid out in the [Class](<xref:Chaos.DarkAges.Definitions.BaseClass>) enum.  
-For example, the `SClass1` metadata file is for the Warrior class.  
-The `SClass2` metadata file is for the Rogue class.
+the details in the `SkillTemplates` and `SpellTemplates` that you have already created. Each `SClass` metadata file is
+for a specific class. They follow the pattern laid out in the [Class](<xref:Chaos.DarkAges.Definitions.BaseClass>)
+enum.For example, the `SClass1` metadata file is for the Warrior class.The `SClass2` metadata file is for the Rogue
+class.
 
 ### Ability MetaData Mapping
 
@@ -88,13 +82,42 @@ The `SClass2` metadata file is for the Rogue class.
 | Dex            | LearningRequirements  | The DEX required to learn the ability                    |
 | Description    | Description           | A brief description of the ability                       |
 
+## Light MetaData
+
+Light metadata controls the "Light" on maps that are specified within it. Within this metadata you can specify different
+colors of light, the hours associated with them, and the enum value used to activate it.
+
+### Lights.json Mapping
+
+| Meta Property | Notes                                                                                                                        |
+|---------------|------------------------------------------------------------------------------------------------------------------------------|
+| LightTypeName | The name of the light type. This name will be specified on map templates to allow them to use this light type                |
+| EnumValue     | The numeric value of the [LightLevel](<xref:Chaos.DarkAges.Definitions.LightLevel>) enum that will activate this light color |
+| StartHour     | The hour that the light starts (this would be used to update the ingame clock, but there isn't one anymore)                  |
+| EndHour       | The hour that the light ends (this would be used to update the ingame clock, but there isn't one anymore)                    |
+| Alpha         | The value of the alpha channel for the color of the light. Acceptable values are 0-32, where 32 is fully transparent         |
+| Red           | The value of the red channel for the color of the light. Acceptable values are 0-255, where 255 is fully red                 |
+| Green         | The value of the green channel for the color of the light. Acceptable values are 0-255, where 255 is fully green             |
+| Blue          | The value of the blue channel for the color of the light. Acceptable values are 0-255, where 255 is fully blue               |
+
+Lights.json defines light types and the enum value to activate them, but you must also specify what light type to use
+for each map that you want light levels to be on. You do this by setting the `LightType` property on the map template.
+
+### Example json
+
+This example json defines 6 different colors for the `default` light type. This light type has been added on a number of
+the default maps that come with the server. You can experiment with them by using the `/setlightlevel <lightlevel>`
+command while on the map.
+
+This example also defines 6 different colors for `bloodmoon` light type, just as another example of what you can do.
+
+[!code-json[](../../Data/Configuration/MetaData/Lights.json)]
+
 ## Event MetaData
 
 Event metadata appears in the character's profile under the `Events` tab. It is a list of events a player can complete,
-along with details
-about those events. These events can be in one of 3 states, unavailable, available, or completed. Here are the
-requirements for an event to
-be in each state:
+along with details about those events. These events can be in one of 3 states: unavailable, available, or completed.
+Here are the requirements for an event to be in each state:
 
 ### Unavailable (gray with a crossed out circle)
 
@@ -104,7 +127,8 @@ be in each state:
 
 ### Available (blue with an exclamation mark)
 
-* The character must be at a level within the designated Circle
+* The character must be at a level within the designated Circle (
+  see [LevelCircle](<xref:Chaos.DarkAges.Definitions.LevelCircle>))
 * The character must be one of the classes the quest is available to
 
 ### Completed (green check mark)
@@ -138,22 +162,18 @@ This file is located at `StagingDir/MetaData/Events.json` by default
 
 Nation description metadata is used to display the description of a nation in the character's profile.
 the [Nation](<xref:Chaos.DarkAges.Definitions.Nation>) enum technically only controls the emblem that is displayed on
-the
-profile. The words
-next to it are controlled by the nation description metadata. This metadata is automatically generated from
-the [Nation](<xref:Chaos.DarkAges.Definitions.Nation>) enum.
+the profile. The words next to it are controlled by the nation description metadata. This metadata is automatically
+generated from the [Nation](<xref:Chaos.DarkAges.Definitions.Nation>) enum.
 
 ### Nation MetaData Mapping
 
 The nation enum is mapped by it's number and name. For example, `Nation.Suomi` is mapped so that the description of the
-emblem for that
-number is "Suomi".
+emblem for that number is "Suomi".
 
 ## Mundane Illustration MetaData
 
 Mundane illustration metadata is used by the client to determine which full art illustrations to display for mundanes,
-if any. This metadata
-must be specified directly
+if any. This metadata must be specified directly
 through [MundaneIllustrationMetaSchema](<xref:Chaos.Schemas.MetaData.MundaneIllustrationMetaSchema>).
 
 This file is located at `StagingDir/MetaData/MundaneIllustrations.json` by default
