@@ -1,52 +1,65 @@
 [
-    {
-        "scriptKeys": ["warp"],
-        "scriptVars": {
-            "warp": {
-                "destination": "testTown:(17, 12)"
-            }
-        },
-        "shouldBlockPathfinding": true,
-        "source": "(3, 13)"
+  {
+    "scriptKeys": [
+      "warp"
+    ],
+    "scriptVars": {
+      "warp": {
+        "destination": "testTown:(17, 12)"
+      }
     },
-    {
-        "scriptKeys": ["warp"],
-        "scriptVars": {
-            "warp": {
-                "destination": "testTown:(18, 12)"
-            }
-        },
-        "shouldBlockPathfinding": true,
-        "source": "(4, 13)"
+    "shouldBlockPathfinding": true,
+    "source": "(3, 13)"
+  },
+  {
+    "scriptKeys": [
+      "warp"
+    ],
+    "scriptVars": {
+      "warp": {
+        "destination": "testTown:(18, 12)"
+      }
     },
-    {
-        "scriptKeys": ["showWorldMap"],
-        "scriptVars": {
-            "showWorldMap": {
-                "worldMapKey": "field001"
-            }
-        },
-        "shouldBlockPathfinding": true,
-        "source": "(0, 13)"
+    "shouldBlockPathfinding": true,
+    "source": "(4, 13)"
+  },
+  {
+    "scriptKeys": [
+      "showWorldMap"
+    ],
+    "scriptVars": {
+      "showWorldMap": {
+        "worldMapKey": "field001"
+      }
     },
-    {
-        "scriptKeys": ["bulletinBoard"],
-        "scriptVars": {
-            "bulletinBoard": {
-                "boardKey": "public_test_board"
-            }
-        },
-        "shouldBlockPathfinding": true,
-        "source": "(23, 28)"
+    "shouldBlockPathfinding": true,
+    "source": "(0, 13)"
+  },
+  {
+    "scriptKeys": [
+      "bulletinBoard"
+    ],
+    "scriptVars": {
+      "bulletinBoard": {
+        "boardKey": "public_test_board"
+      }
     },
-    {
-        "scriptKeys": ["bulletinBoardList"],
-        "scriptVars": {
-            "bulletinBoardList": {
-                "boardKeys": ["public_test_board", "public_test_board_2"]
-            }
-        },
-        "shouldBlockPathfinding": true,
-        "source": "(23, 26)"
-    }
+    "shouldBlockPathfinding": true,
+    "source": "(23, 28)"
+  },
+  {
+    "scriptKeys": [
+      "bulletinBoardList"
+    ],
+    "scriptVars": {
+      "bulletinBoardList": {
+        "boardKeys": [
+          "public_test_board",
+          "public_test_board_2"
+        ]
+      }
+    },
+    "shouldBlockPathfinding": true,
+    "source": "(23, 26)"
+  }
 ]

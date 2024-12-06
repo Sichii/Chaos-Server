@@ -1,38 +1,40 @@
 {
-    "learningRequirements": {
-        "itemRequirements": [
-            {
-                "amountRequired": 15,
-                "itemTemplateKey": "apple"
-            },
-            {
-                "amountRequired": 5,
-                "itemTemplateKey": "stick"
-            }
-        ],
-        "requiredGold": 10000,
-        "requiredStats": {
-            "con": 1,
-            "dex": 2,
-            "int": 2,
-            "str": 1,
-            "wis": 1
-        },
-        "prerequisiteSkills": [],
-        "prerequisiteSpells": []
-    },
-    "prompt": "",
-    "spellType": "NoTarget",
-    "class": "Rogue",
-    "description": "Lays a trap on the ground which when stepped on by an enemy will deal a small amount of pure damage.",
-    "level": 5,
-    "name": "Needle Trap",
-    "panelSprite": 39,
-    "scriptKeys": ["layReactorTile"],
-    "scriptVars": {
-        "layReactorTile": {
-            "reactorTileTemplateKey": "needle_trap"
-        }
-    },
-    "templateKey": "needle_trap"
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 15,
+        "itemTemplateKey": "apple"
+      },
+      {
+        "amountRequired": 5,
+        "itemTemplateKey": "stick"
+      }
+    ],
+    "prerequisiteSkills": [],
+    "prerequisiteSpells": [],
+    "requiredGold": 10000,
+    "requiredStats": {
+      "con": 1,
+      "dex": 2,
+      "int": 2,
+      "str": 1,
+      "wis": 1
+    }
+  },
+  "prompt": "",
+  "spellType": "NoTarget",
+  "class": "Rogue",
+  "description": "Lays a trap on the ground which when stepped on by an enemy will deal a small amount of pure damage.",
+  "level": 5,
+  "name": "Needle Trap",
+  "panelSprite": 39,
+  "scriptKeys": [
+    "layReactorTile"
+  ],
+  "scriptVars": {
+    "layReactorTile": {
+      "reactorTileTemplateKey": "needle_trap"
+    }
+  },
+  "templateKey": "needle_trap"
 }

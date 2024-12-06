@@ -6,7 +6,11 @@ public enum AoeShape
     Front,
     AllAround,
     FrontalCone,
-    FrontalDiamond
+    FrontalDiamond,
+    Circle,
+    Square,
+    CircleOutline,
+    SquareOutline
 }
 
 [Flags]

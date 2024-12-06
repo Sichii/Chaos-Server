@@ -23,7 +23,7 @@ public struct CascadingAbilityComponent<TTileScript> : IComponent where TTileScr
         var targets = vars.GetTargets<MapEntity>();
         var points = vars.GetPoints();
 
-        var cascadePoints = options.CascadeOnlyFromEntities ? targets : points;
+        var cascadePoints = options.CascadeOnlyFromEntities ? targets.Select(Point.From) : points;
         var scriptKey = ScriptBase.GetScriptKey(typeof(TTileScript));
 
         foreach (var point in cascadePoints)

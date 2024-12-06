@@ -1,8 +1,7 @@
 {
-    "height": 100,
-    "scriptKeys": [],
-    "templateKey": "500",
-    "warpPoints": [],
-    "width": 100,
-    "lightType": "default"
+  "height": 100,
+  "lightType": "default",
+  "scriptKeys": [],
+  "templateKey": "500",
+  "width": 100
 }

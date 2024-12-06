@@ -1,9 +1,11 @@
+#region
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Converters;
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Collections.Common;
@@ -106,4 +108,9 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
 
         return value.Deserialize(type, jsonOptions);
     }
+
+    /// <summary>
+    ///     Sets the value associated with the specified key.
+    /// </summary>
+    public void Set(string key, object value) => Vars[key] = JsonSerializer.SerializeToElement(value);
 }

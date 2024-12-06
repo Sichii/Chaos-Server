@@ -1,10 +1,12 @@
 {
-    "contextual": true,
-    "nextDialogKey": "generic_guild_ranks_initial",
-    "options": [],
-    "scriptKeys": ["guildRankModify"],
-    "scriptVars": {},
-    "templateKey": "generic_guild_ranks_modify_accepted",
-    "text": "skip",
-    "type": "Normal"
+  "contextual": true,
+  "nextDialogKey": "generic_guild_ranks_initial",
+  "options": [],
+  "scriptKeys": [
+    "guildRankModify"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_ranks_modify_accepted",
+  "text": "skip",
+  "type": "Normal"
 }

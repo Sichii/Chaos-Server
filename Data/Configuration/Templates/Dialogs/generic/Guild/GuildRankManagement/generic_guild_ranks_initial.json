@@ -1,8 +1,10 @@
 {
-    "options": [],
-    "scriptKeys": ["guildRankManagement"],
-    "scriptVars": {},
-    "templateKey": "generic_guild_ranks_initial",
-    "text": "Here are your guild's ranks. Which one would you like to modify?",
-    "type": "Menu"
+  "options": [],
+  "scriptKeys": [
+    "guildRankManagement"
+  ],
+  "scriptVars": {},
+  "templateKey": "generic_guild_ranks_initial",
+  "text": "Here are your guild's ranks. Which one would you like to modify?",
+  "type": "Menu"
 }

@@ -9,6 +9,19 @@ namespace Chaos.Extensions;
 
 public static class PointExtensions
 {
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> FilterByLineOfSight(this IEnumerable<Point> points, Point origin, MapInstance mapInstance)
+    {
+        ArgumentNullException.ThrowIfNull(points);
+
+        ArgumentNullException.ThrowIfNull(mapInstance);
+
+        return points.Where(
+            point => !mapInstance.IsWall(point)
+                     && !origin.RayTraceTo(point)
+                               .Any(mapInstance.IsWall));
+    }
+
     public static IEnumerable<IPoint> FilterByLineOfSight(this IEnumerable<IPoint> points, IPoint origin, MapInstance mapInstance)
     {
         ArgumentNullException.ThrowIfNull(points);
@@ -20,7 +33,7 @@ public static class PointExtensions
         return points.Where(
             point => !mapInstance.IsWall(point)
                      && !origin.RayTraceTo(point)
-                               .Any(pt => mapInstance.IsWall(pt)));
+                               .Any(mapInstance.IsWall));
     }
 
     [OverloadResolutionPriority(1), MethodImpl(MethodImplOptions.AggressiveInlining)]

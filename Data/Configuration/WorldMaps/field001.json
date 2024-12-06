@@ -1,5 +1,8 @@
 {
-    "worldMapKey": "field001",
-    "fieldIndex": 1,
-    "nodeKeys": ["testArea", "testTown"]
+  "fieldIndex": 1,
+  "nodeKeys": [
+    "testArea",
+    "testTown"
+  ],
+  "worldMapKey": "field001"
 }

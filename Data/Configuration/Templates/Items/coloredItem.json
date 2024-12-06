@@ -9,5 +9,7 @@
   "description": "An item with a custom color",
   "name": "Colored Item",
   "panelSprite": 11975,
+  "scriptKeys": [],
+  "scriptVars": {},
   "templateKey": "coloredItem"
 }

@@ -1,6 +1,7 @@
+#region
 using Chaos.Collections.Common;
-using Chaos.Geometry.Abstractions;
 using Chaos.Models.World.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.Components.Execution;
 
@@ -12,11 +13,11 @@ public class ComponentVars : StaticVars
     private const string POINTS_KEY = "points";
     private const string TARGETS_KEY = "targets";
 
-    public virtual List<IPoint> GetAllPoints() => GetRequired<List<IPoint>>(CASCADE_ALL_POINTS_KEY);
+    public virtual List<Point> GetAllPoints() => GetRequired<List<Point>>(CASCADE_ALL_POINTS_KEY);
 
     public virtual TOptions GetOptions<TOptions>() => GetRequired<TOptions>(OPTIONS_KEY);
 
-    public virtual IReadOnlyCollection<IPoint> GetPoints() => GetRequired<IReadOnlyCollection<IPoint>>(POINTS_KEY);
+    public virtual IReadOnlyCollection<Point> GetPoints() => GetRequired<IReadOnlyCollection<Point>>(POINTS_KEY);
 
     public virtual int GetStage() => GetRequired<int>(CASCADE_STAGE_KEY);
 
@@ -25,9 +26,9 @@ public class ComponentVars : StaticVars
            .OfType<T>()
            .ToList();
 
-    public virtual void SetAllPoints(List<IPoint> points) => Set(CASCADE_ALL_POINTS_KEY, points);
+    public virtual void SetAllPoints(List<Point> points) => Set(CASCADE_ALL_POINTS_KEY, points);
     public virtual void SetOptions(object options) => Set(OPTIONS_KEY, options);
-    public virtual void SetPoints(IReadOnlyCollection<IPoint> points) => Set(POINTS_KEY, points);
+    public virtual void SetPoints(IReadOnlyCollection<Point> points) => Set(POINTS_KEY, points);
 
     public virtual void SetStage(int stage) => Set(CASCADE_STAGE_KEY, stage);
 

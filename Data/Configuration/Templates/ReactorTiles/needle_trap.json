@@ -1,18 +1,20 @@
 {
-    "scriptKeys": ["trap"],
-    "scriptVars": {
-        "trap": {
-            "durationSecs": 300,
-            "animation": {
-                "animationSpeed": 25,
-                "targetAnimation": 42
-            },
-            "animatePoints": true,
-            "sound": 1,
-            "maxTriggers": 1,
-            "baseDamage": 500,
-            "filter": "hostileOnly, aliveOnly, othersOnly"
-        }
-    },
-    "templateKey": "needle_trap"
+  "scriptKeys": [
+    "trap"
+  ],
+  "scriptVars": {
+    "trap": {
+      "maxTriggers": 1,
+      "animatePoints": true,
+      "sound": 1,
+      "animation": {
+        "animationSpeed": 25,
+        "targetAnimation": 42
+      },
+      "filter": "hostileOnly, aliveOnly, othersOnly",
+      "durationSecs": 300,
+      "baseDamage": 500
+    }
+  },
+  "templateKey": "needle_trap"
 }

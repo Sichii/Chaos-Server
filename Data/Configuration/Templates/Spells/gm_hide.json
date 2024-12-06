@@ -10,8 +10,8 @@
   ],
   "scriptVars": {
     "toggleEffect": {
-      "effectKey": "gmHide",
-      "filter": "selfOnly, aliveOnly"
+      "filter": "selfOnly, aliveOnly",
+      "effectKey": "gmHide"
     }
   },
   "templateKey": "gm_hide"

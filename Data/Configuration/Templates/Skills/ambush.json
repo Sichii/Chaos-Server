@@ -1,29 +1,31 @@
 {
-    "learningRequirements": {
-        "itemRequirements": [
-            {
-                "amountRequired": 20,
-                "itemTemplateKey": "apple"
-            }
-        ],
-        "requiredGold": 5000,
-        "requiredStats": {
-            "con": 1,
-            "dex": 2,
-            "int": 1,
-            "str": 1,
-            "wis": 1
-        },
-        "prerequisiteSkills": [],
-        "prerequisiteSpells": []
-    },
-    "class": "Monk",
-    "cooldownMs": 15000,
-    "description": "Teleports the user behind the target, or around the target is behind is occupied.",
-    "level": 10,
-    "name": "Ambush",
-    "panelSprite": 42,
-    "scriptKeys": ["ambush"],
-    "scriptVars": {},
-    "templateKey": "ambush"
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 20,
+        "itemTemplateKey": "apple"
+      }
+    ],
+    "prerequisiteSkills": [],
+    "prerequisiteSpells": [],
+    "requiredGold": 5000,
+    "requiredStats": {
+      "con": 1,
+      "dex": 2,
+      "int": 1,
+      "str": 1,
+      "wis": 1
+    }
+  },
+  "class": "Monk",
+  "cooldownMs": 15000,
+  "description": "Teleports the user behind the target, or around the target is behind is occupied.",
+  "level": 10,
+  "name": "Ambush",
+  "panelSprite": 42,
+  "scriptKeys": [
+    "ambush"
+  ],
+  "scriptVars": {},
+  "templateKey": "ambush"
 }

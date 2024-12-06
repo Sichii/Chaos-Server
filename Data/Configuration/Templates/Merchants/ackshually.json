@@ -2,8 +2,8 @@
   "itemsForSale": [],
   "itemsToBuy": [],
   "name": "ackshually",
-  "restockIntervalHours": 6,
-  "restockPercent": 100,
+  "restockIntervalHrs": 6,
+  "restockPct": 100,
   "scriptKeys": [
     "showdialog"
   ],

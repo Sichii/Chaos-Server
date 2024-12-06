@@ -1,8 +1,8 @@
 {
-    "flags": "None",
-    "instanceId": "swimmingTest",
-    "music": 1,
-    "name": "Swimming Test",
-    "scriptKeys": [],
-    "templateKey": "7900"
+  "flags": "None",
+  "instanceId": "swimmingTest",
+  "music": 1,
+  "name": "Swimming Test",
+  "scriptKeys": [],
+  "templateKey": "7900"
 }

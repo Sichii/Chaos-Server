@@ -7,17 +7,41 @@ using Chaos.Geometry.Abstractions.Definitions;
 
 namespace Chaos.Extensions;
 
+public class AoeShapeOptions
+{
+    public IRectangle? Bounds { get; init; }
+    public Direction? Direction { get; init; }
+    public int? ExclusionRange { get; init; }
+    public int Range { get; init; }
+    public required IPoint Source { get; init; }
+}
+
+public sealed class CascadingAoeShapeOptions : AoeShapeOptions
+{
+    public required ICollection<Point> AllPossiblePoints { get; init; }
+}
+
 public static class AoeShapeExtensions
 {
-    public static IEnumerable<Point> ResolvePoints(
-        this AoeShape aoeShape,
-        IPoint source,
-        int range = 1,
-        Direction? direction = null,
-        IRectangle? bounds = null,
-        bool excludeSource = false)
+    /// <summary>
+    ///     Resolves the points for the specified <see cref="AoeShape" /> given the specified options.
+    /// </summary>
+    /// <param name="aoeShape">
+    ///     The shape of the aoe
+    /// </param>
+    /// <param name="options">
+    ///     Additional options
+    /// </param>
+    /// <returns>
+    ///     Distinct points
+    /// </returns>
+    /// <exception cref="ArgumentNullException">
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
+    public static IEnumerable<Point> ResolvePoints(this AoeShape aoeShape, AoeShapeOptions options)
     {
-        var sourcePoint = Point.From(source);
+        var sourcePoint = Point.From(options.Source);
         IEnumerable<Point> points;
 
         switch (aoeShape)
@@ -28,70 +52,167 @@ public static class AoeShapeExtensions
                 break;
             case AoeShape.Front:
             {
-                ArgumentNullException.ThrowIfNull(direction, nameof(direction));
+                if (!options.Direction.HasValue)
+                    throw new ArgumentNullException(nameof(options.Direction));
 
-                var endPoint = sourcePoint.DirectionalOffset(direction.Value, range);
+                var endPoint = sourcePoint.DirectionalOffset(options.Direction.Value, options.Range);
 
-                points = sourcePoint.GetDirectPath(endPoint)
-                                    .Skip(1);
+                points = sourcePoint.GetDirectPath(endPoint);
 
                 break;
             }
             case AoeShape.AllAround:
-                points = sourcePoint.SpiralSearch(range)
-                                    .Skip(1);
+            {
+                points = sourcePoint.SpiralSearch(options.Range);
 
                 break;
+            }
             case AoeShape.FrontalCone:
-                ArgumentNullException.ThrowIfNull(direction, nameof(direction));
+            {
+                if (!options.Direction.HasValue)
+                    throw new ArgumentNullException(nameof(options.Direction));
 
-                points = sourcePoint.ConalSearch(direction.Value, range);
+                points = sourcePoint.ConalSearch(options.Direction.Value, options.Range);
 
                 break;
+            }
             case AoeShape.FrontalDiamond:
-                ArgumentNullException.ThrowIfNull(direction, nameof(direction));
+            {
+                if (!options.Direction.HasValue)
+                    throw new ArgumentNullException(nameof(options.Direction));
 
-                points = sourcePoint.ConalSearch(direction.Value, range)
-                                    .Where(p => p.WithinRange(sourcePoint, range));
+                points = sourcePoint.ConalSearch(options.Direction.Value, options.Range)
+                                    .Where(p => p.WithinRange(sourcePoint, options.Range));
 
                 break;
+            }
+            case AoeShape.Circle:
+            {
+                var circle = new Circle(sourcePoint, options.Range);
+
+                points = circle.GetPoints();
+
+                break;
+            }
+            case AoeShape.Square:
+            {
+                var rectangle = new Rectangle(sourcePoint, options.Range * 2 + 1, options.Range * 2 + 1);
+
+                points = rectangle.GetPoints();
+
+                break;
+            }
+            case AoeShape.CircleOutline:
+            {
+                var circle = new Circle(sourcePoint, options.Range);
+
+                points = circle.GetOutline();
+
+                break;
+            }
+            case AoeShape.SquareOutline:
+            {
+                var rectangle = new Rectangle(sourcePoint, options.Range * 2 + 1, options.Range * 2 + 1);
+
+                points = rectangle.GetOutline();
+
+                break;
+            }
             default:
                 throw new ArgumentOutOfRangeException(nameof(aoeShape), aoeShape, null);
         }
 
-        if (bounds != null)
-            points = points.Where(bounds.Contains);
+        if (options.Bounds != null)
+            points = points.Where(options.Bounds.Contains);
 
-        if (!excludeSource)
+        if (!options.ExclusionRange.HasValue)
             points = points.Prepend(sourcePoint);
+        else
+            switch (aoeShape)
+            {
+                case AoeShape.Square:
+                case AoeShape.SquareOutline:
+                {
+                    var rectangle = new Rectangle(sourcePoint, options.ExclusionRange.Value * 2 + 1, options.ExclusionRange.Value * 2 + 1);
+
+                    points = points.Where(pt => !rectangle.Contains(pt));
+
+                    break;
+                }
+                case AoeShape.Circle:
+                case AoeShape.CircleOutline:
+                {
+                    var circle = new Circle(sourcePoint, options.ExclusionRange.Value);
+
+                    points = points.Where(pt => !circle.Contains(pt));
+
+                    break;
+                }
+                default:
+                {
+                    points = points.Where(pt => pt.ManhattanDistanceFrom(sourcePoint) > options.ExclusionRange.Value);
+
+                    break;
+                }
+            }
 
         return points.Distinct();
     }
 
-    public static IEnumerable<IPoint> ResolvePointsForRange(
-        this AoeShape shape,
-        IPoint source,
-        Direction aoeDirection,
-        int range,
-        IEnumerable<IPoint> allPossiblePoints)
+    /// <summary>
+    ///     Resolves the points for the specified <see cref="AoeShape" /> given the specified options. This is used by
+    ///     Cascading AOE shapes to get the points for a specific stage of the cascade.
+    /// </summary>
+    /// <param name="aoeShape">
+    ///     The shape of the aoe
+    /// </param>
+    /// <param name="options">
+    ///     Additional options
+    /// </param>
+    /// <returns>
+    ///     Distinct points
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
+    public static IEnumerable<Point> ResolvePointsForRange(this AoeShape aoeShape, CascadingAoeShapeOptions options)
     {
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentNullException.ThrowIfNull(allPossiblePoints);
+        var sourcePoint = Point.From(options.Source);
 
-        switch (shape)
+        switch (aoeShape)
         {
             case AoeShape.None:
                 return [];
             case AoeShape.AllAround:
             case AoeShape.Front:
             case AoeShape.FrontalDiamond:
-                return allPossiblePoints.Where(pt => pt.ManhattanDistanceFrom(source) == range);
-
+            {
+                return options.AllPossiblePoints.Where(pt => pt.ManhattanDistanceFrom(sourcePoint) == options.Range);
+            }
             case AoeShape.FrontalCone:
-                var travelsOnXAxis = aoeDirection is Direction.Left or Direction.Right;
-                var nextOffset = source.DirectionalOffset(aoeDirection, range);
+            {
+                var travelsOnXAxis = options.Direction is Direction.Left or Direction.Right;
+                var nextOffset = sourcePoint.DirectionalOffset(options.Direction!.Value, options.Range);
 
-                return allPossiblePoints.Where(pt => travelsOnXAxis ? pt.X == nextOffset.X : pt.Y == nextOffset.Y);
+                return options.AllPossiblePoints.Where(pt => travelsOnXAxis ? pt.X == nextOffset.X : pt.Y == nextOffset.Y);
+            }
+            case AoeShape.Circle:
+            {
+                var circle = new Circle(sourcePoint, options.Range);
+
+                var outline = circle.GetOutline()
+                                    .ToList();
+
+                return options.AllPossiblePoints.Where(pt => outline.Contains(pt));
+            }
+            case AoeShape.Square:
+            {
+                var rectangle = new Rectangle(sourcePoint, options.Range * 2 + 1, options.Range * 2 + 1);
+
+                var outline = rectangle.GetOutline()
+                                       .ToList();
+
+                return options.AllPossiblePoints.Where(pt => outline.Contains(pt));
+            }
             default:
                 throw new ArgumentOutOfRangeException();
         }

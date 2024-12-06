@@ -1412,8 +1412,8 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         {
             if (localClient.Aisling.SpellBook.TryGetObject(localArgs.SourceSlot, out var spell))
             {
-                var source = (Creature)localClient.Aisling;
-                var prompt = default(string?);
+                Creature source = localClient.Aisling;
+                var promptResponse = default(string?);
                 uint? targetId = null;
 
                 //if we expect the spell we're casting to be more than 0 lines
@@ -1431,7 +1431,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                     case SpellType.None:
                         return default;
                     case SpellType.Prompt:
-                        prompt = PacketSerializer.Encoding.GetString(localArgs.ArgsData);
+                        promptResponse = PacketSerializer.Encoding.GetString(localArgs.ArgsData);
 
                         break;
                     case SpellType.Targeted:
@@ -1463,7 +1463,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                         throw new ArgumentOutOfRangeException();
                 }
 
-                localClient.Aisling.TryUseSpell(spell, targetId, prompt);
+                localClient.Aisling.TryUseSpell(spell, targetId, promptResponse);
             }
 
             localClient.Aisling.UserState &= ~UserState.IsChanting;

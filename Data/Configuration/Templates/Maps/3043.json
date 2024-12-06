@@ -1,8 +1,7 @@
 {
-    "height": 50,
-    "scriptKeys": [],
-    "templateKey": "3043",
-    "warpPoints": [],
-    "width": 50,
-    "lightType": "bloodmoon"
+  "height": 50,
+  "lightType": "bloodmoon",
+  "scriptKeys": [],
+  "templateKey": "3043",
+  "width": 50
 }

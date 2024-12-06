@@ -1,15 +1,21 @@
 {
-    "itemsForSale": [],
-    "itemsToBuy": [],
-    "name": "Bank Tester",
-    "scriptKeys": ["showdialog", "verbalBanker", "defaultBehaviors"],
-    "scriptVars": {
-        "showdialog": {
-            "dialogKey": "bank_tester_initial"
-        }
-    },
-    "skillsToTeach": [],
-    "spellsToTeach": [],
-    "sprite": 56,
-    "templateKey": "bank_tester"
+  "itemsForSale": [],
+  "itemsToBuy": [],
+  "name": "Bank Tester",
+  "restockIntervalHrs": 6,
+  "restockPct": 100,
+  "scriptKeys": [
+    "showdialog",
+    "verbalBanker",
+    "defaultBehaviors"
+  ],
+  "scriptVars": {
+    "showdialog": {
+      "dialogKey": "bank_tester_initial"
+    }
+  },
+  "skillsToTeach": [],
+  "spellsToTeach": [],
+  "sprite": 56,
+  "templateKey": "bank_tester"
 }

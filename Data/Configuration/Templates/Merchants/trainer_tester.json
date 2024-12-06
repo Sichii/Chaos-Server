@@ -1,17 +1,28 @@
 {
-    "itemsForSale": [],
-    "itemsToBuy": [],
-    "name": "Trainer Tester",
-    "restockIntervalHours": 6,
-    "restockPercent": 100,
-    "scriptKeys": ["showdialog", "defaultBehaviors"],
-    "scriptVars": {
-        "showdialog": {
-            "dialogKey": "trainer_tester_initial"
-        }
-    },
-    "skillsToTeach": ["assail", "ambush"],
-    "spellsToTeach": ["fire_breath", "healies", "regrowth", "needle_trap"],
-    "sprite": 37,
-    "templateKey": "trainer_tester"
+  "itemsForSale": [],
+  "itemsToBuy": [],
+  "name": "Trainer Tester",
+  "restockIntervalHrs": 6,
+  "restockPct": 100,
+  "scriptKeys": [
+    "showdialog",
+    "defaultBehaviors"
+  ],
+  "scriptVars": {
+    "showdialog": {
+      "dialogKey": "trainer_tester_initial"
+    }
+  },
+  "skillsToTeach": [
+    "assail",
+    "ambush"
+  ],
+  "spellsToTeach": [
+    "fire_breath",
+    "healies",
+    "regrowth",
+    "needle_trap"
+  ],
+  "sprite": 37,
+  "templateKey": "trainer_tester"
 }

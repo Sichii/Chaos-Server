@@ -1,17 +1,20 @@
 {
-    "itemsForSale": [],
-    "itemsToBuy": [],
-    "name": "Misc Tester 1",
-    "restockIntervalHours": 6,
-    "restockPercent": 100,
-    "scriptKeys": ["showdialog", "defaultBehaviors"],
-    "scriptVars": {
-        "showdialog": {
-            "dialogKey": "misc_tester_1_initial"
-        }
-    },
-    "skillsToTeach": [],
-    "spellsToTeach": [],
-    "sprite": 106,
-    "templateKey": "misc_tester_1"
+  "itemsForSale": [],
+  "itemsToBuy": [],
+  "name": "Misc Tester 1",
+  "restockIntervalHrs": 6,
+  "restockPct": 100,
+  "scriptKeys": [
+    "showdialog",
+    "defaultBehaviors"
+  ],
+  "scriptVars": {
+    "showdialog": {
+      "dialogKey": "misc_tester_1_initial"
+    }
+  },
+  "skillsToTeach": [],
+  "spellsToTeach": [],
+  "sprite": 106,
+  "templateKey": "misc_tester_1"
 }

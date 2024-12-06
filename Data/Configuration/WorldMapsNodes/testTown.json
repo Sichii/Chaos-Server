@@ -1,6 +1,6 @@
 {
-    "nodeKey": "testTown",
-    "destination": "testTown:(1, 13)",
-    "text": "Test Town",
-    "screenPosition": "(300, 150)"
+  "destination": "testTown:(1, 13)",
+  "nodeKey": "testTown",
+  "screenPosition": "(300, 150)",
+  "text": "Test Town"
 }

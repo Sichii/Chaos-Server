@@ -55,9 +55,9 @@ using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Options;
 using ItemMapperProfile = Chaos.Site.Services.MapperProfiles.ItemMapperProfile;
+using MonsterMapperProfile = Chaos.Site.Services.MapperProfiles.MonsterMapperProfile;
 using SkillMapperProfile = Chaos.Site.Services.MapperProfiles.SkillMapperProfile;
 using SpellMapperProfile = Chaos.Site.Services.MapperProfiles.SpellMapperProfile;
-using MonsterMapperProfile = Chaos.Site.Services.MapperProfiles.MonsterMapperProfile;
 #endregion
 
 namespace Chaos.Extensions;

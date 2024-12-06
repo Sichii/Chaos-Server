@@ -100,12 +100,15 @@ public class TrapScript : ConfigurableReactorTileScriptBase,
     public bool SingleTarget { get; init; }
     public BodyAnimation BodyAnimation { get; init; }
     public int Range { get; init; }
+
+    /// <inheritdoc />
+    public int? ExclusionRange { get; init; }
+
     public TargetFilter Filter { get; init; }
     public Animation? Animation { get; init; }
     public byte? Sound { get; init; }
     public bool AnimatePoints { get; init; }
     public bool MustHaveTargets { get; init; } = true;
-    public bool ExcludeSourcePoint { get; init; }
     public int? BaseDamage { get; init; }
     public Stat? DamageStat { get; init; }
     public decimal? DamageStatMultiplier { get; init; }

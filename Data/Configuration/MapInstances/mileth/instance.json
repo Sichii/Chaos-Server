@@ -1,9 +1,9 @@
 {
-    "flags": "None",
-    "instanceId": "mileth",
-    "music": 1,
-    "name": "Mileth",
-    "scriptKeys": [],
-    "templateKey": "500",
-    "autoDayNightCycle": true
+  "autoDayNightCycle": true,
+  "flags": "None",
+  "instanceId": "mileth",
+  "music": 1,
+  "name": "Mileth",
+  "scriptKeys": [],
+  "templateKey": "500"
 }

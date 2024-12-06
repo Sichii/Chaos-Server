@@ -1,5 +1,7 @@
+#region
 using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.DialogScripts.Abstractions;
 
@@ -11,6 +13,9 @@ public interface IDialogScript : IScript
     /// <param name="source">
     ///     The aisling the dialog is for
     /// </param>
+    /// <remarks>
+    ///     Comes after <see cref="OnDisplaying" />
+    /// </remarks>
     void OnDisplayed(Aisling source);
 
     /// <summary>
@@ -20,6 +25,9 @@ public interface IDialogScript : IScript
     /// <param name="source">
     ///     The aisling the dialog is for
     /// </param>
+    /// <remarks>
+    ///     Comes before <see cref="OnDisplayed" />
+    /// </remarks>
     void OnDisplaying(Aisling source);
 
     /// <summary>

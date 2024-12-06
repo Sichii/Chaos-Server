@@ -167,7 +167,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
     public virtual bool CanUse(
         Spell spell,
         Creature target,
-        string? prompt,
+        string? promptResponse,
         [MaybeNullWhen(false)] out SpellContext spellContext)
     {
         spellContext = null;
@@ -178,7 +178,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (!spell.CanUse())
             return false;
 
-        spellContext = new SpellContext(this, target, prompt);
+        spellContext = new SpellContext(this, target, promptResponse);
 
         return spell.Script.CanUse(spellContext);
     }
@@ -570,7 +570,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         return true;
     }
 
-    public virtual bool TryUseSpell(Spell spell, uint? targetId = null, string? prompt = null)
+    public virtual bool TryUseSpell(Spell spell, uint? targetId = null, string? promptResponse = null)
     {
         Creature? target;
 
@@ -586,7 +586,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (!CanUse(
                 spell,
                 target!,
-                prompt,
+                promptResponse,
                 out var context))
             return false;
 
@@ -653,7 +653,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Direction = direction;
         var startPosition = Location.From(this);
         var startPoint = Point.From(this);
-        var endPoint = ((IPoint)this).DirectionalOffset(direction);
+        var endPoint = this.DirectionalOffset(direction);
 
         if (!MapInstance.IsWalkable(endPoint, Type, ignoreBlockingReactors))
             return;

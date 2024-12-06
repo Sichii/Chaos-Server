@@ -683,6 +683,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         => GetEntitiesAtPoints<ReactorTile>(point)
             .Any();
 
+    public bool IsWalkable(IPoint point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
+        => IsWalkable(Point.From(point), creatureType, ignoreBlockingReactors);
+
     /// <summary>
     ///     Determines if a point is walkable
     /// </summary>
@@ -697,7 +700,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// </param>
     /// <exception cref="ArgumentOutOfRangeException">
     /// </exception>
-    public bool IsWalkable(IPoint point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
+    [OverloadResolutionPriority(1)]
+    public bool IsWalkable(Point point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
     {
         ignoreBlockingReactors ??= creatureType == CreatureType.Aisling;
 
@@ -718,7 +722,10 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         };
     }
 
-    public bool IsWall(IPoint point)
+    public bool IsWall(IPoint point) => IsWall(Point.From(point));
+
+    [OverloadResolutionPriority(1)]
+    public bool IsWall(Point point)
     {
         var door = GetEntitiesAtPoints<Door>(point)
             .FirstOrDefault();
@@ -766,13 +773,20 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             aisling.Client.SendSound(music, true);
     }
 
-    public void PlaySound(byte sound, params IReadOnlyList<IPoint> points)
+    public void PlaySound(byte sound, params IReadOnlyList<IPoint> point)
+        => PlaySound(
+            sound,
+            point.Select(Point.From)
+                 .ToArray());
+
+    [OverloadResolutionPriority(1)]
+    public void PlaySound(byte sound, params IReadOnlyList<Point> points)
     {
         switch (points)
         {
             case []:
                 return;
-            case [{ } pt]:
+            case [var pt]:
                 foreach (var aisling in Objects.WithinRange<Aisling>(pt))
                     aisling.Client.SendSound(sound, false);
 

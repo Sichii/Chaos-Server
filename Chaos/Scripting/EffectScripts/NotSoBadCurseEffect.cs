@@ -1,3 +1,4 @@
+#region
 using Chaos.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
@@ -5,6 +6,7 @@ using Chaos.Scripting.Components.AbilityComponents;
 using Chaos.Scripting.Components.EffectComponents;
 using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.EffectScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.EffectScripts;
 
@@ -37,7 +39,7 @@ public class NotSoBadCurseEffect : EffectBase,
     protected override TimeSpan Duration { get; set; } = TimeSpan.FromMinutes(2);
 
     /// <inheritdoc />
-    public bool ExcludeSourcePoint { get; init; }
+    public int? ExclusionRange { get; init; }
 
     /// <inheritdoc />
     public TargetFilter Filter { get; init; }

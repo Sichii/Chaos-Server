@@ -6,6 +6,12 @@
         "itemTemplateKey": "apple"
       }
     ],
+    "prerequisiteSkills": [],
+    "prerequisiteSpells": [
+      {
+        "templateKey": "healies"
+      }
+    ],
     "requiredGold": 10000,
     "requiredStats": {
       "con": 1,
@@ -13,13 +19,7 @@
       "int": 1,
       "str": 1,
       "wis": 2
-    },
-    "prerequisiteSkills": [],
-    "prerequisiteSpells": [
-      {
-        "templateKey": "healies"
-      }
-    ]
+    }
   },
   "spellType": "Targeted",
   "class": "Priest",
@@ -32,12 +32,12 @@
   ],
   "scriptVars": {
     "applyEffect": {
-      "bodyAnimation": "handsup",
-      "sound": 8,
-      "range": 2,
       "shape": "allaround",
-      "effectKey": "regeneration",
-      "filter": "friendlyOnly, aliveOnly"
+      "range": 2,
+      "sound": 8,
+      "bodyAnimation": "handsup",
+      "filter": "friendlyOnly, aliveOnly",
+      "effectKey": "regeneration"
     }
   },
   "templateKey": "regrowth"

@@ -410,7 +410,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public override bool CanUse(
         Spell spell,
         Creature target,
-        string? prompt,
+        string? promptResponse,
         [MaybeNullWhen(false)] out SpellContext spellContext)
     {
         spellContext = null;
@@ -424,7 +424,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         return base.CanUse(
             spell,
             target,
-            prompt,
+            promptResponse,
             out spellContext!);
     }
 
@@ -1050,7 +1050,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     }
 
     /// <inheritdoc />
-    public override bool TryUseSpell(Spell spell, uint? targetId = null, string? prompt = null)
+    public override bool TryUseSpell(Spell spell, uint? targetId = null, string? promptResponse = null)
     {
         Creature? target;
 
@@ -1066,7 +1066,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         if (!CanUse(
                 spell,
                 target!,
-                prompt,
+                promptResponse,
                 out var context))
             return false;
 
@@ -1083,12 +1083,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         return true;
     }
 
-    public bool TryUseSpell(byte slot, uint? targetId = null, string? prompt = null)
+    public bool TryUseSpell(byte slot, uint? targetId = null, string? promptResponse = null)
     {
         if (!SpellBook.TryGetObject(slot, out var spell))
             return false;
 
-        return TryUseSpell(spell, targetId, prompt);
+        return TryUseSpell(spell, targetId, promptResponse);
     }
 
     /// <inheritdoc />

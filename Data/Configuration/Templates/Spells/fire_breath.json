@@ -1,67 +1,62 @@
 {
-    "learningRequirements": {
-        "itemRequirements": [
-            {
-                "amountRequired": 15,
-                "itemTemplateKey": "apple"
-            },
-            {
-                "amountRequired": 5,
-                "itemTemplateKey": "stick"
-            }
-        ],
-        "requiredStats": {
-            "con": 1,
-            "dex": 1,
-            "int": 2,
-            "str": 1,
-            "wis": 1
-        },
-        "prerequisiteSkills": [],
-        "prerequisiteSpells": [
-            {
-                "templateKey": "poison"
-            }
-        ]
+  "learningRequirements": {
+    "itemRequirements": [
+      {
+        "amountRequired": 15,
+        "itemTemplateKey": "apple"
+      },
+      {
+        "amountRequired": 5,
+        "itemTemplateKey": "stick"
+      }
+    ],
+    "prerequisiteSkills": [],
+    "prerequisiteSpells": [
+      {
+        "templateKey": "poison"
+      }
+    ],
+    "requiredStats": {
+      "con": 1,
+      "dex": 1,
+      "int": 2,
+      "str": 1,
+      "wis": 1
+    }
+  },
+  "prompt": "",
+  "spellType": "NoTarget",
+  "class": "Wizard",
+  "description": "A powerful spell that deals damage in a long ranged cone shape in the direction you are facing.",
+  "level": 5,
+  "name": "Fire Breath",
+  "panelSprite": 39,
+  "scriptKeys": [
+    "cascadingDamage"
+  ],
+  "scriptVars": {
+    "cascadingDamage": {
+      "sound": 167,
+      "bodyAnimation": "handsup"
     },
-    "prompt": "",
-    "spellType": "NoTarget",
-    "class": "Wizard",
-    "description": "A powerful spell that deals damage in a long ranged cone shape in the direction you are facing.",
-    "level": 5,
-    "name": "Fire Breath",
-    "panelSprite": 39,
-    "scriptKeys": ["cascadingDamage"],
-    "scriptVars": {
-        "cascadingDamage": {
-            "bodyAnimation": "handsup",
-            "animation": {
-                "targetAnimation": 138,
-                "animationSpeed": 100
-            },
-            "animatePoints": true,
-            "sound": 167,
-            "range": 2,
-            "shape": "allAround",
-            "manaCost": 0
-        },
-        "cascadingDamageTile": {
-            "animatePoints": true,
-            "range": 12,
-            "element": "fire",
-            "damageStat": "int",
-            "sound": 167,
-            "filter": "hostileOnly, aliveOnly, othersOnly",
-            "minSoundIntervalMs": 900,
-            "baseDamage": 50,
-            "cascadeIntervalMs": 300,
-            "damageStatMultiplier": 5,
-            "shape": "allAround",
-            "animation": {
-                "targetAnimation": 138,
-                "animationSpeed": 100
-            }
-        }
-    },
-    "templateKey": "fire_breath"
+    "cascadingDamageTile": {
+      "damageStat": "int",
+      "animatePoints": true,
+      "shape": "allAround",
+	  "exclusionRange": 3,
+      "minSoundIntervalMs": 900,
+      "range": 6,
+      "sound": 167,
+      "animation": {
+        "targetAnimation": 138,
+        "animationSpeed": 100
+      },
+      "cascadeIntervalMs": 300,
+      "filter": "hostileOnly, aliveOnly, othersOnly",
+      "damageStatMultiplier": 5,
+      "baseDamage": 50,
+      "element": "fire"
+    }
+  },
+  "templateKey": "fire_breath"
 }
