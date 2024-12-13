@@ -10,10 +10,10 @@ namespace Chaos.Scripting.ReactorTileScripts;
 
 public class LeaderboardScript : ReactorTileScriptBase
 {
-    private IStorage<PlaytimeLeaderboard> Leaderboard { get; }
+    private IStorage<LeaderboardObj> Leaderboard { get; }
 
     /// <inheritdoc />
-    public LeaderboardScript(ReactorTile subject, IStorage<PlaytimeLeaderboard> storage)
+    public LeaderboardScript(ReactorTile subject, IStorage<LeaderboardObj> storage)
         : base(subject)
         => Leaderboard = storage.GetInstance("test_leaderboard");
 
@@ -40,7 +40,7 @@ public class LeaderboardScript : ReactorTileScriptBase
         source.SendServerMessage(ServerMessageType.WoodenBoard, builder.ToString());
     }
 
-    public sealed class PlaytimeLeaderboard
+    public sealed class LeaderboardObj
     {
         public Dictionary<string, int> Entries { get; } = new(StringComparer.OrdinalIgnoreCase);
     }
