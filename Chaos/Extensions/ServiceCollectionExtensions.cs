@@ -209,6 +209,9 @@ public static class ServiceCollectionExtensions
 
     public static void AddStorage(this IServiceCollection services)
     {
+        //add local storage for general use
+        services.AddLocalStorage(ConfigKeys.Options.Key);
+
         services.AddOptionsFromConfig<EntityRepositoryOptions>(ConfigKeys.Options.Key);
         services.AddTransient<IEntityRepository, EntityRepository>();
 

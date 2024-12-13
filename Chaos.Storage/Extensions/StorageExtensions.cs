@@ -1,7 +1,9 @@
+#region
 using Chaos.Common.Configuration;
 using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Extensions.DependencyInjection;
@@ -67,5 +69,24 @@ public static class StorageExtensions
         services.AddOptionsFromConfig<TOptions>(optionsSubsection); //bound
         services.ConfigureOptions<DirectoryBoundOptionsConfigurer<TOptions>>();
         services.AddSingleton<ISimpleCache<T>, TImpl>();
+    }
+
+    /// <summary>
+    ///     Adds an implementation of <see cref="IStorageManager" /> to the service collection. Also registers generic
+    ///     <see cref="IReadOnlyStorage{T}" /> and <see cref="IStorage{T}" />
+    /// </summary>
+    /// <param name="services">
+    ///     The <see cref="IServiceCollection" /> to add the services to
+    /// </param>
+    /// <param name="optionsSubsection">
+    ///     The optional subsection name of the options to bind
+    /// </param>
+    public static void AddLocalStorage(this IServiceCollection services, string? optionsSubsection = null)
+    {
+        services.AddOptionsFromConfig<LocalStorageOptions>(optionsSubsection); //bound
+        services.ConfigureOptions<DirectoryBoundOptionsConfigurer<LocalStorageOptions>>();
+        services.AddSingleton<IStorageManager, LocalStorageManager>();
+        services.AddSingleton(typeof(IReadOnlyStorage<>), typeof(ReadOnlyStorageObject<>));
+        services.AddSingleton(typeof(IStorage<>), typeof(StorageObject<>));
     }
 }
