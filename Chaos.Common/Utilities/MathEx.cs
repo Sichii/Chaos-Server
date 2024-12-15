@@ -1,4 +1,6 @@
+#region
 using System.Numerics;
+#endregion
 
 namespace Chaos.Common.Utilities;
 
@@ -42,6 +44,21 @@ public static class MathEx
     /// </returns>
     public static TNumber GetPercentOf<TNumber>(int num, decimal percent) where TNumber: INumber<TNumber>
         => (TNumber)Convert.ChangeType(num / 100m * percent, typeof(TNumber));
+
+    /// <summary>
+    ///     Whether the type is an integer type
+    /// </summary>
+    private static bool IsIntegerType<T>()
+        => (typeof(T) == typeof(sbyte))
+           || (typeof(T) == typeof(byte))
+           || (typeof(T) == typeof(short))
+           || (typeof(T) == typeof(ushort))
+           || (typeof(T) == typeof(int))
+           || (typeof(T) == typeof(uint))
+           || (typeof(T) == typeof(long))
+           || (typeof(T) == typeof(ulong))
+           || (typeof(T) == typeof(nint))
+           || (typeof(T) == typeof(nuint));
 
     /// <summary>
     ///     Scales a number from one range to another range.
@@ -115,12 +132,22 @@ public static class MathEx
         if (min.Equals(max))
             throw new ArgumentOutOfRangeException(nameof(min), "Min and max cannot be the same value");
 
-        return T2.CreateTruncating(
-            ScaleRange(
-                double.CreateTruncating(num),
-                double.CreateTruncating(min),
-                double.CreateTruncating(max),
-                double.CreateTruncating(newMin),
-                double.CreateTruncating(newMax)));
+        // Compute the ratio as double for higher precision
+        var ratio = double.CreateChecked(num - min) / double.CreateChecked(max - min);
+
+        // Compute the scaled value
+        var scaledValue = ratio * double.CreateChecked(newMax - newMin) + double.CreateChecked(newMin);
+
+        // Determine if T2 is an integer type
+        if (IsIntegerType<T2>())
+        {
+            // Round the scaled value to the nearest integer
+            var roundedValue = Math.Round(scaledValue, MidpointRounding.AwayFromZero);
+
+            return T2.CreateChecked(roundedValue);
+        }
+
+        // For floating-point types, return the scaled value directly
+        return T2.CreateChecked(scaledValue);
     }
 }

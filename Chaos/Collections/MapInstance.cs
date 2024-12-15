@@ -153,20 +153,12 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     action();
                 } catch (Exception e)
                 {
-                    Logger.WithTopics(
-                              [
-                                  Topics.Entities.MapInstance,
-                                  Topics.Actions.Update
-                              ])
+                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
                           .LogError(e, "Failed to process action in map {@MapInstance}", this);
                 }
         } catch (Exception e)
         {
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.MapInstance,
-                          Topics.Actions.Update
-                      ])
+            Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
                   .LogError(e, "Failed to update map {@MapInstance}", this);
         }
     }
@@ -281,11 +273,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
     public void Destroy()
     {
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.MapInstance,
-                      Topics.Actions.Delete
-                  ])
+        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Delete)
               .WithProperty(this)
               .LogInformation("Shutting down map instance {@MapInstanceId}", InstanceId);
 
@@ -608,7 +596,16 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 aisling.UpdateViewPort();
 
                 aisling.Client.SendMapChangeComplete();
-                aisling.Client.SendSound(Music, true);
+
+                //only send sound if the music is different
+                if (!string.IsNullOrEmpty(aisling.Trackers.LastMapInstanceId))
+                {
+                    var lastMap = SimpleCache.Get<MapInstance>(aisling.Trackers.LastMapInstanceId);
+
+                    if (Music != lastMap.Music)
+                        aisling.Client.SendSound(Music, true);
+                }
+
                 aisling.Client.SendMapLoadComplete();
                 aisling.Client.SendDisplayAisling(aisling);
                 aisling.Client.SendLightLevel(CurrentLightLevel);
@@ -876,11 +873,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                         await UpdateMapAsync(DeltaTime.GetDelta);
                     } catch (Exception e)
                     {
-                        Logger.WithTopics(
-                                  [
-                                      Topics.Entities.MapInstance,
-                                      Topics.Actions.Update
-                                  ])
+                        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
                               .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
                     }
                 }
