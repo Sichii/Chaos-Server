@@ -1,7 +1,11 @@
+#region
 using System.Numerics;
+using System.Reflection;
 using System.Text.Json;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Utilities;
 using Chaos.IO.FileSystem;
+#endregion
 
 namespace Chaos.Common.Identity;
 
@@ -15,6 +19,18 @@ namespace Chaos.Common.Identity;
 public sealed class PersistentIdGenerator<T> : IIdGenerator<T> where T: INumber<T>
 {
     private static readonly string SharedName = $"PersistentId{typeof(T).Name}";
+
+    // ReSharper disable once StaticMemberInGenericType
+    private static readonly string SpecialDirectory = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+        "Chaos",
+        "PersistentIdentity",
+        Assembly.GetEntryAssembly()
+                ?.GetName()
+                .Name
+        ?? "Unknown");
+
+    private readonly string FilePath;
     private readonly IIdGenerator<T> IdGenerator;
     private readonly string Name;
 
@@ -43,14 +59,16 @@ public sealed class PersistentIdGenerator<T> : IIdGenerator<T> where T: INumber<
     public PersistentIdGenerator(string name, T? persistedValue = default)
     {
         Name = name;
-        var path = $"{Name}.json";
+        FilePath = Path.Combine(SpecialDirectory, $"{Name}.json");
 
-        if (!File.Exists(path) || persistedValue is not null)
+        if (!Directory.Exists(SpecialDirectory))
+            Directory.CreateDirectory(SpecialDirectory);
+
+        if (!File.Exists(FilePath) || persistedValue is not null)
             IdGenerator = new SequentialIdGenerator<T>(persistedValue);
         else
         {
-            var json = File.ReadAllText(path);
-            persistedValue = JsonSerializer.Deserialize<T>(json);
+            persistedValue = FilePath.SafeExecute(innerPath => JsonSerializerEx.Deserialize<T>(innerPath, JsonSerializerOptions.Default));
             IdGenerator = new SequentialIdGenerator<T>(persistedValue ?? T.Zero);
         }
 
@@ -68,9 +86,8 @@ public sealed class PersistentIdGenerator<T> : IIdGenerator<T> where T: INumber<
 
                 if (ShouldSave)
                 {
-                    var path = $"{Name}.json";
-
-                    await path.SafeExecuteAsync(innerPath => FileEx.SafeWriteAllTextAsync(innerPath, NextId.ToString()!));
+                    await FilePath.SafeExecuteAsync(
+                        innerPath => JsonSerializerEx.SerializeAsync(innerPath, IdGenerator.NextId, JsonSerializerOptions.Default));
 
                     ShouldSave = false;
                 }
