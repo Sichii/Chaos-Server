@@ -28,12 +28,7 @@ public sealed class OptionsValidator(ILogger<OptionsValidator> logger) : IValida
         {
             if (server.Description.Length > 18)
             {
-                Logger.WithTopics(
-                          [
-                              Topics.Servers.LobbyServer,
-                              Topics.Entities.Options,
-                              Topics.Actions.Validation
-                          ])
+                Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Options, Topics.Actions.Validation)
                       .WithProperty(server.Description)
                       .LogError(
                           "Value for {@OptionName} is too long, trimming it to 18 characters",
@@ -44,12 +39,7 @@ public sealed class OptionsValidator(ILogger<OptionsValidator> logger) : IValida
 
             if (server.Name.Length > 9)
             {
-                Logger.WithTopics(
-                          [
-                              Topics.Servers.LobbyServer,
-                              Topics.Entities.Options,
-                              Topics.Actions.Validation
-                          ])
+                Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Options, Topics.Actions.Validation)
                       .WithProperty(server.Name)
                       .LogError(
                           "Value for {@OptionName} is too long, trimming it to 9 characters",

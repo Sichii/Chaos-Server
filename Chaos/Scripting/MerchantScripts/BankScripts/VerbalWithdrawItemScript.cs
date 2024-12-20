@@ -85,12 +85,7 @@ public class VerbalWithdrawItemScript : VerbalBankerScriptBase
                     amount,
                     itemName);
 
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Item,
-                              Topics.Actions.Withdraw
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Item, Topics.Actions.Withdraw)
                       .WithProperty(source)
                       .WithProperty(Subject)
                       .LogInformation(

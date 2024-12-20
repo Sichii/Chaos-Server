@@ -97,11 +97,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
 
                 //depending on how the loop is performing, log the output at different levels
                 if ((average > MaxDelta) || (max > 250))
-                    Logger.WithTopics(
-                              [
-                                  Topics.Entities.DeltaMonitor,
-                                  Topics.Actions.Update
-                              ])
+                    Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
                           .LogError(
                               FORMAT,
                               Name,
@@ -111,11 +107,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
                               max,
                               count);
                 else if ((upperPct > (MaxDelta / 2)) || (max > 100))
-                    Logger.WithTopics(
-                              [
-                                  Topics.Entities.DeltaMonitor,
-                                  Topics.Actions.Update
-                              ])
+                    Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
                           .LogWarning(
                               FORMAT,
                               Name,
@@ -125,11 +117,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
                               max,
                               count);
                 else
-                    Logger.WithTopics(
-                              [
-                                  Topics.Entities.DeltaMonitor,
-                                  Topics.Actions.Update
-                              ])
+                    Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
                           .LogTrace(
                               FORMAT,
                               Name,

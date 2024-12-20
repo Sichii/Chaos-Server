@@ -95,11 +95,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// <inheritdoc />
     public void ForceLoad()
     {
-        Logger.WithTopics(
-                  [
-                      Topics.Qualifiers.Forced,
-                      Topics.Actions.Load
-                  ])
+        Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Load)
               .LogInformation("Force loading {@TypeName} cache", typeof(T).Name);
 
         using var @lock = Sync.EnterScope();
@@ -170,11 +166,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
                 entry.Value = CreateFromEntry(entry);
             } catch (Exception e)
             {
-                Logger.WithTopics(
-                          [
-                              Topics.Qualifiers.Forced,
-                              Topics.Actions.Load
-                          ])
+                Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Load)
                       .LogError(
                           e,
                           "Failed to reload {@TypeName} with key {@Key}",

@@ -186,12 +186,7 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
         //if the target is ignoring the sender, log a warning
         //dont return here, let things play out, there should be another check to prevent sending an invite
         if (receiver.IgnoreList.Contains(sender.Name))
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Group,
-                          Topics.Actions.Invite,
-                          Topics.Qualifiers.Harassment
-                      ])
+            Logger.WithTopics(Topics.Entities.Group, Topics.Actions.Invite, Topics.Qualifiers.Harassment)
                   .WithProperty(sender)
                   .WithProperty(receiver)
                   .LogWarning(
@@ -277,12 +272,7 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
         //if the target is ignoring the sender, log a warning
         //dont return here, let things play out, there should be another check to prevent sending an invite
         if (receiver.IgnoreList.Contains(sender.Name))
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Group,
-                          Topics.Actions.Invite,
-                          Topics.Qualifiers.Harassment
-                      ])
+            Logger.WithTopics(Topics.Entities.Group, Topics.Actions.Invite, Topics.Qualifiers.Harassment)
                   .WithProperty(sender)
                   .WithProperty(receiver)
                   .LogWarning(

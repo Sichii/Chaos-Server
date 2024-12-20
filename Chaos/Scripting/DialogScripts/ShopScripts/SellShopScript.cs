@@ -79,12 +79,10 @@ public class SellShopScript : DialogScriptBase
         {
             case ComplexActionHelper.SellItemResult.Success:
                 Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Item,
-                              Topics.Entities.Gold,
-                              Topics.Actions.Sell
-                          ])
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Item,
+                          Topics.Entities.Gold,
+                          Topics.Actions.Sell)
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)

@@ -116,11 +116,7 @@ public class GuildMemberDemoteScript : GuildScriptBase
         //change the rank of the aisling
         guild.ChangeRank(aislingToDemote, sourceRank.Tier + 1, source);
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Guild,
-                      Topics.Actions.Demote
-                  ])
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Demote)
               .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)

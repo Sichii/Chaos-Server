@@ -31,12 +31,7 @@ public class VerbalDepositGoldScript : VerbalBankerScriptBase
                     amount,
                     "gold");
 
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Gold,
-                              Topics.Actions.Deposit
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Deposit)
                       .WithProperty(source)
                       .WithProperty(Subject)
                       .LogInformation("Aisling {@AislingName} deposited {Amount} gold in the bank", source.Name, amount);

@@ -94,12 +94,7 @@ public class DepositItemScript : DialogScriptBase
         switch (depositItemResult)
         {
             case ComplexActionHelper.DepositItemResult.Success:
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Item,
-                              Topics.Actions.Deposit
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Item, Topics.Actions.Deposit)
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)

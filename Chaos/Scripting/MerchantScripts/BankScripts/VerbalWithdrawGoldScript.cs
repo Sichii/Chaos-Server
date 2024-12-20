@@ -71,12 +71,7 @@ public class VerbalWithdrawGoldScript : VerbalBankerScriptBase
                     amount,
                     "gold");
 
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Gold,
-                              Topics.Actions.Withdraw
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Withdraw)
                       .WithProperty(source)
                       .WithProperty(Subject)
                       .LogInformation("Aisling {@AislingName} withdrew {Amount} gold from the bank", source, amount);

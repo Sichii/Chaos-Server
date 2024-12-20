@@ -76,12 +76,7 @@ public sealed class StockService(ILogger<StockService> logger) : BackgroundServi
 
         merchantStock.Restock(percent);
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Merchant,
-                      Topics.Qualifiers.Forced,
-                      Topics.Actions.Update
-                  ])
+        Logger.WithTopics(Topics.Entities.Merchant, Topics.Qualifiers.Forced, Topics.Actions.Update)
               .LogDebug("Manually restocked {@Key}", key);
     }
 
@@ -221,11 +216,7 @@ public sealed class StockService(ILogger<StockService> logger) : BackgroundServi
             {
                 Restock(RestockPct);
 
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Merchant,
-                              Topics.Actions.Update
-                          ])
+                Logger.WithTopics(Topics.Entities.Merchant, Topics.Actions.Update)
                       .LogDebug("Auto restocked {@Key}", Key);
             }
         }

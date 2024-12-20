@@ -36,12 +36,7 @@ public class DepositGoldScript : DialogScriptBase
         switch (depositResult)
         {
             case ComplexActionHelper.DepositGoldResult.Success:
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Gold,
-                              Topics.Actions.Deposit
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Deposit)
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)

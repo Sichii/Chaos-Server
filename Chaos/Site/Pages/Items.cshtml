@@ -18,7 +18,7 @@
     <script src="~/Site/wwwroot/Styles/chaos-api.js"></script>
     <script>
         const columnDefs = @Html.Raw(Items.ColumnDefsJson);
-    
+
         // AG Grid initialization and configuration
         const gridOptions = {
             autoSizeStrategy: {
@@ -54,6 +54,6 @@
 
         const itemsGridElement = document.querySelector('#itemGrid');
         let grid = agGrid.createGrid(itemsGridElement, gridOptions);
-        
+
     </script>
 }

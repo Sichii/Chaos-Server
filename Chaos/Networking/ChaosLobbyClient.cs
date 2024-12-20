@@ -70,12 +70,10 @@ public sealed class ChaosLobbyClient : LobbyClientBase, IChaosLobbyClient
 
         if (LogRawPackets)
             Logger.WithTopics(
-                      [
-                          Topics.Servers.LobbyServer,
-                          Topics.Qualifiers.Raw,
-                          Topics.Entities.Packet,
-                          Topics.Actions.Receive
-                      ])
+                      Topics.Servers.LobbyServer,
+                      Topics.Qualifiers.Raw,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Receive)
                   .WithProperty(this)
                   .LogTrace("[Rcv] {@Packet}", packet.ToString());
 

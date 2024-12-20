@@ -90,12 +90,7 @@ public class WithdrawItemScript : DialogScriptBase
         switch (withdrawResult)
         {
             case ComplexActionHelper.WithdrawItemResult.Success:
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Item,
-                              Topics.Actions.Withdraw
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Item, Topics.Actions.Withdraw)
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)

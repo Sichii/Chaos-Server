@@ -92,11 +92,7 @@ public class GuildMemberKickScript : GuildScriptBase
             throw new UnreachableException(
                 "The only failure reason is if the person being kicked is a leader. That should be checked for.");
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Guild,
-                      Topics.Actions.Kick
-                  ])
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Kick)
               .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)

@@ -21,18 +21,10 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
     /// <inheritdoc />
     protected override MailBox LoadFromFile(string dir, string key)
     {
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.MailBox,
-                      Topics.Actions.Load
-                  ])
+        Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Load)
               .LogDebug("Loading new {@TypeName} entry with key {@Key}", nameof(MailBox), key);
 
-        var metricsLogger = Logger.WithTopics(
-                                      [
-                                          Topics.Entities.MailBox,
-                                          Topics.Actions.Load
-                                      ])
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Load)
                                   .WithMetrics();
 
         if (!Directory.Exists(dir))
@@ -50,19 +42,11 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
     /// <inheritdoc />
     public override void Save(MailBox obj)
     {
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.MailBox,
-                      Topics.Actions.Save
-                  ])
+        Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Save)
               .WithProperty(obj)
               .LogDebug("Saving {@TypeName} entry with key {@Key}", nameof(MailBox), obj.Key);
 
-        var metricsLogger = Logger.WithTopics(
-                                      [
-                                          Topics.Entities.MailBox,
-                                          Topics.Actions.Save
-                                      ])
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Save)
                                   .WithMetrics()
                                   .WithProperty(obj);
 
@@ -96,19 +80,11 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
     /// <inheritdoc />
     public override async Task SaveAsync(MailBox obj)
     {
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.MailBox,
-                      Topics.Actions.Save
-                  ])
+        Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Save)
               .WithProperty(obj)
               .LogTrace("Saving {@TypeName} entry with key {@Key}", nameof(MailBox), obj.Key);
 
-        var metricsLogger = Logger.WithTopics(
-                                      [
-                                          Topics.Entities.MailBox,
-                                          Topics.Actions.Save
-                                      ])
+        var metricsLogger = Logger.WithTopics(Topics.Entities.MailBox, Topics.Actions.Save)
                                   .WithMetrics()
                                   .WithProperty(obj);
 

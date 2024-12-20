@@ -108,11 +108,7 @@ public class GuildMemberPromoteScript : GuildScriptBase
         //change the rank of the aisling
         guild.ChangeRank(aislingToPromote, sourceRank.Tier - 1, source);
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Guild,
-                      Topics.Actions.Promote
-                  ])
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Promote)
               .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)

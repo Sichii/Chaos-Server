@@ -833,13 +833,11 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
 
         if (LogRawPackets)
             Logger.WithTopics(
-                      [
-                          Topics.Servers.WorldServer,
-                          Topics.Qualifiers.Raw,
-                          Topics.Entities.Client,
-                          Topics.Entities.Packet,
-                          Topics.Actions.Receive
-                      ])
+                      Topics.Servers.WorldServer,
+                      Topics.Qualifiers.Raw,
+                      Topics.Entities.Client,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Receive)
                   .WithProperty(this)
                   .LogTrace("[Rcv] {@Packet}", packet.ToString());
 

@@ -233,11 +233,7 @@ public static class ServiceProviderExtensions
                 newMap.BaseInstanceId = oldMap.BaseInstanceId;
             } catch (Exception e)
             {
-                logger.WithTopics(
-                          [
-                              Topics.Entities.MapInstance,
-                              Topics.Actions.Reload
-                          ])
+                logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Reload)
                       .WithProperty(oldMap)
                       .LogError(e, "Failed to migrate map {@MapInstanceId} during reload", oldMap.InstanceId);
             }
@@ -279,11 +275,7 @@ public static class ServiceProviderExtensions
                     merchantsToAdd.Add(newMerchant);
                 } catch (Exception e)
                 {
-                    logger.WithTopics(
-                              [
-                                  Topics.Entities.Merchant,
-                                  Topics.Actions.Reload
-                              ])
+                    logger.WithTopics(Topics.Entities.Merchant, Topics.Actions.Reload)
                           .WithProperty(merchant)
                           .WithProperty(mapInstance)
                           .LogError(
@@ -341,11 +333,7 @@ public static class ServiceProviderExtensions
                     monstersToAdd.Add(newMonster);
                 } catch (Exception e)
                 {
-                    logger.WithTopics(
-                              [
-                                  Topics.Entities.Monster,
-                                  Topics.Actions.Reload
-                              ])
+                    logger.WithTopics(Topics.Entities.Monster, Topics.Actions.Reload)
                           .WithProperty(monster)
                           .WithProperty(mapInstance)
                           .LogError(

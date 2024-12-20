@@ -47,12 +47,7 @@ public class ForgetSkillScript : DialogScriptBase
         }
 
         if (source.SkillBook.Remove(slot))
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Skill,
-                          Topics.Actions.Forget
-                      ])
+            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Skill, Topics.Actions.Forget)
                   .WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
                   .WithProperty(source)

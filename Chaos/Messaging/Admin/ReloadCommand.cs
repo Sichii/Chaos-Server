@@ -36,11 +36,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         {
                             aisling.SendOrangeBarMessage("Failed to reload skills");
 
-                            Logger.WithTopics(
-                                      [
-                                          Topics.Entities.Skill,
-                                          Topics.Actions.Reload
-                                      ])
+                            Logger.WithTopics(Topics.Entities.Skill, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload skills");
                         }
                     });
@@ -58,11 +54,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         {
                             aisling.SendOrangeBarMessage("Failed to reload spells");
 
-                            Logger.WithTopics(
-                                      [
-                                          Topics.Entities.Spell,
-                                          Topics.Actions.Reload
-                                      ])
+                            Logger.WithTopics(Topics.Entities.Spell, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload spells");
                         }
                     });
@@ -80,11 +72,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         {
                             aisling.SendOrangeBarMessage("Failed to reload items");
 
-                            Logger.WithTopics(
-                                      [
-                                          Topics.Entities.Item,
-                                          Topics.Actions.Reload
-                                      ])
+                            Logger.WithTopics(Topics.Entities.Item, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload items");
                         }
                     });
@@ -102,11 +90,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         {
                             aisling.SendOrangeBarMessage("Failed to reload monsters");
 
-                            Logger.WithTopics(
-                                      [
-                                          Topics.Entities.Monster,
-                                          Topics.Actions.Reload
-                                      ])
+                            Logger.WithTopics(Topics.Entities.Monster, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload monsters");
                         }
                     });
@@ -124,11 +108,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         {
                             aisling.SendOrangeBarMessage("Failed to reload merchants");
 
-                            Logger.WithTopics(
-                                      [
-                                          Topics.Entities.Merchant,
-                                          Topics.Actions.Reload
-                                      ])
+                            Logger.WithTopics(Topics.Entities.Merchant, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload merchants");
                         }
                     });
@@ -146,12 +126,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         {
                             aisling.SendOrangeBarMessage("Failed to reload maps");
 
-                            Logger.WithTopics(
-                                      [
-                                          Topics.Entities.MapInstance,
-                                          Topics.Entities.MapTemplate,
-                                          Topics.Actions.Reload
-                                      ])
+                            Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.MapTemplate, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload maps");
                         }
                     });
@@ -169,11 +144,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         {
                             aisling.SendOrangeBarMessage("Failed to reload dialogs");
 
-                            Logger.WithTopics(
-                                      [
-                                          Topics.Entities.Dialog,
-                                          Topics.Actions.Reload
-                                      ])
+                            Logger.WithTopics(Topics.Entities.Dialog, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload dialogs");
                         }
                     });
@@ -191,11 +162,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         {
                             aisling.SendOrangeBarMessage("Failed to reload worldmaps");
 
-                            Logger.WithTopics(
-                                      [
-                                          Topics.Entities.WorldMap,
-                                          Topics.Actions.Reload
-                                      ])
+                            Logger.WithTopics(Topics.Entities.WorldMap, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload worldmaps");
                         }
                     });
@@ -213,11 +180,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         {
                             aisling.SendOrangeBarMessage("Failed to reload loottables");
 
-                            Logger.WithTopics(
-                                      [
-                                          Topics.Entities.LootTable,
-                                          Topics.Actions.Reload
-                                      ])
+                            Logger.WithTopics(Topics.Entities.LootTable, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload loottables");
                         }
                     });
@@ -235,11 +198,7 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
                         {
                             aisling.SendOrangeBarMessage("Failed to reload metadata");
 
-                            Logger.WithTopics(
-                                      [
-                                          Topics.Entities.MetaData,
-                                          Topics.Actions.Reload
-                                      ])
+                            Logger.WithTopics(Topics.Entities.MetaData, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload metadata");
                         }
                     });

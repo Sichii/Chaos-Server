@@ -428,11 +428,7 @@ public sealed class StringExtensionsTests
         const string EXPECTED = "Hello, World and Universe!";
 
         // Act
-        var result = INPUT.Inject(
-            [
-                "World",
-                "Universe"
-            ]);
+        var result = INPUT.Inject("World", "Universe");
 
         // Assert
         result.Should()

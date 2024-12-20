@@ -62,6 +62,9 @@ public sealed class ArgumentCollection : IEnumerable<string>
             if (matchedSpan.IsEmpty)
                 continue;
 
+            if (matchedSpan.StartsWith('"') && matchedSpan.EndsWith('"'))
+                matchedSpan = matchedSpan[1..^1];
+
             Arguments.Add(new string(matchedSpan));
         }
     }

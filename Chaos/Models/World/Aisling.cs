@@ -116,12 +116,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
             if ((Sprite == 0) && WorldOptions.Instance.ProhibitSpeedWalk && !WalkCounter.TryIncrement())
             {
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Qualifiers.Cheating,
-                              Topics.Actions.Walk
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Qualifiers.Cheating, Topics.Actions.Walk)
                       .WithProperty(this)
                       .LogWarning("Aisling {@AislingName} is probably speed walking", Name);
 
@@ -659,12 +654,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         if (!Script.CanTalk())
             return;
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Aisling,
-                      Topics.Entities.Message,
-                      Topics.Actions.Send
-                  ])
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Message, Topics.Actions.Send)
               .WithProperty(this)
               .LogInformation(
                   "Aisling {@AislingName} sent {@Type} message {@Message}",
@@ -740,12 +730,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         money = new Money(amount, MapInstance, point);
         MapInstance.AddEntity(money, point);
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Aisling,
-                      Topics.Entities.Gold,
-                      Topics.Actions.Drop
-                  ])
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Drop)
               .WithProperty(this)
               .WithProperty(money)
               .LogInformation(
@@ -845,12 +830,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
         if (TryGiveItem(ref item, destinationSlot))
         {
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Item,
-                          Topics.Actions.Pickup
-                      ])
+            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Item, Topics.Actions.Pickup)
                   .WithProperty(this)
                   .WithProperty(groundItem)
                   .LogInformation(
@@ -883,12 +863,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
         if (TryGiveGold(money.Amount))
         {
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Gold,
-                          Topics.Actions.Pickup
-                      ])
+            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Pickup)
                   .WithProperty(this)
                   .WithProperty(money)
                   .LogInformation("Aisling {@AislingName} picked up {Amount} gold", Name, money.Amount);
@@ -919,12 +894,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         {
             source.SendActiveMessage($"{Name} has disabled exchanging");
 
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Exchange,
-                          Topics.Qualifiers.Harassment
-                      ])
+            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Exchange, Topics.Qualifiers.Harassment)
                   .WithProperty(this)
                   .WithProperty(source)
                   .LogWarning(

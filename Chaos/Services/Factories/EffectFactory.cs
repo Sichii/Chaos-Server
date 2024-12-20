@@ -47,19 +47,11 @@ public sealed class EffectFactory : IEffectFactory
             var effectKey = EffectBase.GetEffectKey(type);
             ret.TryAdd(effectKey, type);
 
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Effect,
-                          Topics.Actions.Load
-                      ])
+            Logger.WithTopics(Topics.Entities.Effect, Topics.Actions.Load)
                   .LogTrace("Loaded effect type with key {@EffectKey} for type {@Type}", effectKey, type.Name);
         }
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Effect,
-                      Topics.Actions.Load
-                  ])
+        Logger.WithTopics(Topics.Entities.Effect, Topics.Actions.Load)
               .LogInformation("{Count} effects loaded", ret.Count);
 
         return ret;

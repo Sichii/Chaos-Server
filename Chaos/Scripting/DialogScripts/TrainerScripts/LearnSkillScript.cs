@@ -85,12 +85,7 @@ public class LearnSkillScript : DialogScriptBase
         switch (learnSkillResult)
         {
             case ComplexActionHelper.LearnSkillResult.Success:
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Skill,
-                              Topics.Actions.Learn
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Skill, Topics.Actions.Learn)
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)
@@ -188,12 +183,10 @@ public class LearnSkillScript : DialogScriptBase
             dialog.ReplyToUnknownInput(source);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Skill,
-                          Topics.Actions.Learn,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Skill,
+                      Topics.Actions.Learn,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
                   .WithProperty(source)
@@ -211,12 +204,10 @@ public class LearnSkillScript : DialogScriptBase
             dialog.ReplyToUnknownInput(source);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Skill,
-                          Topics.Actions.Learn,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Skill,
+                      Topics.Actions.Learn,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
                   .WithProperty(source)

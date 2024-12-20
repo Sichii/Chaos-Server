@@ -121,13 +121,11 @@ public sealed class ChaosLoginClient : LoginClientBase, IChaosLoginClient
 
         if (LogRawPackets)
             Logger.WithTopics(
-                      [
-                          Topics.Servers.LoginServer,
-                          Topics.Qualifiers.Raw,
-                          Topics.Entities.Client,
-                          Topics.Entities.Packet,
-                          Topics.Actions.Receive
-                      ])
+                      Topics.Servers.LoginServer,
+                      Topics.Qualifiers.Raw,
+                      Topics.Entities.Client,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Receive)
                   .WithProperty(this)
                   .LogTrace("[Rcv] {@Packet}", packet.ToString());
 

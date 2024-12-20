@@ -32,12 +32,7 @@ public class VerbalDepositItemScript : VerbalBankerScriptBase
                     amount,
                     itemName);
 
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Item,
-                              Topics.Actions.Deposit
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Item, Topics.Actions.Deposit)
                       .WithProperty(source)
                       .WithProperty(Subject)
                       .LogInformation(

@@ -62,12 +62,10 @@ public class VerbalBuyShopScript : VerbalShopScriptBase
                     itemToBuy.DisplayName);
 
                 Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Item,
-                              Topics.Entities.Gold,
-                              Topics.Actions.Buy
-                          ])
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Item,
+                          Topics.Entities.Gold,
+                          Topics.Actions.Buy)
                       .WithProperty(source)
                       .WithProperty(itemToBuy)
                       .WithProperty(BuyShopSource)

@@ -99,11 +99,7 @@ public class GuildRankModifyScript : GuildScriptBase
 
         guild.ChangeRankName(currentRankName, newRankName);
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Guild,
-                      Topics.Actions.Update
-                  ])
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Update)
               .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)

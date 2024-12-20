@@ -110,11 +110,7 @@ public abstract class VerbalBankerScriptBase : MerchantScriptBase
         else
             template.ReplaceI("{AmountOfThing} are", "{AmountOfThing} is");
 
-        return template.Inject(
-            [
-                name,
-                thing.ToQuantity(amount)
-            ]);
+        return template.Inject(name, thing.ToQuantity(amount));
     }
 
     protected virtual bool IsClosestVerbalBankerTo(Aisling aisling)

@@ -36,12 +36,7 @@ public class WithdrawGoldScript : DialogScriptBase
         switch (withdrawResult)
         {
             case ComplexActionHelper.WithdrawGoldResult.Success:
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Gold,
-                              Topics.Actions.Withdraw
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Gold, Topics.Actions.Withdraw)
                       .WithProperty(Subject)
                       .WithProperty(Subject.DialogSource)
                       .WithProperty(source)

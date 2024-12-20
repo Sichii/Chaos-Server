@@ -69,11 +69,7 @@ public class GuildDisbandScript : GuildScriptBase
             return;
         }
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Guild,
-                      Topics.Actions.Disband
-                  ])
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Disband)
               .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)

@@ -81,11 +81,7 @@ public class GuildLeaveScript : GuildScriptBase
                 "You can not leave the guild at this time. ((a GM has been notified of this issue))",
                 "generic_guild_members_initial");
 
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Guild,
-                          Topics.Actions.Leave
-                      ])
+            Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Leave)
                   .WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
                   .WithProperty(source)
@@ -95,11 +91,7 @@ public class GuildLeaveScript : GuildScriptBase
             return;
         }
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Guild,
-                      Topics.Actions.Leave
-                  ])
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Leave)
               .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)

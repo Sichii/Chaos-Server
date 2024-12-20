@@ -44,13 +44,11 @@ public sealed class MailBox : BoardBase
             deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "You lack the permission", false);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.MailBox,
-                          Topics.Actions.Update,
-                          Topics.Entities.Mail,
-                          Topics.Actions.Delete,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.MailBox,
+                      Topics.Actions.Update,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Delete,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(deletedBy)
                   .WithProperty(this)
                   .WithProperty(post)
@@ -70,12 +68,10 @@ public sealed class MailBox : BoardBase
         deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "Message deleted", true);
 
         Logger.WithTopics(
-                  [
-                      Topics.Entities.MailBox,
-                      Topics.Actions.Update,
-                      Topics.Entities.Mail,
-                      Topics.Actions.Delete
-                  ])
+                  Topics.Entities.MailBox,
+                  Topics.Actions.Update,
+                  Topics.Entities.Mail,
+                  Topics.Actions.Delete)
               .WithProperty(deletedBy)
               .WithProperty(this)
               .WithProperty(post)
@@ -107,13 +103,11 @@ public sealed class MailBox : BoardBase
             highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "You lack the permission", false);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.MailBox,
-                          Topics.Actions.Update,
-                          Topics.Entities.Mail,
-                          Topics.Actions.Highlight,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.MailBox,
+                      Topics.Actions.Update,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Highlight,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(highlightedBy)
                   .WithProperty(this)
                   .WithProperty(post)
@@ -135,12 +129,10 @@ public sealed class MailBox : BoardBase
         highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "Message highlighted", true);
 
         Logger.WithTopics(
-                  [
-                      Topics.Entities.MailBox,
-                      Topics.Actions.Update,
-                      Topics.Entities.Mail,
-                      Topics.Actions.Highlight
-                  ])
+                  Topics.Entities.MailBox,
+                  Topics.Actions.Update,
+                  Topics.Entities.Mail,
+                  Topics.Actions.Highlight)
               .WithProperty(highlightedBy)
               .WithProperty(this)
               .WithProperty(post)
@@ -178,12 +170,10 @@ public sealed class MailBox : BoardBase
         addedBy.Client.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "Message sent", true);
 
         Logger.WithTopics(
-                  [
-                      Topics.Entities.MailBox,
-                      Topics.Actions.Update,
-                      Topics.Entities.Mail,
-                      Topics.Actions.Add
-                  ])
+                  Topics.Entities.MailBox,
+                  Topics.Actions.Update,
+                  Topics.Entities.Mail,
+                  Topics.Actions.Add)
               .WithProperty(addedBy)
               .WithProperty(this)
               .WithProperty(post)
@@ -209,12 +199,10 @@ public sealed class MailBox : BoardBase
         if (!aisling.IsAdmin && !Key.EqualsI(aisling.Name))
         {
             Logger.WithTopics(
-                      [
-                          Topics.Entities.MailBox,
-                          Topics.Entities.Mail,
-                          Topics.Actions.Read,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.MailBox,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Read,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(aisling)
                   .WithProperty(this)
                   .LogWarning("{@AislingName} attempted to view {@MailboxOwnerName}'s mailbox without permission", aisling.Name, Key);
@@ -262,12 +250,10 @@ public sealed class MailBox : BoardBase
         if (!aisling.IsAdmin && !Key.EqualsI(aisling.Name))
         {
             Logger.WithTopics(
-                      [
-                          Topics.Entities.MailBox,
-                          Topics.Entities.Mail,
-                          Topics.Actions.Read,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.MailBox,
+                      Topics.Entities.Mail,
+                      Topics.Actions.Read,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(aisling)
                   .WithProperty(this)
                   .WithProperty(post)
@@ -305,12 +291,10 @@ public sealed class MailBox : BoardBase
             unhighlightedBy.Client.SendAttributes(StatUpdateType.Secondary);
 
         Logger.WithTopics(
-                  [
-                      Topics.Entities.MailBox,
-                      Topics.Actions.Update,
-                      Topics.Entities.Mail,
-                      Topics.Actions.Highlight
-                  ])
+                  Topics.Entities.MailBox,
+                  Topics.Actions.Update,
+                  Topics.Entities.Mail,
+                  Topics.Actions.Highlight)
               .WithProperty(unhighlightedBy)
               .WithProperty(this)
               .WithProperty(post)

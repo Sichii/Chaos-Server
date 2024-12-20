@@ -145,12 +145,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         if (boardBase is null)
         {
             Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.BulletinBoard,
-                          Topics.Entities.MailBox,
-                          Topics.Actions.Read
-                      ])
+                      Topics.Entities.Aisling,
+                      Topics.Entities.BulletinBoard,
+                      Topics.Entities.MailBox,
+                      Topics.Actions.Read)
                   .WithProperty(client)
                   .LogError("{@AislingName} requested an invalid board id: {@BoardId}", client.Aisling.Name, args.BoardId);
 
@@ -205,12 +203,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                     if (board is MailBox)
                     {
                         Logger.WithTopics(
-                                  [
-                                      Topics.Entities.Aisling,
-                                      Topics.Entities.BulletinBoard,
-                                      Topics.Entities.MailBox,
-                                      Topics.Actions.Read
-                                  ])
+                                  Topics.Entities.Aisling,
+                                  Topics.Entities.BulletinBoard,
+                                  Topics.Entities.MailBox,
+                                  Topics.Actions.Read)
                               .WithProperty(client)
                               .LogError(
                                   "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
@@ -260,12 +256,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                     //you cant highlight mail messages
                     if (board is MailBox)
                     {
-                        Logger.WithTopics(
-                                  [
-                                      Topics.Entities.MailBox,
-                                      Topics.Entities.BulletinBoard,
-                                      Topics.Actions.Highlight
-                                  ])
+                        Logger.WithTopics(Topics.Entities.MailBox, Topics.Entities.BulletinBoard, Topics.Actions.Highlight)
                               .WithProperty(client)
                               .LogError(
                                   "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
@@ -348,12 +339,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (!RedirectManager.TryGetRemove(localArgs.Id, out var redirect))
             {
                 Logger.WithTopics(
-                          [
-                              Topics.Servers.WorldServer,
-                              Topics.Entities.Client,
-                              Topics.Actions.Redirect,
-                              Topics.Qualifiers.Cheating
-                          ])
+                          Topics.Servers.WorldServer,
+                          Topics.Entities.Client,
+                          Topics.Actions.Redirect,
+                          Topics.Qualifiers.Cheating)
                       .WithProperty(localArgs)
                       .LogWarning("{@ClientIp} tried to redirect to the world with invalid details", client.RemoteIp);
 
@@ -366,12 +355,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (localArgs.Name != redirect.Name)
             {
                 Logger.WithTopics(
-                          [
-                              Topics.Servers.WorldServer,
-                              Topics.Entities.Client,
-                              Topics.Actions.Redirect,
-                              Topics.Qualifiers.Cheating
-                          ])
+                          Topics.Servers.WorldServer,
+                          Topics.Entities.Client,
+                          Topics.Actions.Redirect,
+                          Topics.Qualifiers.Cheating)
                       .WithProperty(redirect)
                       .WithProperty(localArgs)
                       .LogWarning(
@@ -384,12 +371,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 return default;
             }
 
-            Logger.WithTopics(
-                      [
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Client,
-                          Topics.Actions.Redirect
-                      ])
+            Logger.WithTopics(Topics.Servers.WorldServer, Topics.Entities.Client, Topics.Actions.Redirect)
                   .WithProperty(localClient)
                   .WithProperty(redirect)
                   .LogDebug("Received world redirect {@RedirectId}", redirect.Id);
@@ -400,12 +382,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (existingAisling != null)
             {
                 Logger.WithTopics(
-                          [
-                              Topics.Servers.WorldServer,
-                              Topics.Entities.Aisling,
-                              Topics.Actions.Login,
-                              Topics.Actions.Redirect
-                          ])
+                          Topics.Servers.WorldServer,
+                          Topics.Entities.Aisling,
+                          Topics.Actions.Login,
+                          Topics.Actions.Redirect)
                       .WithProperty(localClient)
                       .WithProperty(existingAisling)
                       .LogDebug("Duplicate login detected for aisling {@AislingName}, disconnecting both clients", existingAisling.Name);
@@ -463,23 +443,19 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 client.ReceiveSync.Name = $"WorldClient {client.RemoteIp} {aisling.Name}";
 
                 Logger.WithTopics(
-                          [
-                              Topics.Servers.WorldServer,
-                              Topics.Entities.Aisling,
-                              Topics.Actions.Redirect,
-                              Topics.Actions.Login
-                          ])
+                          Topics.Servers.WorldServer,
+                          Topics.Entities.Aisling,
+                          Topics.Actions.Redirect,
+                          Topics.Actions.Login)
                       .WithProperty(client)
                       .LogInformation("World redirect finalized for {@AislingName}", aisling.Name);
             } catch (Exception e)
             {
                 Logger.WithTopics(
-                          [
-                              Topics.Servers.WorldServer,
-                              Topics.Entities.Aisling,
-                              Topics.Actions.Redirect,
-                              Topics.Actions.Login
-                          ])
+                          Topics.Servers.WorldServer,
+                          Topics.Entities.Aisling,
+                          Topics.Actions.Redirect,
+                          Topics.Actions.Login)
                       .WithProperty(aisling)
                       .LogError(e, "Failed to add aisling {@AislingName} to the world", aisling.Name);
 
@@ -488,12 +464,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         } catch (Exception e)
         {
             Logger.WithTopics(
-                      [
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Aisling,
-                          Topics.Actions.Redirect,
-                          Topics.Actions.Login
-                      ])
+                      Topics.Servers.WorldServer,
+                      Topics.Entities.Aisling,
+                      Topics.Actions.Redirect,
+                      Topics.Actions.Login)
                   .WithProperty(client)
                   .WithProperty(redirect)
                   .LogError(
@@ -540,12 +514,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             {
                 localClient.Aisling.DialogHistory.Clear();
 
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Dialog,
-                              Topics.Actions.Read,
-                              Topics.Qualifiers.Cheating
-                          ])
+                Logger.WithTopics(Topics.Entities.Dialog, Topics.Actions.Read, Topics.Qualifiers.Cheating)
                       .WithProperty(localClient.Aisling)
                       .WithProperty(localArgs)
                       .LogWarning(
@@ -610,11 +579,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             var mapInstance = aisling.MapInstance;
 
             if (mapInstance.TryGetEntity<VisibleEntity>(localArgs.TargetId, out var obj) && !aisling.CanObserve(obj))
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Qualifiers.Forced
-                          ])
+                Logger.WithTopics(Topics.Entities.Aisling, Topics.Qualifiers.Forced)
                       .WithProperty(aisling)
                       .WithProperty(obj)
                       .LogTrace(
@@ -648,12 +613,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             {
                 case ExchangeRequestType.StartExchange:
                     Logger.WithTopics(
-                              [
-                                  Topics.Entities.Aisling,
-                                  Topics.Entities.Exchange,
-                                  Topics.Actions.Create,
-                                  Topics.Qualifiers.Cheating
-                              ])
+                              Topics.Entities.Aisling,
+                              Topics.Entities.Exchange,
+                              Topics.Actions.Create,
+                              Topics.Qualifiers.Cheating)
                           .WithProperty(localClient)
                           .LogWarning(
                               "Aisling {@AislingName} attempted to directly start an exchange. This should not be possible unless packeting",
@@ -710,12 +673,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 RedirectManager.Add(redirect);
 
                 Logger.WithTopics(
-                          [
-                              Topics.Servers.WorldServer,
-                              Topics.Entities.Aisling,
-                              Topics.Actions.Logout,
-                              Topics.Actions.Redirect
-                          ])
+                          Topics.Servers.WorldServer,
+                          Topics.Entities.Aisling,
+                          Topics.Actions.Logout,
+                          Topics.Actions.Redirect)
                       .WithProperty(localClient)
                       .LogDebug("Redirecting {@ClientIp} to {@ServerIp}", client.RemoteIp, Options.LoginRedirect.Address.ToString());
 
@@ -796,12 +757,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             {
                 case ClientGroupSwitch.FormalInvite:
                     Logger.WithTopics(
-                              [
-                                  Topics.Entities.Aisling,
-                                  Topics.Entities.Group,
-                                  Topics.Actions.Invite,
-                                  Topics.Qualifiers.Cheating
-                              ])
+                              Topics.Entities.Aisling,
+                              Topics.Entities.Group,
+                              Topics.Actions.Invite,
+                              Topics.Qualifiers.Cheating)
                           .WithProperty(aisling)
                           .LogWarning(
                               "Aisling {@AislingName} attempted to send a formal group invite to the server. This type of group request is something only the server should send",
@@ -830,12 +789,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                             break;
                         default:
                             Logger.WithTopics(
-                                      [
-                                          Topics.Entities.Aisling,
-                                          Topics.Entities.Group,
-                                          Topics.Actions.Invite,
-                                          Topics.Qualifiers.Cheating
-                                      ])
+                                      Topics.Entities.Aisling,
+                                      Topics.Entities.Group,
+                                      Topics.Actions.Invite,
+                                      Topics.Qualifiers.Cheating)
                                   .LogWarning(
                                       "{@Aisling} attempted to accept an invite from {@Target}, but there was no invite or request",
                                       aisling,
@@ -866,12 +823,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case ClientGroupSwitch.ViewGroupBox:
                     if (target.GroupBox is null)
                     {
-                        Logger.WithTopics(
-                                  [
-                                      Topics.Entities.Aisling,
-                                      Topics.Entities.Group,
-                                      Topics.Qualifiers.Cheating
-                                  ])
+                        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Group, Topics.Qualifiers.Cheating)
                               .LogWarning(
                                   "{@Aisling} attempted to view {@Target}'s group box, but they do not have one",
                                   localClient.Aisling,
@@ -921,12 +873,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case ClientGroupSwitch.RequestToJoin:
                     if (target.GroupBox is null)
                     {
-                        Logger.WithTopics(
-                                  [
-                                      Topics.Entities.Aisling,
-                                      Topics.Entities.Group,
-                                      Topics.Qualifiers.Cheating
-                                  ])
+                        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Group, Topics.Qualifiers.Cheating)
                               .LogWarning(
                                   "{@Aisling} attempted to interact with {@Target}'s group box, but they do not have one",
                                   localClient.Aisling,
@@ -1139,13 +1086,11 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (CommandInterceptor.IsCommand(localArgs.Message))
             {
                 Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Message,
-                              Topics.Actions.Send,
-                              Topics.Entities.Command,
-                              Topics.Actions.Execute
-                          ])
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Message,
+                          Topics.Actions.Send,
+                          Topics.Entities.Command,
+                          Topics.Actions.Execute)
                       .WithProperty(localClient)
                       .WithProperty(localClient.Aisling)
                       .LogDebug("Aisling {@AislingName} sent command {@Command}", localClient.Aisling.Name, localArgs.Message);
@@ -1172,12 +1117,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (dialog == null)
             {
                 Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Dialog,
-                              Topics.Actions.Read,
-                              Topics.Qualifiers.Cheating
-                          ])
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Dialog,
+                          Topics.Actions.Read,
+                          Topics.Qualifiers.Cheating)
                       .WithProperty(localClient.Aisling)
                       .WithProperty(localArgs)
                       .LogWarning(
@@ -1556,12 +1499,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (targetAisling.IgnoreList.ContainsI(fromAisling.Name))
             {
                 Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Message,
-                              Topics.Actions.Send,
-                              Topics.Qualifiers.Harassment
-                          ])
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Message,
+                          Topics.Actions.Send,
+                          Topics.Qualifiers.Harassment)
                       .WithProperty(fromAisling)
                       .WithProperty(targetAisling)
                       .LogWarning(
@@ -1573,12 +1514,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 return default;
             }
 
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Message,
-                          Topics.Actions.Send
-                      ])
+            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Message, Topics.Actions.Send)
                   .WithProperty(fromAisling)
                   .WithProperty(targetAisling)
                   .LogInformation(
@@ -1664,12 +1600,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         } catch (Exception e)
         {
             Logger.WithTopics(
-                      [
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Client,
-                          Topics.Entities.Packet,
-                          Topics.Actions.Processing
-                      ])
+                      Topics.Servers.WorldServer,
+                      Topics.Entities.Client,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Processing)
                   .WithProperty(client)
                   .WithProperty(args!)
                   .LogError(
@@ -1712,12 +1646,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         } catch (Exception e)
         {
             Logger.WithTopics(
-                      [
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Client,
-                          Topics.Entities.Packet,
-                          Topics.Actions.Processing
-                      ])
+                      Topics.Servers.WorldServer,
+                      Topics.Entities.Client,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Processing)
                   .WithProperty(client)
                   .LogError(
                       e,
@@ -1736,22 +1668,15 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         var trackers = client.Aisling?.Trackers;
 
         if (handler is not null)
-            Logger.WithTopics(
-                      [
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Packet,
-                          Topics.Actions.Processing
-                      ])
+            Logger.WithTopics(Topics.Servers.WorldServer, Topics.Entities.Packet, Topics.Actions.Processing)
                   .WithProperty(client)
                   .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
         else
             Logger.WithTopics(
-                      [
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Packet,
-                          Topics.Actions.Processing,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Servers.WorldServer,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Processing,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(client)
                   .WithProperty(packet.ToString(), "HexData")
                   .LogWarning("Unknown message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
@@ -1815,34 +1740,19 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     {
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
 
-        Logger.WithTopics(
-                  [
-                      Topics.Servers.WorldServer,
-                      Topics.Entities.Client,
-                      Topics.Actions.Connect
-                  ])
+        Logger.WithTopics(Topics.Servers.WorldServer, Topics.Entities.Client, Topics.Actions.Connect)
               .LogDebug("Incoming connection from {@ClientIp}", ip!.Address);
 
         var client = ClientFactory.Create(clientSocket);
         client.OnDisconnected += OnDisconnect;
 
-        Logger.WithTopics(
-                  [
-                      Topics.Servers.WorldServer,
-                      Topics.Entities.Client,
-                      Topics.Actions.Connect
-                  ])
+        Logger.WithTopics(Topics.Servers.WorldServer, Topics.Entities.Client, Topics.Actions.Connect)
               .WithProperty(client)
               .LogInformation("Connection established with {@ClientIp}", client.RemoteIp);
 
         if (!ClientRegistry.TryAdd(client))
         {
-            Logger.WithTopics(
-                      [
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Client,
-                          Topics.Actions.Connect
-                      ])
+            Logger.WithTopics(Topics.Servers.WorldServer, Topics.Entities.Client, Topics.Actions.Connect)
                   .WithProperty(client)
                   .LogError("Somehow two clients got the same id");
 
@@ -1871,12 +1781,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         try
         {
             Logger.WithTopics(
-                      [
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Client,
-                          Topics.Entities.Aisling,
-                          Topics.Actions.Disconnect
-                      ])
+                      Topics.Servers.WorldServer,
+                      Topics.Entities.Client,
+                      Topics.Entities.Aisling,
+                      Topics.Actions.Disconnect)
                   .WithProperty(client)
                   .LogInformation("Aisling {@AislingName} has disconnected", aisling?.Name ?? "N/A");
 
@@ -1894,12 +1802,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 } catch (Exception ex)
                 {
                     Logger.WithTopics(
-                              [
-                                  Topics.Servers.WorldServer,
-                                  Topics.Entities.Client,
-                                  Topics.Entities.Aisling,
-                                  Topics.Actions.Disconnect
-                              ])
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
                           .WithProperty(client)
                           .LogError(
                               ex,
@@ -1915,12 +1821,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 } catch (Exception ex)
                 {
                     Logger.WithTopics(
-                              [
-                                  Topics.Servers.WorldServer,
-                                  Topics.Entities.Client,
-                                  Topics.Entities.Aisling,
-                                  Topics.Actions.Disconnect
-                              ])
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
                           .WithProperty(client)
                           .LogError(ex, "{@Aisling} failed to leave group on disconnect", aisling);
                 }
@@ -1932,12 +1836,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 } catch (Exception ex)
                 {
                     Logger.WithTopics(
-                              [
-                                  Topics.Servers.WorldServer,
-                                  Topics.Entities.Client,
-                                  Topics.Entities.Aisling,
-                                  Topics.Actions.Disconnect
-                              ])
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
                           .WithProperty(client)
                           .LogError(
                               ex,
@@ -1960,12 +1862,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 } catch (Exception ex)
                 {
                     Logger.WithTopics(
-                              [
-                                  Topics.Servers.WorldServer,
-                                  Topics.Entities.Client,
-                                  Topics.Entities.Aisling,
-                                  Topics.Actions.Disconnect
-                              ])
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
                           .WithProperty(client)
                           .LogError(ex, "{@Aisling} failed to leave chat channels on disconnect", aisling);
                 }
@@ -1977,12 +1877,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 } catch (Exception ex)
                 {
                     Logger.WithTopics(
-                              [
-                                  Topics.Servers.WorldServer,
-                                  Topics.Entities.Client,
-                                  Topics.Entities.Aisling,
-                                  Topics.Actions.Disconnect
-                              ])
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
                           .WithProperty(client)
                           .LogError(ex, "{@Aisling} failed to save on disconnect", aisling);
                 }
@@ -1994,12 +1892,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 } catch (Exception ex)
                 {
                     Logger.WithTopics(
-                              [
-                                  Topics.Servers.WorldServer,
-                                  Topics.Entities.Client,
-                                  Topics.Entities.Aisling,
-                                  Topics.Actions.Disconnect
-                              ])
+                              Topics.Servers.WorldServer,
+                              Topics.Entities.Client,
+                              Topics.Entities.Aisling,
+                              Topics.Actions.Disconnect)
                           .WithProperty(client)
                           .LogError(ex, "{@Aisling} failed to remove from map on disconnect", aisling);
                 }
@@ -2007,12 +1903,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         } catch (Exception ex)
         {
             Logger.WithTopics(
-                      [
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Client,
-                          Topics.Entities.Aisling,
-                          Topics.Actions.Disconnect
-                      ])
+                      Topics.Servers.WorldServer,
+                      Topics.Entities.Client,
+                      Topics.Entities.Aisling,
+                      Topics.Actions.Disconnect)
                   .WithProperty(client)
 
                   // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract

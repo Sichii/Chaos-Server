@@ -47,12 +47,7 @@ public class ForgetSpellScript : DialogScriptBase
         }
 
         if (source.SpellBook.Remove(slot))
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Spell,
-                          Topics.Actions.Forget
-                      ])
+            Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Spell, Topics.Actions.Forget)
                   .WithProperty(Subject)
                   .WithProperty(Subject.DialogSource)
                   .WithProperty(source)

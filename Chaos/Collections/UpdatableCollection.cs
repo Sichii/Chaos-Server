@@ -27,11 +27,7 @@ public sealed class UpdatableCollection(ILogger logger) : IDeltaUpdatable
                 obj.Update(delta);
             } catch (Exception e)
             {
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.MapInstance,
-                              Topics.Actions.Update
-                          ])
+                Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
                       .LogError(e, "Error updating entity {@Entity}", obj);
             }
 

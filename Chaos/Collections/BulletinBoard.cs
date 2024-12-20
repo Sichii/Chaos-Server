@@ -62,13 +62,11 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
             deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "You lack the permission", false);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.BulletinBoard,
-                          Topics.Actions.Update,
-                          Topics.Entities.Post,
-                          Topics.Actions.Delete,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.BulletinBoard,
+                      Topics.Actions.Update,
+                      Topics.Entities.Post,
+                      Topics.Actions.Delete,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(deletedBy)
                   .WithProperty(this)
                   .WithProperty(post)
@@ -88,12 +86,10 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         deletedBy.Client.SendBoardResponse(BoardOrResponseType.DeletePostResponse, "Post deleted", true);
 
         Logger.WithTopics(
-                  [
-                      Topics.Entities.BulletinBoard,
-                      Topics.Actions.Update,
-                      Topics.Entities.Post,
-                      Topics.Actions.Delete
-                  ])
+                  Topics.Entities.BulletinBoard,
+                  Topics.Actions.Update,
+                  Topics.Entities.Post,
+                  Topics.Actions.Delete)
               .WithProperty(deletedBy)
               .WithProperty(this)
               .WithProperty(post)
@@ -125,13 +121,11 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
             highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "You lack the permission", false);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.BulletinBoard,
-                          Topics.Actions.Update,
-                          Topics.Entities.Post,
-                          Topics.Actions.Highlight,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.BulletinBoard,
+                      Topics.Actions.Update,
+                      Topics.Entities.Post,
+                      Topics.Actions.Highlight,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(highlightedBy)
                   .WithProperty(this)
                   .WithProperty(post)
@@ -153,12 +147,10 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         highlightedBy.Client.SendBoardResponse(BoardOrResponseType.HighlightPostResponse, "Post highlighted", true);
 
         Logger.WithTopics(
-                  [
-                      Topics.Entities.BulletinBoard,
-                      Topics.Actions.Update,
-                      Topics.Entities.Post,
-                      Topics.Actions.Highlight
-                  ])
+                  Topics.Entities.BulletinBoard,
+                  Topics.Actions.Update,
+                  Topics.Entities.Post,
+                  Topics.Actions.Highlight)
               .WithProperty(highlightedBy)
               .WithProperty(this)
               .WithProperty(post)
@@ -184,13 +176,11 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
             addedBy.Client.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "You lack the permission", false);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.BulletinBoard,
-                          Topics.Actions.Update,
-                          Topics.Entities.Post,
-                          Topics.Actions.Add,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.BulletinBoard,
+                      Topics.Actions.Update,
+                      Topics.Entities.Post,
+                      Topics.Actions.Add,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(addedBy)
                   .WithProperty(this)
                   .LogWarning("{@AislingName} attempted to post on board {@BoardName} without permission", addedBy.Name, Name);
@@ -212,13 +202,11 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
             addedBy.Client.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, reason, false);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.BulletinBoard,
-                          Topics.Actions.Update,
-                          Topics.Entities.Post,
-                          Topics.Actions.Add,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.BulletinBoard,
+                      Topics.Actions.Update,
+                      Topics.Entities.Post,
+                      Topics.Actions.Add,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(addedBy)
                   .WithProperty(this)
                   .WithProperty(post)
@@ -239,12 +227,10 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         addedBy.Client.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "Message posted", true);
 
         Logger.WithTopics(
-                  [
-                      Topics.Entities.BulletinBoard,
-                      Topics.Actions.Update,
-                      Topics.Entities.Post,
-                      Topics.Actions.Add
-                  ])
+                  Topics.Entities.BulletinBoard,
+                  Topics.Actions.Update,
+                  Topics.Entities.Post,
+                  Topics.Actions.Add)
               .WithProperty(addedBy)
               .WithProperty(this)
               .WithProperty(post)
@@ -270,12 +256,10 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         if (!aisling.IsAdmin && !Script.AllowedToView(aisling))
         {
             Logger.WithTopics(
-                      [
-                          Topics.Entities.BulletinBoard,
-                          Topics.Entities.Post,
-                          Topics.Actions.Read,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.BulletinBoard,
+                      Topics.Entities.Post,
+                      Topics.Actions.Read,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(aisling)
                   .WithProperty(this)
                   .LogWarning("{@AislingName} attempted to view board {@BoardName} without permission", aisling.Name, Name);
@@ -329,12 +313,10 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         if (!aisling.IsAdmin && !Script.AllowedToView(aisling))
         {
             Logger.WithTopics(
-                      [
-                          Topics.Entities.BulletinBoard,
-                          Topics.Entities.Post,
-                          Topics.Actions.Read,
-                          Topics.Qualifiers.Cheating
-                      ])
+                      Topics.Entities.BulletinBoard,
+                      Topics.Entities.Post,
+                      Topics.Actions.Read,
+                      Topics.Qualifiers.Cheating)
                   .WithProperty(aisling)
                   .WithProperty(this)
                   .WithProperty(post)
@@ -366,12 +348,10 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
         Posts[post.PostId] = post;
 
         Logger.WithTopics(
-                  [
-                      Topics.Entities.BulletinBoard,
-                      Topics.Actions.Update,
-                      Topics.Entities.Post,
-                      Topics.Actions.Highlight
-                  ])
+                  Topics.Entities.BulletinBoard,
+                  Topics.Actions.Update,
+                  Topics.Entities.Post,
+                  Topics.Actions.Highlight)
               .WithProperty(unhighlightedBy)
               .WithProperty(this)
               .WithProperty(post)

@@ -108,11 +108,7 @@ public class GuildCreateScript : GuildScriptBase
         newGuild.ChangeRank(source, 0, source);
         GuildStore.Save(newGuild);
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Guild,
-                      Topics.Actions.Create
-                  ])
+        Logger.WithTopics(Topics.Entities.Guild, Topics.Actions.Create)
               .WithProperty(Subject)
               .WithProperty(Subject.DialogSource)
               .WithProperty(source)

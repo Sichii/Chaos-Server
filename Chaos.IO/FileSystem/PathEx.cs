@@ -48,17 +48,9 @@ public static class PathEx
         var parentPathSpan = Path.GetFullPath(parentPath)
                                  .AsSpan();
 
-        var pathParts = pathSpan.SplitAny(
-            [
-                Path.DirectorySeparatorChar,
-                Path.AltDirectorySeparatorChar
-            ]);
+        var pathParts = pathSpan.SplitAny(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
-        var parentPathParts = parentPathSpan.SplitAny(
-            [
-                Path.DirectorySeparatorChar,
-                Path.AltDirectorySeparatorChar
-            ]);
+        var parentPathParts = parentPathSpan.SplitAny(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
         while (parentPathParts.MoveNext())
             if (pathParts.MoveNext())

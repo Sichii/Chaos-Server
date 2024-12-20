@@ -100,11 +100,7 @@ public abstract class VerbalShopScriptBase : MerchantScriptBase
         else
             template.ReplaceI("{AmountOfThing} are", "{AmountOfThing} is");
 
-        return template.Inject(
-            [
-                name,
-                thing.ToQuantity(amount)
-            ]);
+        return template.Inject(name, thing.ToQuantity(amount));
     }
 
     protected virtual bool IsClosestVerbalShopTo(Aisling aisling)

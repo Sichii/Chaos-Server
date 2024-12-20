@@ -74,12 +74,7 @@ public sealed class Exchange
         Aisling1.Client.SendExchangeStart(Aisling2);
         Aisling2.Client.SendExchangeStart(Aisling1);
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Aisling,
-                      Topics.Entities.Exchange,
-                      Topics.Actions.Create
-                  ])
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Exchange, Topics.Actions.Create)
               .WithProperty(this)
               .LogDebug(
                   "Exchange {@ExchangeId} started between {@AislingName1} and {@AislingName2}",
@@ -130,12 +125,10 @@ public sealed class Exchange
             userItems.TryAddToNextSlot(item);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Exchange,
-                          Topics.Entities.Item,
-                          Topics.Actions.Add
-                      ])
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Exchange,
+                      Topics.Entities.Item,
+                      Topics.Actions.Add)
                   .WithProperty(aisling)
                   .WithProperty(item)
                   .WithProperty(this)
@@ -197,12 +190,10 @@ public sealed class Exchange
             userItems.TryAddToNextSlot(removedItem);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Exchange,
-                          Topics.Entities.Item,
-                          Topics.Actions.Add
-                      ])
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Exchange,
+                      Topics.Entities.Item,
+                      Topics.Actions.Add)
                   .WithProperty(aisling)
                   .WithProperty(removedItem)
                   .WithProperty(this)
@@ -231,12 +222,7 @@ public sealed class Exchange
         aisling.Client.SendExchangeCancel(false);
         otherUser.Client.SendExchangeCancel(true);
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Aisling,
-                      Topics.Entities.Exchange,
-                      Topics.Actions.Canceled
-                  ])
+        Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Exchange, Topics.Actions.Canceled)
               .WithProperty(aisling)
               .WithProperty(this)
               .LogDebug("Exchange {@ExchangeId} was canceled by aisling {@AislingName}", ExchangeId, aisling.Name);
@@ -257,12 +243,10 @@ public sealed class Exchange
         aisling.TryGiveGold(gold);
 
         Logger.WithTopics(
-                  [
-                      Topics.Entities.Aisling,
-                      Topics.Entities.Exchange,
-                      Topics.Entities.Gold,
-                      Topics.Actions.Accepted
-                  ])
+                  Topics.Entities.Aisling,
+                  Topics.Entities.Exchange,
+                  Topics.Entities.Gold,
+                  Topics.Actions.Accepted)
               .WithProperty(aisling)
               .WithProperty(this)
               .LogInformation(
@@ -277,12 +261,10 @@ public sealed class Exchange
 
             if (aisling.Inventory.TryAddToNextSlot(item))
                 Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Exchange,
-                              Topics.Entities.Item,
-                              Topics.Actions.Accepted
-                          ])
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Exchange,
+                          Topics.Entities.Item,
+                          Topics.Actions.Accepted)
                       .WithProperty(aisling)
                       .WithProperty(item)
                       .WithProperty(this)
@@ -293,12 +275,10 @@ public sealed class Exchange
                           aisling.Name);
             else
                 Logger.WithTopics(
-                          [
-                              Topics.Entities.Aisling,
-                              Topics.Entities.Exchange,
-                              Topics.Entities.Item,
-                              Topics.Actions.Accepted
-                          ])
+                          Topics.Entities.Aisling,
+                          Topics.Entities.Exchange,
+                          Topics.Entities.Item,
+                          Topics.Actions.Accepted)
                       .WithProperty(aisling)
                       .WithProperty(item)
                       .WithProperty(this)
@@ -347,12 +327,10 @@ public sealed class Exchange
             InnerSetGold(aisling, amount);
 
             Logger.WithTopics(
-                      [
-                          Topics.Entities.Aisling,
-                          Topics.Entities.Exchange,
-                          Topics.Entities.Gold,
-                          Topics.Actions.Update
-                      ])
+                      Topics.Entities.Aisling,
+                      Topics.Entities.Exchange,
+                      Topics.Entities.Gold,
+                      Topics.Actions.Update)
                   .WithProperty(aisling)
                   .WithProperty(this)
                   .LogInformation(

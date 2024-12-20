@@ -74,21 +74,13 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
         if (!Commands.TryGetValue(commandName, out var descriptor))
             return;
 
-        Logger.WithTopics(
-                  [
-                      Topics.Entities.Command,
-                      Topics.Actions.Execute
-                  ])
+        Logger.WithTopics(Topics.Entities.Command, Topics.Actions.Execute)
               .WithProperty(source)
               .LogDebug("Handling command {@CommandStr}", commandStr);
 
         if (descriptor.Details.RequiresAdmin && !source.IsAdmin)
         {
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Command,
-                          Topics.Actions.Execute
-                      ])
+            Logger.WithTopics(Topics.Entities.Command, Topics.Actions.Execute)
                   .WithProperty(source)
                   .LogWarning(
                       "Non-Admin {@SourceType} {@SourceName} tried to execute admin command {@CommandStr}",
@@ -104,11 +96,7 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
         {
             var commandInstance = (ICommand<T>)ActivatorUtilities.CreateInstance(ServiceProvider, descriptor.Type);
 
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Command,
-                          Topics.Actions.Create
-                      ])
+            Logger.WithTopics(Topics.Entities.Command, Topics.Actions.Create)
                   .LogTrace("Successfully created command {@CommandName}", commandName);
 
             if (commandName.EqualsI("help") || commandName.EqualsI("commands"))
@@ -126,11 +114,7 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
             {
                 await commandInstance.ExecuteAsync(source, new ArgumentCollection(commandArgs));
 
-                Logger.WithTopics(
-                          [
-                              Topics.Entities.Command,
-                              Topics.Actions.Execute
-                          ])
+                Logger.WithTopics(Topics.Entities.Command, Topics.Actions.Execute)
                       .WithProperty(source)
                       .LogInformation(
                           "{@SourceType} {@SourceName} executed {@CommandStr}",
@@ -143,11 +127,7 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
             await InnerExecute();
         } catch (Exception e)
         {
-            Logger.WithTopics(
-                      [
-                          Topics.Entities.Command,
-                          Topics.Actions.Execute
-                      ])
+            Logger.WithTopics(Topics.Entities.Command, Topics.Actions.Execute)
                   .WithProperty(source)
                   .LogError(
                       e,
