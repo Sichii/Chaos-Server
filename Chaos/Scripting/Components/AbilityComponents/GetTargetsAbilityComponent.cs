@@ -48,17 +48,17 @@ public struct GetTargetsAbilityComponent<TEntity> : IConditionalComponent where 
 
     private AoeShapeOptions CreateOptions(ActivationContext context, IGetTargetsComponentOptions options)
     {
-        var direction = context.TargetCreature?.Direction ?? context.Target.DirectionalRelationTo(context.Source);
+        var direction = context.SnapshotTargetDirection ?? context.SnapshotTargetPoint.DirectionalRelationTo(context.SnapshotSourcePoint);
 
         if (direction == Direction.Invalid)
-            direction = context.Source.Direction;
+            direction = context.SnapshotSourceDirection;
 
         return new AoeShapeOptions
         {
             Direction = direction,
             ExclusionRange = options.ExclusionRange,
             Range = options.Range,
-            Source = context.TargetPoint
+            Source = context.SnapshotTargetPoint
         };
     }
 

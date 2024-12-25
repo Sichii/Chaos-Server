@@ -1,4 +1,6 @@
+#region
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Time;
 
@@ -7,9 +9,10 @@ namespace Chaos.Time;
 /// </summary>
 public sealed class ResettingCounter : IDeltaUpdatable
 {
-    private readonly int MaxCount;
     private readonly IIntervalTimer Timer;
+    private readonly int UpdateIntervalSecs;
     private int Counter;
+    private int MaxCount { get; set; }
 
     /// <summary>
     ///     Gets whether or not the counter can be incremented
@@ -29,6 +32,7 @@ public sealed class ResettingCounter : IDeltaUpdatable
     {
         Timer = timer;
         MaxCount = maxCount;
+        UpdateIntervalSecs = 1;
     }
 
     /// <summary>
@@ -45,6 +49,7 @@ public sealed class ResettingCounter : IDeltaUpdatable
     {
         Timer = new IntervalTimer(TimeSpan.FromSeconds(updateIntervalSecs));
         MaxCount = maxPerSecond * updateIntervalSecs;
+        UpdateIntervalSecs = updateIntervalSecs;
     }
 
     /// <inheritdoc />
@@ -55,6 +60,19 @@ public sealed class ResettingCounter : IDeltaUpdatable
         if (Timer.IntervalElapsed)
             Counter = 0;
     }
+
+    /// <summary>
+    ///     Resets the counter back to 0
+    /// </summary>
+    public void Reset() => Counter = 0;
+
+    /// <summary>
+    ///     Sets the maximum count of the counter (will be automatically multiplied by the update interval)
+    /// </summary>
+    /// <param name="maxCount">
+    ///     The new MaxCount to use
+    /// </param>
+    public void SetMaxCount(int maxCount) => MaxCount = maxCount * UpdateIntervalSecs;
 
     /// <summary>
     ///     Attempts to increment the counter

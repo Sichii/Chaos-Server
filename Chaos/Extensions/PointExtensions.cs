@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Chaos.Collections;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
+using Chaos.Geometry.EqualityComparers;
 #endregion
 
 namespace Chaos.Extensions;
@@ -10,19 +11,35 @@ namespace Chaos.Extensions;
 public static class PointExtensions
 {
     [OverloadResolutionPriority(1)]
-    public static IEnumerable<Point> FilterByLineOfSight(this IEnumerable<Point> points, Point origin, MapInstance mapInstance)
+    public static IEnumerable<Point> FilterByLineOfSight(
+        this IEnumerable<Point> points,
+        Point origin,
+        MapInstance mapInstance,
+        bool invertLos = false)
     {
         ArgumentNullException.ThrowIfNull(points);
 
         ArgumentNullException.ThrowIfNull(mapInstance);
 
-        return points.Where(
-            point => !mapInstance.IsWall(point)
-                     && !origin.RayTraceTo(point)
-                               .Any(mapInstance.IsWall));
+        if (!invertLos)
+            return points.Where(
+                point => !origin.RayTraceTo(point)
+                                .Any(mapInstance.IsWall));
+
+        points = points.ToList();
+
+        var occludedPoints = points.Where(mapInstance.IsWall)
+                                   .SelectMany(point => point.RayTraceTo(origin))
+                                   .ToHashSet();
+
+        return points.Except(occludedPoints);
     }
 
-    public static IEnumerable<IPoint> FilterByLineOfSight(this IEnumerable<IPoint> points, IPoint origin, MapInstance mapInstance)
+    public static IEnumerable<T> FilterByLineOfSight<T>(
+        this IEnumerable<T> points,
+        IPoint origin,
+        MapInstance mapInstance,
+        bool invertLos = false) where T: IPoint
     {
         ArgumentNullException.ThrowIfNull(points);
 
@@ -30,10 +47,16 @@ public static class PointExtensions
 
         ArgumentNullException.ThrowIfNull(mapInstance);
 
-        return points.Where(
-            point => !mapInstance.IsWall(point)
-                     && !origin.RayTraceTo(point)
-                               .Any(mapInstance.IsWall));
+        var pointSet = points.OfType<IPoint>()
+                             .ToHashSet(PointEqualityComparer.Instance);
+
+        foreach (var point in FilterByLineOfSight(
+                     pointSet.Select(Point.From),
+                     Point.From(origin),
+                     mapInstance,
+                     invertLos))
+            if (pointSet.TryGetValue(point, out var setPoint))
+                yield return (T)setPoint;
     }
 
     [OverloadResolutionPriority(1), MethodImpl(MethodImplOptions.AggressiveInlining)]
