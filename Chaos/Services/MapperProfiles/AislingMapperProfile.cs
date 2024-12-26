@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Collections.Synchronized;
 using Chaos.Common.Abstractions;
@@ -13,6 +14,7 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -145,10 +147,7 @@ public sealed class AislingMapperProfile(
         => new()
         {
             Ability = (byte)obj.UserStatSheet.AbilityLevel,
-            Ac = (sbyte)Math.Clamp(
-                obj.UserStatSheet.EffectiveAc,
-                WorldOptions.Instance.MinimumAislingAc,
-                WorldOptions.Instance.MaximumAislingAc),
+            Ac = obj.UserStatSheet.EffectiveAc,
             Blind = obj.IsBlind,
             Con = obj.UserStatSheet.EffectiveCon,
             CurrentHp = (uint)Math.Clamp(obj.UserStatSheet.CurrentHp, 0, int.MaxValue),

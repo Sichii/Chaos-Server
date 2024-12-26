@@ -1,6 +1,9 @@
 // ReSharper disable InconsistentNaming
 
+#region
 using Chaos.DarkAges.Definitions;
+using Chaos.Services.Servers.Options;
+#endregion
 
 namespace Chaos.Models.Data;
 
@@ -78,6 +81,9 @@ public sealed record UserStatSheet : StatSheet
         get => _unspentPoints;
         init => _unspentPoints = value;
     }
+
+    public override sbyte EffectiveAc
+        => (sbyte)Math.Clamp(Ac + AcMod, WorldOptions.Instance.MinimumAislingAc, WorldOptions.Instance.MaximumAislingAc);
 
     public static UserStatSheet NewCharacter
         => new()

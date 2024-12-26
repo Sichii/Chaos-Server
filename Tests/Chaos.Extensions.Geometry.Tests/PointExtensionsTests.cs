@@ -419,7 +419,7 @@ public sealed class PointExtensionsTests
         func.Enumerating()
             .Should()
             .Throw<ArgumentOutOfRangeException>()
-            .WithMessage("*radius must be positive*");
+            .WithMessage("*must be a non-negative and non-zero value*");
     }
 
     public static IEnumerable<(int, int, Direction, int, Point[])> GenerateCardinalPointsTestData()

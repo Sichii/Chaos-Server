@@ -1,7 +1,10 @@
 // ReSharper disable InconsistentNaming
 
+#region
 using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
+using Chaos.Services.Servers.Options;
+#endregion
 
 namespace Chaos.Models.Data;
 
@@ -139,7 +142,8 @@ public record StatSheet : Attributes
         init => _wisMod = value;
     }
 
-    public sbyte EffectiveAc => (sbyte)Math.Clamp(Ac + AcMod, sbyte.MinValue, sbyte.MaxValue);
+    public virtual sbyte EffectiveAc
+        => (sbyte)Math.Clamp(Ac + AcMod, WorldOptions.Instance.MinimumMonsterAc, WorldOptions.Instance.MaximumMonsterAc);
 
     public int EffectiveAttackSpeedPct => Math.Clamp(AtkSpeedPct + AtkSpeedPctMod, -500, 500);
 

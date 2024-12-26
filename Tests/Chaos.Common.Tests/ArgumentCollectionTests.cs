@@ -247,6 +247,42 @@ public sealed class ArgumentCollectionTests
              .Be(default);
     }
 
+    // properly handles arguments in double quotes
+    [Test]
+    public void Properly_Handles_Arguments_In_Double_Quotes()
+    {
+        // Arrange
+        var arguments = new ArgumentCollection("arg1 \"arg2\" arg3");
+
+        // Act
+        var result = arguments.TryGet<string>(1, out var value);
+
+        // Assert
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .Be("arg2");
+    }
+
+    // properly handles arguments with spaces in double quotes
+    [Test]
+    public void Properly_Handles_Arguments_With_Spaces_In_Double_Quotes()
+    {
+        // Arrange
+        var arguments = new ArgumentCollection("arg1 \"arg2 arg3\" arg4");
+
+        // Act
+        var result = arguments.TryGet<string>(1, out var value);
+
+        // Assert
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .Be("arg2 arg3");
+    }
+
     // Returns false if argument cannot be converted to specified type
     [Test]
     public void Returns_False_If_Argument_Cannot_Be_Converted_To_Specified_Type()
