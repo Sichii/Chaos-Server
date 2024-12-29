@@ -1,11 +1,12 @@
+#region
 using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
-using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
 using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.Components.AbilityComponents;
 
@@ -16,6 +17,7 @@ public struct ManaBasedDamageAbilityComponent : IComponent
     {
         var options = vars.GetOptions<IManaBasedDamageComponentOptions>();
         var targets = vars.GetTargets<Creature>();
+        var sourceScript = vars.GetSourceScript();
 
         var damage = CalculateDamage(context, options);
 
@@ -26,7 +28,7 @@ public struct ManaBasedDamageAbilityComponent : IComponent
             options.ApplyDamageScript.ApplyDamage(
                 context.Source,
                 target,
-                options.SourceScript,
+                sourceScript,
                 damage,
                 options.Element);
     }
@@ -62,6 +64,5 @@ public struct ManaBasedDamageAbilityComponent : IComponent
         decimal? FinalMultiplier { get; init; }
         decimal? PctOfMana { get; init; }
         decimal? PctOfManaMultiplier { get; init; }
-        IScript SourceScript { get; init; }
     }
 }

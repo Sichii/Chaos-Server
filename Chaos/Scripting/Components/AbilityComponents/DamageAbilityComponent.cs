@@ -1,11 +1,12 @@
+#region
 using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
-using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
 using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.Components.AbilityComponents;
 
@@ -16,6 +17,7 @@ public struct DamageAbilityComponent : IComponent
     {
         var options = vars.GetOptions<IDamageComponentOptions>();
         var targets = vars.GetTargets<Creature>();
+        var sourceScript = vars.GetSourceScript();
 
         foreach (var target in targets)
         {
@@ -33,7 +35,7 @@ public struct DamageAbilityComponent : IComponent
             options.ApplyDamageScript.ApplyDamage(
                 context.Source,
                 target,
-                options.SourceScript,
+                sourceScript,
                 damage,
                 options.Element);
         }
@@ -74,6 +76,5 @@ public struct DamageAbilityComponent : IComponent
         decimal? DamageStatMultiplier { get; init; }
         Element? Element { get; init; }
         decimal? PctHpDamage { get; init; }
-        IScript SourceScript { get; init; }
     }
 }

@@ -11,7 +11,6 @@ using Chaos.Models.World;
 using Chaos.Networking.Entities.Server;
 using Chaos.Schemas.Aisling;
 using Chaos.Scripting.Abstractions;
-using Chaos.Services.Servers.Options;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 #endregion

@@ -4,7 +4,6 @@ using Chaos.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
-using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.AbilityComponents;
 using Chaos.Scripting.Components.Execution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
@@ -35,7 +34,6 @@ public sealed class CascadingDamageTileScript : ConfigurableReactorTileScriptBas
         : base(subject)
     {
         ApplyDamageScript = ApplyAttackDamageScript.Create();
-        SourceScript = this;
         CascadeTimer = new IntervalTimer(TimeSpan.FromMilliseconds(CascadeIntervalMs));
         SoundTimer = new IntervalTimer(TimeSpan.FromMilliseconds(MinSoundIntervalMs));
 
@@ -170,9 +168,6 @@ public sealed class CascadingDamageTileScript : ConfigurableReactorTileScriptBas
 
     /// <inheritdoc />
     public decimal? PctHpDamage { get; init; }
-
-    /// <inheritdoc />
-    public IScript SourceScript { get; init; }
 
     /// <inheritdoc />
     public byte? Sound { get; init; }

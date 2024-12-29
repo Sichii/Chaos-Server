@@ -1,6 +1,7 @@
 #region
 using Chaos.Collections.Common;
 using Chaos.Models.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 #endregion
 
 namespace Chaos.Scripting.Components.Execution;
@@ -12,12 +13,15 @@ public class ComponentVars : StaticVars
     private const string OPTIONS_KEY = "options";
     private const string POINTS_KEY = "points";
     private const string TARGETS_KEY = "targets";
+    private const string SOURCE_SCRIPT_KEY = "source_script";
 
     public virtual List<Point> GetAllPoints() => GetRequired<List<Point>>(CASCADE_ALL_POINTS_KEY);
 
     public virtual TOptions GetOptions<TOptions>() => GetRequired<TOptions>(OPTIONS_KEY);
 
     public virtual IReadOnlyCollection<Point> GetPoints() => GetRequired<IReadOnlyCollection<Point>>(POINTS_KEY);
+
+    public virtual IScript GetSourceScript() => GetRequired<IScript>(SOURCE_SCRIPT_KEY);
 
     public virtual int GetStage() => GetRequired<int>(CASCADE_STAGE_KEY);
 
@@ -29,6 +33,7 @@ public class ComponentVars : StaticVars
     public virtual void SetAllPoints(List<Point> points) => Set(CASCADE_ALL_POINTS_KEY, points);
     public virtual void SetOptions(object options) => Set(OPTIONS_KEY, options);
     public virtual void SetPoints(IReadOnlyCollection<Point> points) => Set(POINTS_KEY, points);
+    public virtual void SetSourceScript(IScript script) => Set(SOURCE_SCRIPT_KEY, script);
 
     public virtual void SetStage(int stage) => Set(CASCADE_STAGE_KEY, stage);
 

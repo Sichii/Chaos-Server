@@ -1,8 +1,10 @@
+#region
 using Chaos.Models.Data;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
 using Chaos.Scripting.Components.Execution;
 using Chaos.Services.Factories.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.Components.AbilityComponents;
 
@@ -12,6 +14,7 @@ public struct LayReactorAbilityComponent : IComponent
     public void Execute(ActivationContext context, ComponentVars vars)
     {
         var options = vars.GetOptions<ILayReactorComponentOptions>();
+        var sourceScript = vars.GetSourceScript();
         var map = context.TargetMap;
 
         if (string.IsNullOrEmpty(options.ReactorTileTemplateKey))
@@ -26,7 +29,7 @@ public struct LayReactorAbilityComponent : IComponent
                 map,
                 point,
                 owner: context.Source,
-                sourceScript: options.SourceScript);
+                sourceScript: sourceScript);
 
             map.SimpleAdd(trap);
         }
@@ -36,6 +39,5 @@ public struct LayReactorAbilityComponent : IComponent
     {
         IReactorTileFactory ReactorTileFactory { get; init; }
         string? ReactorTileTemplateKey { get; init; }
-        IScript? SourceScript { get; init; }
     }
 }

@@ -1,8 +1,11 @@
+#region
 using Chaos.Collections;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.Components.Execution;
 
@@ -59,6 +62,9 @@ public sealed class ComponentExecutor(ActivationContext context, ComponentVars v
     public ComponentExecutor WithOptions(object options)
     {
         Vars.SetOptions(options);
+
+        if (options is IScript script)
+            Vars.SetSourceScript(script);
 
         return this;
     }
