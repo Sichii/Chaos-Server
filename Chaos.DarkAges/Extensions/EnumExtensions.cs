@@ -1,9 +1,12 @@
+#region
 using Chaos.DarkAges.Definitions;
-
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#endregion
 
 namespace Chaos.DarkAges.Extensions;
 
+/// <summary>
+///     Provides extension methods for various enums
+/// </summary>
 public static class EnumExtensions
 {
     /// <summary>

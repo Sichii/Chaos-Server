@@ -6,8 +6,15 @@ using Chaos.Models.Panel.Abstractions;
 
 namespace Chaos.Collections.Abstractions;
 
+/// <summary>
+///     Defines the base functionality for a panel
+/// </summary>
+/// <typeparam name="T">
+///     The type of object that the panel will contain
+/// </typeparam>
 public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
 {
+    // <inheritdoc />
     public virtual int AvailableSlots
     {
         get
@@ -18,6 +25,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         }
     }
 
+    /// <summary>
+    ///     The number of objects currently in the panel
+    /// </summary>
     public virtual int Count
     {
         get
@@ -28,8 +38,12 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         }
     }
 
+    /// <summary>
+    ///     The slots that are considered invalid
+    /// </summary>
     protected byte[] InvalidSlots { get; }
 
+    // <inheritdoc />
     public virtual bool IsFull
     {
         get
@@ -40,15 +54,46 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         }
     }
 
+    /// <summary>
+    ///     The length of the panel
+    /// </summary>
     protected int Length { get; }
+
+    /// <summary>
+    ///     The objects contained within the panel
+    /// </summary>
     protected T?[] Objects { get; }
 
+    /// <summary>
+    ///     The observers that are registered to this panel
+    /// </summary>
     protected ICollection<Observers.Abstractions.IObserver<T>> Observers { get; }
 
+    // <inheritdoc />
     public PanelType PanelType { get; }
+
+    /// <summary>
+    ///     The synchronization mechanism used to ensure thread safety
+    /// </summary>
     protected Lock Sync { get; }
+
+    /// <summary>
+    ///     The total number of slots available in the panel
+    /// </summary>
     protected int TotalSlots { get; }
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="PanelBase{T}" /> class
+    /// </summary>
+    /// <param name="panelType">
+    ///     The type of panel this is
+    /// </param>
+    /// <param name="length">
+    ///     The length of the panel
+    /// </param>
+    /// <param name="invalidSlots">
+    ///     The slots that are considered invalid
+    /// </param>
     protected PanelBase(PanelType panelType, int length, byte[] invalidSlots)
     {
         PanelType = panelType;
@@ -60,6 +105,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         Observers = new List<Observers.Abstractions.IObserver<T>>();
     }
 
+    // <inheritdoc />
     public virtual void AddObserver(Observers.Abstractions.IObserver<T> observer)
     {
         using var @lock = Sync.EnterScope();
@@ -69,6 +115,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     /// <inheritdoc />
     void IPanel<T>.Clear() => Array.Clear(Objects);
 
+    // <inheritdoc />
     public virtual bool Contains(T obj)
     {
         using var @lock = Sync.EnterScope();
@@ -76,6 +123,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         return Objects.Any(o => (o != null) && o.Template.Name.EqualsI(obj.Template.Name));
     }
 
+    // <inheritdoc />
     public virtual bool Contains(byte slot)
     {
         if (!IsValidSlot(slot))
@@ -86,6 +134,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         return Objects[slot] != null;
     }
 
+    // <inheritdoc />
     public virtual bool Contains(string name)
     {
         using var @lock = Sync.EnterScope();
@@ -104,8 +153,10 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     /// <inheritdoc />
     void IPanel<T>.ForceAdd(T obj) => Objects[obj.Slot] = obj;
 
+    // <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    // <inheritdoc />
     public IEnumerator<T> GetEnumerator()
     {
         List<T?> snapshot;
@@ -117,8 +168,10 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
                        .GetEnumerator()!;
     }
 
+    // <inheritdoc />
     public virtual bool IsValidSlot(byte slot) => (slot > 0) && (slot < Length) && !InvalidSlots.Contains(slot);
 
+    // <inheritdoc />
     public virtual T? this[byte slot]
     {
         get
@@ -132,6 +185,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         }
     }
 
+    // <inheritdoc />
     public virtual T? this[string name]
     {
         get
@@ -142,6 +196,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         }
     }
 
+    // <inheritdoc />
     public virtual bool Remove(string name)
     {
         using var @lock = Sync.EnterScope();
@@ -154,6 +209,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         return Remove(obj.Slot);
     }
 
+    // <inheritdoc />
     public virtual bool Remove(byte slot)
     {
         if (!IsValidSlot(slot))
@@ -185,8 +241,10 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         return Remove(obj.Slot);
     }
 
+    // <inheritdoc />
     public virtual bool TryAdd(byte slot, T obj) => InnerTryAdd(slot, obj);
 
+    // <inheritdoc />
     public virtual bool TryAddToNextSlot(T obj)
     {
         using var @lock = Sync.EnterScope();
@@ -198,6 +256,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         return false;
     }
 
+    // <inheritdoc />
     public virtual bool TryGetObject(byte slot, [MaybeNullWhen(false)] out T obj)
     {
         obj = default;
@@ -212,6 +271,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         return obj != null;
     }
 
+    // <inheritdoc />
     public virtual bool TryGetObject(string name, [MaybeNullWhen(false)] out T obj)
     {
         using var @lock = Sync.EnterScope();
@@ -224,6 +284,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         return obj != null;
     }
 
+    // <inheritdoc />
     public virtual bool TryGetObjectByTemplateKey(string templateKey, [MaybeNullWhen(false)] out T obj)
     {
         using var @lock = Sync.EnterScope();
@@ -236,6 +297,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         return obj != null;
     }
 
+    // <inheritdoc />
     public virtual bool TryGetRemove(byte slot, [MaybeNullWhen(false)] out T obj)
     {
         obj = default;
@@ -292,6 +354,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         return true;
     }
 
+    // <inheritdoc />
     public virtual bool TrySwap(byte slot1, byte slot2)
     {
         if (!IsValidSlot(slot1) || !IsValidSlot(slot2))
@@ -326,6 +389,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         return true;
     }
 
+    // <inheritdoc />
     public void Update(TimeSpan delta)
     {
         using var @lock = Sync.EnterScope();
@@ -334,6 +398,7 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
             obj?.Update(delta);
     }
 
+    // <inheritdoc />
     public void Update(byte slot, Action<T>? action = null)
     {
         if (!IsValidSlot(slot))
@@ -350,6 +415,12 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
         BroadcastOnUpdated(slot, obj);
     }
 
+    /// <summary>
+    ///     Notifies all registered observers that a new object has been added.
+    /// </summary>
+    /// <param name="obj">
+    ///     The object that was added
+    /// </param>
     protected virtual void BroadcastOnAdded(T obj)
     {
         foreach (var observer in Observers)
@@ -362,6 +433,15 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
             }
     }
 
+    /// <summary>
+    ///     Notifies all observers about the removal of an object from a specified slot
+    /// </summary>
+    /// <param name="slot">
+    ///     The slot from which the object was removed
+    /// </param>
+    /// <param name="obj">
+    ///     The object that was removed
+    /// </param>
     protected virtual void BroadcastOnRemoved(byte slot, T obj)
     {
         foreach (var observer in Observers)
@@ -374,6 +454,15 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
             }
     }
 
+    /// <summary>
+    ///     Notifies all observers about an update performed on the specified slot and its associated object
+    /// </summary>
+    /// <param name="originalSlot">
+    ///     The original slot where the object resides
+    /// </param>
+    /// <param name="obj">
+    ///     The object that has been updated
+    /// </param>
     protected virtual void BroadcastOnUpdated(byte originalSlot, T obj)
     {
         foreach (var observer in Observers)

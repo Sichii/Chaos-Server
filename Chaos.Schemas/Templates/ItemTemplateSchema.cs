@@ -1,7 +1,9 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.DarkAges.Definitions;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates.Abstractions;
+#endregion
 
 namespace Chaos.Schemas.Templates;
 
@@ -91,6 +93,16 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     ///     exchange or dropping. These items are still droppable, but are locked to the player that dropped it.
     /// </summary>
     public bool NoTrade { get; set; }
+
+    /// <summary>
+    ///     When this item is equipped, the boots sprite will be set to 0
+    /// </summary>
+    public bool OverridesBootsSprite { get; set; }
+
+    /// <summary>
+    ///     When this item is equipped, the head sprite will be set to 0
+    /// </summary>
+    public bool OverridesHeadSprite { get; set; }
 
     /// <summary>
     ///     Default null

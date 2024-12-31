@@ -5,8 +5,23 @@ using Chaos.Models.Panel.Abstractions;
 
 namespace Chaos.Collections.Abstractions;
 
+/// <summary>
+///     A panel that contains skills or spells
+/// </summary>
+/// <typeparam name="T">
+///     Skill or Spell
+/// </typeparam>
 public abstract class KnowledgeBookBase<T> : PanelBase<T>, IKnowledgeBook<T> where T: PanelEntityBase
 {
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="KnowledgeBookBase{T}" /> class
+    /// </summary>
+    /// <param name="panelType">
+    ///     The type of panel this is
+    /// </param>
+    /// <param name="abilities">
+    ///     The abilities to populate the knowledge book with
+    /// </param>
     protected KnowledgeBookBase(PanelType panelType, IEnumerable<T>? abilities = null)
         : base(
             panelType,
@@ -23,6 +38,7 @@ public abstract class KnowledgeBookBase<T> : PanelBase<T>, IKnowledgeBook<T> whe
             Objects[ability.Slot] = ability;
     }
 
+    // <inheritdoc />
     public byte GetFirstSlotInPage(PageType page)
         => page switch
         {
@@ -32,6 +48,7 @@ public abstract class KnowledgeBookBase<T> : PanelBase<T>, IKnowledgeBook<T> whe
             _              => throw new ArgumentOutOfRangeException(nameof(page), page, null)
         };
 
+    // <inheritdoc />
     public byte GetLastSlotInPage(PageType page)
         => page switch
         {

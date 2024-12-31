@@ -1,6 +1,8 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.Templates.Abstractions;
+#endregion
 
 namespace Chaos.Models.Templates;
 
@@ -19,6 +21,16 @@ public sealed record ItemTemplate : PanelEntityTemplateBase
     public required int MaxStacks { get; init; } = 1;
     public required Attributes? Modifiers { get; init; }
     public required bool NoTrade { get; init; }
+
+    /// <summary>
+    ///     When this item is equipped, the boots sprite will be set to 0
+    /// </summary>
+    public bool OverridesBootsSprite { get; set; }
+
+    /// <summary>
+    ///     When this item is equipped, the head sprite will be set to 0
+    /// </summary>
+    public bool OverridesHeadSprite { get; set; }
 
     public override required ushort PanelSprite
     {

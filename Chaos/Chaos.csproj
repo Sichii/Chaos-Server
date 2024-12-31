@@ -12,10 +12,16 @@
         <IsPackable>false</IsPackable>
         <ServerGarbageCollection>true</ServerGarbageCollection>
         <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
-        <!--<GCHeapHardLimit>1073741824</GCHeapHardLimit>-->
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
     <PropertyGroup>
         <ApplicationIcon>Resources\chaos.ico</ApplicationIcon>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <NoWarn>1701;1702;CS1591</NoWarn>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <NoWarn>1701;1702;CS1591</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <None Update="appsettings.json">
@@ -33,7 +39,6 @@
         <None Update="appsettings.logging.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Remove="PersistentIdUInt64.json.bak"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Collections\Chaos.Collections.csproj"/>
@@ -50,8 +55,6 @@
         <ProjectReference Include="..\Chaos.Storage\Chaos.Storage.csproj"/>
         <ProjectReference Include="..\Chaos.Time\Chaos.Time.csproj"/>
         <ProjectReference Include="..\Chaos.TypeMapper\Chaos.TypeMapper.csproj"/>
-    </ItemGroup>
-    <ItemGroup>
         <PackageReference Include="AutoMapper.Collection"/>
         <PackageReference Include="Humanizer"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"/>
@@ -77,6 +80,5 @@
         <Content Include="Site\wwwroot\Styles\styles.css">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <Content Remove="PersistentIdUInt64.json"/>
     </ItemGroup>
 </Project>

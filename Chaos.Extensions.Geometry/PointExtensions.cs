@@ -579,6 +579,31 @@ public static class PointExtensions
     }
 
     /// <summary>
+    ///     Orders a sequence of points by their angle in relation to a given point
+    /// </summary>
+    /// <param name="points">
+    ///     A sequence of points
+    /// </param>
+    /// <param name="origin">
+    ///     The point for which to get the angle for
+    /// </param>
+    public static IEnumerable<T> OrderByAngle<T>(this IEnumerable<T> points, T origin) where T: IPoint
+        => points.OrderBy(pt => Math.Atan2(origin.Y - pt.Y, origin.X - pt.X));
+
+    /// <summary>
+    ///     Orders a sequence of points by their angle in relation to a given point
+    /// </summary>
+    /// <param name="points">
+    ///     A sequence of points
+    /// </param>
+    /// <param name="origin">
+    ///     The point for which to get the angle for
+    /// </param>
+    [OverloadResolutionPriority(1)]
+    public static IEnumerable<Point> OrderByAngle(this IEnumerable<Point> points, Point origin)
+        => points.OrderBy(pt => Math.Atan2(origin.Y - pt.Y, origin.X - pt.X));
+
+    /// <summary>
     ///     Lazily generates points between two points.
     ///     <br />
     ///     https://playtechs.blogspot.com/2007/03/raytracing-on-grid.html
