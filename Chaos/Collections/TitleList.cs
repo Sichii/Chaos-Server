@@ -1,8 +1,16 @@
+#region
 using Chaos.Collections.Synchronized;
 using Chaos.Extensions.Common;
+#endregion
 
 namespace Chaos.Collections;
 
+/// <summary>
+///     Represents a collection of titles
+/// </summary>
+/// <param name="items">
+///     Titles to populate the collection with
+/// </param>
 public sealed class TitleList(IEnumerable<string>? items = null)
     : SynchronizedList<string>(items?.Distinct(StringComparer.OrdinalIgnoreCase) ?? [])
 {

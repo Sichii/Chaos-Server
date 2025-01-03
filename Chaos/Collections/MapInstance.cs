@@ -26,6 +26,9 @@ using Chaos.Time.Abstractions;
 
 namespace Chaos.Collections;
 
+/// <summary>
+///     Represents an instance of a map
+/// </summary>
 public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 {
     private readonly IAsyncStore<Aisling> AislingStore;
@@ -40,21 +43,93 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     private readonly CancellationToken ServerShutdownToken;
     private readonly IShardGenerator ShardGenerator;
     private readonly ISimpleCache SimpleCache;
+
+    /// <summary>
+    ///     Whether the map will experience day/night cycles automatically
+    /// </summary>
     public bool AutoDayNightCycle { get; set; }
+
+    /// <summary>
+    ///     If the map is a shard, this will be the instance id of the map this shard was created from
+    /// </summary>
     public string? BaseInstanceId { get; set; }
+
+    /// <summary>
+    ///     The current light level being displayed on the map
+    /// </summary>
     public LightLevel CurrentLightLevel { get; set; } = LightLevel.Lightest_A;
+
+    /// <summary>
+    ///     A flag, or combination of flags that should affect the map
+    /// </summary>
     public MapFlags Flags { get; set; }
+
+    /// <summary>
+    ///     A unique id specific to this map instance
+    /// </summary>
     public string InstanceId { get; init; }
+
+    /// <summary>
+    ///     Default null
+    ///     <br />
+    ///     If specified, sets the minimum level needed to enter this map via warp tile
+    /// </summary>
     public int? MaximumLevel { get; set; }
+
+    /// <summary>
+    ///     Default null
+    ///     <br />
+    ///     If specified, sets the maximum level allowed to enter this map via warp tile
+    /// </summary>
     public int? MinimumLevel { get; set; }
+
+    /// <summary>
+    ///     The byte values of the music track to play when entering the map
+    ///     <br />
+    ///     These values aren't explored yet, so you'll have to figure out what's available yourself
+    /// </summary>
     public byte Music { get; set; }
+
+    /// <summary>
+    ///     The name of the map that will display in-game
+    /// </summary>
     public string Name { get; set; }
+
+    /// <summary>
+    ///     A service used to calculate paths between points
+    /// </summary>
     public IPathfindingService Pathfinder { get; set; } = null!;
+
+    /// <summary>
+    ///     Default null
+    ///     <br />
+    ///     If specified, these options will be used to determine how this instance will shard itself
+    /// </summary>
     public ShardingOptions? ShardingOptions { get; init; }
+
+    /// <summary>
+    ///     A collection of timers that will remove aislings from the map if the player limit is reached
+    /// </summary>
     public ConcurrentDictionary<Aisling, IIntervalTimer> ShardLimiterTimers { get; set; }
+
+    /// <summary>
+    ///     A collection of all the shards of this map
+    /// </summary>
     public ConcurrentDictionary<string, MapInstance> Shards { get; set; }
+
+    /// <summary>
+    ///     The template this map is based on
+    /// </summary>
     public MapTemplate Template { get; set; }
+
+    /// <summary>
+    ///     An object used to cancel execution of the map
+    /// </summary>
     public CancellationTokenSource MapInstanceCtx { get; }
+
+    /// <summary>
+    ///     A collection of details about what monsters should spawn and how they should spawn
+    /// </summary>
     public List<MonsterSpawn> MonsterSpawns { get; }
 
     /// <inheritdoc />
@@ -63,10 +138,54 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <inheritdoc />
     public ISet<string> ScriptKeys { get; }
 
+    /// <summary>
+    ///     The synchronization mechanism used to ensure thread safety on the map
+    /// </summary>
     public FifoAutoReleasingSemaphoreSlim Sync { get; }
+
+    /// <summary>
+    ///     Whether this map is a shard of another map
+    /// </summary>
     public bool IsShard => !string.IsNullOrEmpty(BaseInstanceId);
+
+    /// <summary>
+    ///     The id of the map this instance was loaded from. This is populated even if the map is not a shard
+    /// </summary>
     public string LoadedFromInstanceId => BaseInstanceId ?? InstanceId;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="MapInstance" /> class
+    /// </summary>
+    /// <param name="template">
+    ///     The template this map is created from
+    /// </param>
+    /// <param name="simpleCache">
+    ///     A generic cache provider
+    /// </param>
+    /// <param name="shardGenerator">
+    ///     A services used to generate shards of maps
+    /// </param>
+    /// <param name="scriptProvider">
+    ///     A service used to generate scripts
+    /// </param>
+    /// <param name="name">
+    ///     The name of the map
+    /// </param>
+    /// <param name="instanceId">
+    ///     The unique instance if of the map
+    /// </param>
+    /// <param name="aislingStore">
+    ///     A service that stores aisling data
+    /// </param>
+    /// <param name="serverCtx">
+    ///     An object used to signal to the map to stop executing
+    /// </param>
+    /// <param name="logger">
+    ///     A class logger used to log messages
+    /// </param>
+    /// <param name="extraScriptKeys">
+    ///     Any extra script keys beyond those included via the template
+    /// </param>
     public MapInstance(
         MapTemplate template,
         ISimpleCache simpleCache,
@@ -115,6 +234,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         Script = scriptProvider.CreateScript<IMapScript, MapInstance>(ScriptKeys, this);
     }
 
+    /// <inheritdoc />
     public void Update(TimeSpan delta)
     {
         try
@@ -163,8 +283,37 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         }
     }
 
+    /// <summary>
+    ///     Adds an aisling to the map directly without any sharding logic
+    /// </summary>
+    /// <param name="aisling">
+    ///     The aisling to add to the map
+    /// </param>
+    /// <param name="point">
+    ///     The point in which to place the aisling
+    /// </param>
+    /// <remarks>
+    ///     This method is used when sharding should be ignored, such as admin commands, or when joining a map with group
+    ///     members on it
+    /// </remarks>
     public void AddAislingDirect(Aisling aisling, IPoint point) => InnerAddEntity(aisling, point);
 
+    /// <summary>
+    ///     Adds a collection of entities to the map
+    /// </summary>
+    /// <param name="visibleObjects">
+    ///     The entities to add to the map
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of the entities to add
+    /// </typeparam>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown when an aisling is included in the collection
+    /// </exception>
+    /// <remarks>
+    ///     Do not use this method to add aislings to the map. This method will handle all aspects of this operation, including
+    ///     updating viewports, and invoking events on scripts
+    /// </remarks>
     public void AddEntities<T>(ICollection<T> visibleObjects) where T: VisibleEntity
     {
         if (visibleObjects.Any(obj => obj is Aisling))
@@ -209,6 +358,18 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         }
     }
 
+    /// <summary>
+    ///     Adds an entity to the map
+    /// </summary>
+    /// <param name="visibleEntity">
+    ///     The entity to add to the map
+    /// </param>
+    /// <param name="point">
+    ///     The point on which to place the entity
+    /// </param>
+    /// <remarks>
+    ///     This method will handle all aspects of this operation, including updating viewports, and invoking events on scripts
+    /// </remarks>
     public void AddEntity(VisibleEntity visibleEntity, IPoint point)
     {
         //shards cant shard, shardtype none means no sharding, non-aisling cant create shards
@@ -221,6 +382,12 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             HandleSharding(aisling, point);
     }
 
+    /// <summary>
+    ///     Adds a monster spawner to the map
+    /// </summary>
+    /// <param name="monsterSpawn">
+    ///     The spawner to add
+    /// </param>
     public void AddSpawner(MonsterSpawn monsterSpawn)
     {
         monsterSpawn.MapInstance = this;
@@ -244,6 +411,15 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// </param>
     public void BeginInvoke(Action action) => ProcessingQueue.Enqueue(action);
 
+    /// <summary>
+    ///     Invokes a click event on an entity
+    /// </summary>
+    /// <param name="id">
+    ///     The id of the entity to click
+    /// </param>
+    /// <param name="source">
+    ///     The aisling that performed the click
+    /// </param>
     public void Click(uint id, Aisling source)
     {
         if (TryGetEntity<VisibleEntity>(id, out var obj))
@@ -251,6 +427,15 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 obj.OnClicked(source);
     }
 
+    /// <summary>
+    ///     Invokes a click event on a point on the map
+    /// </summary>
+    /// <param name="point">
+    ///     The point to click
+    /// </param>
+    /// <param name="source">
+    ///     The aisling that performed the click
+    /// </param>
     public void Click(IPoint point, Aisling source)
     {
         if (!source.WithinRange(point))
@@ -271,6 +456,13 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         }
     }
 
+    /// <summary>
+    ///     Destroys the map instance
+    /// </summary>
+    /// <remarks>
+    ///     Clears all objects and spawners from the map, stops execution of the map, and removes this map from the collection
+    ///     of shards. Any aislings on the map will be in a sort of limbo and need to relog
+    /// </remarks>
     public void Destroy()
     {
         Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Delete)
@@ -283,6 +475,15 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         MonsterSpawns.Clear();
     }
 
+    /// <summary>
+    ///     Gets all distinct reactors on a given point
+    /// </summary>
+    /// <param name="point">
+    ///     The point from which to retrieve reactors
+    /// </param>
+    /// <remarks>
+    ///     This method will return all non-templated reactors, and only the first instance of each templated reactor
+    /// </remarks>
     public IEnumerable<ReactorTile> GetDistinctReactorsAtPoint(IPoint point)
     {
         //get reactors in order of oldest to newest
@@ -296,14 +497,50 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                        || distinctTemplateKeys.Add(templatedReactorTile.Template.TemplateKey));
     }
 
+    /// <summary>
+    ///     Gets all entities of a specific type
+    /// </summary>
+    /// <typeparam name="T">
+    ///     The type of entities to retrieve
+    /// </typeparam>
     public IEnumerable<T> GetEntities<T>() where T: MapEntity => Objects.Values<T>();
 
+    /// <summary>
+    ///     Gets all entities at the specified points
+    /// </summary>
+    /// <param name="points">
+    ///     The points from which to retrieve entities from
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of entities to retrieve
+    /// </typeparam>
     public IEnumerable<T> GetEntitiesAtPoints<T>(params IEnumerable<IPoint> points) where T: MapEntity
         => GetEntitiesAtPoints<T>(points.Select(Point.From));
 
+    /// <summary>
+    ///     Gets all entities at the specified points
+    /// </summary>
+    /// <param name="points">
+    ///     The points from which to retrieve entities from
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of entities to retrieve
+    /// </typeparam>
     [OverloadResolutionPriority(1)]
     public IEnumerable<T> GetEntitiesAtPoints<T>(params IEnumerable<Point> points) where T: MapEntity => Objects.AtPoints<T>(points);
 
+    /// <summary>
+    ///     Gets all entities within the given range of a given point
+    /// </summary>
+    /// <param name="point">
+    ///     The point from which to search
+    /// </param>
+    /// <param name="range">
+    ///     The range to search within
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of entities to retrieve
+    /// </typeparam>
     public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 15) where T: MapEntity
         => Objects.WithinRange<T>(point, range);
 
@@ -319,9 +556,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             case ShardingType.AbsolutePlayerLimit:
             {
                 //if the limit is 1, do not re-use instances
-                if (ShardingOptions.Limit == 1)
-                    AddToNewShard(aisling, point);
-                else
+                if (ShardingOptions.Limit == 1) { } else
                 {
                     //non-absolute player limit will allow group members to go over the normal player limit
                     if (ShardingOptions.ShardingType == ShardingType.PlayerLimit)
@@ -359,8 +594,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     }
 
                     //if there is no available spots, create a new shard
-                    AddToNewShard(aisling, point);
                 }
+
+                AddToNewShard(aisling, point);
 
                 break;
             }
@@ -381,10 +617,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     return;
                 }
 
-                if (ShardingOptions.Limit == 1)
-                    AddToNewShard(aisling, point);
-                else
-                {
+                if (ShardingOptions.Limit == 1) { } else
                     foreach (var instance in Shards.Values.Prepend(this))
                     {
                         //get the number of groups in this instance
@@ -403,9 +636,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                         }
                     }
 
-                    //if we couldnt find a suitable instance to place the player, generate a new one and add them to it
-                    AddToNewShard(aisling, point);
-                }
+                //if we couldnt find a suitable instance to place the player, generate a new one and add them to it
+                AddToNewShard(aisling, point);
 
                 break;
             }
@@ -582,7 +814,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         if (visibleEntity is Creature c)
         {
             if (visibleEntity is Aisling aisling)
-
             {
                 aisling.Client.SendMapChangePending();
                 aisling.Client.SendMapInfo();
@@ -632,7 +863,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     }
 
     /// <summary>
-    ///     Only use this if you reeeaaalllly know what you are doing
+    ///     Asynchronously invokes an action to be performed within the map's synchronization. Only use this if you
+    ///     reeeaaalllly know what you are doing
     /// </summary>
     /// <param name="action">
     ///     The action to perform within the map's synchronization
@@ -663,10 +895,40 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         }
     }
 
+    /// <summary>
+    ///     Determines if a reactor that blocks pathfinding is on a point
+    /// </summary>
+    /// <param name="point">
+    ///     The point on which to search
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if a blocking reactor is on the point, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public bool IsBlockingReactor(IPoint point)
         => GetEntitiesAtPoints<ReactorTile>(point)
             .Any(reactor => reactor.ShouldBlockPathfinding);
 
+    /// <summary>
+    ///     Determines if an entity is within the shared vision of a lantern
+    /// </summary>
+    /// <param name="entity">
+    ///     The entity to check
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the entity is within the vision of any lantern, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public bool IsInSharedLanternVision(VisibleEntity entity)
     {
         if (!Flags.HasFlag(MapFlags.Darkness))
@@ -676,10 +938,53 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             .Any(aisling => aisling.Illuminates(entity));
     }
 
+    /// <summary>
+    ///     Determines if a point has a reactor on it
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if a reactor is on the point, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public bool IsReactor(IPoint point)
         => GetEntitiesAtPoints<ReactorTile>(point)
             .Any();
 
+    /// <summary>
+    ///     Determines if a point is walkable
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <param name="creatureType">
+    ///     The type of the creature
+    /// </param>
+    /// <param name="ignoreBlockingReactors">
+    ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, and walkable to the specified creature type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     Thrown when the creature type is not recognized
+    /// </exception>
+    /// <remarks>
+    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
+    ///     walking
+    /// </remarks>
     public bool IsWalkable(IPoint point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
         => IsWalkable(Point.From(point), creatureType, ignoreBlockingReactors);
 
@@ -695,8 +1000,22 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <param name="ignoreBlockingReactors">
     ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
     /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, and walkable to the specified creature type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     /// <exception cref="ArgumentOutOfRangeException">
+    ///     Thrown when the creature type is not recognized
     /// </exception>
+    /// <remarks>
+    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
+    ///     walking
+    /// </remarks>
     [OverloadResolutionPriority(1)]
     public bool IsWalkable(Point point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
     {
@@ -719,8 +1038,38 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         };
     }
 
+    /// <summary>
+    ///     Determines if a point is a wall
+    /// </summary>
+    /// <param name="point">
+    ///     The point in which to check
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is a wall or is not within the map, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public bool IsWall(IPoint point) => IsWall(Point.From(point));
 
+    /// <summary>
+    ///     Determines if a point is a wall
+    /// </summary>
+    /// <param name="point">
+    ///     The point in which to check
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is a wall or is not within the map, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     [OverloadResolutionPriority(1)]
     public bool IsWall(Point point)
     {
@@ -742,8 +1091,32 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         return door?.Closed ?? false;
     }
 
+    /// <summary>
+    ///     Determines if a point is within the map
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public bool IsWithinMap(IPoint point) => Template.IsWithinMap(point);
 
+    /// <summary>
+    ///     Changes the map instance's template to a new template
+    /// </summary>
+    /// <param name="newMapTemplateKey">
+    ///     The key of the new map template to use
+    /// </param>
+    /// <remarks>
+    ///     This method will update the map template, and refresh all aislings on the map.
+    /// </remarks>
     public void Morph(string newMapTemplateKey)
     {
         var newMapTemplate = SimpleCache.Get<MapTemplate>(newMapTemplateKey);
@@ -759,23 +1132,61 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     }
 
     /// <summary>
-    ///     Moves an entity within the point lookup of the master object collection. DO NOT USE THIS UNLESS YOU KNOW WHAT YOU
-    ///     ARE DOING.
+    ///     Moves an entity to a new point
     /// </summary>
+    /// <param name="entity">
+    ///     The entity to move
+    /// </param>
+    /// <param name="newPoint">
+    ///     The point to move the entity to
+    /// </param>
+    /// <remarks>
+    ///     This is a low-level part of the api. This method is not intended for general use
+    /// </remarks>
     public void MoveEntity(MapEntity entity, Point newPoint) => Objects.MoveEntity(entity, newPoint);
 
+    /// <summary>
+    ///     Plays the specified music for all aislings on the map
+    /// </summary>
+    /// <param name="music">
+    ///     The byte value of the music to play
+    /// </param>
     public void PlayMusic(byte music)
     {
         foreach (var aisling in Objects.Values<Aisling>())
             aisling.Client.SendSound(music, true);
     }
 
-    public void PlaySound(byte sound, params IReadOnlyList<IPoint> point)
+    /// <summary>
+    ///     Plays the specified sound for all near the specified points
+    /// </summary>
+    /// <param name="sound">
+    ///     The sound to play
+    /// </param>
+    /// <param name="points">
+    ///     The points around which to play the sound
+    /// </param>
+    /// <remarks>
+    ///     This method ensure that the sound is only played once per aisling near any of the points
+    /// </remarks>
+    public void PlaySound(byte sound, params IReadOnlyList<IPoint> points)
         => PlaySound(
             sound,
-            point.Select(Point.From)
-                 .ToArray());
+            points.Select(Point.From)
+                  .ToArray());
 
+    /// <summary>
+    ///     Plays the specified sound for all near the specified points
+    /// </summary>
+    /// <param name="sound">
+    ///     The sound to play
+    /// </param>
+    /// <param name="points">
+    ///     The points around which to play the sound
+    /// </param>
+    /// <remarks>
+    ///     This method ensure that the sound is only played once per aisling near any of the points
+    /// </remarks>
     [OverloadResolutionPriority(1)]
     public void PlaySound(byte sound, params IReadOnlyList<Point> points)
     {
@@ -799,6 +1210,21 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         }
     }
 
+    /// <summary>
+    ///     Removes an entity from the map
+    /// </summary>
+    /// <param name="mapEntity">
+    ///     The entity to remove
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the entity was found an removed, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public bool RemoveEntity(MapEntity mapEntity)
     {
         if (!Objects.Remove(mapEntity.Id))
@@ -827,6 +1253,16 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         return true;
     }
 
+    /// <summary>
+    ///     Shows an animation to all aislings within range of it
+    /// </summary>
+    /// <param name="animation">
+    ///     The animation to show
+    /// </param>
+    /// <remarks>
+    ///     If the animation provided has both a target point and target id, it will prefer to animated the point. If the
+    ///     animation has neither, it will do nothing
+    /// </remarks>
     public void ShowAnimation(Animation animation)
     {
         //if both target point and target id are set, prefer the point animation.
@@ -843,12 +1279,25 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     aisling.Client.SendAnimation(animation);
     }
 
+    /// <summary>
+    ///     Adds an entity to the collection
+    /// </summary>
+    /// <param name="mapEntity">
+    ///     The entity to add
+    /// </param>
+    /// <remarks>
+    ///     This method will add the entity to the underlying entity collection with no additional logic. This method is not
+    ///     intended for general use
+    /// </remarks>
     public void SimpleAdd(MapEntity mapEntity)
     {
         mapEntity.MapInstance = this;
         Objects.Add(mapEntity.Id, mapEntity);
     }
 
+    /// <summary>
+    ///     Begins execution of the map's update loop
+    /// </summary>
     public void StartAsync()
         => Task.Run(
             async () =>
@@ -879,10 +1328,52 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 }
             });
 
+    /// <summary>
+    ///     Stops execution of the map's update loop
+    /// </summary>
     public void Stop() => MapInstanceCtx.Cancel();
 
+    /// <summary>
+    ///     Attempts to retrieve an entity from the map by it's id
+    /// </summary>
+    /// <param name="id">
+    ///     The id of the entity to find
+    /// </param>
+    /// <param name="obj">
+    ///     The entity if found
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of entity to find or cast to
+    /// </typeparam>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the entity was found and was able to be case to the specified type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public bool TryGetEntity<T>(uint id, [MaybeNullWhen(false)] out T obj) => Objects.TryGetValue(id, out obj);
 
+    /// <summary>
+    ///     Attempts to find a random walkable point on the map
+    /// </summary>
+    /// <param name="point">
+    ///     A random point if found
+    /// </param>
+    /// <param name="creatureType">
+    ///     The type of the creature. This is used to determine if a point is walkable
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if a walkable point was found, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
     public bool TryGetRandomWalkablePoint([NotNullWhen(true)] out Point? point, CreatureType creatureType = CreatureType.Normal)
     {
         if (!Template.Bounds.TryGetRandomPoint(pt => IsWalkable(pt, creatureType), out point))
@@ -891,6 +1382,12 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         return true;
     }
 
+    /// <summary>
+    ///     Asynchronously updates the map
+    /// </summary>
+    /// <param name="delta">
+    ///     The delta value to update the map with
+    /// </param>
     public async Task UpdateMapAsync(TimeSpan delta)
     {
         await using var sync = await Sync.WaitAsync();
@@ -910,6 +1407,15 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         DeltaMonitor.DigestDelta(elapsed);
     }
 
+    /// <summary>
+    ///     Updates the viewports of all creatures within range of a point
+    /// </summary>
+    /// <param name="point">
+    ///     The point around which viewports are updated
+    /// </param>
+    /// <param name="partialUpdateEntities">
+    ///     If the entities that changed are known, they are passed in to reduce computation cost of the update
+    /// </param>
     public void UpdateNearbyViewPorts(IPoint point, HashSet<VisibleEntity>? partialUpdateEntities = null)
     {
         foreach (var creature in GetEntitiesWithinRange<Creature>(point))

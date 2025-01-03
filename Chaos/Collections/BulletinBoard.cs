@@ -24,6 +24,9 @@ public sealed class BulletinBoard : BoardBase, IScripted<IBulletinBoardScript>
     /// <inheritdoc />
     public ISet<string> ScriptKeys { get; }
 
+    /// <summary>
+    ///     The template used to create this bulletin board
+    /// </summary>
     public BulletinBoardTemplate Template { get; }
 
     /// <inheritdoc />

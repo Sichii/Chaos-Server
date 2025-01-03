@@ -1,9 +1,14 @@
+#region
 using System.ComponentModel;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
+#endregion
 
 namespace Chaos.Collections;
 
+/// <summary>
+///     Represents a collection of user options
+/// </summary>
 public sealed class UserOptions
 {
     private string GetDescription(UserOption userOption)
@@ -35,10 +40,10 @@ public sealed class UserOptions
         };
 
     /// <summary>
-    ///     Toggles the given UserOption.
+    ///     Toggles the given UserOption
     /// </summary>
     /// <param name="opt">
-    ///     Option to toggle.
+    ///     Option to toggle
     /// </param>
     public void Toggle(UserOption opt)
     {
@@ -81,8 +86,17 @@ public sealed class UserOptions
         }
     }
 
+    /// <summary>
+    ///     Toggles the group option
+    /// </summary>
     public void ToggleGroup() => AllowGroup = !AllowGroup;
 
+    /// <summary>
+    ///     Prints the option as a string in the format required by the networking layer
+    /// </summary>
+    /// <param name="opt">
+    ///     The option to print as a string
+    /// </param>
     public string ToString(UserOption opt)
     {
         if (opt == UserOption.Request)
@@ -96,6 +110,9 @@ public sealed class UserOptions
         return string.Format(OPTIONS_FORMAT, $"{(byte)opt}{description}", enabled ? "ON" : "OFF");
     }
 
+    /// <summary>
+    ///     Prints all of the options as a string in the format required by the networking layer
+    /// </summary>
     public override string ToString()
     {
         var options = new string[8];
@@ -108,29 +125,57 @@ public sealed class UserOptions
     }
 
     #region OtherOptions
+    /// <summary>
+    ///     Whether or not to allow grouping
+    /// </summary>
     public bool AllowGroup { get; set; } = true;
+
+    /// <summary>
+    ///     The social status of the aisling
+    /// </summary>
     public SocialStatus SocialStatus { get; set; }
     #endregion
 
     #region F4 Options
+    /// <summary>
+    ///     Whether to show body animations
+    /// </summary>
     [Description("Show body animations")]
     public bool ShowBodyAnimations { get; set; } = true;
 
+    /// <summary>
+    ///     Whether to listen to hit sounds
+    /// </summary>
     [Description("Listen to hit sounds")]
     public bool ListenToHitSounds { get; set; } = true;
 
+    /// <summary>
+    ///     Unused option 3
+    /// </summary>
     [Description("Option 3")]
     public bool Option3 { get; set; } = true;
 
+    /// <summary>
+    ///     Unused option 4
+    /// </summary>
     [Description("Option 4")]
     public bool Option4 { get; set; } = true;
 
+    /// <summary>
+    ///     Unused option 5
+    /// </summary>
     [Description("Option 5")]
     public bool Option5 { get; set; } = true;
 
+    /// <summary>
+    ///     Whether to allow exchanges
+    /// </summary>
     [Description("Allow Exchanges")]
     public bool AllowExchange { get; set; } = true;
 
+    /// <summary>
+    ///     Unused option 8
+    /// </summary>
     [Description("Option 8")]
     public bool Option8 { get; set; } = true;
     #endregion

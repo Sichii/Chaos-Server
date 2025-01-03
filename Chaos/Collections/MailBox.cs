@@ -11,9 +11,16 @@ using Chaos.NLog.Logging.Extensions;
 
 namespace Chaos.Collections;
 
+/// <summary>
+///     Represents a mailbox for a player
+/// </summary>
 public sealed class MailBox : BoardBase
 {
+    /// <summary>
+    ///     The unique identifier for the mailbox is always 0
+    /// </summary>
     public const ushort BOARD_ID = 0;
+
     private readonly ILogger<MailBox> Logger;
 
     /// <inheritdoc />

@@ -7,6 +7,17 @@ using Chaos.Time.Abstractions;
 
 namespace Chaos.Collections;
 
+/// <summary>
+///     A thread-safe collection of entities that can be linearly updated, allowing for the addition and removal of
+///     entities during the update process
+/// </summary>
+/// <param name="logger">
+///     A class logger used to log messages
+/// </param>
+/// <remarks>
+///     If an entity is added or removed during the update process, the action is deferred until the update process is
+///     complete. After the update, the deferred actions are processed in the order they were received
+/// </remarks>
 public sealed class UpdatableCollection(ILogger logger) : IDeltaUpdatable
 {
     private readonly ILogger Logger = logger;
@@ -56,6 +67,12 @@ public sealed class UpdatableCollection(ILogger logger) : IDeltaUpdatable
         }
     }
 
+    /// <summary>
+    ///     Adds an object to the collection
+    /// </summary>
+    /// <param name="obj">
+    ///     The object to add
+    /// </param>
     public void Add(IDeltaUpdatable obj)
     {
         lock (this)
@@ -65,6 +82,9 @@ public sealed class UpdatableCollection(ILogger logger) : IDeltaUpdatable
                 PendingActions.Enqueue(PendingAction.Add(obj));
     }
 
+    /// <summary>
+    ///     Clears the collection
+    /// </summary>
     public void Clear()
     {
         lock (this)
@@ -74,6 +94,12 @@ public sealed class UpdatableCollection(ILogger logger) : IDeltaUpdatable
                 PendingActions.Enqueue(PendingAction.Clear());
     }
 
+    /// <summary>
+    ///     Removes an object from the collection
+    /// </summary>
+    /// <param name="obj">
+    ///     The object to remove
+    /// </param>
     public void Remove(IDeltaUpdatable obj)
     {
         lock (this)

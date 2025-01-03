@@ -7,8 +7,17 @@ using Chaos.Models.Panel;
 
 namespace Chaos.Collections;
 
+/// <summary>
+///     Represents a panel that's used to manage equipped items
+/// </summary>
 public sealed class Equipment : PanelBase<Item>, IEquipment
 {
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Equipment" /> class.
+    /// </summary>
+    /// <param name="items">
+    ///     The items to populate this panel with
+    /// </param>
     public Equipment(IEnumerable<Item>? items = null)
         : base(PanelType.Equipment, 19, [0])
     {
@@ -18,8 +27,15 @@ public sealed class Equipment : PanelBase<Item>, IEquipment
             Objects[item.Slot] = item;
     }
 
+    /// <summary>
+    ///     Gets the item in the specified slot
+    /// </summary>
+    /// <param name="slot">
+    ///     The equipment slot to retreive an item from
+    /// </param>
     public Item? this[EquipmentSlot slot] => this[(byte)slot];
 
+    /// <inheritdoc />
     public bool TryEquip(EquipmentType equipmentType, Item item, out Item? returnedItem)
     {
         returnedItem = null;

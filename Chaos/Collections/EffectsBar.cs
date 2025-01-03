@@ -10,6 +10,9 @@ using Chaos.Scripting.EffectScripts.Abstractions;
 
 namespace Chaos.Collections;
 
+/// <summary>
+///     Represents a bar that displays effects on a creature in game
+/// </summary>
 public sealed class EffectsBar : IEffectsBar
 {
     private readonly Creature Affected;
@@ -17,6 +20,15 @@ public sealed class EffectsBar : IEffectsBar
     private readonly Dictionary<string, IEffect> Effects;
     private readonly Lock Sync;
 
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="EffectsBar" /> class.
+    /// </summary>
+    /// <param name="affected">
+    ///     The creature this bar is for
+    /// </param>
+    /// <param name="effects">
+    ///     The effects to populate this collection with
+    /// </param>
     public EffectsBar(Creature affected, IEnumerable<IEffect>? effects = null)
     {
         Affected = affected;
@@ -30,6 +42,15 @@ public sealed class EffectsBar : IEffectsBar
             Effects[effect.Name] = effect;
     }
 
+    /// <summary>
+    ///     Applies an effect to the creature this bar is for
+    /// </summary>
+    /// <param name="source">
+    ///     The creature that applied the effect
+    /// </param>
+    /// <param name="effect">
+    ///     The effect to apply
+    /// </param>
     public void Apply(Creature source, IEffect effect)
     {
         using var @lock = Sync.EnterScope();
@@ -54,6 +75,7 @@ public sealed class EffectsBar : IEffectsBar
         return Effects.ContainsKey(effectName) || Effects.Values.Any(effect => effect.ScriptKey.EqualsI(effectName));
     }
 
+    /// <inheritdoc />
     public void Dispel(string effectName)
     {
         using var @lock = Sync.EnterScope();
@@ -66,8 +88,10 @@ public sealed class EffectsBar : IEffectsBar
         }
     }
 
+    /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+    /// <inheritdoc />
     public IEnumerator<IEffect> GetEnumerator()
     {
         List<IEffect> snapshot;
@@ -78,6 +102,7 @@ public sealed class EffectsBar : IEffectsBar
         return snapshot.GetEnumerator();
     }
 
+    /// <inheritdoc />
     public void ResetDisplay()
     {
         //clear all effects
@@ -93,6 +118,7 @@ public sealed class EffectsBar : IEffectsBar
             AffectedAisling?.Client.SendEffect(effect.Color, effect.Icon);
     }
 
+    /// <inheritdoc />
     public void Terminate(string effectName)
     {
         using var @lock = Sync.EnterScope();
@@ -118,6 +144,7 @@ public sealed class EffectsBar : IEffectsBar
         return effect is not null;
     }
 
+    /// <inheritdoc />
     public void Update(TimeSpan delta)
     {
         if (Effects.Count == 0)
