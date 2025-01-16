@@ -742,6 +742,8 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnGroupInvite(IChaosWorldClient localClient, GroupInviteArgs localArgs)
         {
+            localArgs.TargetName = localArgs.TargetName.ReplaceI("_", " ");
+
             var target = Aislings.FirstOrDefault(user => user.Name.EqualsI(localArgs.TargetName));
 
             if (target == null)

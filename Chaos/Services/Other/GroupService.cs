@@ -219,6 +219,64 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
         }
     }
 
+    /// <inheritdoc />
+    public void Kick(Aisling sender, Aisling receiver)
+    {
+        var group = sender.Group;
+
+        if (group is null)
+        {
+            sender.SendActiveMessage("You are not in a group");
+
+            return;
+        }
+
+        if (group != receiver.Group)
+        {
+            sender.SendActiveMessage("You are not in the same group");
+
+            return;
+        }
+
+        if (!group.Leader.Equals(sender))
+        {
+            sender.SendActiveMessage("You are not the group leader");
+
+            return;
+        }
+
+        group.Kick(receiver);
+    }
+
+    /// <inheritdoc />
+    public void Promote(Aisling sender, Aisling receiver)
+    {
+        var group = sender.Group;
+
+        if (group is null)
+        {
+            sender.SendActiveMessage("You are not in a group");
+
+            return;
+        }
+
+        if (group != receiver.Group)
+        {
+            sender.SendActiveMessage("You are not in the same group");
+
+            return;
+        }
+
+        if (!group.Leader.Equals(sender))
+        {
+            sender.SendActiveMessage("You are not the group leader");
+
+            return;
+        }
+
+        group.Promote(receiver);
+    }
+
     public void RequestToJoin(Aisling sender, Aisling receiver)
     {
         using var @lock = Sync.EnterScope();

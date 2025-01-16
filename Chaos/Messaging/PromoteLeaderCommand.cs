@@ -9,8 +9,8 @@ using Chaos.Services.Other.Abstractions;
 
 namespace Chaos.Messaging;
 
-[Command("invite", false, "<targetName>")]
-public class GroupInviteCommand(IClientRegistry<IChaosWorldClient> clientRegistry, IGroupService groupService) : ICommand<Aisling>
+[Command("promote", false, "<targetName>")]
+public class PromoteLeaderCommand(IGroupService groupService, IClientRegistry<IChaosWorldClient> clientRegistry) : ICommand<Aisling>
 {
     private readonly IClientRegistry<IChaosWorldClient> ClientRegistry = clientRegistry;
     private readonly IGroupService GroupService = groupService;
@@ -32,7 +32,7 @@ public class GroupInviteCommand(IClientRegistry<IChaosWorldClient> clientRegistr
             return default;
         }
 
-        GroupService.Invite(source, targetClient.Aisling);
+        GroupService.Promote(source, targetClient.Aisling);
 
         return default;
     }

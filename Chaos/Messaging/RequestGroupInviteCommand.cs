@@ -1,9 +1,11 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Services.Other.Abstractions;
+#endregion
 
 namespace Chaos.Messaging;
 
@@ -18,6 +20,8 @@ public class RequestGroupInviteCommand(IClientRegistry<IChaosWorldClient> client
     {
         if (!args.TryGetNext<string>(out var targetName))
             return default;
+
+        targetName = targetName.ReplaceI("_", " ");
 
         var targetClient = ClientRegistry.FirstOrDefault(c => c.Aisling.Name.EqualsI(targetName));
 

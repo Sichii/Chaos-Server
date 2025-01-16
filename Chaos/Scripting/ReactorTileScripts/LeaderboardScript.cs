@@ -15,7 +15,7 @@ public class LeaderboardScript : ReactorTileScriptBase
     /// <inheritdoc />
     public LeaderboardScript(ReactorTile subject, IStorage<LeaderboardObj> storage)
         : base(subject)
-        => Leaderboard = storage.GetInstance("test_leaderboard");
+        => Leaderboard = storage;
 
     /// <inheritdoc />
     public override void OnClicked(Aisling source)
@@ -42,6 +42,6 @@ public class LeaderboardScript : ReactorTileScriptBase
 
     public sealed class LeaderboardObj
     {
-        public Dictionary<string, int> Entries { get; } = new(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, int> Entries { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     }
 }
