@@ -1,15 +1,14 @@
-﻿#region
+#region
 using System.Collections;
-using System.Text.Json.Serialization;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.JsonConverters;
 #endregion
 
 namespace Chaos.Geometry;
 
-/// <inheritdoc cref="IPolygon" />
-[JsonConverter(typeof(PolygonConverter))]
-public sealed class Polygon : IPolygon, IEquatable<IPolygon>
+/// <summary>
+///     Represents a polygon, a 3 or more sided shape
+/// </summary>
+public readonly ref struct ValuePolygon : IPolygon, IEquatable<IPolygon>
 {
     /// <inheritdoc />
     public IReadOnlyList<IPoint> Vertices { get; init; }
@@ -21,21 +20,18 @@ public sealed class Polygon : IPolygon, IEquatable<IPolygon>
     ///     A sequence of vertices. Must be contiguous, but can be either clockwise or counterclockwise. Can be convex or
     ///     concave.
     /// </param>
-    public Polygon(IEnumerable<IPoint> vertices) => Vertices = vertices.ToList();
+    public ValuePolygon(IEnumerable<IPoint> vertices) => Vertices = vertices.ToList();
 
     /// <summary>
     ///     Creates a new <see cref="Polygon" /> with no vertices
     /// </summary>
-    public Polygon() => Vertices = new List<IPoint>();
+    public ValuePolygon() => Vertices = new List<IPoint>();
 
     /// <inheritdoc />
     public bool Equals(IPolygon? other)
     {
         if (ReferenceEquals(null, other))
             return false;
-
-        if (ReferenceEquals(this, other))
-            return true;
 
         var vertices = Vertices.ToList();
         var otherVertices = other.Vertices.ToList();
@@ -80,13 +76,16 @@ public sealed class Polygon : IPolygon, IEquatable<IPolygon>
         return false;
     }
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
     /// <inheritdoc />
     public IEnumerator<IPoint> GetEnumerator() => Vertices.GetEnumerator();
 
     /// <inheritdoc />
     public override bool Equals(object? obj) => obj is IPolygon other && Equals(other);
+
+    /// <summary>
+    ///     Implicitly converts a ref struct polygon to a polygon
+    /// </summary>
+    public static explicit operator ValuePolygon(Polygon poly) => new(poly.Vertices);
 
     /// <inheritdoc />
     public override int GetHashCode()
@@ -99,8 +98,6 @@ public sealed class Polygon : IPolygon, IEquatable<IPolygon>
         return hashCode.ToHashCode();
     }
 
-    /// <summary>
-    ///     Implicitly converts a ref struct polygon to a polygon
-    /// </summary>
-    public static implicit operator Polygon(ValuePolygon poly) => new(poly.Vertices);
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

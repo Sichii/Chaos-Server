@@ -1158,6 +1158,6 @@ public enum TileFlags : byte
 {
     None = 0,
     Wall = 15,
-    Unknown = 128
+    Transparent = 128
 }
 #endregion

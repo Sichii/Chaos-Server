@@ -1,16 +1,15 @@
-﻿#region
+#region
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Json.Serialization;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
-using Chaos.Geometry.JsonConverters;
 #endregion
 
 namespace Chaos.Geometry;
 
-/// <inheritdoc cref="ILocation" />
-[JsonConverter(typeof(LocationConverter))]
-public sealed record Location : ILocation, IEquatable<ILocation>
+/// <summary>
+///     Represents a location in a map
+/// </summary>
+public readonly ref struct ValueLocation : ILocation, IEquatable<ILocation>
 {
     /// <inheritdoc />
     public string Map { get; init; }
@@ -33,7 +32,7 @@ public sealed record Location : ILocation, IEquatable<ILocation>
     /// <param name="y">
     ///     The Y coordinate
     /// </param>
-    public Location(string map, int x, int y)
+    public ValueLocation(string map, int x, int y)
     {
         X = x;
         Y = y;
@@ -48,7 +47,7 @@ public sealed record Location : ILocation, IEquatable<ILocation>
     /// <param name="point">
     ///     The coordinate point
     /// </param>
-    public Location(string map, Point point)
+    public ValueLocation(string map, Point point)
         : this(map, point.X, point.Y) { }
 
     /// <summary>
@@ -60,7 +59,7 @@ public sealed record Location : ILocation, IEquatable<ILocation>
     /// <param name="point">
     ///     The coordinate point
     /// </param>
-    public Location(string map, IPoint point)
+    public ValueLocation(string map, IPoint point)
         : this(map, point.X, point.Y) { }
 
     /// <inheritdoc />
@@ -81,6 +80,11 @@ public sealed record Location : ILocation, IEquatable<ILocation>
         x = X;
         y = Y;
     }
+
+    /// <summary>
+    ///     Implicitly converts a location to a ref struct location
+    /// </summary>
+    public static explicit operator ValueLocation(Location loc) => new(loc.Map, loc.X, loc.Y);
 
     /// <summary>
     ///     Creates a new <see cref="Chaos.Geometry.Location" /> from an existing
@@ -105,20 +109,18 @@ public sealed record Location : ILocation, IEquatable<ILocation>
     /// <summary>
     ///     Compares two locations
     /// </summary>
-    public static bool operator ==(Location left, ILocation right) => left.Equals(right);
-
-    /// <summary>
-    ///     Implicitly converts a ref struct location to a location
-    /// </summary>
-    public static implicit operator Location(ValueLocation loc) => new(loc.Map, loc.X, loc.Y);
+    public static bool operator ==(ValueLocation left, ILocation right) => left.Equals(right);
 
     /// <summary>
     ///     Compares two locations
     /// </summary>
-    public static bool operator !=(Location left, ILocation right) => !left.Equals(right);
+    public static bool operator !=(ValueLocation left, ILocation right) => !left.Equals(right);
 
     /// <inheritdoc />
-    public override string ToString() => ILocation.ToString(this);
+    public override string ToString() => $"{Map}:({X}, {Y})";
+
+    /// <inheritdoc />
+    public override bool Equals(object? other) => other is ILocation loc && Equals(loc);
 
     /// <summary>
     ///     Tries to parse a location from a string

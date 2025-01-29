@@ -1,18 +1,15 @@
-﻿#region
+#region
 using System.Collections;
-using System.Text.Json.Serialization;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.JsonConverters;
 #endregion
 
 namespace Chaos.Geometry;
 
-/// <inheritdoc cref="IRectangle" />
-[JsonConverter(typeof(RectangleConverter))]
-public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
+/// <summary>
+///     Represents a rectangle, a 4 sided polygon
+/// </summary>
+public readonly ref struct ValueRectangle : IRectangle, IEquatable<IRectangle>
 {
-    private IReadOnlyList<IPoint>? _vertices;
-
     /// <inheritdoc />
     public int Bottom { get; init; }
 
@@ -29,11 +26,7 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
     public int Top { get; init; }
 
     /// <inheritdoc />
-    public IReadOnlyList<IPoint> Vertices
-    {
-        get => _vertices ??= GenerateVertices();
-        init => _vertices = value;
-    }
+    public IReadOnlyList<IPoint> Vertices { get; init; }
 
     /// <inheritdoc />
     public int Width { get; init; }
@@ -42,12 +35,7 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
     public int Area => Height * Width;
 
     /// <summary>
-    ///     Creates a new <see cref="Rectangle" /> with no vertices
-    /// </summary>
-    public Rectangle() { }
-
-    /// <summary>
-    ///     Creates a new <see cref="Rectangle" /> from values indicating the top left corner, width, and height
+    ///     Creates a new <see cref="ValueRectangle" /> from values indicating the top left corner, width, and height
     /// </summary>
     /// <param name="left">
     ///     The X value of the rectangle's leftmost edge
@@ -61,7 +49,7 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
     /// <param name="height">
     ///     The height of the rectangle
     /// </param>
-    public Rectangle(
+    public ValueRectangle(
         int left,
         int top,
         int width,
@@ -73,8 +61,18 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
         Top = top;
         Right = left + width - 1;
         Bottom = top + height - 1;
-        _vertices = GenerateVertices();
+        Vertices = GenerateVertices();
     }
+
+    /// <summary>
+    ///     Implicitly converts a rectangle to a ref struct rectangle
+    /// </summary>
+    public static explicit operator ValueRectangle(Rectangle rect)
+        => new(
+            rect.Left,
+            rect.Top,
+            rect.Width,
+            rect.Height);
 
     /// <summary>
     ///     Creates a new <see cref="Rectangle" /> from the center point, width, and height
@@ -88,7 +86,7 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
     /// <param name="height">
     ///     The height of the rectangle. The height must be an odd number.
     /// </param>
-    public Rectangle(IPoint center, int width, int height)
+    public ValueRectangle(IPoint center, int width, int height)
         : this(
             center.X - (width - 1) / 2,
             center.Y - (height - 1) / 2,
@@ -97,35 +95,13 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
 
     /// <inheritdoc />
     public bool Equals(IRectangle? other)
-    {
-        if (ReferenceEquals(null, other))
-            return false;
-
-        if (ReferenceEquals(this, other))
-            return true;
-
-        return (Height == other.Height) && (Left == other.Left) && (Top == other.Top) && (Width == other.Width);
-    }
-
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        => other is not null && (Left == other.Left) && (Top == other.Top) && (Width == other.Width) && (Height == other.Height);
 
     /// <inheritdoc />
     public IEnumerator<IPoint> GetEnumerator() => Vertices.GetEnumerator();
 
     /// <inheritdoc />
-    public override bool Equals(object? obj)
-    {
-        if (ReferenceEquals(null, obj))
-            return false;
-
-        if (ReferenceEquals(this, obj))
-            return true;
-
-        if (obj.GetType() != GetType())
-            return false;
-
-        return Equals((IRectangle)obj);
-    }
+    public override bool Equals(object? obj) => obj is IRectangle other && Equals(other);
 
     private IReadOnlyList<IPoint> GenerateVertices()
         => new List<IPoint>
@@ -144,13 +120,6 @@ public sealed class Rectangle : IRectangle, IEquatable<IRectangle>
             Top,
             Width);
 
-    /// <summary>
-    ///     Implicitly converts a ref struct rectangle to a rectangle
-    /// </summary>
-    public static implicit operator Rectangle(ValueRectangle rect)
-        => new(
-            rect.Left,
-            rect.Top,
-            rect.Width,
-            rect.Height);
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

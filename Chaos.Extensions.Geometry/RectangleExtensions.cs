@@ -13,6 +13,30 @@ namespace Chaos.Extensions.Geometry;
 /// </summary>
 public static class RectangleExtensions
 {
+    #region Rect Contains Rect
+    /// <inheritdoc cref="Contains(IRectangle, IRectangle)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Contains(this ValueRectangle rect, ValueRectangle other)
+        => (rect.Bottom >= other.Bottom) && (rect.Left <= other.Left) && (rect.Right >= other.Right) && (rect.Top <= other.Top);
+
+    /// <inheritdoc cref="Contains(IRectangle, IRectangle)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Contains(this IRectangle rect, ValueRectangle other)
+    {
+        ArgumentNullException.ThrowIfNull(rect);
+
+        return (rect.Bottom >= other.Bottom) && (rect.Left <= other.Left) && (rect.Right >= other.Right) && (rect.Top <= other.Top);
+    }
+
+    /// <inheritdoc cref="Contains(IRectangle, IRectangle)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Contains(this ValueRectangle rect, IRectangle other)
+    {
+        ArgumentNullException.ThrowIfNull(other);
+
+        return (rect.Bottom >= other.Bottom) && (rect.Left <= other.Left) && (rect.Right >= other.Right) && (rect.Top <= other.Top);
+    }
+
     /// <summary>
     ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> contains another
     ///     <see cref="Chaos.Geometry.Abstractions.IRectangle" />
@@ -41,6 +65,45 @@ public static class RectangleExtensions
 
         return (rect.Bottom >= other.Bottom) && (rect.Left <= other.Left) && (rect.Right >= other.Right) && (rect.Top <= other.Top);
     }
+    #endregion
+
+    #region Rect Contains Point
+    /// <inheritdoc cref="Contains(IRectangle, IPoint)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Contains(this ValueRectangle rect, ValuePoint point)
+        => (rect.Bottom >= point.Y) && (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y);
+
+    /// <inheritdoc cref="Contains(IRectangle, IPoint)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Contains(this ValueRectangle rect, Point point)
+        => (rect.Bottom >= point.Y) && (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y);
+
+    /// <inheritdoc cref="Contains(IRectangle, IPoint)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Contains(this ValueRectangle rect, IPoint point)
+    {
+        ArgumentNullException.ThrowIfNull(point);
+
+        return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
+    }
+
+    /// <inheritdoc cref="Contains(IRectangle, IPoint)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Contains(this IRectangle rect, ValuePoint point)
+    {
+        ArgumentNullException.ThrowIfNull(rect);
+
+        return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
+    }
+
+    /// <inheritdoc cref="Contains(IRectangle, IPoint)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Contains(this IRectangle rect, Point point)
+    {
+        ArgumentNullException.ThrowIfNull(rect);
+
+        return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
+    }
 
     /// <summary>
     ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> contains an
@@ -61,22 +124,15 @@ public static class RectangleExtensions
     ///         false
     ///     </c>
     /// </returns>
-    [OverloadResolutionPriority(1), MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool Contains(this IRectangle rect, Point point)
-    {
-        ArgumentNullException.ThrowIfNull(rect);
-
-        return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
-    }
-
-    /// <inheritdoc cref="Contains(IRectangle, Point)" />
     public static bool Contains(this IRectangle rect, IPoint point)
     {
         ArgumentNullException.ThrowIfNull(point);
 
-        return rect.Contains(Point.From(point));
+        return (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
     }
+    #endregion
 
+    #region Misc
     /// <summary>
     ///     Given a start and end point, generates a maze inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
     /// </summary>
@@ -91,7 +147,6 @@ public static class RectangleExtensions
     /// </param>
     /// <returns>
     /// </returns>
-    [OverloadResolutionPriority(1)]
     public static IEnumerable<Point> GenerateMaze(this IRectangle rect, Point start, Point end)
     {
         //neighbor pattern
@@ -198,6 +253,35 @@ public static class RectangleExtensions
 
         return rect.GenerateMaze(Point.From(start), Point.From(end));
     }
+    #endregion
+
+    #region Rect Outline
+    /// <inheritdoc cref="GetOutline(IRectangle)" />
+    public static IEnumerable<Point> GetOutline(this ValueRectangle rect)
+    {
+        var vertices = rect.Vertices;
+
+        return InnerGetOutline(vertices);
+
+        static IEnumerable<Point> InnerGetOutline(IReadOnlyList<IPoint> localVertices)
+        {
+            for (var i = 0; i < (localVertices.Count - 1); i++)
+            {
+                var current = localVertices[i];
+                var next = localVertices[i + 1];
+
+                //skip the last point so the vertices are not included twice
+                foreach (var point in current.GetDirectPath(next)
+                                             .SkipLast(1))
+                    yield return point;
+            }
+
+            foreach (var point in localVertices[^1]
+                                  .GetDirectPath(localVertices[0])
+                                  .SkipLast(1))
+                yield return point;
+        }
+    }
 
     /// <summary>
     ///     Lazily generates points along the outline of the rectangle. The points will be in the order the vertices are
@@ -223,6 +307,30 @@ public static class RectangleExtensions
                               .SkipLast(1))
             yield return point;
     }
+    #endregion
+
+    #region Rectangle GetPoints
+    /// <inheritdoc cref="GetPoints(IRectangle)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static IEnumerable<Point> GetPoints(this ValueRectangle rect)
+    {
+        return InnerGetPoints(
+            rect.Left,
+            rect.Top,
+            rect.Right,
+            rect.Bottom);
+
+        static IEnumerable<Point> InnerGetPoints(
+            int left,
+            int top,
+            int right,
+            int bottom)
+        {
+            for (var x = left; x <= right; x++)
+                for (var y = top; y <= bottom; y++)
+                    yield return new Point(x, y);
+        }
+    }
 
     /// <summary>
     ///     Lazily generates all points inside of the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" />
@@ -230,6 +338,7 @@ public static class RectangleExtensions
     /// <param name="rect">
     ///     The rectangle togenerate points for
     /// </param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<Point> GetPoints(this IRectangle rect)
     {
         ArgumentNullException.ThrowIfNull(rect);
@@ -238,6 +347,13 @@ public static class RectangleExtensions
             for (var y = rect.Top; y <= rect.Bottom; y++)
                 yield return new Point(x, y);
     }
+    #endregion
+
+    #region Rectangle GetRandomPoint
+    /// <inheritdoc cref="GetRandomPoint(IRectangle)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Point GetRandomPoint(this ValueRectangle rect)
+        => new(rect.Left + Random.Shared.Next(rect.Width), rect.Top + Random.Shared.Next(rect.Height));
 
     /// <summary>
     ///     Generates a random point inside the <see cref="Chaos.Geometry.Abstractions.IRectangle" />
@@ -248,6 +364,31 @@ public static class RectangleExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point GetRandomPoint(this IRectangle rect)
         => new(rect.Left + Random.Shared.Next(rect.Width), rect.Top + Random.Shared.Next(rect.Height));
+    #endregion
+
+    #region Rectangle Intersect Rectangle
+    /// <inheritdoc cref="Intersects(IRectangle, IRectangle)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Intersects(this ValueRectangle rect, ValueRectangle other)
+        => !((rect.Bottom < other.Top) || (rect.Left > other.Right) || (rect.Right < other.Left) || (rect.Top > other.Bottom));
+
+    /// <inheritdoc cref="Intersects(IRectangle, IRectangle)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Intersects(this IRectangle rect, ValueRectangle other)
+    {
+        ArgumentNullException.ThrowIfNull(rect);
+
+        return !((rect.Bottom < other.Top) || (rect.Left > other.Right) || (rect.Right < other.Left) || (rect.Top > other.Bottom));
+    }
+
+    /// <inheritdoc cref="Intersects(IRectangle, IRectangle)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Intersects(this ValueRectangle rect, IRectangle other)
+    {
+        ArgumentNullException.ThrowIfNull(other);
+
+        return !((rect.Bottom < other.Top) || (rect.Left > other.Right) || (rect.Right < other.Left) || (rect.Top > other.Bottom));
+    }
 
     /// <summary>
     ///     Determines whether the specified <see cref="Chaos.Geometry.Abstractions.IRectangle" /> intersects another
@@ -276,6 +417,57 @@ public static class RectangleExtensions
         ArgumentNullException.ThrowIfNull(other);
 
         return !((rect.Bottom < other.Top) || (rect.Left > other.Right) || (rect.Right < other.Left) || (rect.Top > other.Bottom));
+    }
+    #endregion
+
+    #region Rectangle Intersects Circle
+    /// <inheritdoc cref="Intersects(IRectangle, ICircle, DistanceType)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Intersects(this ValueRectangle rect, ValueCircle circle, DistanceType distanceType = DistanceType.Euclidean)
+    {
+        var closestX = Math.Clamp(circle.Center.X, rect.Left, rect.Right);
+        var closestY = Math.Clamp(circle.Center.Y, rect.Top, rect.Bottom);
+
+        return distanceType switch
+        {
+            DistanceType.Manhattan => new Point(closestX, closestY).ManhattanDistanceFrom(Point.From(circle.Center)) < circle.Radius,
+            DistanceType.Euclidean => new Point(closestX, closestY).EuclideanDistanceFrom(Point.From(circle.Center)) < circle.Radius,
+            _                      => throw new ArgumentOutOfRangeException(nameof(distanceType), distanceType, null)
+        };
+    }
+
+    /// <inheritdoc cref="Intersects(IRectangle, ICircle, DistanceType)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Intersects(this IRectangle rect, ValueCircle circle, DistanceType distanceType = DistanceType.Euclidean)
+    {
+        ArgumentNullException.ThrowIfNull(rect);
+
+        var closestX = Math.Clamp(circle.Center.X, rect.Left, rect.Right);
+        var closestY = Math.Clamp(circle.Center.Y, rect.Top, rect.Bottom);
+
+        return distanceType switch
+        {
+            DistanceType.Manhattan => new Point(closestX, closestY).ManhattanDistanceFrom(Point.From(circle.Center)) < circle.Radius,
+            DistanceType.Euclidean => new Point(closestX, closestY).EuclideanDistanceFrom(Point.From(circle.Center)) < circle.Radius,
+            _                      => throw new ArgumentOutOfRangeException(nameof(distanceType), distanceType, null)
+        };
+    }
+
+    /// <inheritdoc cref="Intersects(IRectangle, ICircle, DistanceType)" />
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Intersects(this ValueRectangle rect, ICircle circle, DistanceType distanceType = DistanceType.Euclidean)
+    {
+        ArgumentNullException.ThrowIfNull(circle);
+
+        var closestX = Math.Clamp(circle.Center.X, rect.Left, rect.Right);
+        var closestY = Math.Clamp(circle.Center.Y, rect.Top, rect.Bottom);
+
+        return distanceType switch
+        {
+            DistanceType.Manhattan => new Point(closestX, closestY).ManhattanDistanceFrom(Point.From(circle.Center)) < circle.Radius,
+            DistanceType.Euclidean => new Point(closestX, closestY).EuclideanDistanceFrom(Point.From(circle.Center)) < circle.Radius,
+            _                      => throw new ArgumentOutOfRangeException(nameof(distanceType), distanceType, null)
+        };
     }
 
     /// <summary>
@@ -315,6 +507,30 @@ public static class RectangleExtensions
             DistanceType.Euclidean => new Point(closestX, closestY).EuclideanDistanceFrom(Point.From(circle.Center)) < circle.Radius,
             _                      => throw new ArgumentOutOfRangeException(nameof(distanceType), distanceType, null)
         };
+    }
+    #endregion
+
+    #region Rectangle TryGetRandomPoints
+    /// <inheritdoc cref="TryGetRandomPoint(IRectangle, Func{Point, bool}, out Point?)" />
+    public static bool TryGetRandomPoint(this ValueRectangle rect, Func<Point, bool> predicate, [NotNullWhen(true)] out Point? point)
+    {
+        point = null;
+
+        if (!rect.GetPoints()
+                 .Any(predicate))
+            return false;
+
+        while (true)
+        {
+            var randomPoint = rect.GetRandomPoint();
+
+            if (predicate(randomPoint))
+            {
+                point = randomPoint;
+
+                return true;
+            }
+        }
     }
 
     /// <summary>
@@ -358,4 +574,5 @@ public static class RectangleExtensions
             }
         }
     }
+    #endregion
 }
