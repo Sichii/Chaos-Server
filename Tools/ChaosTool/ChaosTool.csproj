@@ -5,7 +5,7 @@
         <UseWPF>true</UseWPF>
         <AssemblyName>ChaosTool</AssemblyName>
         <RootNamespace>ChaosTool</RootNamespace>
-        <ApplicationIcon>..\..\Chaos\Resources\chaos.ico</ApplicationIcon>
+        <ApplicationIcon>Resources\chaosTool.ico</ApplicationIcon>
         <TargetFramework>net9.0-windows</TargetFramework>
     </PropertyGroup>
 
@@ -123,9 +123,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Include="..\..\Chaos\Resources\chaos.ico">
-            <Link>chaos.ico</Link>
-        </None>
+        <Folder Include="Resources\"/>
     </ItemGroup>
 
 </Project>
