@@ -1,9 +1,11 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Converters.Server;
 
@@ -38,7 +40,7 @@ public sealed class DisplayDialogConverter : PacketConverterBase<DisplayDialogAr
         var dialogId = reader.ReadUInt16();
         var hasPreviousButton = reader.ReadBoolean();
         var hasNextButton = reader.ReadBoolean();
-        var shouldIllustrate = reader.ReadBoolean();
+        var shouldIllustrate = !reader.ReadBoolean(); //why is this backwards? who knows
         var name = reader.ReadString8();
         var text = reader.ReadString16();
 
@@ -170,7 +172,7 @@ public sealed class DisplayDialogConverter : PacketConverterBase<DisplayDialogAr
         writer.WriteUInt16(args.DialogId);
         writer.WriteBoolean(args.HasPreviousButton);
         writer.WriteBoolean(args.HasNextButton);
-        writer.WriteBoolean(args.ShouldIllustrate);
+        writer.WriteBoolean(!args.ShouldIllustrate); //why is this backwards? who knows
         writer.WriteString8(args.Name);
         writer.WriteString16(args.Text);
 

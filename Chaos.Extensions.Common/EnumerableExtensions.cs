@@ -113,6 +113,58 @@ public static class EnumerableExtensions
     }
 
     /// <summary>
+    ///     Randomly selects a number of elements from the given enumerable
+    /// </summary>
+    /// <param name="source">
+    ///     The source of items
+    /// </param>
+    /// <param name="count">
+    ///     The amount of items to randomly select
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of the item
+    /// </typeparam>
+    /// <returns>
+    ///     A randomly selected sequence of items from the source. Count items are returned, and order is preserved.
+    /// </returns>
+    public static IEnumerable<T> TakeRandom<T>(this IEnumerable<T> source, int count)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+
+        ArgumentOutOfRangeException.ThrowIfLessThan(count, 0, nameof(count));
+
+        var collection = source.ToList();
+
+        if (count >= collection.Count)
+            return collection;
+
+        return RandomlyIterate(collection, count);
+
+        // variant of reservoir sampling
+        static IEnumerable<T> RandomlyIterate(List<T> localCollection, int localCount)
+        {
+            var remaining = localCollection.Count;
+
+            for (var i = 0; i < localCollection.Count; i++)
+            {
+                var probability = (double)localCount / remaining;
+
+                if (Random.Shared.NextDouble() <= probability)
+                {
+                    yield return localCollection[i];
+
+                    localCount--;
+
+                    if (localCount == 0)
+                        yield break;
+                }
+
+                remaining--;
+            }
+        }
+    }
+
+    /// <summary>
     ///     Orders the given enumerable by the given comparer
     /// </summary>
     public static IOrderedEnumerable<T> ThenBy<T>(this IOrderedEnumerable<T> orderedEnumerable, IComparer<T> comparer)

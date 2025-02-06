@@ -1,6 +1,22 @@
 [
     {
-        "name": "Dialog Tester",
-        "imageName": "dragon.spf"
+        "name": "Shop Tester",
+        "imageName": "buls.spf"
+    },
+    {
+        "name": "Bank Tester",
+        "imageName": "bank.spf"
+    },
+    {
+        "name": "Trainer Tester",
+        "imageName": "black.spf"
+    },
+    {
+        "name": "Guild Tester",
+        "imageName": "seba.spf"
+    },
+    {
+        "name": "Misc Tester 1",
+        "imageName": "metus.spf"
     }
 ]

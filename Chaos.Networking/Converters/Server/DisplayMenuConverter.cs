@@ -1,9 +1,13 @@
+#region
+using System.Text;
 using Chaos.DarkAges.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Converters.Server;
 
@@ -261,6 +265,9 @@ public sealed class DisplayMenuConverter : PacketConverterBase<DisplayMenuArgs>
         writer.WriteString8(args.Name);
         writer.WriteString16(args.Text);
 
+        var encoding = Encoding.GetEncoding(949);
+        var headerLength = 18 + encoding.GetByteCount(args.Name) + encoding.GetByteCount(args.Text);
+
         switch (args.MenuType)
         {
             case MenuType.Menu:
@@ -300,6 +307,27 @@ public sealed class DisplayMenuConverter : PacketConverterBase<DisplayMenuArgs>
 
             case MenuType.ShowItems:
                 writer.WriteUInt16(args.PursuitId);
+
+                var itemCount = args.Items!.Count;
+                var totalExpectedNameLength = args.Items.Sum(item => encoding.GetByteCount(item.Name));
+                var totalExpectedLength = headerLength + 4 + itemCount * 11 + totalExpectedNameLength;
+
+                if (totalExpectedLength > ushort.MaxValue)
+                {
+                    var currentCount = headerLength + 4;
+
+                    args.Items = args.Items
+                                     .Shuffle()
+                                     .TakeWhile(
+                                         item =>
+                                         {
+                                             currentCount += 11 + encoding.GetByteCount(item.Name);
+
+                                             return currentCount < ushort.MaxValue;
+                                         })
+                                     .ToList();
+                }
+
                 writer.WriteUInt16((ushort)args.Items!.Count);
 
                 foreach (var item in args.Items)
@@ -310,7 +338,7 @@ public sealed class DisplayMenuConverter : PacketConverterBase<DisplayMenuArgs>
                     writer.WriteString8(item.Name);
 
                     //TODO: figure out what this is, maybe something to do with metadatas
-                    writer.WriteString8("what is this");
+                    writer.WriteString8("");
                 }
 
                 break;
