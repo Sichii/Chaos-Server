@@ -97,23 +97,87 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     private Task SaveUserAsync(Aisling aisling) => AislingStore.SaveAsync(aisling);
     #endregion
 
-    #region OnHandlers
-    public ValueTask OnBeginChant(IChaosWorldClient client, in Packet packet)
+    #region Utility
+    private async ValueTask LoadAislingAsync(IChaosWorldClient client, IRedirect redirect)
     {
-        var args = PacketSerializer.Deserialize<BeginChantArgs>(in packet);
-
-        return ExecuteHandler(client, args, InnerOnBeginChant);
-
-        static ValueTask InnerOnBeginChant(IChaosWorldClient localClient, BeginChantArgs localArgs)
+        try
         {
-            localClient.Aisling.UserState |= UserState.IsChanting;
-            localClient.Aisling.ChantTimer.Start(localArgs.CastLineCount);
+            client.Crypto = new Crypto(redirect.Seed, redirect.Key, redirect.Name);
 
-            return default;
+            var aisling = await AislingStore.LoadAsync(redirect.Name);
+
+            client.Aisling = aisling;
+            aisling.Client = client;
+
+            await using var sync = await aisling.MapInstance.Sync.WaitAsync();
+
+            try
+            {
+                aisling.Guild?.Associate(aisling);
+                aisling.MailBox = MailStore.Load(aisling.Name);
+                aisling.BeginObserving();
+                client.SendAttributes(StatUpdateType.Full);
+                client.SendLightLevel(aisling.MapInstance.CurrentLightLevel);
+                client.SendUserId();
+                aisling.MapInstance.AddAislingDirect(aisling, aisling);
+                client.SendEditableProfileRequest();
+
+                foreach (var channel in aisling.ChannelSettings.ToList())
+                {
+                    //try to join channel
+                    //remove from channel if it fails
+                    if (!ChannelService.JoinChannel(aisling, channel.ChannelName, true))
+                    {
+                        aisling.ChannelSettings.Remove(channel);
+
+                        continue;
+                    }
+
+                    //set custom channel color if it exists
+                    if (channel.MessageColor.HasValue)
+                        ChannelService.SetChannelColor(aisling, channel.ChannelName, channel.MessageColor.Value);
+                }
+
+                client.ReceiveSync.Name = $"WorldClient {client.RemoteIp} {aisling.Name}";
+
+                Logger.WithTopics(
+                          Topics.Servers.WorldServer,
+                          Topics.Entities.Aisling,
+                          Topics.Actions.Redirect,
+                          Topics.Actions.Login)
+                      .WithProperty(client)
+                      .LogInformation("World redirect finalized for {@AislingName}", aisling.Name);
+            } catch (Exception e)
+            {
+                Logger.WithTopics(
+                          Topics.Servers.WorldServer,
+                          Topics.Entities.Aisling,
+                          Topics.Actions.Redirect,
+                          Topics.Actions.Login)
+                      .WithProperty(aisling)
+                      .LogError(e, "Failed to add aisling {@AislingName} to the world", aisling.Name);
+
+                client.Disconnect();
+            }
+        } catch (Exception e)
+        {
+            Logger.WithTopics(
+                      Topics.Servers.WorldServer,
+                      Topics.Entities.Aisling,
+                      Topics.Actions.Redirect,
+                      Topics.Actions.Login)
+                  .WithProperty(client)
+                  .WithProperty(redirect)
+                  .LogError(
+                      e,
+                      "Client with ip {@ClientIp} failed to load aisling {@AislingName}",
+                      client.RemoteIp,
+                      redirect.Name);
+
+            client.Disconnect();
         }
     }
 
-    #region Board Request
     private bool TryGetBoard(IChaosWorldClient client, BoardInteractionArgs args, [MaybeNullWhen(false)] out BoardBase boardBase)
     {
         boardBase = null;
@@ -159,6 +223,25 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     }
     #endregion
 
+    #region OnHandlers
+    public ValueTask OnBeginChant(IChaosWorldClient client, in Packet packet)
+    {
+        var args = PacketSerializer.Deserialize<BeginChantArgs>(in packet);
+
+        return ExecuteHandler(client, args, InnerOnBeginChant);
+
+        static ValueTask InnerOnBeginChant(IChaosWorldClient localClient, BeginChantArgs localArgs)
+        {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
+            localClient.Aisling.UserState |= UserState.IsChanting;
+            localClient.Aisling.ChantTimer.Start(localArgs.CastLineCount);
+
+            return default;
+        }
+    }
+
     public ValueTask OnBoardInteraction(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<BoardInteractionArgs>(in packet);
@@ -167,6 +250,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnBoardInteraction(IChaosWorldClient localClient, BoardInteractionArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             switch (localArgs.BoardRequestType)
             {
                 case BoardRequestType.BoardList:
@@ -287,6 +373,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnChant(IChaosWorldClient localClient, ChantArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var message = localArgs.ChantMessage;
 
             if (message.Length > CONSTANTS.MAX_MESSAGE_LINE_LENGTH)
@@ -306,6 +395,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnClick(IChaosWorldClient localClient, ClickArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             if (localArgs.TargetId.HasValue)
             {
                 if (localArgs.TargetId == uint.MaxValue)
@@ -400,86 +492,6 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         }
     }
 
-    public async ValueTask LoadAislingAsync(IChaosWorldClient client, IRedirect redirect)
-    {
-        try
-        {
-            client.Crypto = new Crypto(redirect.Seed, redirect.Key, redirect.Name);
-
-            var aisling = await AislingStore.LoadAsync(redirect.Name);
-
-            client.Aisling = aisling;
-            aisling.Client = client;
-
-            await using var sync = await aisling.MapInstance.Sync.WaitAsync();
-
-            try
-            {
-                aisling.Guild?.Associate(aisling);
-                aisling.MailBox = MailStore.Load(aisling.Name);
-                aisling.BeginObserving();
-                client.SendAttributes(StatUpdateType.Full);
-                client.SendLightLevel(aisling.MapInstance.CurrentLightLevel);
-                client.SendUserId();
-                aisling.MapInstance.AddAislingDirect(aisling, aisling);
-                client.SendEditableProfileRequest();
-
-                foreach (var channel in aisling.ChannelSettings.ToList())
-                {
-                    //try to join channel
-                    //remove from channel if it fails
-                    if (!ChannelService.JoinChannel(aisling, channel.ChannelName, true))
-                    {
-                        aisling.ChannelSettings.Remove(channel);
-
-                        continue;
-                    }
-
-                    //set custom channel color if it exists
-                    if (channel.MessageColor.HasValue)
-                        ChannelService.SetChannelColor(aisling, channel.ChannelName, channel.MessageColor.Value);
-                }
-
-                client.ReceiveSync.Name = $"WorldClient {client.RemoteIp} {aisling.Name}";
-
-                Logger.WithTopics(
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Aisling,
-                          Topics.Actions.Redirect,
-                          Topics.Actions.Login)
-                      .WithProperty(client)
-                      .LogInformation("World redirect finalized for {@AislingName}", aisling.Name);
-            } catch (Exception e)
-            {
-                Logger.WithTopics(
-                          Topics.Servers.WorldServer,
-                          Topics.Entities.Aisling,
-                          Topics.Actions.Redirect,
-                          Topics.Actions.Login)
-                      .WithProperty(aisling)
-                      .LogError(e, "Failed to add aisling {@AislingName} to the world", aisling.Name);
-
-                client.Disconnect();
-            }
-        } catch (Exception e)
-        {
-            Logger.WithTopics(
-                      Topics.Servers.WorldServer,
-                      Topics.Entities.Aisling,
-                      Topics.Actions.Redirect,
-                      Topics.Actions.Login)
-                  .WithProperty(client)
-                  .WithProperty(redirect)
-                  .LogError(
-                      e,
-                      "Client with ip {@ClientIp} failed to load aisling {@AislingName}",
-                      client.RemoteIp,
-                      redirect.Name);
-
-            client.Disconnect();
-        }
-    }
-
     public ValueTask OnClientWalk(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<ClientWalkArgs>(in packet);
@@ -488,8 +500,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnClientWalk(IChaosWorldClient localClient, ClientWalkArgs localArgs)
         {
-            //if player is in a world map, dont allow them to walk
-            if (localClient.Aisling.ActiveObject.TryGet<WorldMap>() != null)
+            if (localClient.Aisling.IsOnWorldMap)
                 return default;
 
             //TODO: should i refresh the client if the points don't match up? seems like it might get obnoxious
@@ -508,6 +519,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnDialogInteraction(IChaosWorldClient localClient, DialogInteractionArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var dialog = localClient.Aisling.ActiveDialog.Get();
 
             if (dialog == null)
@@ -560,6 +574,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnEmote(IChaosWorldClient localClient, EmoteArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             if ((int)localArgs.BodyAnimation <= 44)
                 client.Aisling.AnimateBody(localArgs.BodyAnimation, 100);
 
@@ -575,6 +592,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnDisplayEntityRequest(IChaosWorldClient localClient, DisplayEntityRequestArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var aisling = localClient.Aisling;
             var mapInstance = aisling.MapInstance;
 
@@ -599,6 +619,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnExchangeInteraction(IChaosWorldClient localClient, ExchangeInteractionArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var exchange = localClient.Aisling.ActiveObject.TryGet<Exchange>();
 
             if (exchange == null)
@@ -695,6 +718,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnGoldDrop(IChaosWorldClient localClient, GoldDropArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var map = localClient.Aisling.MapInstance;
 
             if (!localClient.Aisling.WithinRange(localArgs.DestinationPoint, Options.DropRange))
@@ -717,6 +743,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnGoldDroppedOnCreature(IChaosWorldClient localClient, GoldDroppedOnCreatureArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var map = localClient.Aisling.MapInstance;
 
             if (localArgs.Amount <= 0)
@@ -901,6 +930,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnIgnore(IChaosWorldClient localClient, IgnoreArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             switch (localArgs.IgnoreType)
             {
                 case IgnoreType.Request:
@@ -933,6 +965,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnItemDrop(IChaosWorldClient localClient, ItemDropArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             localClient.Aisling.TryDrop(
                 localArgs.DestinationPoint,
                 localArgs.SourceSlot,
@@ -951,6 +986,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnItemDroppedOnCreature(IChaosWorldClient localClient, ItemDroppedOnCreatureArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var map = localClient.Aisling.MapInstance;
 
             if (!map.TryGetEntity<Creature>(localArgs.TargetId, out var target))
@@ -1017,6 +1055,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnPickup(IChaosWorldClient localClient, PickupArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var map = localClient.Aisling.MapInstance;
 
             if (!localClient.Aisling.WithinRange(localArgs.SourcePoint, Options.PickupRange))
@@ -1071,6 +1112,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnProfileRequest(IChaosWorldClient localClient)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             localClient.SendSelfProfile();
 
             return default;
@@ -1085,6 +1129,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         async ValueTask InnerOnPublicMessage(IChaosWorldClient localClient, PublicMessageArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return;
+
             if (CommandInterceptor.IsCommand(localArgs.Message))
             {
                 Logger.WithTopics(
@@ -1114,6 +1161,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnMenuInteraction(IChaosWorldClient localClient, MenuInteractionArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var dialog = localClient.Aisling.ActiveDialog.Get();
 
             if (dialog == null)
@@ -1157,6 +1207,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnRaiseStat(IChaosWorldClient localClient, RaiseStatArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             if (localClient.Aisling.UserStatSheet.UnspentPoints > 0)
                 if (localClient.Aisling.UserStatSheet.IncrementStat(localArgs.Stat))
                 {
@@ -1174,6 +1227,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnRefreshRequest(IChaosWorldClient localClient)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             localClient.Aisling.Refresh();
 
             return default;
@@ -1188,6 +1244,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnSocialStatus(IChaosWorldClient localClient, SocialStatusArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             localClient.Aisling.Options.SocialStatus = localArgs.SocialStatus;
 
             return default;
@@ -1200,6 +1259,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnSpacebar(IChaosWorldClient localClient)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             localClient.SendCancelCasting();
 
             foreach (var skill in localClient.Aisling.SkillBook)
@@ -1218,6 +1280,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnSwapSlot(IChaosWorldClient localClient, SwapSlotArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             switch (localArgs.PanelType)
             {
                 case PanelType.Inventory:
@@ -1268,6 +1333,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnTurn(IChaosWorldClient localClient, TurnArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             localClient.Aisling.Turn(localArgs.Direction);
 
             return default;
@@ -1282,6 +1350,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnUnequip(IChaosWorldClient localClient, UnequipArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             localClient.Aisling.UnEquip(localArgs.EquipmentSlot);
 
             return default;
@@ -1296,6 +1367,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnItemUse(IChaosWorldClient localClient, ItemUseArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var exchange = localClient.Aisling.ActiveObject.TryGet<Exchange>();
 
             if (exchange != null)
@@ -1319,6 +1393,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnOptionToggle(IChaosWorldClient localClient, OptionToggleArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             if (localArgs.UserOption == UserOption.Request)
             {
                 localClient.SendServerMessage(ServerMessageType.UserOptions, localClient.Aisling.Options.ToString());
@@ -1341,6 +1418,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnSkillUse(IChaosWorldClient localClient, SkillUseArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             localClient.Aisling.TryUseSkill(localArgs.SourceSlot);
 
             return default;
@@ -1355,6 +1435,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnSpellUse(IChaosWorldClient localClient, SpellUseArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             if (localClient.Aisling.SpellBook.TryGetObject(localArgs.SourceSlot, out var spell))
             {
                 Creature source = localClient.Aisling;
@@ -1425,6 +1508,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnWhisper(IChaosWorldClient localClient, WhisperArgs localArgs)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             var fromAisling = localClient.Aisling;
 
             if (localArgs.Message.Length > 100)
@@ -1537,6 +1623,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnWorldListRequest(IChaosWorldClient localClient)
         {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
             localClient.SendWorldList(Aislings.ToList());
 
             return default;
