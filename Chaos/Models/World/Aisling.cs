@@ -138,6 +138,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     /// <inheritdoc />
     EntityType IDialogSourceEntity.EntityType => EntityType.Aisling;
 
+    public bool IsOnWorldMap => ActiveObject.TryGet<Collections.WorldMap>() != null;
+
     public bool ShouldRefresh
         => !Trackers.LastRefresh.HasValue
            || (DateTime.UtcNow.Subtract(Trackers.LastRefresh.Value)
