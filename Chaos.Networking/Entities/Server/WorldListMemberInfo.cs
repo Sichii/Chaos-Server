@@ -1,5 +1,7 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Networking.Abstractions.Definitions;
+#endregion
 
 namespace Chaos.Networking.Entities.Server;
 
@@ -17,6 +19,11 @@ public sealed record WorldListMemberInfo
     ///     The color the name will show up as on the list
     /// </summary>
     public WorldListColor Color { get; set; }
+
+    /// <summary>
+    ///     Whether or not the character is in the same guild as the aisling requesting the list
+    /// </summary>
+    public bool IsGuilded { get; set; }
 
     /// <summary>
     ///     Whether or not the character is a master

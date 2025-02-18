@@ -1,9 +1,11 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Converters.Server;
 
@@ -39,7 +41,10 @@ public sealed class UserIdConverter : PacketConverterBase<UserIdArgs>
     {
         writer.WriteUInt32(args.Id);
         writer.WriteByte((byte)args.Direction);
-        writer.WriteByte(0); //LI: what is this for?
+
+        //having any number here allows the guild list to work
+        writer.WriteByte(1);
+
         writer.WriteByte((byte)args.BaseClass);
         writer.WriteByte(0); //LI: what is this for?
         writer.WriteByte(0); //LI: what is this for?

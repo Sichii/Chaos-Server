@@ -21,6 +21,7 @@ namespace Chaos.Networking.Abstractions;
 /// </summary>
 public abstract class SocketClientBase : ISocketClient, IDisposable
 {
+    private readonly Memory<byte> Memory;
     private readonly ConcurrentQueue<SocketAsyncEventArgs> SocketArgsQueue;
     private int Count;
     private int Sequence;
@@ -44,8 +45,6 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// </summary>
     protected ILogger<SocketClientBase> Logger { get; }
 
-    private MemoryHandle MemoryHandle { get; }
-
     private IMemoryOwner<byte> MemoryOwner { get; }
 
     /// <summary>
@@ -62,9 +61,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// <inheritdoc />
     public Socket Socket { get; }
 
-    private unsafe Span<byte> Buffer => new(MemoryHandle.Pointer, ushort.MaxValue * 4);
-
-    private Memory<byte> Memory => MemoryOwner.Memory;
+    private Span<byte> Buffer => Memory.Span;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="SocketClientBase" /> class.
@@ -89,7 +86,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
         //var buffer = new byte[ushort.MaxValue];
         MemoryOwner = MemoryPool<byte>.Shared.Rent(ushort.MaxValue * 4);
-        MemoryHandle = Memory.Pin();
+        Memory = MemoryOwner.Memory;
         Logger = logger;
         PacketSerializer = packetSerializer;
         RemoteIp = (Socket.RemoteEndPoint as IPEndPoint)?.Address ?? IPAddress.None;
@@ -108,7 +105,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
         try
         {
-            MemoryHandle.Dispose();
+            Socket.Dispose();
         } catch
         {
             //ignored
@@ -117,14 +114,6 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         try
         {
             MemoryOwner.Dispose();
-        } catch
-        {
-            //ignored
-        }
-
-        try
-        {
-            Socket.Dispose();
         } catch
         {
             //ignored

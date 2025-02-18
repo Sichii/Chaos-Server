@@ -1,8 +1,10 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Converters.Server;
 
@@ -57,7 +59,18 @@ public sealed class WorldListConverter : PacketConverterBase<WorldListArgs>
 
         foreach (var user in args.CountryList)
         {
-            writer.WriteByte((byte)user.BaseClass);
+            var infoByte = (byte)user.BaseClass;
+
+            if (user.IsGuilded)
+                infoByte |= 0b_0000_1000;
+
+            //this isnt used in the current UI
+            /*if(user.IsWithinLevelRange)
+                infoByte |= 0b_0001_0000;*/
+
+            //there are other bit flags here but i dont know what they do or if they are used by anything
+
+            writer.WriteByte(infoByte);
             writer.WriteByte((byte)user.Color);
             writer.WriteByte((byte)user.SocialStatus);
             writer.WriteString8(user.Title ?? string.Empty);

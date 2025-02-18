@@ -1,4 +1,6 @@
+#region
 using Chaos.Networking.Abstractions;
+#endregion
 
 namespace Chaos.Networking;
 
@@ -20,7 +22,7 @@ public class ClientRegistry<T> : IClientRegistry<T> where T: ISocketClient
     public ClientRegistry() => Clients = new ConcurrentDictionary<uint, T>();
 
     /// <inheritdoc />
-    public virtual T? GetClient(uint id) => Clients.TryGetValue(id, out var client) ? client : default;
+    public virtual T? GetClient(uint id) => Clients.GetValueOrDefault(id);
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
