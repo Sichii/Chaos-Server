@@ -1016,7 +1016,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
     ///     walking
     /// </remarks>
-    [OverloadResolutionPriority(1)]
     public bool IsWalkable(Point point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
     {
         ignoreBlockingReactors ??= creatureType == CreatureType.Aisling;
@@ -1070,21 +1069,20 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     ///         false
     ///     </c>
     /// </returns>
-    [OverloadResolutionPriority(1)]
     public bool IsWall(Point point)
     {
         var door = GetEntitiesAtPoints<Door>(point)
             .FirstOrDefault();
 
+        //if the spot is a wall
+        //prevent them from walking
+        if (Template.IsWall(point))
+            return true;
+
         //if there's an open door (even if that door is considered a wall)
         //allow them to walk on the spot
         if (door is { Closed: false })
             return false;
-
-        //if the spot is a wall (or a closed door)
-        //prevent them from walking
-        if (Template.IsWall(point))
-            return true;
 
         //if there's a closed door return false
         //otherwise return true
