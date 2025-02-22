@@ -1,0 +1,66 @@
+{
+  "default": {
+    "entries": {
+      "Soso": {
+        "victories": 1
+      },
+      "Ieyasu": {
+        "losses": 1
+      },
+      "Versaille": {
+        "victories": 2
+      },
+      "Garen": {
+        "losses": 1
+      },
+      "Aroha": {
+        "victories": 1
+      },
+      "Capitano": {
+        "victories": 1,
+        "losses": 2
+      },
+      "Ella": {
+        "losses": 1
+      },
+      "Cothrom": {
+        "victories": 1
+      },
+      "Blizz": {
+        "losses": 1
+      },
+      "Suibai": {
+        "victories": 1,
+        "losses": 1
+      },
+      "WHUG": {
+        "victories": 1
+      },
+      "Valhar": {
+        "victories": 1
+      },
+      "Pyrex": {
+        "losses": 2
+      },
+      "Revane": {
+        "victories": 1
+      },
+      "Dagger": {
+        "victories": 1,
+        "losses": 2
+      },
+      "skinner": {
+        "victories": 1
+      },
+      "CENAS": {
+        "losses": 1
+      },
+      "giegue": {
+        "victories": 1
+      },
+      "Eternalty": {
+        "losses": 1
+      }
+    }
+  }
+}

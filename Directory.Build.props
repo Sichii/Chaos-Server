@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup>
-        <LangVersion>13.0</LangVersion>
+        <LangVersion>preview</LangVersion>
         <TargetFramework>net9.0</TargetFramework>
         <TieredPGO>true</TieredPGO>
         <TieredCompilation>true</TieredCompilation>

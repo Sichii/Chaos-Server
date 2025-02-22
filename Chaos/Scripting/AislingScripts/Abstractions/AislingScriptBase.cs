@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.DarkAges.Definitions;
@@ -5,6 +6,7 @@ using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.AislingScripts.Abstractions;
 
@@ -77,6 +79,12 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
 
     /// <inheritdoc />
     public virtual void OnItemDroppedOn(Aisling source, Item item) { }
+
+    /// <inheritdoc />
+    public virtual void OnLogin() { }
+
+    /// <inheritdoc />
+    public virtual void OnLogout() { }
 
     /// <inheritdoc />
     public virtual void OnPublicMessage(Creature source, string message) { }

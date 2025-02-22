@@ -1,37 +1,31 @@
 {
-  "aggroRange": 6,
-  "assailIntervalMs": 1500,
-  "expReward": 50,
-  "lootTableKeys": [
-    "testAreaRats"
-  ],
-  "maxGoldDrop": 30,
-  "minGoldDrop": 10,
-  "moveIntervalMs": 1500,
-  "name": "Common Rat",
-  "scriptKeys": [
-    "default"
-  ],
-  "scriptVars": {},
-  "skillIntervalMs": 1500,
-  "skillTemplateKeys": [
-    "Assail"
-  ],
-  "spellIntervalMs": 10000,
-  "spellTemplateKeys": [],
-  "sprite": 7,
-  "statSheet": {
-    "level": 1,
-    "ac": 50,
-    "maximumHp": 100,
-    "maximumMp": 100,
-    "con": 2,
-    "dex": 1,
-    "int": 1,
-    "str": 1,
-    "wis": 1
-  },
-  "templateKey": "common_rat",
-  "type": "Normal",
-  "wanderIntervalMs": 2000
+    "aggroRange": 6,
+    "assailIntervalMs": 1500,
+    "expReward": 50,
+    "lootTableKeys": ["testAreaRats"],
+    "maxGoldDrop": 30,
+    "minGoldDrop": 10,
+    "moveIntervalMs": 1500,
+    "name": "Common Rat",
+    "scriptKeys": ["default"],
+    "scriptVars": {},
+    "skillIntervalMs": 1500,
+    "skillTemplateKeys": ["Assail"],
+    "spellIntervalMs": 10000,
+    "spellTemplateKeys": [],
+    "sprite": 959,
+    "statSheet": {
+        "level": 1,
+        "ac": 50,
+        "maximumHp": 100,
+        "maximumMp": 100,
+        "con": 2,
+        "dex": 1,
+        "int": 1,
+        "str": 1,
+        "wis": 1
+    },
+    "templateKey": "common_rat",
+    "type": "Normal",
+    "wanderIntervalMs": 2000
 }

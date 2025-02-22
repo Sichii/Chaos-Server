@@ -489,6 +489,68 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                 }
             });
 
+    /// <summary>
+    ///     Attempts to move this entity from its current map to the destination map
+    /// </summary>
+    /// <remarks>
+    ///     This method does not use the MapInstance.BeginInvoke api due to not knowing who the caller is. The caller could be
+    ///     from another map, which would require entrancy into this entity's map synchronization, but there is no way of
+    ///     knowing where the caller is from. In order for this to be safe, it has to make no assumptions and deal with every
+    ///     requirement itself.
+    /// </remarks>
+    public virtual async Task TraverseMapAsync(
+        MapInstance destinationMap,
+        IPoint destinationPoint,
+        bool ignoreSharding = false,
+        bool fromWolrdMap = false,
+        Func<Task>? onTraverse = null)
+    {
+        var currentMap = MapInstance;
+
+        var aisling = this as Aisling;
+
+        if (aisling is not null)
+            await aisling.Client.ReceiveSync.WaitAsync();
+
+        try
+        {
+            await using var sync = await ComplexSynchronizationHelper.WaitAsync(
+                TimeSpan.FromMilliseconds(500),
+                TimeSpan.FromMilliseconds(3),
+                currentMap.Sync,
+                destinationMap.Sync);
+
+            if (!fromWolrdMap && !currentMap.RemoveEntity(this))
+                return;
+
+            if (currentMap.InstanceId != destinationMap.InstanceId)
+                Trackers.LastMapInstanceId = currentMap.InstanceId;
+
+            if (aisling is not null && ignoreSharding)
+                destinationMap.AddAislingDirect(aisling, destinationPoint);
+            else
+                destinationMap.AddEntity(this, destinationPoint);
+
+            if (onTraverse is not null)
+                await onTraverse();
+        } catch (Exception e)
+        {
+            Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.Creature, Topics.Actions.Traverse)
+                  .WithProperty(this)
+                  .WithProperty(currentMap)
+                  .WithProperty(destinationMap)
+                  .LogError(
+                      e,
+                      "Exception thrown while creature {@CreatureName} attempted to traverse from map {@FromMapInstanceId} to map {@ToMapInstanceId}",
+                      Name,
+                      currentMap.InstanceId,
+                      destinationMap.InstanceId);
+        } finally
+        {
+            aisling?.Client.ReceiveSync.Release();
+        }
+    }
+
     public virtual bool TryDrop(IPoint point, IEnumerable<Item> items, [MaybeNullWhen(false)] out GroundItem[] groundItems)
     {
         groundItems = items.Select(i => new GroundItem(i, MapInstance, point))

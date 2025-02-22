@@ -7,7 +7,8 @@ public enum ShardingType : byte
     None,
     AbsolutePlayerLimit,
     PlayerLimit,
-    AbsoluteGroupLimit
+    AbsoluteGroupLimit,
+    AbsoluteGuildLimit
 }
 
 [Flags]

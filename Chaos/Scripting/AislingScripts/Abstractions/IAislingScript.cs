@@ -20,6 +20,16 @@ public interface IAislingScript : ICreatureScript
     IEnumerable<BoardBase> GetBoardList();
 
     /// <summary>
+    ///     Triggers when the aisling logs in (after they have been added to the world)
+    /// </summary>
+    void OnLogin();
+
+    /// <summary>
+    ///     Triggers when the aisling logs out (before they are removed from the world)
+    /// </summary>
+    void OnLogout();
+
+    /// <summary>
     ///     Triggers when the aisling's stat is increased
     /// </summary>
     /// <param name="stat">

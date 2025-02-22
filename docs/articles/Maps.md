@@ -105,7 +105,8 @@ those options, a new map instance will be spun up with a new map instance id. Th
 the instance id of the map that it was sharded from, but with a guid attached. You can view all the shards of a map
 instance from any of the shards, or the base map instance by accessing the `MapInstance.Shards` property.
 
-It's important to note here that these shards are the same type of "instances" that you might find in AAA MMO's. These
+It's important to note here that these shards are not the same type of "instances" that you might find in AAA MMO's.
+These
 instances are not owned or associated to any aisling, and there are no persistent zone timers or anything.
 
 ### AbsolutePlayerLimit
@@ -138,6 +139,19 @@ The same as AbsolutePlayerLimit except for the following
   they will be added moved to `ShardingOptions.ExitLocation`
 - If a shard is over-filled due to a player logging into an already-full shard, that player will be moved to
   `ShardingOptions.ExitLocation` after a short delay. If the player is grouped by someone, they will not be moved.
+
+### AbsoluteGuildLimit
+
+- Once the map instance has reached `ShardingOptions.Limit` number of guilds, any aisling not in an existing guild that
+  get added will instead be added to any existing shards that arent yet full
+- If no shards exist, or all shards are full, a new shard will be created
+- If the limit is 1, if no group member is in an existing shard, a new shard will always be created. (shards will not be
+  reused)
+- If a player logs out of one of these instances, if the instance still exists, they will be added back to it, otherwise
+  they will be added moved to `ShardingOptions.ExitLocation`
+- If a shard is over-filled due to a player logging into an already-full shard, that player will be moved to
+  `ShardingOptions.ExitLocation` after a short delay. If the player is in one of the guilds that are already in the
+  shard, they will not be moved.
 
 ## Scripting
 

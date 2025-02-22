@@ -1,0 +1,39 @@
+{
+  "default": {
+    "guildProperties": {
+      "entries": {
+        "Dev Team": {
+          "deed": true,
+          "armory": true
+        },
+        "Fidalgos Cavaleiros": {
+          "deed": true,
+          "armory": true,
+          "bank": true,
+          "tailor": true
+        },
+        "The Fatui": {
+          "deed": true,
+          "armory": true,
+          "bank": true,
+          "tailor": true,
+          "combatroom": true
+        },
+        "Fiends": {
+          "deed": true,
+          "armory": true,
+          "bank": true,
+          "tailor": true,
+          "combatroom": true
+        },
+        "OH NATE": {
+          "deed": true,
+          "armory": true,
+          "bank": true,
+          "tailor": true,
+          "combatroom": true
+        }
+      }
+    }
+  }
+}

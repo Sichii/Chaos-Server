@@ -1,4 +1,5 @@
 #region
+using System.Buffers;
 using System.Buffers.Binary;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -111,8 +112,7 @@ public ref struct SpanWriter
 
         //create a new buffer of length * 3 OR (length + bytesToWrite) * 1.5 (whichever is bigger)
         var newLength = (int)Math.Max(buffer.Length * 3, (buffer.Length + bytesToWrite) * 1.5);
-        var newBuffer = new byte[newLength];
-        Buffer = new Span<byte>(newBuffer);
+        Buffer = new byte[newLength].AsSpan();
         buffer.CopyTo(Buffer);
     }
 

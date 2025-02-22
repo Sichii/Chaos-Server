@@ -174,8 +174,8 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     /// <summary>
     ///     Changes the rank of a member in the guild
     /// </summary>
-    /// <param name="aisling">
-    ///     The aisling whose rank to change
+    /// <param name="aislingName">
+    ///     The name of the aisling whose rank to change
     /// </param>
     /// <param name="newTier">
     ///     The new rank tier the aisling is being set to
@@ -186,37 +186,41 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     /// <exception cref="InvalidOperationException">
     ///     Thrown when the aisling is not in a guild
     /// </exception>
-    public void ChangeRank(Aisling aisling, int newTier, Aisling by)
+    public void ChangeRank(string aislingName, int newTier, Aisling by)
     {
         using var @lock = Sync.EnterScope();
 
-        if (aisling.Guild is null)
-            throw new InvalidOperationException(
-                $"Attempted to change rank of \"{aisling.Name}\" in guild \"{Name}\", but that player is not in a guild");
+        if (!UnsafeTryGetRank(newTier, out var newRank))
+            throw new InvalidOperationException("Attempted to change rank of a member to a rank that does not exist.");
 
-        if (string.IsNullOrEmpty(aisling.GuildRank))
-            throw new InvalidOperationException(
-                $"Attempted to change rank of \"{aisling.Name}\" in guild \"{Name}\", but that player does not have a rank");
+        var currentRank = UnsafeRankof(aislingName);
 
-        var newRank = GuildHierarchy.First(r => r.Tier == newTier);
-        var currentRank = GuildHierarchy.First(r => r.Name.EqualsI(aisling.GuildRank!));
+        if (currentRank is null)
+            throw new InvalidOperationException("Attempted to change rank of a member that is not in the guild.");
 
         if (currentRank.Tier == 0)
             return;
 
-        currentRank.RemoveMember(aisling.Name);
-        newRank.AddMember(aisling.Name);
-        aisling.GuildRank = newRank.Name;
-        aisling.Client.SendSelfProfile();
+        currentRank.RemoveMember(aislingName);
+        newRank.AddMember(aislingName);
+
+        var aisling = ClientRegistry.FirstOrDefault(client => client.Aisling.Name.EqualsI(aislingName))
+                                    ?.Aisling;
+
+        if (aisling is not null)
+        {
+            aisling.GuildRank = newRank.Name;
+            aisling.Client.SendSelfProfile();
+        }
 
         if (newRank.Tier < currentRank.Tier)
             foreach (var member in GetOnlineMembers()
                          .Where(member => !member.Equals(by)))
-                member.SendActiveMessage($"{aisling.Name} has been promoted to {newRank.Name} by {by.Name}");
+                member.SendActiveMessage($"{aislingName} has been promoted to {newRank.Name} by {by.Name}");
         else
             foreach (var member in GetOnlineMembers()
                          .Where(member => !member.Equals(by)))
-                member.SendActiveMessage($"{aisling.Name} has been demoted to {newRank.Name} by {by.Name}");
+                member.SendActiveMessage($"{aislingName} has been demoted to {newRank.Name} by {by.Name}");
     }
 
     /// <summary>

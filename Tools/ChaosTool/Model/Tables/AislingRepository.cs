@@ -1,3 +1,4 @@
+#region
 using System.IO;
 using System.Text.Json;
 using Chaos.Extensions.Common;
@@ -6,6 +7,7 @@ using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using ChaosTool.Model.Abstractions;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace ChaosTool.Model.Tables;
 
@@ -63,7 +65,7 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
                                              .ToListAsync()
                                              .AsTask();
 
-            var trackersTask = EntityRepository.LoadAsync<TrackersSchema>(Path.Combine(path, "trackers.json"));
+            var trackersTask = EntityRepository.LoadAsync<AislingTrackersSchema>(Path.Combine(path, "trackers.json"));
 
             await Task.WhenAll(
                 aislingTask,
@@ -138,6 +140,6 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
         public required ICollection<LegendMarkSchema> Legend { get; init; }
         public required ICollection<SkillSchema> Skills { get; init; }
         public required ICollection<SpellSchema> Spells { get; init; }
-        public required TrackersSchema Trackers { get; init; }
+        public required AislingTrackersSchema Trackers { get; init; }
     }
 }

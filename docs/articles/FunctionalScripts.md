@@ -22,7 +22,7 @@ stored by it's interface, making it swappable with other implementations of that
 
 Anything that deals damage should do it through this script, rather than do it directly. This creates a single place
 where changes and logic
-can be made for how damage is applies.
+can be made for how damage is applied.
 
 ### Functional Script Construction
 

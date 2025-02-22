@@ -1,3 +1,4 @@
+#region
 using System.Runtime.InteropServices;
 using Chaos.Collections.Abstractions;
 using Chaos.DarkAges.Definitions;
@@ -6,6 +7,7 @@ using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.AislingScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.AislingScripts;
 
@@ -220,6 +222,24 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public virtual void OnLogin()
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnLogin();
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual void OnLogout()
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnLogout();
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnPublicMessage(Creature source, string message)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
@@ -229,7 +249,7 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public void OnStatIncrease(Stat stat)
+    public virtual void OnStatIncrease(Stat stat)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
             script.OnStatIncrease(stat);

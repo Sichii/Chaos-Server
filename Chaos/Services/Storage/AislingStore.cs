@@ -132,7 +132,7 @@ public sealed class AislingStore(
 
         var aislingTask = EntityRepository.LoadAndMapAsync<Aisling, AislingSchema>(aislingPath);
         var bankTask = EntityRepository.LoadAndMapAsync<Bank, BankSchema>(bankPath);
-        var trackersTask = EntityRepository.LoadAndMapAsync<AislingTrackers, TrackersSchema>(trackersPath);
+        var trackersTask = EntityRepository.LoadAndMapAsync<AislingTrackers, AislingTrackersSchema>(trackersPath);
 
         var effectsTask = EntityRepository.LoadAndMapManyAsync<IEffect, EffectSchema>(effectsPath)
                                           .ToListAsync();
@@ -192,7 +192,7 @@ public sealed class AislingStore(
         return Task.WhenAll(
             EntityRepository.SaveAndMapAsync<Aisling, AislingSchema>(aisling, aislingPath),
             EntityRepository.SaveAndMapAsync<Bank, BankSchema>(aisling.Bank, bankPath),
-            EntityRepository.SaveAndMapAsync<Trackers, TrackersSchema>(aisling.Trackers, trackersPath),
+            EntityRepository.SaveAndMapAsync<AislingTrackers, AislingTrackersSchema>(aisling.Trackers, trackersPath),
             EntityRepository.SaveAndMapManyAsync<LegendMark, LegendMarkSchema>(aisling.Legend, legendPath),
             EntityRepository.SaveAndMapManyAsync<Item, ItemSchema>(aisling.Inventory, inventoryPath),
             EntityRepository.SaveAndMapManyAsync<Skill, SkillSchema>(aisling.SkillBook, skillsPath),
