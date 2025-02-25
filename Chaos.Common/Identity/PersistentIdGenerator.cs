@@ -64,7 +64,7 @@ public sealed class PersistentIdGenerator<T> : IIdGenerator<T> where T: INumber<
         if (!Directory.Exists(SpecialDirectory))
             Directory.CreateDirectory(SpecialDirectory);
 
-        if (!File.Exists(FilePath) || persistedValue is not null)
+        if (!File.Exists(FilePath) || (persistedValue != default))
             IdGenerator = new SequentialIdGenerator<T>(persistedValue);
         else
         {
