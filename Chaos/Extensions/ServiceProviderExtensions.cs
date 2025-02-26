@@ -219,7 +219,8 @@ public static class ServiceProviderExtensions
             newMap.SimpleAdd(monster);
 
         foreach (var aisling in oldMap.GetEntities<Aisling>())
-            newMap.SimpleAdd(aisling);
+            if (aisling.Client.Connected) //dont copy dopplegangers
+                newMap.SimpleAdd(aisling);
 
         oldMap.Destroy();
 
@@ -275,7 +276,8 @@ public static class ServiceProviderExtensions
                     newMap.SimpleAdd(monster);
 
                 foreach (var aisling in oldMap.GetEntities<Aisling>())
-                    newMap.SimpleAdd(aisling);
+                    if (aisling.Client.Connected) //dont copy dopplegangers
+                        newMap.SimpleAdd(aisling);
 
                 oldMap.Destroy();
 
