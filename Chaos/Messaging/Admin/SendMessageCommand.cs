@@ -1,11 +1,13 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.DarkAges.Definitions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
+#endregion
 
 namespace Chaos.Messaging.Admin;
 
-[Command("sendmessage")]
+[Command("sendmessage", helpText: "<messageType> <message>")]
 public class SendMessageCommand : ICommand<Aisling>
 {
     /// <inheritdoc />
