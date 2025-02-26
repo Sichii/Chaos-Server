@@ -237,7 +237,12 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         foreach (var key in LocalLookup.Keys)
         {
             if (!Cache.TryGetValue(key, out var value))
+            {
+                Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Reload)
+                      .LogWarning("MapInstance with key {@Key} not found in cache when trying to reload it", key);
+
                 continue;
+            }
 
             var mapInstance = (MapInstance)value!;
             var instanceId = DeconstructKeyForType(DeconstructShardKey(key));
@@ -257,6 +262,37 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         }
 
         ReconstructShardLookups();
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public override Task ReloadAsync(string key)
+    {
+        using var @lock = Sync.EnterScope();
+
+        try
+        {
+            key = ConstructKeyForType(key);
+
+            if (!Cache.TryGetValue(key, out var value))
+            {
+                Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Reload)
+                      .LogWarning("MapInstance with key {@Key} not found in cache when trying to reload it specifically", key);
+
+                return Task.CompletedTask;
+            }
+
+            var mapInstance = (MapInstance)value!;
+            var instanceId = DeconstructKeyForType(DeconstructShardKey(key));
+
+            using var entry = Cache.CreateEntry(key);
+            entry.Value = mapInstance.IsShard ? InnerCreateFromEntry(entry, instanceId) : InnerCreateFromEntry(entry);
+        } catch (Exception e)
+        {
+            Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Reload)
+                  .LogError(e, "Failed to reload MapInstance with key {@Key}", key);
+        }
 
         return Task.CompletedTask;
     }

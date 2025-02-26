@@ -9,7 +9,7 @@ using Chaos.NLog.Logging.Extensions;
 
 namespace Chaos.Messaging.Admin;
 
-[Command("reload", helpText: "<skills|spells|items|monsters|merchants|maps|dialogs|worldMaps|loottables>")]
+[Command("reload", helpText: "<skills|spells|items|monsters|merchants|map|maps|dialogs|worldMaps|loottables> <map-key>")]
 public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<ReloadCommand> logger) : ICommand<Aisling>
 {
     private readonly ILogger<ReloadCommand> Logger = logger;
@@ -128,6 +128,27 @@ public sealed class ReloadCommand(IServiceProvider serviceProvider, ILogger<Relo
 
                             Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.MapTemplate, Topics.Actions.Reload)
                                   .LogError(e, "Failed to reload maps");
+                        }
+                    });
+
+                break;
+            case "map":
+                _ = Task.Run(
+                    async () =>
+                    {
+                        try
+                        {
+                            if (!args.TryGetNext<string>(out var mapInstanceId))
+                                mapInstanceId = aisling.MapInstance.InstanceId;
+
+                            await ServiceProvider.ReloadMapAsync(Logger, mapInstanceId);
+                            aisling.SendOrangeBarMessage("Map reloaded");
+                        } catch (Exception e)
+                        {
+                            aisling.SendOrangeBarMessage("Failed to reload map");
+
+                            Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.MapTemplate, Topics.Actions.Reload)
+                                  .LogError(e, "Failed to reload map");
                         }
                     });
 

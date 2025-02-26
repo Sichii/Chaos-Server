@@ -160,13 +160,18 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
             try
             {
                 if (!Cache.TryGetValue(key, out _))
+                {
+                    Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Reload)
+                          .LogWarning("{@TypeName} with key {@Key} not found in cache when trying to reload it", typeof(T).Name, key);
+
                     continue;
+                }
 
                 using var entry = Cache.CreateEntry(key);
                 entry.Value = CreateFromEntry(entry);
             } catch (Exception e)
             {
-                Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Load)
+                Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Reload)
                       .LogError(
                           e,
                           "Failed to reload {@TypeName} with key {@Key}",
@@ -175,6 +180,41 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
 
                 //otherwise ignored
             }
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public virtual Task ReloadAsync(string key)
+    {
+        using var @lock = Sync.EnterScope();
+
+        try
+        {
+            key = ConstructKeyForType(key);
+
+            if (!Cache.TryGetValue(key, out _))
+            {
+                Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Reload)
+                      .LogWarning(
+                          "{@TypeName} with key {@Key} not found in cache when trying to reload it specifically",
+                          typeof(T).Name,
+                          key);
+
+                return Task.CompletedTask;
+            }
+
+            using var entry = Cache.CreateEntry(key);
+            entry.Value = CreateFromEntry(entry);
+        } catch (Exception e)
+        {
+            Logger.WithTopics(Topics.Qualifiers.Forced, Topics.Actions.Reload)
+                  .LogError(
+                      e,
+                      "Failed to reload {@TypeName} with key {@Key}",
+                      typeof(T).Name,
+                      key);
+        }
 
         return Task.CompletedTask;
     }

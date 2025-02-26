@@ -24,6 +24,11 @@ public interface ISimpleCache<out TResult> : IEnumerable<TResult>
     ///     Reloads the cache
     /// </summary>
     Task ReloadAsync();
+
+    /// <summary>
+    ///     Reloads a specific entry in the cache
+    /// </summary>
+    Task ReloadAsync(string key);
 }
 
 /// <summary>
@@ -41,4 +46,14 @@ public interface ISimpleCache
     ///     The type of object to retreive
     /// </typeparam>
     TResult Get<TResult>(string key);
+
+    /// <summary>
+    ///     Reloads the cache of the given type
+    /// </summary>
+    Task ReloadAsync<T>();
+
+    /// <summary>
+    ///     Reloads a specific entry in the cache
+    /// </summary>
+    Task ReloadAsync<T>(string key);
 }

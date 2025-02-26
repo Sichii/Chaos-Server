@@ -184,12 +184,61 @@ public static class ServiceProviderExtensions
         }
     }
 
+    public static async Task ReloadMapAsync(this IServiceProvider provider, ILogger logger, string key)
+    {
+        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+        var mapTemplateCache = cacheProvider.GetCache<MapTemplate>();
+        var mapCache = cacheProvider.GetCache<MapInstance>();
+        var oldMap = mapCache.Get(key);
+
+        oldMap.Stop();
+
+        //wait for oldMap to stop and become accessible
+        await using (await oldMap.Sync.WaitAsync(TimeSpan.FromSeconds(15))) { }
+
+        //reload template and mapinstance
+        await mapTemplateCache.ReloadAsync(oldMap.Template.TemplateKey);
+        await mapCache.ReloadAsync(key);
+
+        var newMap = mapCache.Get(key);
+
+        //lock both maps
+        await using var sync = await ComplexSynchronizationHelper.WaitAsync(
+            TimeSpan.FromSeconds(10),
+            TimeSpan.FromMilliseconds(50),
+            oldMap.Sync,
+            newMap.Sync);
+
+        foreach (var monster in newMap.GetEntities<Monster>())
+            newMap.RemoveEntity(monster);
+
+        foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
+            newMap.SimpleAdd(groundEntity);
+
+        foreach (var monster in oldMap.GetEntities<Monster>())
+            newMap.SimpleAdd(monster);
+
+        foreach (var aisling in oldMap.GetEntities<Aisling>())
+            newMap.SimpleAdd(aisling);
+
+        oldMap.Destroy();
+
+        newMap.BaseInstanceId = oldMap.BaseInstanceId;
+    }
+
     public static async Task ReloadMapsAsync(this IServiceProvider provider, ILogger logger)
     {
         var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
         var mapTemplateCache = cacheProvider.GetCache<MapTemplate>();
         var mapCache = cacheProvider.GetCache<MapInstance>();
         var oldMaps = mapCache.ToDictionary(m => m.InstanceId, StringComparer.OrdinalIgnoreCase);
+
+        foreach (var map in oldMaps.Values)
+            map.Stop();
+
+        //ensure all maps are unlocked
+        foreach (var map in oldMaps.Values)
+            await using (await map.Sync.WaitAsync(TimeSpan.FromSeconds(15))) { }
 
         //locks ALL maps
         await using var oldSync = await ComplexSynchronizationHelper.WaitAsync(
