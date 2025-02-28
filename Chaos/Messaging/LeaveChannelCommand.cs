@@ -1,7 +1,9 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.World;
+#endregion
 
 namespace Chaos.Messaging;
 
@@ -18,7 +20,7 @@ public class LeaveChannelCommand(IChannelService channelService) : ICommand<Aisl
 
         channelName = ChannelService.PrependPrefix(channelName);
 
-        source.ChannelSettings.Remove(new ChannelSettings(channelName));
+        source.ChannelSettings.Remove(new ChannelSettings(channelName, true));
         ChannelService.LeaveChannel(source, channelName);
 
         return default;

@@ -11,6 +11,7 @@ using Chaos.Common.Synchronization;
 using Chaos.Cryptography;
 using Chaos.DarkAges.Definitions;
 using Chaos.DarkAges.Extensions;
+using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
@@ -32,6 +33,7 @@ using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
+using Chaos.Utilities;
 using Microsoft.Extensions.Options;
 #endregion
 
@@ -125,10 +127,20 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 foreach (var channel in aisling.ChannelSettings.ToList())
                 {
                     //try to join channel
-                    //remove from channel if it fails
                     if (!ChannelService.JoinChannel(aisling, channel.ChannelName, true))
                     {
-                        aisling.ChannelSettings.Remove(channel);
+                        //if we fail to join
+                        //if the channel is a custom channel, then recreate it
+                        if (channel.CustomChannel)
+                            ChannelService.RegisterChannel(
+                                aisling,
+                                channel.ChannelName,
+                                CHAOS_CONSTANTS.DEFAULT_CHANNEL_MESSAGE_COLOR,
+                                Helpers.DefaultChannelMessageHandler);
+
+                        //otherwise, remove it
+                        else
+                            aisling.ChannelSettings.Remove(channel);
 
                         continue;
                     }
@@ -1879,8 +1891,11 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
             try
             {
-                client.Aisling.Trackers.LastLogout = DateTime.UtcNow;
-                client.Aisling.Script.OnLogout();
+                if (aisling is not null)
+                {
+                    aisling.Trackers.LastLogout = DateTime.UtcNow;
+                    aisling.Script.OnLogout();
+                }
 
                 Logger.WithTopics(
                           Topics.Servers.WorldServer,

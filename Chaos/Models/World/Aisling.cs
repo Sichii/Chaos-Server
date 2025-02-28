@@ -191,7 +191,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
         Titles = [string.Empty];
 
-        ChannelSettings.AddRange(WorldOptions.Instance.DefaultChannels.Select(x => new ChannelSettings(x.ChannelName)));
+        ChannelSettings.AddRange(WorldOptions.Instance.DefaultChannels.Select(x => new ChannelSettings(x.ChannelName, false)));
     }
 
     private Aisling(string name, MapInstance mapInstance, IPoint point)

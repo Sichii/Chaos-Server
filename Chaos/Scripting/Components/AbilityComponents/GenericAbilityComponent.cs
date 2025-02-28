@@ -1,7 +1,9 @@
+#region
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
 using Chaos.Scripting.Components.Execution;
+#endregion
 
 namespace Chaos.Scripting.Components.AbilityComponents;
 

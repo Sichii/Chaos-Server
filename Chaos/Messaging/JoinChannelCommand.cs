@@ -1,7 +1,9 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.World;
+#endregion
 
 namespace Chaos.Messaging;
 
@@ -19,7 +21,7 @@ public class JoinChannelCommand(IChannelService channelService) : ICommand<Aisli
         channelName = ChannelService.PrependPrefix(channelName);
 
         if (ChannelService.JoinChannel(source, channelName))
-            source.ChannelSettings.Add(new ChannelSettings(channelName));
+            source.ChannelSettings.Add(new ChannelSettings(channelName, true));
 
         return default;
     }

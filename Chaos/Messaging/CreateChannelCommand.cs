@@ -1,9 +1,11 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.Definitions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.World;
 using Chaos.Utilities;
+#endregion
 
 namespace Chaos.Messaging;
 
@@ -18,8 +20,6 @@ public class CreateChannelCommand(IChannelService channelService) : ICommand<Ais
         if (!args.TryGetNext<string>(out var channelName))
             return default;
 
-        Helpers.TryGetMessageColor(args, out var messageColor);
-
         channelName = ChannelService.PrependPrefix(channelName);
 
         if (ChannelService.ContainsChannel(channelName))
@@ -32,9 +32,9 @@ public class CreateChannelCommand(IChannelService channelService) : ICommand<Ais
         if (ChannelService.RegisterChannel(
                 source,
                 channelName,
-                messageColor ?? CHAOS_CONSTANTS.DEFAULT_CHANNEL_MESSAGE_COLOR,
+                CHAOS_CONSTANTS.DEFAULT_CHANNEL_MESSAGE_COLOR,
                 Helpers.DefaultChannelMessageHandler))
-            source.ChannelSettings.Add(new ChannelSettings(channelName));
+            source.ChannelSettings.Add(new ChannelSettings(channelName, true));
 
         return default;
     }

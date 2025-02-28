@@ -1,5 +1,7 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.DarkAges.Definitions;
+#endregion
 
 namespace Chaos.Schemas.Aisling;
 
@@ -13,6 +15,11 @@ public sealed record ChannelSettingsSchema
     /// </summary>
     [JsonRequired]
     public string ChannelName { get; set; } = null!;
+
+    /// <summary>
+    ///     Whether or not this channel is a custom channel
+    /// </summary>
+    public bool CustomChannel { get; set; }
 
     /// <summary>
     ///     The color that message to and from this channel will show up as, if specified

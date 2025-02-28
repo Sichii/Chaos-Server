@@ -30,7 +30,7 @@ internal class ReadOnlyStorageObject<T> : IReadOnlyStorage<T> where T: class, ne
         Manager = manager;
         Data = data;
         Name = name;
-        Value = DeepClone.CreateRequired(Data!.GetValueOrDefault(name, new T()));
+        Value = DeepClone.CreateRequired(Data.GetValueOrDefault(name, new T()));
     }
 
     /// <inheritdoc />
