@@ -11,7 +11,7 @@ public sealed record ChannelSettings
     public bool CustomChannel { get; set; }
     public MessageColor? MessageColor { get; set; }
 
-    public ChannelSettings(string channelName, bool customChannel, MessageColor? messageColor = null)
+    public ChannelSettings(string channelName, bool customChannel = false, MessageColor? messageColor = null)
     {
         ChannelName = channelName;
         MessageColor = messageColor;
