@@ -1,9 +1,11 @@
+#region
 using Chaos.Collections;
 using Chaos.Models.Data;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Data;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -18,7 +20,8 @@ public sealed class LootTableMapperProfile(IItemFactory itemFactory, ITypeMapper
         => new()
         {
             ItemTemplateKey = obj.ItemTemplateKey,
-            DropChance = obj.DropChance
+            DropChance = obj.DropChance,
+            ExtraScriptKeys = obj.ExtraScriptKeys
         };
 
     /// <inheritdoc />

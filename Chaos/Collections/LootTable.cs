@@ -43,17 +43,17 @@ public sealed class LootTable(IItemFactory itemFactory) : ILootTable
             {
                 foreach (var drop in LootDrops)
                     if (DecimalRandomizer.RollChance(drop.DropChance))
-                        yield return ItemFactory.Create(drop.ItemTemplateKey);
+                        yield return ItemFactory.Create(drop.ItemTemplateKey, drop.ExtraScriptKeys);
 
                 break;
             }
             case LootTableMode.PickSingleOrDefault:
             {
-                var itemTemplateKey = LootDrops.ToDictionary(drop => drop.ItemTemplateKey, drop => drop.DropChance)
-                                               .PickRandomWeightedSingleOrDefault();
+                var drop = LootDrops.ToDictionary(drop => drop, drop => drop.DropChance)
+                                    .PickRandomWeightedSingleOrDefault();
 
-                if (itemTemplateKey is not null)
-                    yield return ItemFactory.Create(itemTemplateKey);
+                if (drop is not null)
+                    yield return ItemFactory.Create(drop.ItemTemplateKey, drop.ExtraScriptKeys);
 
                 break;
             }

@@ -1,4 +1,6 @@
+#region
 using System.Text.Json.Serialization;
+#endregion
 
 namespace Chaos.Schemas.Data;
 
@@ -12,6 +14,11 @@ public sealed record LootDropSchema
     /// </summary>
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]
     public decimal DropChance { get; set; }
+
+    /// <summary>
+    ///     A collection of extra merchant script keys to add to the monsters created by this spawn
+    /// </summary>
+    public ICollection<string> ExtraScriptKeys { get; set; } = Array.Empty<string>();
 
     /// <summary>
     ///     A unique id specific to the template of the item that should drop
