@@ -24,6 +24,7 @@ using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+using Chaos.Utilities;
 using Microsoft.Extensions.Options;
 #endregion
 
@@ -691,6 +692,17 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
 
     public void SendServerMessage(ServerMessageType serverMessageType, string message)
     {
+        if ((message.Length < CONSTANTS.MAX_MESSAGE_LINE_LENGTH)
+            || serverMessageType is ServerMessageType.WoodenBoard
+                                    or ServerMessageType.ScrollWindow
+                                    or ServerMessageType.NonScrollWindow
+                                    or ServerMessageType.UserOptions
+                                    or ServerMessageType.Whisper)
+            InnerSendServerMessage(serverMessageType, message);
+        else
+            foreach (var chunk in Helpers.ChunkMessage(message))
+                InnerSendServerMessage(serverMessageType, chunk);
+
         if (serverMessageType is ServerMessageType.Whisper
                                  or ServerMessageType.OrangeBar1
                                  or ServerMessageType.OrangeBar2
@@ -702,13 +714,18 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
                                  or ServerMessageType.GuildChat)
             Aisling.Trackers.LastOrangeBarMessage = DateTime.UtcNow;
 
-        var args = new ServerMessageArgs
-        {
-            ServerMessageType = serverMessageType,
-            Message = message
-        };
+        return;
 
-        Send(args);
+        void InnerSendServerMessage(ServerMessageType localType, string localMessage)
+        {
+            var args = new ServerMessageArgs
+            {
+                ServerMessageType = localType,
+                Message = localMessage
+            };
+
+            Send(args);
+        }
     }
 
     public void SendSound(byte sound, bool isMusic)

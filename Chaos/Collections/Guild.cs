@@ -6,6 +6,7 @@ using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Services.Servers.Options;
+using Chaos.Utilities;
 #endregion
 
 namespace Chaos.Collections;
@@ -79,6 +80,9 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
             {
                 var aisling = (Aisling)sub;
                 aisling.SendServerMessage(ServerMessageType.GuildChat, msg);
+                var firstChunk = Helpers.ChunkMessage(msg)[0];
+                firstChunk = firstChunk[..^3] + "...";
+                aisling.SendServerMessage(ServerMessageType.AdminMessage, firstChunk);
             },
             true,
             "!guild");

@@ -191,7 +191,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
         Titles = [string.Empty];
 
-        ChannelSettings.AddRange(WorldOptions.Instance.DefaultChannels.Select(x => new ChannelSettings(x.ChannelName, false)));
+        ChannelSettings.AddRange(WorldOptions.Instance.DefaultChannels.Select(x => new ChannelSettings(x.ChannelName)));
     }
 
     private Aisling(string name, MapInstance mapInstance, IPoint point)
@@ -606,17 +606,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public void SendPersistentMessage(string message) => SendServerMessage(ServerMessageType.PersistentMessage, message);
 
     public void SendServerMessage(ServerMessageType serverMessageType, string message)
-    {
-        if ((message.Length < CONSTANTS.MAX_MESSAGE_LINE_LENGTH)
-            || serverMessageType is ServerMessageType.WoodenBoard
-                                    or ServerMessageType.ScrollWindow
-                                    or ServerMessageType.NonScrollWindow
-                                    or ServerMessageType.UserOptions)
-            Client.SendServerMessage(serverMessageType, message);
-        else
-            foreach (var msg in message.Chunk(CONSTANTS.MAX_MESSAGE_LINE_LENGTH))
-                Client.SendServerMessage(serverMessageType, new string(msg));
-    }
+        => Client.SendServerMessage(serverMessageType, message);
 
     public void SetLanternSize(LanternSize lanternSize)
     {

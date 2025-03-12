@@ -56,6 +56,9 @@ public static partial class RegexCache
     [GeneratedRegex("^How (?:many|much) (?<thing>.+) I got", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex ItemCheckRegex2 { get; }
 
+    [GeneratedRegex(@"\{\=[a-z]", RegexOptions.Compiled)]
+    public static partial Regex MessageColorRegex { get; }
+
     [GeneratedRegex("^I (?:will )?sell (?<amount>all) my (?<thing>.+)", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
     private static partial Regex SellItemRegex1 { get; }
 

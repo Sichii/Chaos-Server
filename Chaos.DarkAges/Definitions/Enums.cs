@@ -111,12 +111,12 @@ public enum ServerMessageType : byte
     Whisper = 0,
 
     /// <summary>
-    ///     Text is only in the action bar, and will not show up in Shift+F
+    ///     Text is in the action bar and shows up in Shift+F
     /// </summary>
     OrangeBar1 = 1,
 
     /// <summary>
-    ///     Text is only in the action bar, and will not show up in Shift+F
+    ///     Text is in the action bar and shows up in Shift+F
     /// </summary>
     OrangeBar2 = 2,
 
@@ -126,12 +126,12 @@ public enum ServerMessageType : byte
     ActiveMessage = 3,
 
     /// <summary>
-    ///     Text is only in the action bar, and will not show up in Shift+F
+    ///     Text is in the action bar and shows up in Shift+F
     /// </summary>
     OrangeBar3 = 4,
 
     /// <summary>
-    ///     Text is only in the action bar, and will not show up in Shift+F. In official this was used for admin world messages
+    ///     Text is in the action bar and shows up in Shift+F. In official this was used for admin world messages
     /// </summary>
     AdminMessage = 5,
 

@@ -5,6 +5,7 @@ using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Services.Servers.Options;
+using Chaos.Utilities;
 #endregion
 
 namespace Chaos.Collections;
@@ -71,6 +72,9 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
             {
                 var aisling = (Aisling)sub;
                 aisling.SendServerMessage(ServerMessageType.GroupChat, msg);
+                var firstChunk = Helpers.ChunkMessage(msg)[0];
+                firstChunk = firstChunk[..^3] + "...";
+                aisling.SendServerMessage(ServerMessageType.AdminMessage, firstChunk);
             },
             true,
             "!group");
