@@ -1,8 +1,10 @@
+#region
 using System.Net;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Converters.Server;
 
@@ -26,13 +28,11 @@ public sealed class RedirectConverter : PacketConverterBase<RedirectArgs>
         var name = reader.ReadString8();
         var id = reader.ReadUInt32();
 
+        Array.Reverse(address);
+
         return new RedirectArgs
         {
-            EndPoint = new IPEndPoint(
-                new IPAddress(
-                    address.Reverse()
-                           .ToArray()),
-                port),
+            EndPoint = new IPEndPoint(new IPAddress(address), port),
             Seed = seed,
             Key = key,
             Name = name,
@@ -43,12 +43,10 @@ public sealed class RedirectConverter : PacketConverterBase<RedirectArgs>
     /// <inheritdoc />
     public override void Serialize(ref SpanWriter writer, RedirectArgs args)
     {
-        writer.WriteBytes(
-            args.EndPoint
-                .Address
-                .GetAddressBytes()
-                .Reverse()
-                .ToArray());
+        var address = args.EndPoint.Address.GetAddressBytes();
+        Array.Reverse(address);
+
+        writer.WriteBytes(address);
         writer.WriteUInt16((ushort)args.EndPoint.Port);
 
         var remaining = args.Key.Length;
