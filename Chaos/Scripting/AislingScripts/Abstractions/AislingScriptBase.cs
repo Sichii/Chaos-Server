@@ -22,10 +22,25 @@ public abstract class AislingScriptBase : SubjectiveScriptBase<Aisling>, IAislin
         : base(subject) { }
 
     /// <inheritdoc />
-    public virtual bool CanDropItemOn(Aisling source, Item item) => !(item.Template.AccountBound || item.Template.NoTrade);
+    public virtual bool CanDropItem(Item item) => Subject.IsAlive;
+
+    /// <inheritdoc />
+    public virtual bool CanDropItemOn(Aisling source, Item item) => Subject.IsAlive;
+
+    /// <inheritdoc />
+    public virtual bool CanDropMoney(int amount) => Subject.IsAlive;
+
+    /// <inheritdoc />
+    public virtual bool CanDropMoneyOn(Aisling source, int amount) => Subject.IsAlive;
 
     /// <inheritdoc />
     public virtual bool CanMove() => true;
+
+    /// <inheritdoc />
+    public virtual bool CanPickupItem(GroundItem groundItem) => Subject.IsAlive;
+
+    /// <inheritdoc />
+    public virtual bool CanPickupMoney(Money money) => Subject.IsAlive;
 
     /// <param name="entity">
     /// </param>

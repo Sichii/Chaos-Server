@@ -1,0 +1,13 @@
+{
+    "buyCost": 100,
+    "category": "trinkets",
+    "color": "Default",
+    "maxStacks": 1,
+    "sellValue": 50,
+    "weight": 1,
+    "description": "A piece of paper",
+    "name": "Note",
+    "panelSprite": 216,
+    "scriptKeys": ["notepad"],
+    "templateKey": "note"
+}

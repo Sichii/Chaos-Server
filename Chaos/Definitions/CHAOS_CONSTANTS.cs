@@ -9,6 +9,8 @@ public static class CHAOS_CONSTANTS
 {
     public static readonly MessageColor DEFAULT_CHANNEL_MESSAGE_COLOR = MessageColor.Gainsboro;
 
+    public const int MAX_NOTEPAD_MESSAGE_LENGTH = 3500;
+
     // @formatter:wrap_array_initializer_style wrap_if_long
     // @formatter:max_array_initializer_elements_on_line 10000
     public static readonly FrozenSet<ushort> WATER_TILE_IDS = new ushort[]

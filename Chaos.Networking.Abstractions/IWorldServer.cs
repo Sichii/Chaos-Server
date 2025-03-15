@@ -1,4 +1,6 @@
+#region
 using Chaos.Packets;
+#endregion
 
 namespace Chaos.Networking.Abstractions;
 
@@ -149,6 +151,11 @@ public interface IWorldServer<in TClient> : IServer<TClient> where TClient: ICon
     ///     Occurs when a client requests the profile of another player
     /// </summary>
     ValueTask OnSelfProfileRequest(TClient client, in Packet packet);
+
+    /// <summary>
+    ///     Occurs when a client edits an item's notepad and submits the changes
+    /// </summary>
+    ValueTask OnSetNotepad(TClient client, in Packet packet);
 
     /// <summary>
     ///     Occurs when a client uses a skill

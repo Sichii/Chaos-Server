@@ -1,13 +1,18 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Data;
+using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.EffectScripts;
 
 public sealed class RegenerationEffect : ContinuousAnimationEffectBase
 {
+    private int HealAmount;
+
     /// <inheritdoc />
     protected override TimeSpan Duration { get; set; } = TimeSpan.FromSeconds(10);
 
@@ -31,14 +36,17 @@ public sealed class RegenerationEffect : ContinuousAnimationEffectBase
     public override string Name => "Regeneration";
 
     /// <inheritdoc />
+    public override void OnApplied() => HealAmount = GetVar<int>("healAmount");
+
+    /// <inheritdoc />
     protected override void OnIntervalElapsed()
     {
-        //the interval is 100ms, so this will be applied 10 times a second
-        const int HEAL_PER_TICK = 5;
-
-        Subject.StatSheet.AddHp(HEAL_PER_TICK);
+        Subject.StatSheet.AddHp(HealAmount);
 
         //if the subject was a player, update their vit
         AislingSubject?.Client.SendAttributes(StatUpdateType.Vitality);
     }
+
+    /// <inheritdoc />
+    public override void PrepareSnapshot(Creature source) => SetVar("healAmount", source.StatSheet.EffectiveWis * 5 / 10);
 }

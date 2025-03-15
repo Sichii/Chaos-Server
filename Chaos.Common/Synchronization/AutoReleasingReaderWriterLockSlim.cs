@@ -101,7 +101,7 @@ public class AutoReleasingReaderWriterLockSlim
         if (Root.TryEnterReadLock(timeoutMs))
             return new AutoReleasingSubscription(Root, true);
 
-        return default;
+        return null;
     }
 
     /// <summary>
@@ -123,7 +123,7 @@ public class AutoReleasingReaderWriterLockSlim
         if (Root.TryEnterUpgradeableReadLock(timeoutMs))
             return new AutoReleasingSubscription(Root, true);
 
-        return default;
+        return null;
     }
 
     /// <summary>
@@ -145,7 +145,7 @@ public class AutoReleasingReaderWriterLockSlim
         if (Root.TryEnterWriteLock(timeoutMs))
             return new AutoReleasingSubscription(Root, false);
 
-        return default;
+        return null;
     }
 
     private sealed record AutoReleasingSubscription : IDisposable

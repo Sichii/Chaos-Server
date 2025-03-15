@@ -1,4 +1,6 @@
+#region
 using Chaos.DarkAges.Definitions;
+#endregion
 
 namespace Chaos.Site.Models;
 
@@ -34,6 +36,7 @@ public sealed class MonsterDto
     public required string Spells { get; set; }
     public int Sprite { get; set; }
     public int Str { get; set; }
+    public string TemplateKey { get; set; } = null!;
     public CreatureType Type { get; set; }
     public int WanderIntervalMs { get; set; }
     public int Wis { get; set; }

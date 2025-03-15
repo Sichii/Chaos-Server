@@ -1,8 +1,10 @@
+#region
 using Chaos.Collections;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.MonsterScripts.Abstractions;
 
@@ -29,7 +31,10 @@ public abstract class MonsterScriptBase : SubjectiveScriptBase<Monster>, IMonste
         : base(subject) { }
 
     /// <inheritdoc />
-    public virtual bool CanDropItemOn(Aisling source, Item item) => !(item.Template.AccountBound || item.Template.NoTrade);
+    public virtual bool CanDropItemOn(Aisling source, Item item) => source.IsAlive;
+
+    /// <inheritdoc />
+    public virtual bool CanDropMoneyOn(Aisling source, int amount) => source.IsAlive;
 
     /// <inheritdoc />
     public virtual bool CanMove() => true;

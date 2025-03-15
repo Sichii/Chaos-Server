@@ -256,7 +256,7 @@ public sealed class LocationTests
               .BeFalse();
 
         location.Should()
-                .Be(default(Location));
+                .Be(null);
     }
 
     [Test]

@@ -957,7 +957,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                     if (Music != lastMap.Music)
                         aisling.Client.SendSound(Music, true);
-                }
+                } else
+                    aisling.Client.SendSound(Music, true);
 
                 aisling.Client.SendMapLoadComplete();
                 aisling.Client.SendDisplayAisling(aisling);

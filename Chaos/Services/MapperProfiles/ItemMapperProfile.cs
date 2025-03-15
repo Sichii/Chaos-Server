@@ -68,6 +68,7 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
         item.CustomNameOverride = obj.CustomNameOverride;
         item.Prefix = obj.Prefix;
         item.Suffix = obj.Suffix;
+        item.NotepadText = obj.NotepadText;
 
         return item;
     }
@@ -93,7 +94,8 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
             CustomNameOverride = obj.CustomNameOverride,
             Weight = obj.Weight == obj.Template.Weight ? null : obj.Weight,
             PanelSprite = obj.ItemSprite.PanelSprite == obj.Template.ItemSprite.PanelSprite ? null : obj.ItemSprite.PanelSprite,
-            DisplaySprite = obj.ItemSprite.DisplaySprite == obj.Template.ItemSprite.DisplaySprite ? null : obj.ItemSprite.DisplaySprite
+            DisplaySprite = obj.ItemSprite.DisplaySprite == obj.Template.ItemSprite.DisplaySprite ? null : obj.ItemSprite.DisplaySprite,
+            NotepadText = obj.NotepadText
         };
 
         return ret;

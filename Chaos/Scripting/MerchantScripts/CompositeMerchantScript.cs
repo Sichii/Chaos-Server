@@ -1,9 +1,11 @@
+#region
 using System.Runtime.InteropServices;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MerchantScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.MerchantScripts;
 
@@ -12,11 +14,25 @@ namespace Chaos.Scripting.MerchantScripts;
 /// </summary>
 public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMerchantScript
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual bool CanDropItemOn(Aisling source, Item item)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
             if (!script.CanDropItemOn(source, item))
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanDropMoneyOn(Aisling source, int amount)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanDropMoneyOn(source, amount))
                 return false;
 
         return true;
@@ -148,7 +164,7 @@ public class CompositeMerchantScript : CompositeScriptBase<IMerchantScript>, IMe
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
-    public void OnDeath()
+    public virtual void OnDeath()
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
             script.OnDeath();

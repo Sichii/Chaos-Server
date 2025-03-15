@@ -16,7 +16,21 @@ namespace Chaos.Scripting.AislingScripts;
 /// </summary>
 public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAislingScript
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanDropItem(Item item)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanDropItem(item))
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual bool CanDropItemOn(Aisling source, Item item)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
@@ -29,10 +43,58 @@ public class CompositeAislingScript : CompositeScriptBase<IAislingScript>, IAisl
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public virtual bool CanDropMoney(int amount)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanDropMoney(amount))
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanDropMoneyOn(Aisling source, int amount)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanDropMoneyOn(source, amount))
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual bool CanMove()
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
             if (!script.CanMove())
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanPickupItem(GroundItem groundItem)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanPickupItem(groundItem))
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanPickupMoney(Money money)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanPickupMoney(money))
                 return false;
 
         return true;

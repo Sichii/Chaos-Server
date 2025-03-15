@@ -538,7 +538,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x1B
     /// </summary>
-    Notepad = 27,
+    DisplayNotepad = 27,
 
     /// <summary>
     ///     OpCode used to signal to the client that a map change operation has completed

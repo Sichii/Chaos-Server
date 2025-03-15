@@ -345,43 +345,43 @@ public sealed class StringExtensionsTests
                  "kitten",
                  "sitting",
                  "mittens"
-             ], "sitten", 0.6m, 0.33m, default, true, "kitten"),
+             ], "sitten", 0.6m, 0.33m, null, true, "kitten"),
             ([
                  "kitten",
                  "sitting",
                  "mittens"
-             ], "sitten", 0.6m, 0.33m, default, false, "kitten"),
+             ], "sitten", 0.6m, 0.33m, null, false, "kitten"),
             ([
                  "kitten",
                  "Sitting",
                  "mittens"
-             ], "sitteng", 0.6m, 0.33m, default, true, "kitten"),
+             ], "sitteng", 0.6m, 0.33m, null, true, "kitten"),
             ([
                  "kitten",
                  "Sitting",
                  "mittens"
-             ], "sitteng", 0.6m, 0.33m, default, false, "Sitting"),
+             ], "sitteng", 0.6m, 0.33m, null, false, "Sitting"),
             ([
                  "Written",
                  "writing",
                  "kitten"
-             ], "ritten", 0.6m, 0.33m, default, true, "Written"),
+             ], "ritten", 0.6m, 0.33m, null, true, "Written"),
             ([
                  "Written",
                  "writing",
                  "kitten"
-             ], "ritten", 0.6m, 0.33m, default, false, "Written"),
+             ], "ritten", 0.6m, 0.33m, null, false, "Written"),
             ([
                  "apple",
                  "banana",
                  "cherry"
-             ], "peach", 0, 1, default, true, "cherry"),
+             ], "peach", 0, 1, null, true, "cherry"),
             ([
                  "apple",
                  "banana",
                  "cherry"
-             ], "peach", 0, 1, default, true, "cherry"),
-            (Array.Empty<string>(), "peach", 0, 1, default, true, default)
+             ], "peach", 0, 1, null, true, "cherry"),
+            (Array.Empty<string>(), "peach", 0, 1, null, true, null)
         ];
 
     [Test]

@@ -14,6 +14,12 @@ namespace Chaos.Scripting.ItemScripts.Abstractions;
 
 public interface IItemScript : IScript, IDeltaUpdatable
 {
+    bool CanBeDropped(Aisling source, Point targetPoint);
+
+    bool CanBeDroppedOn(Aisling source, Creature creature);
+
+    bool CanBePickedUp(Aisling source, Point sourcePoint);
+
     /// <summary>
     ///     Determines if the item subject can be used by the specified aisling (check level, class, etc)
     /// </summary>
@@ -37,6 +43,11 @@ public interface IItemScript : IScript, IDeltaUpdatable
     ///     Triggers when the item subject has been equipped by the aisling
     /// </summary>
     void OnEquipped(Aisling aisling);
+
+    /// <summary>
+    ///     Triggers when the notepad text of the item subject is updated
+    /// </summary>
+    void OnNotepadTextUpdated(Aisling source, string? oldText);
 
     /// <summary>
     ///     Triggers when the item subject is picked up by the specified aisling

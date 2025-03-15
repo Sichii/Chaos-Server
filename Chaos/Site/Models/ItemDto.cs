@@ -1,4 +1,6 @@
+#region
 using Chaos.DarkAges.Definitions;
+#endregion
 
 namespace Chaos.Site.Models;
 
@@ -41,6 +43,7 @@ public sealed class ItemDto
     public int? SpellDamagePct { get; set; }
     public int? Sprite { get; set; }
     public int? Str { get; set; }
+    public string TemplateKey { get; set; } = null!;
     public int? Weight { get; set; }
     public int? Wis { get; set; }
 }

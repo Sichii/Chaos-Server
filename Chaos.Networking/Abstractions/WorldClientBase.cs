@@ -1,8 +1,10 @@
+#region
 using System.Net.Sockets;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
 using Microsoft.Extensions.Logging;
+#endregion
 
 namespace Chaos.Networking.Abstractions;
 
@@ -79,6 +81,9 @@ public abstract class WorldClientBase : ConnectedClientBase, IWorldClient
     public virtual void SendDisplayGroupInvite(DisplayGroupInviteArgs args) => Send(args);
 
     /// <inheritdoc />
+    public virtual void SendDisplayNotepad(DisplayNotepadArgs args) => Send(args);
+
+    /// <inheritdoc />
     public virtual void SendDisplayPublicMessage(DisplayPublicMessageArgs args) => Send(args);
 
     /// <inheritdoc />
@@ -133,7 +138,7 @@ public abstract class WorldClientBase : ConnectedClientBase, IWorldClient
     public virtual void SendMetaData(MetaDataArgs args) => Send(args);
 
     /// <inheritdoc />
-    public virtual void SendNotepad(NotepadArgs args) => Send(args);
+    public virtual void SendNotepad(DisplayNotepadArgs args) => Send(args);
 
     /// <inheritdoc />
     public virtual void SendOtherProfile(OtherProfileArgs args) => Send(args);

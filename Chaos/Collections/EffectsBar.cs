@@ -62,6 +62,8 @@ public sealed class EffectsBar : IEffectsBar
             //set color here because the bar will be fully reset anyway
             effect.Color = effect.GetColor();
             Effects[effect.Name] = effect;
+
+            effect.PrepareSnapshot(source);
             effect.OnApplied();
             ResetDisplay();
         }

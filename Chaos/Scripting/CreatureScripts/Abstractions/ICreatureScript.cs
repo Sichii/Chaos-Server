@@ -22,6 +22,17 @@ public interface ICreatureScript : IScript, IDeltaUpdatable
     bool CanDropItemOn(Aisling source, Item item);
 
     /// <summary>
+    ///     Determines if the specified amount of money can be dropped on the creature subject by the source aisling
+    /// </summary>
+    /// <param name="source">
+    ///     The aisling trying to drop the money on the creature source
+    /// </param>
+    /// <param name="amount">
+    ///     The amount of money being dropped
+    /// </param>
+    bool CanDropMoneyOn(Aisling source, int amount);
+
+    /// <summary>
     ///     Determines if the creature subject is allowed to move (check for paralysis, sleep, etc)
     /// </summary>
     bool CanMove();
@@ -134,8 +145,8 @@ public interface ICreatureScript : IScript, IDeltaUpdatable
     /// </param>
     /// <remarks>
     ///     At this point, the item has already been removed from the aisling's inventory. A check was made via
-    ///     <see cref="CanDropItemOn" /> to ensure the item could be dropped. This method merely determines what to do with
-    ///     that item.
+    ///     <see cref="CanDropItemOn" /> to ensure the item could be dropped. If this is a monster, the item is already added
+    ///     to the item list. This method now determines what to do with that item.
     /// </remarks>
     void OnItemDroppedOn(Aisling source, Item item);
 

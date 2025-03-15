@@ -23,7 +23,7 @@ public sealed class SpatialHash<T> where T: IPoint
     /// <param name="comparer">
     ///     The comparer used to compare items
     /// </param>
-    public SpatialHash(IEqualityComparer<T>? comparer = default) => Comparer = comparer;
+    public SpatialHash(IEqualityComparer<T>? comparer = null) => Comparer = comparer;
 
     /// <summary>
     ///     Adds an item to the SpatialHash.

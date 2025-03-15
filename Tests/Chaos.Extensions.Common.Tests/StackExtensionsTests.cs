@@ -20,7 +20,7 @@ public sealed class StackExtensionsTests
 
         // Assert
         result.Should()
-              .Be(default);
+              .Be(0);
 
         stack.Should()
              .BeEmpty(); // The stack should be empty
@@ -37,7 +37,7 @@ public sealed class StackExtensionsTests
 
         // Assert
         result.Should()
-              .Be(default);
+              .Be(0);
 
         stack.Should()
              .BeEmpty(); // The stack should still be empty

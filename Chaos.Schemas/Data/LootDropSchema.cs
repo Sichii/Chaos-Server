@@ -25,4 +25,14 @@ public sealed record LootDropSchema
     /// </summary>
     [JsonRequired]
     public string ItemTemplateKey { get; set; } = null!;
+
+    /// <summary>
+    ///     If the item is selected to drop, this is the maximum amount that will drop
+    /// </summary>
+    public int? MaxAmount { get; set; }
+
+    /// <summary>
+    ///     If the item is selected to drop, this is the minimum amount that will drop
+    /// </summary>
+    public int? MinAmount { get; set; }
 }

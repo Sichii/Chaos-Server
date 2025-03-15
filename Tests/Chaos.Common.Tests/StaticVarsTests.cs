@@ -73,7 +73,7 @@ public sealed class StaticVarsTests
 
         // Assert
         result.Should()
-              .Be(default);
+              .Be(0);
     }
 
     [Test]

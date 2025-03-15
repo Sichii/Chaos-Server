@@ -24,7 +24,7 @@ public sealed class QuadTreeWithSpatialHash<T> : QuadTree<T> where T: IPoint
     /// <param name="comparer">
     ///     The comparer used by the <see cref="SpatialHash" />
     /// </param>
-    public QuadTreeWithSpatialHash(IRectangle bounds, IEqualityComparer<T>? comparer = default)
+    public QuadTreeWithSpatialHash(IRectangle bounds, IEqualityComparer<T>? comparer = null)
         : base(bounds)
         => SpatialHash = new SpatialHash<T>(comparer);
 

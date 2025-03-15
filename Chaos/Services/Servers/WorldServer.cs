@@ -739,14 +739,6 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (localClient.Aisling.IsOnWorldMap)
                 return default;
 
-            var map = localClient.Aisling.MapInstance;
-
-            if (!localClient.Aisling.WithinRange(localArgs.DestinationPoint, Options.DropRange))
-                return default;
-
-            if (map.IsWall(localArgs.DestinationPoint))
-                return default;
-
             localClient.Aisling.TryDropGold(localArgs.DestinationPoint, localArgs.Amount, out _);
 
             return default;
@@ -759,7 +751,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         return ExecuteHandler(client, args, InnerOnGoldDroppedOnCreature);
 
-        ValueTask InnerOnGoldDroppedOnCreature(IChaosWorldClient localClient, GoldDroppedOnCreatureArgs localArgs)
+        static ValueTask InnerOnGoldDroppedOnCreature(IChaosWorldClient localClient, GoldDroppedOnCreatureArgs localArgs)
         {
             if (localClient.Aisling.IsOnWorldMap)
                 return default;
@@ -770,9 +762,6 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 return default;
 
             if (!map.TryGetEntity<Creature>(localArgs.TargetId, out var target))
-                return default;
-
-            if (!localClient.Aisling.WithinRange(target, Options.TradeRange))
                 return default;
 
             target.OnGoldDroppedOn(localClient.Aisling, localArgs.Amount);
@@ -1002,7 +991,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         return ExecuteHandler(client, args, InnerOnItemDroppedOnCreature);
 
-        ValueTask InnerOnItemDroppedOnCreature(IChaosWorldClient localClient, ItemDroppedOnCreatureArgs localArgs)
+        static ValueTask InnerOnItemDroppedOnCreature(IChaosWorldClient localClient, ItemDroppedOnCreatureArgs localArgs)
         {
             if (localClient.Aisling.IsOnWorldMap)
                 return default;
@@ -1010,15 +999,6 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             var map = localClient.Aisling.MapInstance;
 
             if (!map.TryGetEntity<Creature>(localArgs.TargetId, out var target))
-                return default;
-
-            if (!localClient.Aisling.WithinRange(target, Options.TradeRange))
-                return default;
-
-            if (!localClient.Aisling.Inventory.TryGetObject(localArgs.SourceSlot, out var item))
-                return default;
-
-            if (item.Count < localArgs.Count)
                 return default;
 
             target.OnItemDroppedOn(localClient.Aisling, localArgs.SourceSlot, localArgs.Count);
@@ -1059,6 +1039,44 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+
+            return default;
+        }
+    }
+
+    /// <inheritdoc />
+    public ValueTask OnSetNotepad(IChaosWorldClient client, in Packet packet)
+    {
+        var args = PacketSerializer.Deserialize<SetNotepadArgs>(in packet);
+
+        if (args.Message.Length > CHAOS_CONSTANTS.MAX_NOTEPAD_MESSAGE_LENGTH)
+        {
+            Logger.WithTopics(Topics.Entities.Packet, Topics.Actions.Processing, Topics.Qualifiers.Cheating)
+                  .WithProperty(client)
+                  .LogWarning(
+                      "Aisling {@AislingName} attempted to set a notepad message that was too long. Length: {@MessageLength}",
+                      client.Aisling.Name,
+                      args.Message.Length);
+
+            return default;
+        }
+
+        return ExecuteHandler(client, args, InnerOnSetNotepad);
+
+        static ValueTask InnerOnSetNotepad(IChaosWorldClient localClient, SetNotepadArgs localArgs)
+        {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
+            var item = localClient.Aisling.Inventory[localArgs.Slot];
+
+            if (item is not null)
+            {
+                var oldText = item.NotepadText;
+                item.NotepadText = localArgs.Message;
+
+                item.Script.OnNotepadTextUpdated(localClient.Aisling, oldText);
             }
 
             return default;
@@ -1821,6 +1839,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         ClientHandlers[(byte)ClientOpCode.OptionToggle] = OnOptionToggle;
         ClientHandlers[(byte)ClientOpCode.ItemUse] = OnItemUse;
         ClientHandlers[(byte)ClientOpCode.Emote] = OnEmote;
+        ClientHandlers[(byte)ClientOpCode.SetNotepad] = OnSetNotepad;
         ClientHandlers[(byte)ClientOpCode.GoldDrop] = OnGoldDrop;
         ClientHandlers[(byte)ClientOpCode.ItemDroppedOnCreature] = OnItemDroppedOnCreature;
         ClientHandlers[(byte)ClientOpCode.GoldDroppedOnCreature] = OnGoldDroppedOnCreature;

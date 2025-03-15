@@ -363,7 +363,7 @@ public sealed class SynchronizedHashSetTests
               .BeFalse();
 
         actualValue.Should()
-                   .Be(default);
+                   .Be(0);
     }
 
     [Test]

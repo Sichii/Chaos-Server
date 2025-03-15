@@ -1,6 +1,8 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.DarkAges.Definitions;
 using Chaos.Schemas.Aisling.Abstractions;
+#endregion
 
 namespace Chaos.Schemas.Aisling;
 
@@ -34,6 +36,11 @@ public sealed record ItemSchema : PanelEntitySchema
     ///     The sprite to display for this item if it's different than what is specified by it's template
     /// </summary>
     public ushort? DisplaySprite { get; set; }
+
+    /// <summary>
+    ///     The text of the notepad attached to this item
+    /// </summary>
+    public string? NotepadText { get; set; }
 
     /// <summary>
     ///     The sprite to display for this item in the panel if it's different than what is specified by it's template

@@ -104,7 +104,7 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
         JsonSerializerOptions jsonOptions)
     {
         if (!lookup.TryGetValue(key, out var value))
-            return default;
+            return null;
 
         return value.Deserialize(type, jsonOptions);
     }
