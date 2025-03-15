@@ -1,6 +1,7 @@
 #region
 using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
+using Chaos.DarkAges.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
@@ -80,9 +81,15 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
             {
                 var aisling = (Aisling)sub;
                 aisling.SendServerMessage(ServerMessageType.GuildChat, msg);
-                var firstChunk = Helpers.ChunkMessage(msg)[0];
-                firstChunk = firstChunk[..^3] + "...";
-                aisling.SendServerMessage(ServerMessageType.AdminMessage, firstChunk);
+
+                var chunks = Helpers.ChunkMessage(msg);
+
+                if (chunks.Count > 1)
+                {
+                    var orangeBarChunk = Helpers.ChunkMessage(msg)[0];
+                    orangeBarChunk = $"{orangeBarChunk[..^3]}...";
+                    aisling.SendServerMessage(ServerMessageType.OrangeBar1, orangeBarChunk);
+                }
             },
             true,
             "!guild");

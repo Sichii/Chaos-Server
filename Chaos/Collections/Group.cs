@@ -72,9 +72,15 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
             {
                 var aisling = (Aisling)sub;
                 aisling.SendServerMessage(ServerMessageType.GroupChat, msg);
-                var firstChunk = Helpers.ChunkMessage(msg)[0];
-                firstChunk = firstChunk[..^3] + "...";
-                aisling.SendServerMessage(ServerMessageType.AdminMessage, firstChunk);
+
+                var chunks = Helpers.ChunkMessage(msg);
+
+                if (chunks.Count > 1)
+                {
+                    var orangeBarChunk = Helpers.ChunkMessage(msg)[0];
+                    orangeBarChunk = $"{orangeBarChunk[..^3]}...";
+                    aisling.SendServerMessage(ServerMessageType.OrangeBar1, orangeBarChunk);
+                }
             },
             true,
             "!group");
