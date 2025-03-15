@@ -675,9 +675,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         return true;
     }
 
-    public virtual void Turn(Direction direction)
+    public virtual void Turn(Direction direction, bool forced = false)
     {
-        if (!Script.CanTurn())
+        if (!forced && !Script.CanTurn())
             return;
 
         Direction = direction;

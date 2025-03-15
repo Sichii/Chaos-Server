@@ -1083,9 +1083,9 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     }
 
     /// <inheritdoc />
-    public override void Turn(Direction direction)
+    public override void Turn(Direction direction, bool forced = false)
     {
-        if (!Script.CanTurn() || !TurnThrottle.TryIncrement())
+        if (!forced && (!Script.CanTurn() || !TurnThrottle.TryIncrement()))
             return;
 
         Direction = direction;
