@@ -91,6 +91,7 @@ public static class Topics
     public static class Qualifiers
     {
         public static string Cheating => nameof(Cheating);
+        public static string Facade => nameof(Facade);
         public static string Forced => nameof(Forced);
         public static string Harassment => nameof(Harassment);
         public static string Raw => nameof(Raw);

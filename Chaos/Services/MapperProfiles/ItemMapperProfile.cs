@@ -62,8 +62,11 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
         if (obj.Color.HasValue)
             item.Color = obj.Color.Value;
 
-        if (obj is { PanelSprite: not null, DisplaySprite: not null })
-            item.ItemSprite = new ItemSprite(obj.PanelSprite.Value, obj.DisplaySprite.Value);
+        if (obj.PanelSprite.HasValue)
+            item.ItemSprite.PanelSprite = obj.PanelSprite.Value;
+
+        if (obj.DisplaySprite.HasValue)
+            item.ItemSprite.DisplaySprite = obj.DisplaySprite.Value;
 
         item.CustomNameOverride = obj.CustomNameOverride;
         item.Prefix = obj.Prefix;

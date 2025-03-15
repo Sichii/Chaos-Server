@@ -86,7 +86,7 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
         Modifiers = template.Modifiers is null ? new Attributes() : ShallowCopy<Attributes>.Create(template.Modifiers);
         Weight = template.Weight;
         Level = template.Level;
-        ItemSprite = template.ItemSprite;
+        ItemSprite = new ItemSprite(template.ItemSprite.PanelSprite, template.ItemSprite.DisplaySprite);
 
         if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);

@@ -1,9 +1,13 @@
 #region
 using Chaos.Collections.Common;
 using Chaos.Common.Utilities;
+using Chaos.Models.World;
+using Chaos.Networking.Abstractions;
 using Chaos.Schemas.Aisling;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
+using Chaos.Services.Storage;
+using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 #endregion
 
@@ -29,6 +33,6 @@ public class EffectMapperProfile(IEffectFactory effectFactory) : IMapperProfile<
         {
             EffectKey = EffectBase.GetEffectKey(obj.GetType()),
             RemainingSecs = Convert.ToInt32(Math.Ceiling(obj.Remaining.TotalSeconds)),
-            SnapshotVars = DeepClone.CreateRequired(obj.SnapshotVars)
+            SnapshotVars = new StaticVars(obj.SnapshotVars.ToDictionary(kvp => kvp.Key, kvp => kvp.Value))
         };
 }

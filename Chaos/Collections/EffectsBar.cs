@@ -63,6 +63,7 @@ public sealed class EffectsBar : IEffectsBar
             effect.Color = effect.GetColor();
             Effects[effect.Name] = effect;
 
+            SetSource(effect, source);
             effect.PrepareSnapshot(source);
             effect.OnApplied();
             ResetDisplay();
@@ -169,5 +170,27 @@ public sealed class EffectsBar : IEffectsBar
 
         if (shouldResetDisplay)
             ResetDisplay();
+    }
+
+    private void SetSource(IEffect effect, Creature source)
+    {
+        effect.Source = source;
+        effect.SetVar("sourceType", source.Type);
+
+        switch (source)
+        {
+            case Aisling aisling:
+                effect.SetVar("sourceIdentifier", aisling.Name);
+
+                break;
+            case Monster monster:
+                effect.SetVar("sourceIdentifier", monster.Template.TemplateKey);
+
+                break;
+            case Merchant merchant:
+                effect.SetVar("sourceIdentifier", merchant.Template.TemplateKey);
+
+                break;
+        }
     }
 }

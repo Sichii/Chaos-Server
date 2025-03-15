@@ -113,4 +113,30 @@ public sealed class DynamicVars : IEnumerable<KeyValuePair<string, JsonElement>>
     ///     Sets the value associated with the specified key.
     /// </summary>
     public void Set(string key, object value) => Vars[key] = JsonSerializer.SerializeToElement(value);
+
+    /// <summary>
+    ///     Converts the DynamicVars to a StaticVars object.
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// </exception>
+    public StaticVars ToStaticVars()
+    {
+        var dic = Vars.ToDictionary(
+            kvp => kvp.Key,
+            kvp =>
+            {
+                var element = kvp.Value;
+
+                return element.ValueKind switch
+                {
+                    JsonValueKind.String                      => element.GetString(),
+                    JsonValueKind.Number                      => element.GetDouble(),
+                    JsonValueKind.True or JsonValueKind.False => element.GetBoolean(),
+                    JsonValueKind.Null                        => (object)null!,
+                    _                                         => throw new ArgumentOutOfRangeException()
+                };
+            });
+
+        return new StaticVars(dic!);
+    }
 }

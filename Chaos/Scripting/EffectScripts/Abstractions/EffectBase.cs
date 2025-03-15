@@ -24,6 +24,8 @@ public abstract class EffectBase : IEffect
     /// <inheritdoc />
     public StaticVars SnapshotVars { get; set; } = new();
 
+    public Creature Source { get; set; } = null!;
+
     public Creature Subject { get; set; } = null!;
     public abstract byte Icon { get; }
     public abstract string Name { get; }
@@ -31,12 +33,14 @@ public abstract class EffectBase : IEffect
     /// <inheritdoc />
     public string ScriptKey { get; }
 
+    public Aisling? AislingSource => Source as Aisling;
+
     public Aisling? AislingSubject => Subject as Aisling;
 
     protected EffectBase() => ScriptKey = GetEffectKey(GetType());
 
     /// <inheritdoc />
-    public T GetVar<T>(string key) where T: struct => SnapshotVars.GetRequired<T>(key);
+    public T GetVar<T>(string key) where T: notnull => SnapshotVars.GetRequired<T>(key);
 
     /// <inheritdoc />
     public virtual void OnApplied() { }
@@ -55,7 +59,7 @@ public abstract class EffectBase : IEffect
     public void SetDuration(TimeSpan duration) => Duration = duration;
 
     /// <inheritdoc />
-    public void SetVar<T>(string key, T value) where T: struct => SnapshotVars.Set(key, value);
+    public void SetVar<T>(string key, T value) where T: notnull => SnapshotVars.Set(key, value);
 
     /// <inheritdoc />
     public virtual bool ShouldApply(Creature source, Creature target)
