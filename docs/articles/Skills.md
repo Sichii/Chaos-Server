@@ -27,7 +27,7 @@ Skills can be created by using the [SkillFactory](<xref:Chaos.Services.Factories
 implementation of [ISkillFactory](<xref:Chaos.Services.Factories.Abstractions.ISkillFactory>).
 
 > [!NOTE]
-> Each skill is a fresh instance of an skill created from a template. Any changes made to the template will apply to all
+> Each skill is a fresh instance of a skill created from a template. Any changes made to the template will apply to all
 > instances of that skill.
 
 ```cs

@@ -27,7 +27,7 @@ Spells can be created by using the [SpellFactory](<xref:Chaos.Services.Factories
 implementation of [ISpellFactory](<xref:Chaos.Services.Factories.Abstractions.ISpellFactory>).
 
 > [!NOTE]
-> Each spell is a fresh instance of an spell created from a template. Any changes made to the template will apply to all
+> Each spell is a fresh instance of a spell created from a template. Any changes made to the template will apply to all
 > instances of that spell.
 
 ```cs

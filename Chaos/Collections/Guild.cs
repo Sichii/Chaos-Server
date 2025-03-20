@@ -367,102 +367,6 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     }
 
     /// <summary>
-    ///     Kicks a member out of the guild
-    /// </summary>
-    /// <param name="memberName">
-    ///     The name of the member to kick
-    /// </param>
-    /// <param name="by">
-    ///     The aisling doing the kicking
-    /// </param>
-    /// <returns>
-    ///     <c>
-    ///         true
-    ///     </c>
-    ///     if a member with the specified name was in the guild and was kicked, otherwise
-    ///     <c>
-    ///         false
-    ///     </c>
-    /// </returns>
-    /// <remarks>
-    ///     This will work on members who are not online. When the member logs in, the association check will fail due to the
-    ///     aisling not holding a rank in the guild, and so they will become unassociated
-    /// </remarks>
-    public bool KickMember(string memberName, Aisling by)
-    {
-        ArgumentException.ThrowIfNullOrEmpty(memberName);
-
-        using var @lock = Sync.EnterScope();
-
-        var rank = UnsafeRankof(memberName);
-
-        //leaders can not be removed
-        if (rank is null or { Tier: 0 })
-            return false;
-
-        rank.RemoveMember(memberName);
-
-        var aisling = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(memberName))
-                                    ?.Aisling;
-
-        if (aisling is not null)
-        {
-            LeaveChannel(aisling);
-            aisling.Guild = null;
-            aisling.GuildRank = null;
-            aisling.Client.SendSelfProfile();
-        }
-
-        foreach (var member in GetOnlineMembers())
-            member.SendActiveMessage($"{memberName} has been kicked from the guild by {by}");
-
-        return true;
-    }
-
-    /// <summary>
-    ///     Leaves the guild
-    /// </summary>
-    /// <param name="aisling">
-    ///     The aisling leaving the guild
-    /// </param>
-    /// <returns>
-    ///     <c>
-    ///         true
-    ///     </c>
-    ///     if the aisling was in the guild and left, otherwise
-    ///     <c>
-    ///         false
-    ///     </c>
-    /// </returns>
-    public bool Leave(Aisling aisling)
-    {
-        ArgumentNullException.ThrowIfNull(aisling);
-
-        using var @lock = Sync.EnterScope();
-
-        var memberName = aisling.Name;
-        var rank = UnsafeRankof(memberName);
-
-        //leaders can only leave if there's another leader
-        if (rank is null or { Tier: 0, Count: <= 1 })
-            return false;
-
-        rank.RemoveMember(memberName);
-
-        LeaveChannel(aisling);
-        aisling.Guild = null;
-        aisling.GuildRank = null;
-        aisling.Client.SendSelfProfile();
-
-        aisling.SendActiveMessage($"You have left {Name}");
-
-        foreach (var member in GetOnlineMembers())
-            member.SendActiveMessage($"{memberName} has left the guild");
-
-        return true;
-    }
-
-    /// <summary>
     /// </summary>
     /// <param name="left">
     /// </param>
@@ -573,6 +477,102 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
             return false;
 
         guildRank = DeepClone.CreateRequired(rank);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Kicks a member out of the guild
+    /// </summary>
+    /// <param name="memberName">
+    ///     The name of the member to kick
+    /// </param>
+    /// <param name="by">
+    ///     The aisling doing the kicking
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if a member with the specified name was in the guild and was kicked, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    /// <remarks>
+    ///     This will work on members who are not online. When the member logs in, the association check will fail due to the
+    ///     aisling not holding a rank in the guild, and so they will become unassociated
+    /// </remarks>
+    public bool TryKickMember(string memberName, Aisling by)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(memberName);
+
+        using var @lock = Sync.EnterScope();
+
+        var rank = UnsafeRankof(memberName);
+
+        //leaders can not be removed
+        if (rank is null or { Tier: 0 })
+            return false;
+
+        rank.RemoveMember(memberName);
+
+        var aisling = ClientRegistry.FirstOrDefault(cli => cli.Aisling.Name.EqualsI(memberName))
+                                    ?.Aisling;
+
+        if (aisling is not null)
+        {
+            LeaveChannel(aisling);
+            aisling.Guild = null;
+            aisling.GuildRank = null;
+            aisling.Client.SendSelfProfile();
+        }
+
+        foreach (var member in GetOnlineMembers())
+            member.SendActiveMessage($"{memberName} has been kicked from the guild by {by}");
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Leaves the guild
+    /// </summary>
+    /// <param name="aisling">
+    ///     The aisling leaving the guild
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the aisling was in the guild and left, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    public bool TryLeave(Aisling aisling)
+    {
+        ArgumentNullException.ThrowIfNull(aisling);
+
+        using var @lock = Sync.EnterScope();
+
+        var memberName = aisling.Name;
+        var rank = UnsafeRankof(memberName);
+
+        //leaders can only leave if there's another leader
+        if (rank is null or { Tier: 0, Count: <= 1 })
+            return false;
+
+        rank.RemoveMember(memberName);
+
+        LeaveChannel(aisling);
+        aisling.Guild = null;
+        aisling.GuildRank = null;
+        aisling.Client.SendSelfProfile();
+
+        aisling.SendActiveMessage($"You have left {Name}");
+
+        foreach (var member in GetOnlineMembers())
+            member.SendActiveMessage($"{memberName} has left the guild");
 
         return true;
     }

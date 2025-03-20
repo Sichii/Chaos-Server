@@ -83,7 +83,7 @@ public class GuildRankModifyScript : GuildScriptBase
             return;
         }
 
-        if (!IsLeader(rank))
+        if (!rank.IsLeaderRank)
         {
             Subject.Reply(source, "You do not have permission to modify guild ranks", "top");
 

@@ -62,7 +62,7 @@ public class GuildLeaveScript : GuildScriptBase
         }
 
         //ensure that if the player is a guild leader, that there are other guild leaders
-        if (IsLeader(sourceRank) && (sourceRank.Count <= 1))
+        if (sourceRank is { IsLeaderRank: true, Count: <= 1 })
         {
             Subject.Reply(
                 source,
@@ -73,7 +73,7 @@ public class GuildLeaveScript : GuildScriptBase
         }
 
         //leave the guild
-        if (!source.Guild!.Leave(source))
+        if (!source.Guild!.TryLeave(source))
         {
             //something went wrong, but I don't know what
             Subject.Reply(

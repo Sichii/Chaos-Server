@@ -25,10 +25,18 @@ public sealed class GuildRank
     /// </summary>
     public int Tier { get; }
 
+    public bool CanBeDemoted => Tier < 3;
+
+    public bool CanBePromoted => Tier > 0;
+
     /// <summary>
     ///     The number of members in this rank
     /// </summary>
     public int Count => MemberNames.Count;
+
+    public bool IsLeaderRank => Tier == 0;
+
+    public bool IsOfficerRank => Tier <= 1;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="GuildRank" /> class
@@ -107,6 +115,10 @@ public sealed class GuildRank
     ///     </c>
     /// </returns>
     public bool HasMember(string memberName) => MemberNames.Contains(memberName);
+
+    public bool IsInferiorTo(GuildRank other, int minDiff = 1) => (other.Tier - Tier) >= minDiff;
+
+    public bool IsSuperiorTo(GuildRank other, int minDiff = 1) => (Tier - other.Tier) >= minDiff;
 
     /// <summary>
     ///     Removes a member from the rank

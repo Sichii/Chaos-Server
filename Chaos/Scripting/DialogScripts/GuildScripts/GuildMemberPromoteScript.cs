@@ -72,7 +72,7 @@ public class GuildMemberPromoteScript : GuildScriptBase
         }
 
         //ensure the player has permission to promote members
-        if (!IsOfficer(sourceRank))
+        if (!sourceRank.IsOfficerRank)
         {
             Subject.Reply(source, "You do not have permission to promote members.", "generic_guild_members_initial");
 
@@ -91,10 +91,10 @@ public class GuildMemberPromoteScript : GuildScriptBase
 
         //leader can promote anyone that is currently 1 tier higher than them (can promote TO their own tier, from 1 rank away)
         //officer can promote anyone that is currently 2 tiers higher than them (can promote TO 1 tier higher than them, from 2 ranks away)
-        var factor = IsLeader(sourceRank) ? 1 : 2;
+        var factor = sourceRank.IsLeaderRank ? 1 : 2;
 
         //ensure the player to promote is not the same or higher rank (same or lower tier)
-        if (!IsSuperiorRank(sourceRank, targetCurrentRank, factor))
+        if (!sourceRank.IsSuperiorTo(targetCurrentRank, factor))
         {
             Subject.Reply(source, $"You do not have permission to promote {name}", "generic_guild_members_initial");
 

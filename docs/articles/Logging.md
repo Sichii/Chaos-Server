@@ -23,7 +23,7 @@ To quickly and easily enable Seq, set the configuration value `Logging:UseSeq` t
 your Seq instance in the `appsettings.seq.json` files. They are preconfigured to use the default values for a local Seq
 instance.
 
-There is also a tool in thie repo that can be used to configure seq for use with chaos-server. Look for
+There is also a tool in this repo that can be used to configure seq for use with chaos-server. Look for
 Tools\SeqConfigurator. Simply replace the hostname and apikey at the top of `Program.cs` and run the tool. It will add a
 dashboard and signals related to logging topics.
 

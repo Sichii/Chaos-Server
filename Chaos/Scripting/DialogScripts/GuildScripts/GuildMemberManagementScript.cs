@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Models.Menu;
@@ -5,6 +6,7 @@ using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 using Chaos.Storage.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.DialogScripts.GuildScripts;
 
@@ -53,7 +55,7 @@ public class GuildMemberManagementScript : GuildScriptBase
         Subject.AddOption("Roster", "generic_guild_members_roster_initial");
 
         //only leaders and officers can promote/demote/admit/kick
-        if (sourceRank.Tier <= 1)
+        if (sourceRank.IsOfficerRank)
             Subject.AddOptions(
                 ("Promote", "generic_guild_members_promote_initial"),
                 ("Demote", "generic_guild_members_demote_initial"),
