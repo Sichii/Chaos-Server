@@ -63,6 +63,11 @@ will be serialized as well. This will allow that modification script to be re-ap
 
 To add a script to an object at runtime, just use the extension method `AddScript`.
 
+## Notepad Text
+
+Items have a `NotepadText` property that can be used to store text. This is in place to support the `DisplayNotepad` and
+`SetNotepad` packets. This text is not guaranteed to persist through banking or stackable item transfer.
+
 ## Dyeable items
 
 The color of the item (not the item template) can be changed, but in order for this change to be persisted,
@@ -87,15 +92,19 @@ If the script is configurable, you must also have an entry for that script in th
 
 Here are the events overridable in item scripts:
 
-| Event Name   | Description                                                                                                                                                                                                                                     |
-|--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| CanUse       | Called before the item is used. Return false to prevent the item from being used                                                                                                                                                                |
-| OnDropped    | Called after the item is dropped, but before reactor tiles are notified                                                                                                                                                                         |
-| OnEquipped   | Called after the item has been equipped                                                                                                                                                                                                         |
-| OnPickup     | Called after the item has been picked up. Beware that if a stackable item is picked up, this event will be fired from the item after it has been merged into another stack.<br/>Details about the original item will be properties in the event |
-| OnUnEquipped | Called after the item has been unequipped                                                                                                                                                                                                       |
-| OnUse        | Called when the item is used. Provide functionality to items via this event                                                                                                                                                                     |
-| Update       | Called every time the map updates. Items will update if they're on the ground, in an inventory, or equipped, but will not update if they are in the bank                                                                                        |
+| Event Name           | Description                                                                                                                                                                                                                                     |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CanBeDropped         | Called before the item is dropped. Return false to prevent the item from being dropped                                                                                                                                                          |
+| CanBeDroppedOn       | Called before the item is dropped on a creature. Return false to prevent the item from being dropped on the creature                                                                                                                            |
+| CanBePickedUp        | Called before the item is picked up. Return false to prevent the item from being picked up                                                                                                                                                      |
+| CanUse               | Called before the item is used. Return false to prevent the item from being used                                                                                                                                                                |
+| OnDropped            | Called after the item is dropped, but before reactor tiles are notified                                                                                                                                                                         |
+| OnEquipped           | Called after the item has been equipped                                                                                                                                                                                                         |
+| OnNotepadTextUpdated | Called after the item's `NotepadText` property is updated                                                                                                                                                                                       |
+| OnPickup             | Called after the item has been picked up. Beware that if a stackable item is picked up, this event will be fired from the item after it has been merged into another stack.<br/>Details about the original item will be properties in the event |
+| OnUnEquipped         | Called after the item has been unequipped                                                                                                                                                                                                       |
+| OnUse                | Called when the item is used. Provide functionality to items via this event                                                                                                                                                                     |
+| Update               | Called every time the map updates. Items will update if they're on the ground, in an inventory, or equipped, but will not update if they are in the bank                                                                                        |
 
 ## Example
 

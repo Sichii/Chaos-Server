@@ -66,11 +66,11 @@ If the script is configurable, you must also have an entry for the script in the
 
 Here are the events overridable in spell scripts:
 
-| Event Name | Description                                                                                   |
-|------------|-----------------------------------------------------------------------------------------------|
-| CanUse     | Called when a spell is about to be used. Return false to prevent the spell from being used    |
-| OnUse      | Called when a spell is used. Provide functionality to spells via this event                   |
-| Update     | Called every time the map updates. Spells will update only if they're in a player's spellbook |
+| Event Name | Description                                                                                     |
+|------------|-------------------------------------------------------------------------------------------------|
+| CanUse     | Called when a spell is about to be used. Return false to prevent the spell from being used      |
+| OnUse      | Called when a spell is used. Provide functionality to spells via this event                     |
+| Update     | Called every time the map updates. Spells will update only if they're in a creature's spellbook |
 
 ## Example
 

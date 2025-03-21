@@ -14,10 +14,19 @@ namespace Chaos.Scripting.ItemScripts.Abstractions;
 
 public interface IItemScript : IScript, IDeltaUpdatable
 {
+    /// <summary>
+    ///     Determines if the item subject can be dropped by the specified aisling onto the specified point
+    /// </summary>
     bool CanBeDropped(Aisling source, Point targetPoint);
 
+    /// <summary>
+    ///     Determines if the item subject can be dropped by the specified aisling onto the specified creature
+    /// </summary>
     bool CanBeDroppedOn(Aisling source, Creature creature);
 
+    /// <summary>
+    ///     Determines if the item subject can be picked up by the specified aisling from the specified point
+    /// </summary>
     bool CanBePickedUp(Aisling source, Point sourcePoint);
 
     /// <summary>

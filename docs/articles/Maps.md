@@ -153,6 +153,15 @@ The same as AbsolutePlayerLimit except for the following
   `ShardingOptions.ExitLocation` after a short delay. If the player is in one of the guilds that are already in the
   shard, they will not be moved.
 
+## Morphing
+
+MapInstances can be morphed via [MapInstance.Morph](<xref:Chaos.Collections.MapInstance.Morph>). This will change the
+underlying map template to the one specified. All aisling on the map will be automatically refreshed.
+
+[OnMorphing](#scripting) should be used to handle any special cases that need to be addressed when a map is morphed. For
+example, if you morph into a smaller dimension map, aislings will need to be moved so that they are not outside of map
+bounds.
+
 ## Scripting
 
 Maps are scripted via [IMapScript](<xref:Chaos.Scripting.MapScripts.Abstractions.IMapScript>).
@@ -173,6 +182,8 @@ Here are the events overridable in map scripts:
 |------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | OnEntered  | Called after a creature has entered the map for any reason (including spawns). This includes monsters, merchants, and aislings<br/>This is called after OnSpawn, but before OnApproached |
 | OnExited   | Called after a creature has exited the map for any reason (including death). This includes monsters, merchants, and aislings<br/>This is called after OnDeath, but before OnDeparture    |
+| OnMorphing | Called before a map is morphed                                                                                                                                                           |
+| OnMorphed  | Called after a map has been morphed                                                                                                                                                      |
 | Update     | Called every time the map updates. Ever map has it's own update loop. Time between updates is configurable via [WorldOptions](WorldOptions.md#updatespersecond)                          |
 
 ## Example
