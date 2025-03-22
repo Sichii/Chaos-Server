@@ -174,7 +174,12 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
         var rank = UnsafeRankof(aisling.Name);
 
         if (rank is null)
+        {
+            aisling.Guild = null;
+            aisling.GuildRank = null;
+
             return;
+        }
 
         aisling.Guild = this;
         aisling.GuildRank = rank.Name;

@@ -1,9 +1,11 @@
+#region
 using Chaos.Common.Abstractions;
 using Chaos.IO.FileSystem;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace Chaos.Services.Storage.Abstractions;
 
@@ -71,7 +73,7 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
                 return Cache.Remove(key, out _);
 
             Cache.Remove(key, out _);
-            Directory.Delete(dir);
+            Directory.Delete(dir, true);
 
             return true;
         }
