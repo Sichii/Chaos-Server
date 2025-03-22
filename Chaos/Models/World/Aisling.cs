@@ -58,6 +58,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public LanternSize LanternSize { get; private set; }
     public Collections.Legend Legend { get; private set; }
     public MailBox MailBox { get; set; } = null!;
+    public bool Muted { get; set; }
     public Nation Nation { get; set; }
     public UserOptions Options { get; init; }
     public byte[] Portrait { get; set; }

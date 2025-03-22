@@ -461,8 +461,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnChant(IChaosWorldClient localClient, ChantArgs localArgs)
         {
-            if (localClient.Aisling.IsOnWorldMap)
+            if (localClient.Aisling.IsOnWorldMap || localClient.Aisling.Muted)
+            {
+                localClient.SendServerMessage(ServerMessageType.OrangeBar1, "Your voice is swept away by a strange wind...");
+
                 return default;
+            }
 
             var message = localArgs.ChantMessage;
 
@@ -1235,8 +1239,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         async ValueTask InnerOnPublicMessage(IChaosWorldClient localClient, PublicMessageArgs localArgs)
         {
-            if (localClient.Aisling.IsOnWorldMap)
+            if (localClient.Aisling.IsOnWorldMap || localClient.Aisling.Muted)
+            {
+                localClient.SendServerMessage(ServerMessageType.OrangeBar1, "Your voice is swept away by a strange wind...");
+
                 return;
+            }
 
             if (CommandInterceptor.IsCommand(localArgs.Message))
             {
@@ -1614,8 +1622,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnWhisper(IChaosWorldClient localClient, WhisperArgs localArgs)
         {
-            if (localClient.Aisling.IsOnWorldMap)
+            if (localClient.Aisling.IsOnWorldMap || localClient.Aisling.Muted)
+            {
+                localClient.SendServerMessage(ServerMessageType.OrangeBar1, "Your voice is swept away by a strange wind...");
+
                 return default;
+            }
 
             var fromAisling = localClient.Aisling;
 

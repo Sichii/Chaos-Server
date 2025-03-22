@@ -1,4 +1,6 @@
+#region
 using Chaos.DarkAges.Definitions;
+#endregion
 
 namespace Chaos.Messaging.Abstractions;
 
@@ -94,6 +96,13 @@ public interface IChannelService
     void LeaveChannel(IChannelSubscriber subscriber, string channelName);
 
     /// <summary>
+    ///     Mutes a channel, preventing messages from being set through it
+    /// </summary>
+    /// <param name="channelName">
+    /// </param>
+    void MuteChannel(string channelName);
+
+    /// <summary>
     ///     Prepends the channel prefix to the string if it is not already present
     /// </summary>
     string PrependPrefix(string channelName);
@@ -155,6 +164,13 @@ public interface IChannelService
     ///     The color to use for the given channel
     /// </param>
     void SetChannelColor(IChannelSubscriber subscriber, string channelName, MessageColor messageColor);
+
+    /// <summary>
+    ///     Unmutes a channel, allowing messages to be sent through it
+    /// </summary>
+    /// <param name="channelName">
+    /// </param>
+    void UnmuteChannel(string channelName);
 
     /// <summary>
     ///     Unregisters a channel, preventing anyone from sending and receiving messages to/from it

@@ -1,7 +1,9 @@
+#region
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Chaos.DarkAges.Definitions;
 using Chaos.Messaging.Abstractions;
+#endregion
 
 namespace Chaos.Messaging;
 
@@ -9,6 +11,7 @@ internal sealed class ChannelDetails
 {
     internal string? ChannelNameOverride { get; set; }
     internal MessageColor DefaultColor { get; set; }
+    internal bool Muted { get; set; }
     internal Action<IChannelSubscriber, string> SendMessageAction { get; set; }
     internal ConcurrentDictionary<string, SubscriberDetails> Subscribers { get; set; }
 
@@ -17,7 +20,14 @@ internal sealed class ChannelDetails
         Action<IChannelSubscriber, string> sendMessageAction,
         string? channelNameOverride = null)
     {
-        SendMessageAction = sendMessageAction;
+        SendMessageAction = (fromSub, message) =>
+        {
+            if (Muted)
+                return;
+
+            sendMessageAction(fromSub, message);
+        };
+
         DefaultColor = defaultColor;
         Subscribers = new ConcurrentDictionary<string, SubscriberDetails>(StringComparer.OrdinalIgnoreCase);
         ChannelNameOverride = channelNameOverride;
