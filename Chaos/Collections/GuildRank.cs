@@ -116,9 +116,9 @@ public sealed class GuildRank
     /// </returns>
     public bool HasMember(string memberName) => MemberNames.Contains(memberName);
 
-    public bool IsInferiorTo(GuildRank other, int minDiff = 1) => (other.Tier - Tier) >= minDiff;
+    public bool IsInferiorTo(GuildRank other, int minDiff = 1) => (Tier - other.Tier) >= minDiff;
 
-    public bool IsSuperiorTo(GuildRank other, int minDiff = 1) => (Tier - other.Tier) >= minDiff;
+    public bool IsSuperiorTo(GuildRank other, int minDiff = 1) => (other.Tier - Tier) >= minDiff;
 
     /// <summary>
     ///     Removes a member from the rank
