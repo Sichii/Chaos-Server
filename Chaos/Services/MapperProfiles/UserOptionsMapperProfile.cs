@@ -1,6 +1,8 @@
+#region
 using Chaos.Collections;
 using Chaos.Schemas.Aisling;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -11,7 +13,7 @@ public sealed class UserOptionsMapperProfile : IMapperProfile<UserOptions, UserO
         {
             ShowBodyAnimations = obj.ShowBodyAnimations,
             ListenToHitSounds = obj.ListenToHitSounds,
-            Option3 = obj.Option3,
+            PriorityAnimations = obj.PriorityAnimations,
             Option4 = obj.Option4,
             Option5 = obj.Option5,
             AllowExchange = obj.AllowExchange,
@@ -28,7 +30,7 @@ public sealed class UserOptionsMapperProfile : IMapperProfile<UserOptions, UserO
         {
             ShowBodyAnimations = obj.ShowBodyAnimations,
             ListenToHitSounds = obj.ListenToHitSounds,
-            Option3 = obj.Option3,
+            PriorityAnimations = obj.PriorityAnimations,
             Option4 = obj.Option4,
             Option5 = obj.Option5,
             AllowExchange = obj.AllowExchange,
