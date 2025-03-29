@@ -366,7 +366,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var nextPoint = path.Pop();
         var direction = nextPoint.DirectionalRelationTo(this);
 
-        Walk(direction, pathOptions.IgnoreBlockingReactors);
+        Walk(direction, pathOptions.IgnoreBlockingReactors, pathOptions.IgnoreWalls);
     }
 
     public virtual void Say(string message) => ShowPublicMessage(PublicMessageType.Normal, message);
@@ -725,9 +725,11 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             OnApproached(entity, refresh);*/
     }
 
-    public virtual void Walk(Direction direction, bool? ignoreBlockingReactors = null)
+    public virtual void Walk(Direction direction, bool? ignoreBlockingReactors = null, bool? ignoreWalls = null)
     {
         ignoreBlockingReactors ??= Type == CreatureType.Aisling;
+        ignoreWalls ??= Type == CreatureType.WalkThrough;
+        var metaType = ignoreWalls.Value ? CreatureType.WalkThrough : CreatureType.Normal;
 
         if (!Script.CanMove())
             return;
@@ -737,7 +739,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var startPoint = Point.From(this);
         var endPoint = this.DirectionalOffset(direction);
 
-        if (!MapInstance.IsWalkable(endPoint, Type, ignoreBlockingReactors))
+        if (!MapInstance.IsWalkable(endPoint, metaType, ignoreBlockingReactors))
             return;
 
         SetLocation(endPoint);
@@ -794,7 +796,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (direction == Direction.Invalid)
             return;
 
-        Walk(direction);
+        Walk(direction, pathOptions.IgnoreBlockingReactors, pathOptions.IgnoreWalls);
     }
 
     /// <inheritdoc />
