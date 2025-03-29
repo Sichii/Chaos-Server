@@ -1,3 +1,4 @@
+#region
 using System.Runtime.InteropServices;
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
@@ -19,6 +20,7 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MonsterScripts.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Models.World;
 
@@ -142,8 +144,10 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     /// <inheritdoc />
     public override void Wander(IPathOptions? pathOptions = null)
     {
-        pathOptions ??= PathOptions.Default;
-        pathOptions.IgnoreWalls |= Type == CreatureType.WalkThrough;
+        pathOptions ??= PathOptions.Default with
+        {
+            IgnoreWalls = Type == CreatureType.WalkThrough
+        };
 
         pathOptions.BlockedPoints = pathOptions.BlockedPoints
                                                .Concat(BlackList)
