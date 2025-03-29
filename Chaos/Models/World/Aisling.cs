@@ -1201,9 +1201,11 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                     ApproachTime[kvp.Key] = kvp.Value;
     }
 
-    public override void Walk(Direction direction, bool? ignoreBlockingReactors = null)
+    public override void Walk(Direction direction, bool? ignoreBlockingReactors = null, bool? ignoreWalls = null)
     {
         ignoreBlockingReactors ??= true;
+        ignoreWalls ??= false;
+        var metaType = ignoreWalls.Value ? CreatureType.WalkThrough : CreatureType.Aisling;
 
         if (!Script.CanMove() || ((direction != Direction) && !Script.CanTurn()) || !ShouldWalk)
         {
@@ -1229,7 +1231,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
 
         //otherwise, check if the point is walkable
-        else if (!MapInstance.IsWalkable(endPoint, Type, ignoreBlockingReactors))
+        else if (!MapInstance.IsWalkable(endPoint, metaType, ignoreBlockingReactors))
         {
             Refresh(true);
 
