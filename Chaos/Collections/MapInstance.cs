@@ -1080,7 +1080,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         => GetEntitiesAtPoints<ReactorTile>(point)
             .Any();
 
-    /// <summary>
+    /*/// <summary>
     ///     Determines if a point is walkable
     /// </summary>
     /// <param name="point">
@@ -1109,9 +1109,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     ///     walking
     /// </remarks>
     public bool IsWalkable(IPoint point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
-        => IsWalkable(Point.From(point), creatureType, ignoreBlockingReactors);
+        => IsWalkable(Point.From(point), creatureType, ignoreBlockingReactors);*/
 
-    /// <summary>
+    /*/// <summary>
     ///     Determines if a point is walkable
     /// </summary>
     /// <param name="point">
@@ -1158,6 +1158,117 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             CreatureType.Aisling     => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
             _                        => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
         };
+    }*/
+
+    /// <summary>
+    ///     Determines if a point is walkable
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <param name="ignoreBlockingReactors">
+    ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
+    /// </param>
+    /// <param name="collisionType">
+    ///     The type of the creature
+    /// </param>
+    /// <param name="ignoreWalls">
+    ///     Whether to ignore walls. Default behavior ignores walls only for WalkThrough creatures
+    /// </param>
+    /// <param name="ignoreCollision">
+    ///     Whether to ignore creature type collision. Default behavior does not ignore collision
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, and walkable to the specified creature type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     Thrown when the creature type is not recognized
+    /// </exception>
+    /// <remarks>
+    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
+    ///     walking
+    /// </remarks>
+    public bool IsWalkable(
+        IPoint point,
+        bool? ignoreBlockingReactors = null,
+        bool? ignoreWalls = null,
+        bool? ignoreCollision = null,
+        CreatureType? collisionType = null)
+        => IsWalkable(
+            Point.From(point),
+            ignoreBlockingReactors,
+            ignoreWalls,
+            ignoreCollision,
+            collisionType);
+
+    /// <summary>
+    ///     Determines if a point is walkable
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <param name="ignoreBlockingReactors">
+    ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
+    /// </param>
+    /// <param name="collisionType">
+    ///     The type of the creature
+    /// </param>
+    /// <param name="ignoreWalls">
+    ///     Whether to ignore walls. Default behavior ignores walls only for WalkThrough creatures
+    /// </param>
+    /// <param name="ignoreCollision">
+    ///     Whether to ignore creature type collision. Default behavior does not ignore collision
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, and walkable to the specified creature type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     Thrown when the creature type is not recognized
+    /// </exception>
+    /// <remarks>
+    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
+    ///     walking
+    /// </remarks>
+    public bool IsWalkable(
+        Point point,
+        bool? ignoreBlockingReactors = null,
+        bool? ignoreWalls = null,
+        bool? ignoreCollision = null,
+        CreatureType? collisionType = null)
+    {
+        collisionType ??= CreatureType.Normal;
+        ignoreBlockingReactors ??= collisionType == CreatureType.Aisling;
+        ignoreWalls ??= collisionType == CreatureType.WalkThrough;
+        ignoreCollision ??= false;
+
+        var creatures = GetEntitiesAtPoints<Creature>(point)
+            .ToList();
+
+        if (!ignoreBlockingReactors.Value && IsBlockingReactor(point))
+            return false;
+
+        if (!IsWithinMap(point))
+            return false;
+
+        if (!ignoreWalls.Value && IsWall(point))
+            return false;
+
+        if (ignoreCollision.Value)
+            return true;
+
+        return !creatures.Any(c => collisionType.Value.WillCollideWith(c));
     }
 
     /// <summary>
@@ -1497,7 +1608,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// </returns>
     public bool TryGetRandomWalkablePoint([NotNullWhen(true)] out Point? point, CreatureType creatureType = CreatureType.Normal)
     {
-        if (!Template.Bounds.TryGetRandomPoint(pt => IsWalkable(pt, creatureType), out point))
+        if (!Template.Bounds.TryGetRandomPoint(pt => IsWalkable(pt, collisionType: creatureType), out point))
             return false;
 
         return true;

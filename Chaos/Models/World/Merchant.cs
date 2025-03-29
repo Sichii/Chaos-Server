@@ -199,14 +199,14 @@ public sealed class Merchant : Creature,
     }
 
     /// <inheritdoc />
-    public override void Wander(IPathOptions? pathOptions = null)
+    public override void Wander(IPathOptions? pathOptions = null, bool ignoreCollision = false)
     {
-        pathOptions ??= PathOptions.Default;
+        pathOptions ??= PathOptions.Default.ForCreatureType(Type);
 
         pathOptions.BlockedPoints = pathOptions.BlockedPoints
                                                .Concat(BlackList)
                                                .ToHashSet();
 
-        base.Wander(pathOptions);
+        base.Wander(pathOptions, ignoreCollision);
     }
 }

@@ -54,7 +54,7 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 
     private bool PointValidator(Point point)
         => (SpawnArea is null || SpawnArea.Contains(point))
-           && MapInstance.IsWalkable(point, MonsterTemplate.Type)
+           && MapInstance.IsWalkable(point, collisionType: MonsterTemplate.Type)
            && !BlackList.Contains(point, PointEqualityComparer.Instance);
 
     private void SpawnMonsters()

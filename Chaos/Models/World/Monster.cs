@@ -5,6 +5,7 @@ using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
@@ -142,17 +143,14 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     }
 
     /// <inheritdoc />
-    public override void Wander(IPathOptions? pathOptions = null)
+    public override void Wander(IPathOptions? pathOptions = null, bool ignoreCollision = false)
     {
-        pathOptions ??= PathOptions.Default with
-        {
-            IgnoreWalls = Type == CreatureType.WalkThrough
-        };
+        pathOptions ??= PathOptions.Default.ForCreatureType(Type);
 
         pathOptions.BlockedPoints = pathOptions.BlockedPoints
                                                .Concat(BlackList)
-                                               .ToHashSet();
+                                               .ToHashSet(PointEqualityComparer.Instance);
 
-        base.Wander(pathOptions);
+        base.Wander(pathOptions, ignoreCollision);
     }
 }
