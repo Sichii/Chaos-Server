@@ -299,6 +299,7 @@ public static class ServiceCollectionExtensions
         services.AddSimpleFactory<IChaosLobbyClient, ChaosLobbyClient>(typeof(Socket));
         services.AddSimpleFactory<IChaosLoginClient, ChaosLoginClient>(typeof(Socket));
         services.AddSimpleFactory<IChaosWorldClient, ChaosWorldClient>(typeof(Socket));
+        services.AddSimpleFactory<Group>(typeof(Aisling), typeof(Aisling));
         services.AddSimpleFactory<Exchange>(typeof(Aisling), typeof(Aisling));
         services.AddSimpleFactory<MailBox>(typeof(string));
     }

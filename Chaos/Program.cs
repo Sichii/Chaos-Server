@@ -409,6 +409,14 @@ static void RegisterStructuredLoggingTransformations()
                                  NoTrade = obj.Item.Template.NoTrade
                              });
 
+                         builder.RegisterObjectTransformation<Group>(
+                             obj => new
+                             {
+                                 Id = obj.Id,
+                                 LeaderName = obj.Leader.Name,
+                                 MemberCount = obj.Count
+                             });
+
                          builder.RegisterObjectTransformation<Dialog>(
                              obj => new
                              {

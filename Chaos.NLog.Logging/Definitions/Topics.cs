@@ -90,11 +90,14 @@ public static class Topics
 
     public static class Qualifiers
     {
+        public static string Accepted => nameof(Accepted);
         public static string Cheating => nameof(Cheating);
+        public static string Expired => nameof(Expired);
         public static string Facade => nameof(Facade);
         public static string Forced => nameof(Forced);
         public static string Harassment => nameof(Harassment);
         public static string Raw => nameof(Raw);
+        public static string Rejected => nameof(Rejected);
     }
 
     public static class Servers

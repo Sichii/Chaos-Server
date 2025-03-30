@@ -1166,6 +1166,60 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <param name="point">
     ///     The point to check
     /// </param>
+    /// <param name="creatureType">
+    ///     The type of the creature
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, and walkable to the specified creature type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     Thrown when the creature type is not recognized
+    /// </exception>
+    /// <remarks>
+    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
+    ///     walking
+    /// </remarks>
+    public bool IsWalkable(Point point, CreatureType creatureType) => IsWalkable(point, collisionType: creatureType);
+
+    /// <summary>
+    ///     Determines if a point is walkable
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <param name="creatureType">
+    ///     The type of the creature
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, and walkable to the specified creature type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     Thrown when the creature type is not recognized
+    /// </exception>
+    /// <remarks>
+    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
+    ///     walking
+    /// </remarks>
+    public bool IsWalkable(IPoint point, CreatureType creatureType) => IsWalkable(Point.From(point), collisionType: creatureType);
+
+    /// <summary>
+    ///     Determines if a point is walkable
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
     /// <param name="ignoreBlockingReactors">
     ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
     /// </param>
