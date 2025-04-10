@@ -1450,7 +1450,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (localClient.Aisling.IsOnWorldMap)
                 return default;
 
-            localClient.Aisling.Turn(localArgs.Direction);
+            localClient.Aisling.Turn(localArgs.Direction, isResponse: true);
 
             return default;
         }

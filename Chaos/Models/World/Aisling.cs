@@ -1083,6 +1083,30 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         return TryUseSpell(spell, targetId, promptResponse);
     }
 
+    // ReSharper disable once MethodOverloadWithOptionalParameter
+    public void Turn(Direction direction, bool forced = false, bool isResponse = false)
+    {
+        if (!forced && (!Script.CanTurn() || !TurnThrottle.TryIncrement()))
+            return;
+
+        Direction = direction;
+
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                           .ThatCanObserve(this))
+        {
+            //if turn is not forced
+            //and aisling is this asiling
+            //and this is a turn response to a client turn
+            //dont send them the turn (this prevents double tap macros)
+            if (!forced && aisling.Equals(this) && isResponse)
+                continue;
+
+            aisling.Client.SendCreatureTurn(Id, direction);
+        }
+
+        Trackers.LastTurn = DateTime.UtcNow;
+    }
+
     /// <inheritdoc />
     public override void Turn(Direction direction, bool forced = false)
     {
