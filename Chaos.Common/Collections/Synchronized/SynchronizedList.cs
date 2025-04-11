@@ -1,5 +1,6 @@
 #region
 using System.Collections;
+using System.Text.Json.Serialization;
 #endregion
 
 // ReSharper disable once CheckNamespace
@@ -56,14 +57,20 @@ public class SynchronizedList<T> : IList<T>, IReadOnlyList<T>
     /// <summary>
     ///     Creates a new <see cref="SynchronizedList{T}" />
     /// </summary>
-    /// <param name="items">
+    public SynchronizedList()
+        : this([]) { }
+
+    /// <summary>
+    ///     Creates a new <see cref="SynchronizedList{T}" />
+    /// </summary>
+    /// <param name="list">
     ///     An optional sequence of initial items to add to the collection
     /// </param>
-    public SynchronizedList(IEnumerable<T>? items = null)
+    [JsonConstructor]
+    public SynchronizedList(IEnumerable<T> list)
     {
         Sync = new Lock();
-        items ??= [];
-        List = [..items];
+        List = [..list];
     }
 
     /// <inheritdoc cref="ICollection{T}.Add" />
