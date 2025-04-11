@@ -181,6 +181,8 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient<IScriptProvider, ScriptProvider>();
         services.AddTransient<ICloningService<Item>, ItemCloningService>();
+
+        services.AddSingleton<IHostedService, WorldScriptingService>();
     }
 
     public static void AddServerAuthentication(this IServiceCollection services)
