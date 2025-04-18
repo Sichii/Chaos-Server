@@ -1,3 +1,4 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Formulae;
 using Chaos.Formulae.Abstractions;
@@ -5,6 +6,7 @@ using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.FunctionalScripts.ApplyDamage;
 
@@ -13,7 +15,7 @@ public class ApplyNonAttackDamageScript : ScriptBase, IApplyDamageScript
     public IDamageFormula DamageFormula { get; set; } = DamageFormulae.PureDamage;
     public static string Key { get; } = GetScriptKey(typeof(ApplyNonAttackDamageScript));
 
-    public virtual void ApplyDamage(
+    public virtual int ApplyDamage(
         Creature source,
         Creature target,
         IScript script,
@@ -28,7 +30,7 @@ public class ApplyNonAttackDamageScript : ScriptBase, IApplyDamageScript
             elementOverride);
 
         if (damage <= 0)
-            return;
+            return 0;
 
         target.Trackers.LastDamagedBy = source;
 
@@ -54,6 +56,8 @@ public class ApplyNonAttackDamageScript : ScriptBase, IApplyDamageScript
             case Merchant merchant:
                 break;
         }
+
+        return damage;
     }
 
     public static IApplyDamageScript Create() => FunctionalScriptRegistry.Instance.Get<IApplyDamageScript>(Key);
