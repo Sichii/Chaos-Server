@@ -16,6 +16,8 @@ using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.Data;
+using Chaos.Models.Panel;
+using Chaos.Models.Panel.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Networking.Abstractions;
@@ -27,7 +29,10 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
+using Chaos.Scripting.SpellScripts.Abstractions;
+using Chaos.Services.Factories;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Other;
 using Chaos.Services.Other.Abstractions;
@@ -51,10 +56,13 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     private readonly ICommandInterceptor<Aisling> CommandInterceptor;
     private readonly AislingFacadeCache FacadeCache;
     private readonly IGroupService GroupService;
+    private readonly IItemFactory ItemFactory;
     private readonly IStore<MailBox> MailStore;
     private readonly IMerchantFactory MerchantFactory;
     private readonly IMetaDataStore MetaDataStore;
     private readonly IMonsterFactory MonsterFactory;
+    private readonly ISkillFactory SkillFactory;
+    private readonly ISpellFactory SpellFactory;
     private new WorldOptions Options { get; }
 
     public IEnumerable<Aisling> Aislings
@@ -78,7 +86,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         BulletinBoardKeyMapper bulletinBoardKeyMapper,
         IStore<BulletinBoard> bulletinBoardStore,
         AislingFacadeCache facadeCache,
-        IMonsterFactory monsterFactory)
+        IMonsterFactory monsterFactory,
+        ISkillFactory skillFactory,
+        ISpellFactory spellFactory,
+        IItemFactory itemFactory)
         : base(
             redirectManager,
             packetSerializer,
@@ -99,6 +110,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         BulletinBoardStore = bulletinBoardStore;
         FacadeCache = facadeCache;
         MonsterFactory = monsterFactory;
+        SkillFactory = skillFactory;
+        SpellFactory = spellFactory;
+        ItemFactory = itemFactory;
 
         IndexHandlers();
     }
@@ -112,6 +126,30 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     {
         var sourceType = effect.SnapshotVars.Get<CreatureType>("sourceType");
         var sourceIdentifier = effect.SnapshotVars.Get<string>("sourceIdentifier")!;
+        var activatorType = effect.SnapshotVars.Get<string>("activatorType");
+        var activatorKey = effect.SnapshotVars.Get<string>("activatorKey");
+        var scriptKey = effect.SnapshotVars.Get<string>("scriptKey");
+
+        //if there's no source script info, return false
+        if (string.IsNullOrEmpty(activatorType) || string.IsNullOrEmpty(activatorKey) || string.IsNullOrEmpty(scriptKey))
+            return false;
+
+        //if there's source script info, but the data is unknown
+        //then dont set the source script
+        if (!activatorType.EqualsI("unknown") && !activatorKey.EqualsI("unknown") && !scriptKey.EqualsI("unknown"))
+        {
+            var sourceActivator = (IScripted<IScript>)(activatorType.ToLower() switch
+            {
+                "spell" => SpellFactory.CreateFaux(activatorKey),
+                "skill" => SkillFactory.CreateFaux(activatorKey),
+                "item"  => ItemFactory.CreateFaux(activatorKey),
+                _       => throw new ArgumentOutOfRangeException()
+            });
+
+            effect.SourceScript = sourceActivator.Script
+                                                 .GetScripts<IScript>()
+                                                 .Single(script => script.ScriptKey.EqualsI(scriptKey));
+        }
 
         if (string.IsNullOrEmpty(sourceIdentifier))
             return false;
@@ -177,12 +215,18 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
                         if (TrySetSource(aisling, effect))
                             continue;
-                    } catch
+                    } catch (Exception e)
                     {
                         //ignored
                     }
 
-                    aisling.Effects.Dispel(effect.Name);
+                    try
+                    {
+                        aisling.Effects.Dispel(effect.Name);
+                    } catch
+                    {
+                        //ignored
+                    }
                 }
 
                 aisling.Guild?.Associate(aisling);

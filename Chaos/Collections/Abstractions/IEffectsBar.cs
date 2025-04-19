@@ -1,5 +1,6 @@
 #region
 using Chaos.Models.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Time.Abstractions;
 #endregion
@@ -12,15 +13,18 @@ namespace Chaos.Collections.Abstractions;
 public interface IEffectsBar : IEnumerable<IEffect>, IDeltaUpdatable
 {
     /// <summary>
-    ///     Applies the specified effect
+    ///     Applies an effect to the creature this bar is for
     /// </summary>
     /// <param name="source">
-    ///     The source creature applying the effect
+    ///     The creature that applied the effect
     /// </param>
     /// <param name="effect">
-    ///     The effect to be applied
+    ///     The effect to apply
     /// </param>
-    void Apply(Creature source, IEffect effect);
+    /// <param name="sourceScript">
+    ///     The script that applied this effect
+    /// </param>
+    void Apply(Creature source, IEffect effect, IScript? sourceScript = null);
 
     /// <summary>
     ///     Determines whether the specified effect is present in the collection

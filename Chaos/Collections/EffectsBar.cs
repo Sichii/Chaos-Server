@@ -3,9 +3,15 @@ using Chaos.Collections.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.Models.Menu;
+using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
+using Chaos.Scripting.ReactorTileScripts.Abstractions;
+using Chaos.Scripting.SkillScripts.Abstractions;
+using Chaos.Scripting.SpellScripts.Abstractions;
 #endregion
 
 namespace Chaos.Collections;
@@ -42,16 +48,8 @@ public sealed class EffectsBar : IEffectsBar
             Effects[effect.Name] = effect;
     }
 
-    /// <summary>
-    ///     Applies an effect to the creature this bar is for
-    /// </summary>
-    /// <param name="source">
-    ///     The creature that applied the effect
-    /// </param>
-    /// <param name="effect">
-    ///     The effect to apply
-    /// </param>
-    public void Apply(Creature source, IEffect effect)
+    /// <inheritdoc />
+    public void Apply(Creature source, IEffect effect, IScript? sourceScript = null)
     {
         using var @lock = Sync.EnterScope();
 
@@ -63,7 +61,7 @@ public sealed class EffectsBar : IEffectsBar
             effect.Color = effect.GetColor();
             Effects[effect.Name] = effect;
 
-            SetSource(effect, source);
+            SetSource(effect, source, sourceScript);
             effect.PrepareSnapshot(source);
             effect.OnApplied();
             ResetDisplay();
@@ -172,9 +170,25 @@ public sealed class EffectsBar : IEffectsBar
             ResetDisplay();
     }
 
-    private void SetSource(IEffect effect, Creature source)
+    private void SetSource(IEffect effect, Creature source, IScript? sourceScript = null)
     {
         effect.Source = source;
+        effect.SourceScript = sourceScript;
+
+        if (sourceScript is SubjectiveScriptBase<ReactorTile> reactorScript)
+            sourceScript = reactorScript.Subject.SourceScript;
+
+        (var activatorType, var activatorKey, var scriptKey) = sourceScript switch
+        {
+            SubjectiveScriptBase<Spell> spellScript => ("spell", spellScript.Subject.Template.TemplateKey, spellScript.ScriptKey),
+            SubjectiveScriptBase<Skill> skillScript => ("skill", skillScript.Subject.Template.TemplateKey, skillScript.ScriptKey),
+            SubjectiveScriptBase<Item> itemScript   => ("item", itemScript.Subject.Template.TemplateKey, itemScript.ScriptKey),
+            _                                       => ("unknown", "unknown", "unknown")
+        };
+
+        effect.SetVar("activatorType", activatorType);
+        effect.SetVar("activatorKey", activatorKey);
+        effect.SetVar("scriptKey", scriptKey);
         effect.SetVar("sourceType", source.Type);
 
         switch (source)

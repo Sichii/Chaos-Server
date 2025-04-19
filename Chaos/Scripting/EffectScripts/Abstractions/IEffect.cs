@@ -15,6 +15,7 @@ public interface IEffect : IDeltaUpdatable, IScript
     TimeSpan Remaining { get; set; }
     StaticVars SnapshotVars { get; set; }
     Creature Source { get; set; }
+    IScript? SourceScript { get; set; }
     Creature Subject { get; set; }
     Aisling? AislingSubject { get; }
     byte Icon { get; }

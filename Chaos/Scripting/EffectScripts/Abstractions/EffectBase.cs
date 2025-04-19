@@ -5,6 +5,7 @@ using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 #endregion
 
 namespace Chaos.Scripting.EffectScripts.Abstractions;
@@ -25,6 +26,9 @@ public abstract class EffectBase : IEffect
     public StaticVars SnapshotVars { get; set; } = new();
 
     public Creature Source { get; set; } = null!;
+
+    /// <inheritdoc />
+    public IScript? SourceScript { get; set; }
 
     public Creature Subject { get; set; } = null!;
     public abstract byte Icon { get; }
