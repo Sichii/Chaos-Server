@@ -217,6 +217,9 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
 
         var remaining = panelEntityBase.Cooldown.Value.TotalSeconds - panelEntityBase.Elapsed.Value.TotalSeconds;
 
+        if (remaining <= 0)
+            return;
+
         var args = new CooldownArgs
         {
             IsSkill = panelEntityBase is Skill,
