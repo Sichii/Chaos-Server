@@ -37,6 +37,16 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// </summary>
     public bool LogRawPackets { get; set; }
 
+    /// <summary>
+    ///     Whether or not to log the packet opcode when receiving packets
+    /// </summary>
+    public bool LogReceivePacketCode { get; set; }
+
+    /// <summary>
+    ///     Whether or not to log the packet opcode when sending packets
+    /// </summary>
+    public bool LogSendPacketCode { get; set; }
+
     /// <inheritdoc />
     public uint Id { get; }
 
@@ -270,6 +280,14 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                       Topics.Actions.Send)
                   .WithProperty(this)
                   .LogTrace("[Snd] {Packet}", packet.ToString());
+        else if (LogSendPacketCode)
+            Logger.WithTopics(
+                      Topics.Qualifiers.Raw,
+                      Topics.Entities.Client,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Send)
+                  .WithProperty(this)
+                  .LogTrace("Sending packet with code {@OpCode} to {@ClientIp}", packet.OpCode, RemoteIp);
 
         packet.IsEncrypted = IsEncrypted(packet.OpCode);
 

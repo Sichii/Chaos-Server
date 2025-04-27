@@ -107,11 +107,13 @@ public sealed class EffectsBar : IEffectsBar
     public void ResetDisplay()
     {
         //clear all effects
-        foreach (var effect in Effects.Values)
+        foreach (var effect in Effects.Values.DistinctBy(effect => effect.Icon))
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
 
         var orderedEffects = Effects.Values
                                     .OrderBy(e => e.Remaining)
+                                    .DistinctBy(e => e.Icon)
+                                    .Take(9)
                                     .ToList();
 
         //re-apply all effects sorted by ascending remaining duration
@@ -159,11 +161,11 @@ public sealed class EffectsBar : IEffectsBar
             effect.Update(delta);
 
             if (effect.Remaining <= TimeSpan.Zero)
-            {
-                Effects.Remove(effect.Name);
-                effect.OnTerminated();
-                shouldResetDisplay = true;
-            }
+                if (Effects.Remove(effect.Name))
+                {
+                    effect.OnTerminated();
+                    shouldResetDisplay = true;
+                }
         }
 
         if (shouldResetDisplay)

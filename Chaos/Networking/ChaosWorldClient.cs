@@ -52,6 +52,8 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
             logger)
     {
         LogRawPackets = chaosOptions.Value.LogRawPackets;
+        LogSendPacketCode = chaosOptions.Value.LogSendPacketCode;
+        LogReceivePacketCode = chaosOptions.Value.LogReceivePacketCode;
         Mapper = mapper;
         Server = server;
     }
@@ -882,6 +884,14 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
                       Topics.Actions.Receive)
                   .WithProperty(this)
                   .LogTrace("[Rcv] {@Packet}", packet.ToString());
+        else if (LogReceivePacketCode)
+            Logger.WithTopics(
+                      Topics.Qualifiers.Raw,
+                      Topics.Entities.Client,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Receive)
+                  .WithProperty(this)
+                  .LogTrace("Received packet with code {@OpCode} from {@ClientIp}", opCode, RemoteIp);
 
         return Server.HandlePacketAsync(this, in packet);
     }

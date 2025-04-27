@@ -317,17 +317,13 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
         var opCode = packet.OpCode;
         var handler = ClientHandlers[opCode];
 
-        if (handler is not null)
-            Logger.WithTopics(Topics.Servers.LoginServer, Topics.Entities.Packet, Topics.Actions.Processing)
-                  .WithProperty(client)
-                  .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
-        else if (opCode is (byte)ClientOpCode.ExitRequest or (byte)ClientOpCode.SelfProfileRequest)
+        if (opCode is (byte)ClientOpCode.ExitRequest or (byte)ClientOpCode.SelfProfileRequest)
         {
             //ignored
             //these occasionally happen in the LoginServer for some unknown reason
             //ExitRequest might be from a double click from exiting
             //RequestProfile I have no idea tho
-        } else
+        } else if (handler is null)
             Logger.WithTopics(
                       Topics.Servers.LoginServer,
                       Topics.Entities.Packet,
@@ -335,7 +331,7 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
                       Topics.Qualifiers.Cheating)
                   .WithProperty(client)
                   .WithProperty(packet.ToString(), "HexData")
-                  .LogWarning("Unknown message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
+                  .LogWarning("Received packet with unknown code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
 
         return handler?.Invoke(client, in packet) ?? default;
     }
