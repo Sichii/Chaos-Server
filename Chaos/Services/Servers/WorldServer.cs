@@ -2033,10 +2033,20 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             try
             {
                 if (aisling is not null)
-                {
-                    aisling.Trackers.LastLogout = DateTime.UtcNow;
-                    aisling.Script.OnLogout();
-                }
+                    try
+                    {
+                        aisling.Trackers.LastLogout = DateTime.UtcNow;
+                        aisling.Script.OnLogout();
+                    } catch (Exception ex)
+                    {
+                        Logger.WithTopics(
+                                  Topics.Servers.WorldServer,
+                                  Topics.Entities.Client,
+                                  Topics.Entities.Aisling,
+                                  Topics.Actions.Disconnect)
+                              .WithProperty(client)
+                              .LogError(ex, "{@AislingName} encountered an exception while running logout events", aisling.Name);
+                    }
 
                 Logger.WithTopics(
                           Topics.Servers.WorldServer,
