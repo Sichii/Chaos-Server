@@ -64,7 +64,7 @@ public sealed class EffectsBar : IEffectsBar
             SetSource(effect, source, sourceScript);
             effect.PrepareSnapshot(source);
             effect.OnApplied();
-            ResetDisplay();
+            ResetDisplay(effect, false);
         }
     }
 
@@ -85,7 +85,7 @@ public sealed class EffectsBar : IEffectsBar
         {
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
             effect.OnDispelled();
-            ResetDisplay();
+            ResetDisplay(effect, true);
         }
     }
 
@@ -108,6 +108,7 @@ public sealed class EffectsBar : IEffectsBar
     {
         //clear all effects that might be visible
         foreach (var effect in Effects.Values
+                                      .OrderBy(e => e.Remaining)
                                       .DistinctBy(effect => effect.Icon)
                                       .Take(10))
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
@@ -132,7 +133,7 @@ public sealed class EffectsBar : IEffectsBar
         {
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
             effect.OnTerminated();
-            ResetDisplay();
+            ResetDisplay(effect, true);
         }
     }
 
@@ -172,6 +173,86 @@ public sealed class EffectsBar : IEffectsBar
 
         if (shouldResetDisplay)
             ResetDisplay();
+    }
+
+    public void ResetDisplay(IEffect effect, bool removed)
+    {
+        if (AffectedAisling is null)
+            return;
+
+        if (removed)
+        {
+            var currentlyDisplayed = Effects.Values
+                                            .OrderBy(e => e.Remaining)
+                                            .DistinctBy(e => e.Icon)
+                                            .Take(9)
+                                            .ToList();
+
+            //first determine if that effect was being displayed
+            //if any of the effects that should currently be displayed has a longer remaining duration
+            //then it's safe to conclude this effect was being displayed
+            var wasBeingDisplayed = currentlyDisplayed.Max(e => e.Remaining) > effect.Remaining;
+
+            //no action needed, effect wasnt on display
+            if (!wasBeingDisplayed)
+                return;
+
+            for (var i = 0; i < currentlyDisplayed.Count; i++)
+            {
+                var currentEffect = currentlyDisplayed[i];
+
+                //if the effect has a longer remaining duration than the effect being removed
+                //remove the effect from the bar and re add it (this will move it up the list)
+                if (currentEffect.Remaining > effect.Remaining)
+                {
+                    AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
+                    AffectedAisling?.Client.SendEffect(currentEffect.Color, currentEffect.Icon);
+                }
+            }
+        } else
+        {
+            //grab the top 10 effects
+            var currentlydisplayed = Effects.Values
+                                            .OrderBy(e => e.Remaining)
+                                            .DistinctBy(e => e.Icon)
+                                            .Take(10)
+                                            .ToList();
+
+            //if the effect is not in the top 9, no action needed
+            var isBeingDisplayed = currentlydisplayed.Take(9)
+                                                     .Any(e => e == effect);
+
+            //no action needed, new effect isnt on display
+            if (!isBeingDisplayed)
+                return;
+
+            if (currentlydisplayed.Count == 10)
+            {
+                var effectToRemove = currentlydisplayed[9];
+                currentlydisplayed.Remove(effectToRemove);
+            }
+
+            var currentIndex = currentlydisplayed.IndexOf(effect);
+
+            if (currentIndex == -1)
+                return;
+
+            //remove all effects starting at the effect that is currently in the spot the new effect will be
+            for (var i = currentIndex + 1; i < currentlydisplayed.Count; i++)
+            {
+                var currentEffect = currentlydisplayed[i];
+
+                AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
+            }
+
+            //add effects back starting with the new effect
+            for (var i = currentIndex; i < currentlydisplayed.Count; i++)
+            {
+                var currentEffect = currentlydisplayed[i];
+
+                AffectedAisling?.Client.SendEffect(currentEffect.Color, currentEffect.Icon);
+            }
+        }
     }
 
     private void SetSource(IEffect effect, Creature source, IScript? sourceScript = null)
