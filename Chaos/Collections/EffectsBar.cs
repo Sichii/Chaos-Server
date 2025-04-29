@@ -106,8 +106,10 @@ public sealed class EffectsBar : IEffectsBar
     /// <inheritdoc />
     public void ResetDisplay()
     {
-        //clear all effects
-        foreach (var effect in Effects.Values.DistinctBy(effect => effect.Icon))
+        //clear all effects that might be visible
+        foreach (var effect in Effects.Values
+                                      .DistinctBy(effect => effect.Icon)
+                                      .Take(10))
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
 
         var orderedEffects = Effects.Values
