@@ -180,23 +180,30 @@ public sealed class EffectsBar : IEffectsBar
         if (AffectedAisling is null)
             return;
 
+        //if removed... effect has already been removed from the collection
+        //and has already been removed from the bar
         if (removed)
         {
+            //these are the effect that need to be displayed now
             var currentlyDisplayed = Effects.Values
                                             .OrderBy(e => e.Remaining)
                                             .DistinctBy(e => e.Icon)
                                             .Take(9)
                                             .ToList();
 
+            var wasBeingDisplayed = true;
+
             //first determine if that effect was being displayed
             //if any of the effects that should currently be displayed has a longer remaining duration
             //then it's safe to conclude this effect was being displayed
-            var wasBeingDisplayed = currentlyDisplayed.Max(e => e.Remaining) > effect.Remaining;
+            if (currentlyDisplayed.Count > 0)
+                wasBeingDisplayed = currentlyDisplayed.Max(e => e.Remaining) > effect.Remaining;
 
             //no action needed, effect wasnt on display
             if (!wasBeingDisplayed)
                 return;
 
+            //if it was being displayed, re-display all effect below where the removed effects was
             for (var i = 0; i < currentlyDisplayed.Count; i++)
             {
                 var currentEffect = currentlyDisplayed[i];
@@ -205,50 +212,62 @@ public sealed class EffectsBar : IEffectsBar
                 //remove the effect from the bar and re add it (this will move it up the list)
                 if (currentEffect.Remaining > effect.Remaining)
                 {
-                    AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
+                    //if i == 9, this effect was not previously being displayed
+                    //so we dont need to remove it from the bar
+                    if (i != 9)
+                        AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
+
                     AffectedAisling?.Client.SendEffect(currentEffect.Color, currentEffect.Icon);
                 }
             }
         } else
         {
+            //effect is being added
+            //effect has already been added to the collection, but not to the effectbar
+
             //grab the top 10 effects
-            var currentlydisplayed = Effects.Values
+            //we want 10 incase we need to remove the 10th from the display
+            var currentlyDisplayed = Effects.Values
                                             .OrderBy(e => e.Remaining)
                                             .DistinctBy(e => e.Icon)
                                             .Take(10)
                                             .ToList();
 
             //if the effect is not in the top 9, no action needed
-            var isBeingDisplayed = currentlydisplayed.Take(9)
+            var isBeingDisplayed = currentlyDisplayed.Take(9)
                                                      .Any(e => e == effect);
 
             //no action needed, new effect isnt on display
             if (!isBeingDisplayed)
                 return;
 
-            if (currentlydisplayed.Count == 10)
+            //new effect is on display
+            //first we must remove the 10th effect to make room for the new one
+            if (currentlyDisplayed.Count == 10)
             {
-                var effectToRemove = currentlydisplayed[9];
-                currentlydisplayed.Remove(effectToRemove);
+                var effectToRemove = currentlyDisplayed[9];
+                currentlyDisplayed.Remove(effectToRemove);
+                AffectedAisling?.Client.SendEffect(EffectColor.None, effectToRemove.Icon);
             }
 
-            var currentIndex = currentlydisplayed.IndexOf(effect);
+            var currentIndex = currentlyDisplayed.IndexOf(effect);
 
+            //who knows
             if (currentIndex == -1)
                 return;
 
             //remove all effects starting at the effect that is currently in the spot the new effect will be
-            for (var i = currentIndex + 1; i < currentlydisplayed.Count; i++)
+            for (var i = currentIndex + 1; i < currentlyDisplayed.Count; i++)
             {
-                var currentEffect = currentlydisplayed[i];
+                var currentEffect = currentlyDisplayed[i];
 
                 AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
             }
 
             //add effects back starting with the new effect
-            for (var i = currentIndex; i < currentlydisplayed.Count; i++)
+            for (var i = currentIndex; i < currentlyDisplayed.Count; i++)
             {
-                var currentEffect = currentlydisplayed[i];
+                var currentEffect = currentlyDisplayed[i];
 
                 AffectedAisling?.Client.SendEffect(currentEffect.Color, currentEffect.Icon);
             }

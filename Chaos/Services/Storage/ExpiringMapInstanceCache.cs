@@ -1,6 +1,7 @@
 #region
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
@@ -117,6 +118,16 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
 
         //we use entry.Key.ToString()
         var mapInstance = InnerLoadFromFile(path, shardId);
+
+        //if shardingType is AlwaysShardOnCreate, we ALWAYS create a shard of the instance
+        if (mapInstance.ShardingOptions?.ShardingType == ShardingType.AlwaysShardOnCreate)
+        {
+            var shard = CreateShardOfInstance(mapInstance.InstanceId);
+            shard.Shards = mapInstance.Shards;
+            shard.Shards.TryAdd(shard.InstanceId, shard);
+
+            mapInstance = shard;
+        }
 
         if (!mapInstance.LoadedFromInstanceId.EqualsI(loadInstanceIdActual))
         {

@@ -492,9 +492,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         var distinctTemplateKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         //returns all static reactor tiles, and only unique templated reactor tiles
-        return reactors.Where(
-            reactor => reactor is not TemplatedReactorTile templatedReactorTile
-                       || distinctTemplateKeys.Add(templatedReactorTile.Template.TemplateKey));
+        return reactors.Where(reactor
+            => reactor is not TemplatedReactorTile templatedReactorTile
+               || distinctTemplateKeys.Add(templatedReactorTile.Template.TemplateKey));
     }
 
     /// <summary>
@@ -549,6 +549,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         switch (ShardingOptions!.ShardingType)
         {
             case ShardingType.None:
+            //the shard is generated on create, so just add the entity to whatever instance it is already being added to
+            case ShardingType.AlwaysShardOnCreate:
                 InnerAddEntity(aisling, point);
 
                 break;
@@ -564,9 +566,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                         var shard = aisling.Group
                                            ?.Where(a => !a.Equals(aisling))
                                            .Select(m => m.MapInstance)
-                                           .FirstOrDefault(
-                                               m => m.InstanceId.EqualsI(InstanceId)
-                                                    || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
+                                           .FirstOrDefault(m
+                                               => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
 
                         if (shard != null)
                         {
@@ -606,8 +607,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 var shard = aisling.Group
                                    ?.Where(a => !a.Equals(aisling))
                                    .Select(m => m.MapInstance)
-                                   .FirstOrDefault(
-                                       m => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
+                                   .FirstOrDefault(m
+                                       => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
 
                 if (shard != null)
                 {
@@ -649,8 +650,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                                    ?.GetOnlineMembers()
                                    .Where(a => !a.Equals(aisling))
                                    .Select(m => m.MapInstance)
-                                   .FirstOrDefault(
-                                       m => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
+                                   .FirstOrDefault(m
+                                       => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
 
                 if (shard != null)
                 {
@@ -720,14 +721,13 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     return;
 
                 var aislingsToRemove = aislings.OrderByDescending(a => a.Id)
-                                               .ThenBy(
-                                                   a =>
-                                                   {
-                                                       if (a.Group == null)
-                                                           return 0;
+                                               .ThenBy(a =>
+                                               {
+                                                   if (a.Group == null)
+                                                       return 0;
 
-                                                       return a.Group.Count(m => m.MapInstance == this);
-                                                   })
+                                                   return a.Group.Count(m => m.MapInstance == this);
+                                               })
                                                .Take(amountOverLimit)
                                                .ToHashSet();
 
@@ -775,22 +775,20 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                 //number of unique groups in the zone
                 var groups = aislings.GroupBy(a => a.Group)
-                                     .SelectMany(
-                                         grp =>
-                                         {
-                                             if (grp.Key == null)
-                                                 return grp.Select(
-                                                     m => new List<Aisling>
-                                                     {
-                                                         m
-                                                     });
+                                     .SelectMany(grp =>
+                                     {
+                                         if (grp.Key == null)
+                                             return grp.Select(m => new List<Aisling>
+                                             {
+                                                 m
+                                             });
 
-                                             return
-                                             [
-                                                 grp.Where(m => m.MapInstance == this)
-                                                    .ToList()
-                                             ];
-                                         })
+                                         return
+                                         [
+                                             grp.Where(m => m.MapInstance == this)
+                                                .ToList()
+                                         ];
+                                     })
                                      .ToList();
 
                 var groupCount = groups.Count;
@@ -853,22 +851,20 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                 //number of unique groups in the zone
                 var guilds = aislings.GroupBy(a => a.Guild)
-                                     .SelectMany(
-                                         gld =>
-                                         {
-                                             if (gld.Key == null)
-                                                 return gld.Select(
-                                                     m => new List<Aisling>
-                                                     {
-                                                         m
-                                                     });
+                                     .SelectMany(gld =>
+                                     {
+                                         if (gld.Key == null)
+                                             return gld.Select(m => new List<Aisling>
+                                             {
+                                                 m
+                                             });
 
-                                             return
-                                             [
-                                                 gld.Where(m => m.MapInstance == this)
-                                                    .ToList()
-                                             ];
-                                         })
+                                         return
+                                         [
+                                             gld.Where(m => m.MapInstance == this)
+                                                .ToList()
+                                         ];
+                                     })
                                      .ToList();
 
                 var guildCount = guilds.Count;
@@ -1585,34 +1581,33 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     ///     Begins execution of the map's update loop
     /// </summary>
     public void StartAsync()
-        => Task.Run(
-            async () =>
+        => Task.Run(async () =>
+        {
+            var linkedCancellationToken = MapInstanceCtx.Token;
+
+            while (true)
             {
-                var linkedCancellationToken = MapInstanceCtx.Token;
+                if (linkedCancellationToken.IsCancellationRequested)
+                    return;
 
-                while (true)
+                try
                 {
-                    if (linkedCancellationToken.IsCancellationRequested)
-                        return;
-
-                    try
-                    {
-                        await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken);
-                    } catch (OperationCanceledException)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        await UpdateMapAsync(DeltaTime.GetDelta);
-                    } catch (Exception e)
-                    {
-                        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
-                              .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
-                    }
+                    await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken);
+                } catch (OperationCanceledException)
+                {
+                    return;
                 }
-            });
+
+                try
+                {
+                    await UpdateMapAsync(DeltaTime.GetDelta);
+                } catch (Exception e)
+                {
+                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+                          .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
+                }
+            }
+        });
 
     /// <summary>
     ///     Stops execution of the map's update loop
