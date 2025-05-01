@@ -707,6 +707,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         {
             case ShardingType.None:
             case ShardingType.PlayerLimit:
+            case ShardingType.AlwaysShardOnCreate:
                 break;
             case ShardingType.AbsolutePlayerLimit:
             {

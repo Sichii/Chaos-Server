@@ -120,7 +120,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         var mapInstance = InnerLoadFromFile(path, shardId);
 
         //if shardingType is AlwaysShardOnCreate, we ALWAYS create a shard of the instance
-        if (mapInstance.ShardingOptions?.ShardingType == ShardingType.AlwaysShardOnCreate)
+        if ((mapInstance.ShardingOptions?.ShardingType == ShardingType.AlwaysShardOnCreate) && string.IsNullOrEmpty(shardId))
         {
             var shard = CreateShardOfInstance(mapInstance.InstanceId);
             shard.Shards = mapInstance.Shards;
