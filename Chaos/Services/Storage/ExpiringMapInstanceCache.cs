@@ -88,6 +88,23 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
     }
 
     /// <inheritdoc />
+    public override MapInstance Get(string key)
+    {
+        var mapInstance = base.Get(key);
+
+        if ((mapInstance.ShardingOptions?.ShardingType == ShardingType.AlwaysShardOnCreate) && !mapInstance.IsShard)
+        {
+            var shard = CreateShardOfInstance(mapInstance.InstanceId);
+            shard.Shards = mapInstance.Shards;
+            shard.Shards.TryAdd(shard.InstanceId, shard);
+
+            mapInstance = shard;
+        }
+
+        return mapInstance;
+    }
+
+    /// <inheritdoc />
     protected override MapInstance CreateFromEntry(ICacheEntry entry) => InnerCreateFromEntry(entry);
 
     private MapInstance InnerCreateFromEntry(ICacheEntry entry, string? loadFromFileKeyOverride = null)
@@ -118,16 +135,6 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
 
         //we use entry.Key.ToString()
         var mapInstance = InnerLoadFromFile(path, shardId);
-
-        //if shardingType is AlwaysShardOnCreate, we ALWAYS create a shard of the instance
-        if ((mapInstance.ShardingOptions?.ShardingType == ShardingType.AlwaysShardOnCreate) && string.IsNullOrEmpty(shardId))
-        {
-            var shard = CreateShardOfInstance(mapInstance.InstanceId);
-            shard.Shards = mapInstance.Shards;
-            shard.Shards.TryAdd(shard.InstanceId, shard);
-
-            mapInstance = shard;
-        }
 
         if (!mapInstance.LoadedFromInstanceId.EqualsI(loadInstanceIdActual))
         {

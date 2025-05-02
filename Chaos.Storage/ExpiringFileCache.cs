@@ -126,7 +126,7 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     }
 
     /// <inheritdoc />
-    public T Get(string key)
+    public virtual T Get(string key)
     {
         key = ConstructKeyForType(key);
 
@@ -291,9 +291,8 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
     /// </exception>
     protected virtual string GetPathForKey(string key)
     {
-        var loadPath = Paths.FirstOrDefault(
-            path => Path.GetFileNameWithoutExtension(path)
-                        .EqualsI(key));
+        var loadPath = Paths.FirstOrDefault(path => Path.GetFileNameWithoutExtension(path)
+                                                        .EqualsI(key));
 
         if (string.IsNullOrEmpty(loadPath))
             throw Options.SearchType switch
@@ -321,9 +320,8 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         {
             SearchType.Files => Directory.EnumerateFiles(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern),
             SearchType.Directories => Directory.EnumerateDirectories(Options.Directory, Options.FilePattern ?? string.Empty, searchPattern)
-                                               .Where(
-                                                   src => Directory.EnumerateFiles(src)
-                                                                   .Any()),
+                                               .Where(src => Directory.EnumerateFiles(src)
+                                                                      .Any()),
             _ => throw new ArgumentOutOfRangeException()
         };
 
