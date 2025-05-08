@@ -32,8 +32,8 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     public int Experience { get; set; }
     public ILootTable LootTable { get; set; }
     public Creature? Target { get; set; }
-    public ConcurrentDictionary<uint, int> AggroList { get; }
-    public ConcurrentDictionary<uint, int> Contribution { get; }
+    public AggroList AggroList { get; }
+    public ContributionList Contribution { get; }
     public List<Item> Items { get; }
     public override ILogger<Monster> Logger { get; }
     public IIntervalTimer MoveTimer { get; }
@@ -89,8 +89,8 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         Items = new List<Item>();
         Type = template.Type;
         Direction = (Direction)Random.Shared.Next(4);
-        AggroList = new ConcurrentDictionary<uint, int>();
-        Contribution = new ConcurrentDictionary<uint, int>();
+        AggroList = new AggroList();
+        Contribution = new ContributionList();
         LootTable = new CompositeLootTable(template.LootTables);
         WanderTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.WanderIntervalMs), 10, RandomizationType.Positive);
         MoveTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.MoveIntervalMs), 10, RandomizationType.Positive);
@@ -119,7 +119,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         if (Target?.Equals(creature) ?? false)
             Target = null;
 
-        AggroList.Remove(creature.Id, out _);
+        AggroList.Clear(creature);
 
         if (ApproachTime.TryGetValue(creature, out _))
             ApproachTime[creature] = DateTime.UtcNow;

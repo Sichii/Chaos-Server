@@ -16,7 +16,7 @@ public abstract class MonsterScriptBase : SubjectiveScriptBase<Monster>, IMonste
         set => Subject.Target = value;
     }
 
-    protected virtual ConcurrentDictionary<uint, int> AggroList => Subject.AggroList;
+    protected virtual AggroList AggroList => Subject.AggroList;
     protected virtual int AggroRange => Subject.AggroRange;
     protected virtual MapInstance Map => Subject.MapInstance;
     protected virtual bool ShouldMove => Subject.MoveTimer.IntervalElapsed;
