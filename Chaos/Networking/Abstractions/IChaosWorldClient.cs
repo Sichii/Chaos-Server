@@ -20,6 +20,17 @@ namespace Chaos.Networking.Abstractions;
 public interface IChaosWorldClient : IConnectedClient
 {
     Aisling Aisling { get; set; }
+
+    /// <summary>
+    ///     Client side id of the client
+    /// </summary>
+    uint LoginId1 { get; set; }
+
+    /// <summary>
+    ///     Client side id of the client (2)
+    /// </summary>
+    ushort LoginId2 { get; set; }
+
     void SendAddItemToPane(Item item);
     void SendAddSkillToPane(Skill skill);
     void SendAddSpellToPane(Spell spell);

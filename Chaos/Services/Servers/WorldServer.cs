@@ -624,6 +624,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 return default;
             }
 
+            if (!redirect.LoginId1.HasValue || !redirect.LoginId2.HasValue)
+                return default;
+
+            localClient.LoginId1 = redirect.LoginId1!.Value;
+            localClient.LoginId2 = redirect.LoginId2!.Value;
+
             return LoadAislingAsync(localClient, redirect);
         }
     }

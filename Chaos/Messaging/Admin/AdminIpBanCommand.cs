@@ -1,14 +1,16 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Security.Abstractions;
+#endregion
 
 namespace Chaos.Messaging.Admin;
 
-[Command("adminban", helpText: "<name>")]
-public class AdminBanCommand(IClientRegistry<IChaosWorldClient> clientRegistry, IAccessManager accessManager) : ICommand<Aisling>
+[Command("adminipban", helpText: "<name>")]
+public class AdminIpBanCommand(IClientRegistry<IChaosWorldClient> clientRegistry, IAccessManager accessManager) : ICommand<Aisling>
 {
     private readonly IAccessManager AccessManager = accessManager;
     private readonly IClientRegistry<IChaosWorldClient> ClientRegistry = clientRegistry;
@@ -28,7 +30,7 @@ public class AdminBanCommand(IClientRegistry<IChaosWorldClient> clientRegistry, 
             return;
         }
 
-        await AccessManager.BanishAsync(targetClient.RemoteIp);
+        await AccessManager.IpBanishAsync(targetClient.RemoteIp);
         targetClient.Disconnect();
     }
 }

@@ -37,6 +37,12 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
     private Animation? CurrentAnimation;
     public Aisling Aisling { get; set; } = null!;
 
+    /// <inheritdoc />
+    public uint LoginId1 { get; set; }
+
+    /// <inheritdoc />
+    public ushort LoginId2 { get; set; }
+
     public ChaosWorldClient(
         Socket socket,
         IOptions<ChaosOptions> chaosOptions,

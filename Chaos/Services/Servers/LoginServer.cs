@@ -202,6 +202,21 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
 
         async ValueTask InnerOnLogin(IChaosLoginClient localClient, LoginArgs localArgs)
         {
+            var allowed = await AccessManager.ShouldAllowAsync(localArgs.ClientId1);
+
+            if (!allowed)
+            {
+                Logger.WithTopics(Topics.Entities.Client, Topics.Actions.Login, Topics.Actions.Validation)
+                      .WithProperty(localClient)
+                      .LogWarning("Client with id {@ClientId} tried to connect, but is id banned", localArgs.ClientId1);
+
+                localClient.SendLoginMessage(
+                    LoginMessageType.CharacterDoesntExist,
+                    "You are banned. If you feel this is a mistake, please contact a GM.");
+
+                return;
+            }
+
             var result = await AccessManager.ValidateCredentialsAsync(localClient.RemoteIp, localArgs.Name, localArgs.Password);
 
             if (!result.Success)
@@ -225,7 +240,9 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
                 ServerType.World,
                 Encoding.ASCII.GetString(localClient.Crypto.Key),
                 localClient.Crypto.Seed,
-                localArgs.Name);
+                localArgs.Name,
+                localArgs.ClientId1,
+                localArgs.ClientId2);
 
             Logger.WithTopics(
                       Topics.Servers.LoginServer,

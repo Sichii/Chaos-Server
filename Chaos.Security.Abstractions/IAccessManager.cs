@@ -1,4 +1,6 @@
+#region
 using System.Net;
+#endregion
 
 namespace Chaos.Security.Abstractions;
 
@@ -7,11 +9,6 @@ namespace Chaos.Security.Abstractions;
 /// </summary>
 public interface IAccessManager
 {
-    /// <summary>
-    ///     Bans the specified IP address
-    /// </summary>
-    Task BanishAsync(IPAddress ipAddress);
-
     /// <summary>
     ///     Changes the password for the specified character
     /// </summary>
@@ -32,6 +29,16 @@ public interface IAccessManager
         string name,
         string oldPassword,
         string newPassword);
+
+    /// <summary>
+    ///     Bans the specified client id
+    /// </summary>
+    Task IdBanishAsync(uint clientId1, ushort clientId2);
+
+    /// <summary>
+    ///     Bans the specified IP address
+    /// </summary>
+    Task IpBanishAsync(IPAddress ipAddress);
 
     /// <summary>
     ///     Saves a new name and password combination
@@ -63,6 +70,23 @@ public interface IAccessManager
     ///     </c>
     /// </returns>
     Task<bool> ShouldAllowAsync(IPAddress ipAddress);
+
+    /// <summary>
+    ///     Determines whether the specified client id should be allowed to connect
+    /// </summary>
+    /// <param name="clientId">
+    ///     The id of the client
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the client id should be allowed to connect, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    Task<bool> ShouldAllowAsync(uint clientId);
 
     /// <summary>
     ///     Validates the specified name and password combination against existing credentials
