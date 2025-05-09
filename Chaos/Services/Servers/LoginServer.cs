@@ -131,9 +131,11 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
         {
             if (CreateCharRequests.TryGetValue(localClient.Id, out var requestArgs))
             {
+                var hairStyleCap = localArgs.Gender == Gender.Male ? 18 : 17;
+
                 if (localArgs.Gender is not Gender.Male and not Gender.Female
                     || (localArgs.HairColor > DisplayColor.Navy)
-                    || (localArgs.HairStyle > 17))
+                    || (localArgs.HairStyle > hairStyleCap))
                 {
                     Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Create, Topics.Qualifiers.Cheating)
                           .WithProperty(localClient)
