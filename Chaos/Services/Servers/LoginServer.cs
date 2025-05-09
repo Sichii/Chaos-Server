@@ -131,6 +131,23 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
         {
             if (CreateCharRequests.TryGetValue(localClient.Id, out var requestArgs))
             {
+                if (localArgs.Gender is not Gender.Male and not Gender.Female
+                    || (localArgs.HairColor > DisplayColor.Navy)
+                    || (localArgs.HairStyle > 17))
+                {
+                    Logger.WithTopics(Topics.Entities.Aisling, Topics.Actions.Create, Topics.Qualifiers.Cheating)
+                          .WithProperty(localClient)
+                          .WithProperty(requestArgs)
+                          .WithProperty(localArgs)
+                          .LogWarning("{@ClientIp} tried to create a character with invalid values", localClient.RemoteIp);
+
+                    localClient.SendLoginMessage(LoginMessageType.ClearPswdMessage, "Unable to create character, bad request");
+
+                    CreateCharRequests.Remove(localClient.Id, out _);
+
+                    return;
+                }
+
                 var mapInstanceCache = CacheProvider.GetCache<MapInstance>();
                 var startingMap = mapInstanceCache.Get(Options.StartingMapInstanceId);
 
@@ -152,6 +169,7 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
                       .LogInformation("New character created with name {@Name}", aisling.Name);
 
                 localClient.SendLoginMessage(LoginMessageType.Confirm);
+                CreateCharRequests.Remove(localClient.Id, out _);
             } else
                 localClient.SendLoginMessage(LoginMessageType.ClearNameMessage, "Unable to create character, bad request.");
         }
