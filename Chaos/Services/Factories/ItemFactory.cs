@@ -54,6 +54,7 @@ public sealed class ItemFactory(ISimpleCache simpleCache, IScriptProvider script
             Color = DisplayColor.Default,
             EquipmentType = null,
             Gender = null,
+            PreventBanking = true,
             IsDyeable = false,
             IsModifiable = false,
             ItemSprite = new ItemSprite(0, 0),

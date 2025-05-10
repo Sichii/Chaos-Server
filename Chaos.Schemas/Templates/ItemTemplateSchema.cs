@@ -112,6 +112,11 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     public DisplayColor? PantsColor { get; set; }
 
     /// <summary>
+    ///     Whether or not the item can be banked
+    /// </summary>
+    public bool PreventBanking { get; set; }
+
+    /// <summary>
     ///     The amount of gold given for selling this item to a merchant
     /// </summary>
     public int SellValue { get; set; }

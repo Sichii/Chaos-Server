@@ -12,6 +12,11 @@ namespace Chaos.Schemas.Aisling;
 public sealed record ItemSchema : PanelEntitySchema
 {
     /// <summary>
+    ///     Whether or not the item is account bound. If the item is account bound, it cannot be traded or dropped
+    /// </summary>
+    public bool? AccountBound { get; set; }
+
+    /// <summary>
     ///     The color of this item if it's different that what is specified by it's template
     /// </summary>
     public DisplayColor? Color { get; set; }
@@ -43,6 +48,11 @@ public sealed record ItemSchema : PanelEntitySchema
     public string? NotepadText { get; set; }
 
     /// <summary>
+    ///     Whether or not the item can be traded
+    /// </summary>
+    public bool? NoTrade { get; set; }
+
+    /// <summary>
     ///     The sprite to display for this item in the panel if it's different than what is specified by it's template
     /// </summary>
     public ushort? PanelSprite { get; set; }
@@ -51,6 +61,11 @@ public sealed record ItemSchema : PanelEntitySchema
     ///     If specified, the prefix of the item
     /// </summary>
     public string? Prefix { get; set; }
+
+    /// <summary>
+    ///     Whether or not the item can be banked
+    /// </summary>
+    public bool? PreventBanking { get; set; }
 
     /// <summary>
     ///     If specified, the suffix of the item

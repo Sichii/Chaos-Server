@@ -22,6 +22,7 @@ namespace Chaos.Models.Panel;
 public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourceEntity
 {
     private readonly NameComposer NameComposer;
+    public bool AccountBound { get; set; }
 
     public DisplayColor Color
     {
@@ -43,12 +44,15 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
     public int Level { get; set; }
     public Attributes Modifiers { get; set; }
     public string? NotepadText { get; set; }
+    public bool NoTrade { get; set; }
 
     public string? Prefix
     {
         get => NameComposer.Prefix;
         set => NameComposer.SetPrefix(value);
     }
+
+    public bool PreventBanking { get; set; }
 
     public string? Suffix
     {
@@ -86,6 +90,9 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
         Modifiers = template.Modifiers is null ? new Attributes() : ShallowCopy<Attributes>.Create(template.Modifiers);
         Weight = template.Weight;
         Level = template.Level;
+        PreventBanking = template.PreventBanking;
+        AccountBound = template.AccountBound;
+        NoTrade = template.NoTrade;
         ItemSprite = new ItemSprite(template.ItemSprite.PanelSprite, template.ItemSprite.DisplaySprite);
 
         if (extraScriptKeys != null)

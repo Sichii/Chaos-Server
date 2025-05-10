@@ -68,6 +68,15 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
         if (obj.DisplaySprite.HasValue)
             item.ItemSprite.DisplaySprite = obj.DisplaySprite.Value;
 
+        if (obj.AccountBound.HasValue)
+            item.AccountBound = obj.AccountBound.Value;
+
+        if (obj.NoTrade.HasValue)
+            item.NoTrade = obj.NoTrade.Value;
+
+        if (obj.PreventBanking.HasValue)
+            item.PreventBanking = obj.PreventBanking.Value;
+
         item.CustomNameOverride = obj.CustomNameOverride;
         item.Prefix = obj.Prefix;
         item.Suffix = obj.Suffix;
@@ -147,6 +156,7 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
             ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
             AccountBound = obj.AccountBound,
             NoTrade = obj.NoTrade,
+            PreventBanking = obj.PreventBanking,
             Color = obj.Color,
             ItemSprite = new ItemSprite(obj.PanelSprite, obj.DisplaySprite ?? 0),
             MaxDurability = obj.MaxDurability,

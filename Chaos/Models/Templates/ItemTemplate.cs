@@ -39,6 +39,7 @@ public sealed record ItemTemplate : PanelEntityTemplateBase
     }
 
     public required DisplayColor? PantsColor { get; init; }
+    public required bool PreventBanking { get; init; }
     public required int SellValue { get; init; }
     public required byte Weight { get; init; } = 1;
     public bool Stackable => MaxStacks > 1;

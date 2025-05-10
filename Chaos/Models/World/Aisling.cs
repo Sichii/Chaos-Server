@@ -694,7 +694,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
         var item = Inventory[slot];
 
-        if ((item == null) || item.Template.AccountBound || !Script.CanDropItem(item) || !item.Script.CanBeDropped(this, Point.From(point)))
+        if ((item == null) || item.AccountBound || !Script.CanDropItem(item) || !item.Script.CanBeDropped(this, Point.From(point)))
         {
             SendActiveMessage("You can't drop that item");
 
@@ -709,7 +709,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             if (Inventory.RemoveQuantity(item.Slot, amount.Value, out var items))
                 if (TryDrop(point, items.FixStacks(ItemCloner), out groundItems))
                 {
-                    if (item.Template.NoTrade)
+                    if (item.NoTrade)
                         foreach (var groundItem in groundItems)
                             groundItem.LockToAislings(int.MaxValue, this);
 
@@ -720,7 +720,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             if (Inventory.TryGetRemove(slot, out var droppedItem))
                 if (TryDrop(point, out groundItems, droppedItem))
                 {
-                    if (item.Template.NoTrade)
+                    if (item.NoTrade)
                         foreach (var groundItem in groundItems)
                             groundItem.LockToAislings(int.MaxValue, this);
 

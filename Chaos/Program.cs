@@ -158,12 +158,11 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddSingleton(serverCtx);
     builder.Services.AddChaosOptions();
 
-    builder.Services.AddLogging(
-        logging =>
-        {
-            logging.ClearProviders();
-            logging.AddNLog();
-        });
+    builder.Services.AddLogging(logging =>
+    {
+        logging.ClearProviders();
+        logging.AddNLog();
+    });
 
     builder.Services.AddJsonSerializerOptions();
     builder.Services.AddCommandInterceptor<Aisling, AislingCommandInterceptorOptions>(ConfigKeys.Options.Key);
@@ -179,8 +178,8 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddTypeMapper();
     builder.Services.AddSingleton<IStockService, IHostedService, StockService>();
 
-    builder.Services.AddSingleton<IShardGenerator, ExpiringMapInstanceCache>(
-        p => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
+    builder.Services.AddSingleton<IShardGenerator, ExpiringMapInstanceCache>(p
+        => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
 
     builder.Services.AddLobbyServer();
     builder.Services.AddLoginserver();
@@ -191,16 +190,15 @@ static void ConfigureServices(WebApplicationBuilder builder)
         builder.Services
                .AddRazorPages(opts => opts.RootDirectory = "/Site/Pages")
                .AddRazorRuntimeCompilation()
-               .AddJsonOptions(
-                   opts =>
-                   {
-                       var jsonSerializerOptions = opts.JsonSerializerOptions;
+               .AddJsonOptions(opts =>
+               {
+                   var jsonSerializerOptions = opts.JsonSerializerOptions;
 
-                       jsonSerializerOptions.PropertyNameCaseInsensitive = true;
-                       jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                       jsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowReadingFromString;
-                       jsonSerializerOptions.PropertyNamingPolicy = new LowerCaseNamingPolicy();
-                   });
+                   jsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                   jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                   jsonSerializerOptions.NumberHandling = JsonNumberHandling.AllowReadingFromString;
+                   jsonSerializerOptions.PropertyNamingPolicy = new LowerCaseNamingPolicy();
+               });
 
         builder.Environment.WebRootPath = "Site/wwwroot";
 
@@ -210,260 +208,237 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
 static void RegisterStructuredLoggingTransformations()
     => LogManager.Setup()
-                 .SetupSerialization(
-                     builder =>
+                 .SetupSerialization(builder =>
+                 {
+                     builder.RegisterObjectTransformation<ISocketClient>(client => new
                      {
-                         builder.RegisterObjectTransformation<ISocketClient>(
-                             client => new
-                             {
-                                 IpAddress = client.RemoteIp
-                             });
-
-                         builder.RegisterObjectTransformation<IChaosLobbyClient>(
-                             client => new
-                             {
-                                 IpAddress = client.RemoteIp,
-                                 Type = "LobbyClient"
-                             });
-
-                         builder.RegisterObjectTransformation<IChaosLoginClient>(
-                             client => new
-                             {
-                                 IpAddress = client.RemoteIp,
-                                 Type = "LoginClient"
-                             });
-
-                         builder.RegisterObjectTransformation<IChaosWorldClient>(
-                             client => new
-                             {
-                                 IpAddress = client.RemoteIp,
-
-                                 // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-                                 Id = client.Aisling?.Id,
-                                 Name = client.Aisling?.Name,
-                                 Location = client.Aisling is not null ? ILocation.ToString(client.Aisling) : null,
-                                 Type = "WorldClient"
-                             });
-
-                         builder.RegisterObjectTransformation<WorldEntity>(
-                             obj => new
-                             {
-                                 Type = obj.GetType()
-                                           .Name,
-                                 Id = obj.Id,
-                                 Creation = obj.Creation
-                             });
-
-                         builder.RegisterObjectTransformation<MapEntity>(
-                             obj => new
-                             {
-                                 Type = obj.GetType()
-                                           .Name,
-                                 Id = obj.Id,
-                                 Creation = obj.Creation,
-                                 Location = ILocation.ToString(obj)
-                             });
-
-                         builder.RegisterObjectTransformation<VisibleEntity>(
-                             obj => new
-                             {
-                                 Type = obj.GetType()
-                                           .Name,
-                                 Id = obj.Id,
-                                 Creation = obj.Creation,
-                                 Location = ILocation.ToString(obj),
-                                 Sprite = obj.Sprite
-                             });
-
-                         builder.RegisterObjectTransformation<NamedEntity>(
-                             obj => new
-                             {
-                                 Type = obj.GetType()
-                                           .Name,
-                                 Id = obj.Id,
-                                 Creation = obj.Creation,
-                                 Location = ILocation.ToString(obj),
-                                 Name = obj.Name
-                             });
-
-                         builder.RegisterObjectTransformation<Creature>(
-                             obj => new
-                             {
-                                 Type = obj.GetType()
-                                           .Name,
-                                 Id = obj.Id,
-                                 Location = ILocation.ToString(obj),
-                                 Name = obj.Name
-                             });
-
-                         builder.RegisterObjectTransformation<Aisling>(
-                             obj => new
-                             {
-                                 // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-                                 IpAddress = obj.Client?.RemoteIp,
-                                 Id = (uint?)obj.Id,
-                                 Name = obj.Name,
-                                 Location = ILocation.ToString(obj)
-                             });
-
-                         builder.RegisterObjectTransformation<Monster>(
-                             obj => new
-                             {
-                                 Type = nameof(Monster),
-                                 Id = obj.Id,
-                                 Name = obj.Name,
-                                 TemplateKey = obj.Template.TemplateKey,
-                                 Location = ILocation.ToString(obj)
-                             });
-
-                         builder.RegisterObjectTransformation<Merchant>(
-                             obj => new
-                             {
-                                 Type = nameof(Merchant),
-                                 Id = obj.Id,
-                                 Name = obj.Name,
-                                 TemplateKey = obj.Template.TemplateKey,
-                                 Location = ILocation.ToString(obj)
-                             });
-
-                         builder.RegisterObjectTransformation<Money>(
-                             obj => new
-                             {
-                                 Type = nameof(Money),
-                                 Id = obj.Id,
-                                 Amount = obj.Amount,
-                                 Creation = obj.Creation,
-                                 Location = ILocation.ToString(obj)
-                             });
-
-                         builder.RegisterObjectTransformation<Item>(
-                             obj => new
-                             {
-                                 Uid = obj.UniqueId,
-                                 Name = obj.DisplayName,
-                                 TemplateKey = obj.Template.TemplateKey,
-                                 Count = obj.Count
-                             });
-
-                         builder.RegisterObjectTransformation<Spell>(
-                             obj => new
-                             {
-                                 Uid = obj.UniqueId,
-                                 Name = obj.Template.Name,
-                                 TemplateKey = obj.Template.TemplateKey
-                             });
-
-                         builder.RegisterObjectTransformation<Skill>(
-                             obj => new
-                             {
-                                 Uid = obj.UniqueId,
-                                 Name = obj.Template.Name,
-                                 TemplateKey = obj.Template.TemplateKey
-                             });
-
-                         builder.RegisterObjectTransformation<MapInstance>(
-                             obj => new
-                             {
-                                 InstanceId = obj.InstanceId,
-                                 BaseInstanceId = obj.BaseInstanceId,
-                                 TemplateKey = obj.Template.TemplateKey,
-                                 Name = obj.Name
-                             });
-
-                         builder.RegisterObjectTransformation<CommandDescriptor>(
-                             obj => new
-                             {
-                                 CommandName = obj.Details.CommandName,
-                                 RequiresAdmin = obj.Details.RequiresAdmin
-                             });
-
-                         builder.RegisterObjectTransformation<IEffect>(
-                             obj => new
-                             {
-                                 EffectKey = obj.ScriptKey,
-                                 Name = obj.Name
-                             });
-
-                         builder.RegisterObjectTransformation<Redirect>(
-                             obj => new
-                             {
-                                 Id = obj.Id,
-                                 Name = obj.Name,
-                                 Type = obj.Type,
-                                 Address = obj.EndPoint
-                             });
-
-                         builder.RegisterObjectTransformation<Guild>(obj => obj.Name);
-
-                         builder.RegisterObjectTransformation<GroundItem>(
-                             obj => new
-                             {
-                                 Type = nameof(GroundItem),
-                                 Id = obj.Id,
-                                 ItemUid = obj.Item.UniqueId,
-                                 ItemName = obj.Item.DisplayName,
-                                 ItemTemplateKey = obj.Item.Template.TemplateKey,
-                                 ItemCount = obj.Item.Count,
-                                 Creation = obj.Creation,
-                                 Location = ILocation.ToString(obj),
-                                 NoTrade = obj.Item.Template.NoTrade
-                             });
-
-                         builder.RegisterObjectTransformation<Group>(
-                             obj => new
-                             {
-                                 Id = obj.Id,
-                                 LeaderName = obj.Leader.Name,
-                                 MemberCount = obj.Count
-                             });
-
-                         builder.RegisterObjectTransformation<Dialog>(
-                             obj => new
-                             {
-                                 TemplateKey = obj.Template.TemplateKey,
-                                 Type = obj.Template.Type,
-                                 Contextual = obj.Template.Contextual,
-                                 HasContext = obj.Context is not null,
-                                 HasMenuArgs = obj.MenuArgs.Count != 0
-                             });
-
-                         builder.RegisterObjectTransformation<Exchange>(
-                             obj => new
-                             {
-                                 obj.ExchangeId
-                             });
-
-                         builder.RegisterObjectTransformation<BoardBase>(
-                             obj => new
-                             {
-                                 Key = obj.Key,
-                                 Name = obj.Name,
-                                 Posts = obj.Posts.Count
-                             });
-
-                         builder.RegisterObjectTransformation<MailBox>(
-                             obj => new
-                             {
-                                 Key = obj.Key,
-                                 Name = obj.Name,
-                                 Posts = obj.Posts.Count
-                             });
-
-                         builder.RegisterObjectTransformation<BulletinBoard>(
-                             obj => new
-                             {
-                                 Key = obj.Key,
-                                 Name = obj.Name,
-                                 Posts = obj.Posts.Count
-                             });
-
-                         builder.RegisterObjectTransformation<Post>(
-                             obj => new
-                             {
-                                 PostId = obj.PostId,
-                                 Author = obj.Author,
-                                 Subject = obj.Subject,
-                                 Message = obj.Message,
-                                 Creation = obj.CreationDate
-                             });
+                         IpAddress = client.RemoteIp
                      });
+
+                     builder.RegisterObjectTransformation<IChaosLobbyClient>(client => new
+                     {
+                         IpAddress = client.RemoteIp,
+                         Type = "LobbyClient"
+                     });
+
+                     builder.RegisterObjectTransformation<IChaosLoginClient>(client => new
+                     {
+                         IpAddress = client.RemoteIp,
+                         Type = "LoginClient"
+                     });
+
+                     builder.RegisterObjectTransformation<IChaosWorldClient>(client => new
+                     {
+                         IpAddress = client.RemoteIp,
+                         LoginId1 = client.LoginId1,
+                         LoginId2 = client.LoginId2,
+
+                         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+                         Id = client.Aisling?.Id,
+                         Name = client.Aisling?.Name,
+                         Location = client.Aisling is not null ? ILocation.ToString(client.Aisling) : null,
+                         Type = "WorldClient"
+                     });
+
+                     builder.RegisterObjectTransformation<WorldEntity>(obj => new
+                     {
+                         Type = obj.GetType()
+                                   .Name,
+                         Id = obj.Id,
+                         Creation = obj.Creation
+                     });
+
+                     builder.RegisterObjectTransformation<MapEntity>(obj => new
+                     {
+                         Type = obj.GetType()
+                                   .Name,
+                         Id = obj.Id,
+                         Creation = obj.Creation,
+                         Location = ILocation.ToString(obj)
+                     });
+
+                     builder.RegisterObjectTransformation<VisibleEntity>(obj => new
+                     {
+                         Type = obj.GetType()
+                                   .Name,
+                         Id = obj.Id,
+                         Creation = obj.Creation,
+                         Location = ILocation.ToString(obj),
+                         Sprite = obj.Sprite
+                     });
+
+                     builder.RegisterObjectTransformation<NamedEntity>(obj => new
+                     {
+                         Type = obj.GetType()
+                                   .Name,
+                         Id = obj.Id,
+                         Creation = obj.Creation,
+                         Location = ILocation.ToString(obj),
+                         Name = obj.Name
+                     });
+
+                     builder.RegisterObjectTransformation<Creature>(obj => new
+                     {
+                         Type = obj.GetType()
+                                   .Name,
+                         Id = obj.Id,
+                         Location = ILocation.ToString(obj),
+                         Name = obj.Name
+                     });
+
+                     builder.RegisterObjectTransformation<Aisling>(obj => new
+                     {
+                         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+                         IpAddress = obj.Client?.RemoteIp,
+                         Id = (uint?)obj.Id,
+                         Name = obj.Name,
+                         Location = ILocation.ToString(obj),
+                         LoginId1 = obj.Client?.LoginId1,
+                         LoginId2 = obj.Client?.LoginId2
+                     });
+
+                     builder.RegisterObjectTransformation<Monster>(obj => new
+                     {
+                         Type = nameof(Monster),
+                         Id = obj.Id,
+                         Name = obj.Name,
+                         TemplateKey = obj.Template.TemplateKey,
+                         Location = ILocation.ToString(obj)
+                     });
+
+                     builder.RegisterObjectTransformation<Merchant>(obj => new
+                     {
+                         Type = nameof(Merchant),
+                         Id = obj.Id,
+                         Name = obj.Name,
+                         TemplateKey = obj.Template.TemplateKey,
+                         Location = ILocation.ToString(obj)
+                     });
+
+                     builder.RegisterObjectTransformation<Money>(obj => new
+                     {
+                         Type = nameof(Money),
+                         Id = obj.Id,
+                         Amount = obj.Amount,
+                         Creation = obj.Creation,
+                         Location = ILocation.ToString(obj)
+                     });
+
+                     builder.RegisterObjectTransformation<Item>(obj => new
+                     {
+                         Uid = obj.UniqueId,
+                         Name = obj.DisplayName,
+                         TemplateKey = obj.Template.TemplateKey,
+                         Count = obj.Count
+                     });
+
+                     builder.RegisterObjectTransformation<Spell>(obj => new
+                     {
+                         Uid = obj.UniqueId,
+                         Name = obj.Template.Name,
+                         TemplateKey = obj.Template.TemplateKey
+                     });
+
+                     builder.RegisterObjectTransformation<Skill>(obj => new
+                     {
+                         Uid = obj.UniqueId,
+                         Name = obj.Template.Name,
+                         TemplateKey = obj.Template.TemplateKey
+                     });
+
+                     builder.RegisterObjectTransformation<MapInstance>(obj => new
+                     {
+                         InstanceId = obj.InstanceId,
+                         BaseInstanceId = obj.BaseInstanceId,
+                         TemplateKey = obj.Template.TemplateKey,
+                         Name = obj.Name
+                     });
+
+                     builder.RegisterObjectTransformation<CommandDescriptor>(obj => new
+                     {
+                         CommandName = obj.Details.CommandName,
+                         RequiresAdmin = obj.Details.RequiresAdmin
+                     });
+
+                     builder.RegisterObjectTransformation<IEffect>(obj => new
+                     {
+                         EffectKey = obj.ScriptKey,
+                         Name = obj.Name
+                     });
+
+                     builder.RegisterObjectTransformation<Redirect>(obj => new
+                     {
+                         Id = obj.Id,
+                         Name = obj.Name,
+                         Type = obj.Type,
+                         Address = obj.EndPoint
+                     });
+
+                     builder.RegisterObjectTransformation<Guild>(obj => obj.Name);
+
+                     builder.RegisterObjectTransformation<GroundItem>(obj => new
+                     {
+                         Type = nameof(GroundItem),
+                         Id = obj.Id,
+                         ItemUid = obj.Item.UniqueId,
+                         ItemName = obj.Item.DisplayName,
+                         ItemTemplateKey = obj.Item.Template.TemplateKey,
+                         ItemCount = obj.Item.Count,
+                         Creation = obj.Creation,
+                         Location = ILocation.ToString(obj),
+                         NoTrade = obj.Item.NoTrade,
+                         AccountBound = obj.Item.AccountBound,
+                         PreventBanking = obj.Item.Color
+                     });
+
+                     builder.RegisterObjectTransformation<Group>(obj => new
+                     {
+                         Id = obj.Id,
+                         LeaderName = obj.Leader.Name,
+                         MemberCount = obj.Count
+                     });
+
+                     builder.RegisterObjectTransformation<Dialog>(obj => new
+                     {
+                         TemplateKey = obj.Template.TemplateKey,
+                         Type = obj.Template.Type,
+                         Contextual = obj.Template.Contextual,
+                         HasContext = obj.Context is not null,
+                         HasMenuArgs = obj.MenuArgs.Count != 0
+                     });
+
+                     builder.RegisterObjectTransformation<Exchange>(obj => new
+                     {
+                         obj.ExchangeId
+                     });
+
+                     builder.RegisterObjectTransformation<BoardBase>(obj => new
+                     {
+                         Key = obj.Key,
+                         Name = obj.Name,
+                         Posts = obj.Posts.Count
+                     });
+
+                     builder.RegisterObjectTransformation<MailBox>(obj => new
+                     {
+                         Key = obj.Key,
+                         Name = obj.Name,
+                         Posts = obj.Posts.Count
+                     });
+
+                     builder.RegisterObjectTransformation<BulletinBoard>(obj => new
+                     {
+                         Key = obj.Key,
+                         Name = obj.Name,
+                         Posts = obj.Posts.Count
+                     });
+
+                     builder.RegisterObjectTransformation<Post>(obj => new
+                     {
+                         PostId = obj.PostId,
+                         Author = obj.Author,
+                         Subject = obj.Subject,
+                         Message = obj.Message,
+                         Creation = obj.CreationDate
+                     });
+                 });
