@@ -77,6 +77,12 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
         if (obj.PreventBanking.HasValue)
             item.PreventBanking = obj.PreventBanking.Value;
 
+        if (obj.ArmorUsesOvercoatSprites.HasValue)
+            item.ArmorUsesOvercoatSprites = obj.ArmorUsesOvercoatSprites.Value;
+
+        if (obj.OvercoatUsesArmorSprites.HasValue)
+            item.OvercoatUsesArmorSprites = obj.OvercoatUsesArmorSprites.Value;
+
         item.CustomNameOverride = obj.CustomNameOverride;
         item.Prefix = obj.Prefix;
         item.Suffix = obj.Suffix;
@@ -183,7 +189,9 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
             EquipmentType = obj.EquipmentType,
             Gender = obj.Gender,
             OverridesHeadSprite = obj.OverridesHeadSprite,
-            OverridesBootsSprite = obj.OverridesBootsSprite
+            OverridesBootsSprite = obj.OverridesBootsSprite,
+            ArmorUsesOvercoatSprites = obj.ArmorUsesOvercoatSprites,
+            OvercoatUsesArmorSprites = obj.OvercoatUsesArmorSprites
         };
 
     public ItemTemplateSchema Map(ItemTemplate obj) => throw new NotImplementedException();

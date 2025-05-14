@@ -198,6 +198,9 @@ public sealed class AislingMapperProfile(
             byte bootsSprite;
             DisplayColor headColor;
             DisplayColor bootsColor;
+            ushort overcoatSprite;
+            DisplayColor overcoatColor;
+            ushort armorSprite;
 
             //determine if we should override head/boots sprite
             var shouldOverrideHeadSprite = obj.Equipment.Any(item => item.Template.OverridesHeadSprite);
@@ -259,7 +262,7 @@ public sealed class AislingMapperProfile(
             } else
                 headColor = DisplayColor.Default;
 
-            //determine boots sprite to use
+            //determine boots sprite/color
             if (shouldOverrideBootsSprite)
                 bootsSprite = 0;
             else if (boots?.ItemSprite.DisplaySprite is not null)
@@ -273,6 +276,27 @@ public sealed class AislingMapperProfile(
             else
                 bootsColor = DisplayColor.Default;
 
+            //determine overcoat sprite/color
+            if (overcoat is not null)
+            {
+                overcoatSprite = overcoat.ItemSprite.DisplaySprite;
+                overcoatColor = overcoat.Color;
+            } else if (armor?.ArmorUsesOvercoatSprites == true)
+            {
+                overcoatSprite = armor.ItemSprite.DisplaySprite;
+                overcoatColor = armor.Color;
+            } else
+            {
+                overcoatSprite = 0;
+                overcoatColor = DisplayColor.Default;
+            }
+
+            //determine armor sprite
+            if (overcoat?.ArmorUsesOvercoatSprites == true)
+                armorSprite = overcoat.ItemSprite.DisplaySprite;
+            else
+                armorSprite = armor?.ItemSprite.DisplaySprite ?? 0;
+
             return new DisplayAislingArgs
             {
                 AccessoryColor1 = acc1?.Color ?? DisplayColor.Default,
@@ -281,8 +305,8 @@ public sealed class AislingMapperProfile(
                 AccessorySprite1 = acc1?.ItemSprite.DisplaySprite ?? 0,
                 AccessorySprite2 = acc2?.ItemSprite.DisplaySprite ?? 0,
                 AccessorySprite3 = acc3?.ItemSprite.DisplaySprite ?? 0,
-                ArmorSprite1 = armor?.ItemSprite.DisplaySprite ?? 0, //TODO: figure this out again cuz i deleted it
-                ArmorSprite2 = armor?.ItemSprite.DisplaySprite ?? 0,
+                ArmorSprite1 = armorSprite,
+                ArmorSprite2 = armorSprite,
                 BodyColor = obj.BodyColor,
                 BodySprite = obj.BodySprite,
                 PantsColor = pantsColor,
@@ -301,8 +325,8 @@ public sealed class AislingMapperProfile(
                 LanternSize = obj.LanternSize,
                 Name = obj.Name,
                 NameTagStyle = NameTagStyle.NeutralHover, //this is a default value
-                OvercoatColor = overcoat?.Color ?? DisplayColor.Default,
-                OvercoatSprite = overcoat?.ItemSprite.DisplaySprite ?? 0,
+                OvercoatColor = overcoatColor,
+                OvercoatSprite = overcoatSprite,
                 X = obj.X,
                 Y = obj.Y,
                 RestPosition = obj.RestPosition,

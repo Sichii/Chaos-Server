@@ -23,6 +23,7 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
 {
     private readonly NameComposer NameComposer;
     public bool AccountBound { get; set; }
+    public bool? ArmorUsesOvercoatSprites { get; set; }
 
     public DisplayColor Color
     {
@@ -45,6 +46,7 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
     public Attributes Modifiers { get; set; }
     public string? NotepadText { get; set; }
     public bool NoTrade { get; set; }
+    public bool? OvercoatUsesArmorSprites { get; set; }
 
     public string? Prefix
     {
@@ -93,6 +95,8 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
         PreventBanking = template.PreventBanking;
         AccountBound = template.AccountBound;
         NoTrade = template.NoTrade;
+        ArmorUsesOvercoatSprites = template.ArmorUsesOvercoatSprites;
+        OvercoatUsesArmorSprites = template.OvercoatUsesArmorSprites;
         ItemSprite = new ItemSprite(template.ItemSprite.PanelSprite, template.ItemSprite.DisplaySprite);
 
         if (extraScriptKeys != null)

@@ -18,6 +18,12 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     public bool AccountBound { get; set; }
 
     /// <summary>
+    ///     When this item is equipped, it will be considered an overcoat for display purposes. This allows items in the normal
+    ///     armor slot to use overcoat sprites and be dyeable. If an overcoat is equipped, that item will show instead.
+    /// </summary>
+    public bool ArmorUsesOvercoatSprites { get; set; }
+
+    /// <summary>
     ///     The amount of gold it costs to buy this item from a merchant
     /// </summary>
     public int BuyCost { get; set; }
@@ -93,6 +99,12 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     ///     exchange or dropping. These items are still droppable, but are locked to the player that dropped it.
     /// </summary>
     public bool NoTrade { get; set; }
+
+    /// <summary>
+    ///     When this item is equipped, it will be considered an armor for display purposes. This allows items in the overcoat
+    ///     slot to use normal armor sprites. If both an armor and an overcoat are equipped, the overcoat will display.
+    /// </summary>
+    public bool OvercoatUsesArmorSprites { get; set; }
 
     /// <summary>
     ///     When this item is equipped, the boots sprite will be set to 0
