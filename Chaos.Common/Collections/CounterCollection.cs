@@ -1,7 +1,9 @@
+#region
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Text.Json.Serialization;
 using Chaos.Common.Converters;
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Collections.Common;
@@ -18,9 +20,7 @@ public sealed class CounterCollection : IEnumerable<KeyValuePair<string, int>>
     ///     Initializes a new instance of the CounterCollection class with an optional initial set of key-value pairs.
     /// </summary>
     public CounterCollection(IEnumerable<KeyValuePair<string, int>>? enumerable = null)
-        => Counters = new ConcurrentDictionary<string, int>(
-            enumerable ?? Array.Empty<KeyValuePair<string, int>>(),
-            StringComparer.OrdinalIgnoreCase);
+        => Counters = new ConcurrentDictionary<string, int>(enumerable ?? [], StringComparer.OrdinalIgnoreCase);
 
     /// <inheritdoc />
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

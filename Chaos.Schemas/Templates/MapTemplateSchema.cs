@@ -1,4 +1,6 @@
+#region
 using System.Text.Json.Serialization;
+#endregion
 
 namespace Chaos.Schemas.Templates;
 
@@ -21,7 +23,7 @@ public sealed record MapTemplateSchema
     /// <summary>
     ///     A collection of names of map scripts to attach to this map by default
     /// </summary>
-    public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> ScriptKeys { get; set; } = [];
 
     /// <summary>
     ///     A unique id specific to this map template

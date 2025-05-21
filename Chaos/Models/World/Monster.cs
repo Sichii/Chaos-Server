@@ -27,6 +27,7 @@ namespace Chaos.Models.World;
 
 public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSourceEntity
 {
+    public int AbilityExperience { get; set; }
     public int AggroRange { get; set; }
     public ICollection<IPoint> BlackList { get; set; }
     public int Experience { get; set; }
@@ -75,18 +76,19 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
             mapInstance,
             point)
     {
-        extraScriptKeys ??= Array.Empty<string>();
+        extraScriptKeys ??= [];
 
         AggroRange = template.AggroRange;
         Experience = template.ExpReward;
+        AbilityExperience = template.AbilityReward;
         Gold = Random.Shared.Next(template.MinGoldDrop, template.MaxGoldDrop + 1);
-        Items = new List<Item>();
-        Skills = new List<Skill>();
-        Spells = new List<Spell>();
+        Items = [];
+        Skills = [];
+        Spells = [];
         Template = template;
         Logger = logger;
         StatSheet = ShallowCopy<StatSheet>.Create(template.StatSheet);
-        Items = new List<Item>();
+        Items = [];
         Type = template.Type;
         Direction = (Direction)Random.Shared.Next(4);
         AggroList = new AggroList();

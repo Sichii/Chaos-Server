@@ -381,7 +381,7 @@ public sealed class StringExtensionsTests
                  "banana",
                  "cherry"
              ], "peach", 0, 1, null, true, "cherry"),
-            (Array.Empty<string>(), "peach", 0, 1, null, true, null)
+            ([], "peach", 0, 1, null, true, null)
         ];
 
     [Test]

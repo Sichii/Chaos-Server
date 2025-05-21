@@ -1,5 +1,7 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
+#endregion
 
 namespace Chaos.Schemas.Templates;
 
@@ -17,7 +19,7 @@ public sealed record BulletinBoardTemplateSchema
     /// <summary>
     ///     A collection of names of dialog scripts to attach to this dialog by default
     /// </summary>
-    public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> ScriptKeys { get; set; } = [];
 
     /// <summary>
     ///     A collection of key-value pairs of key-value pairs

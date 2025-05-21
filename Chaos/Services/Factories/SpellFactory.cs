@@ -18,7 +18,7 @@ public sealed class SpellFactory(ISimpleCache simpleCache, IScriptProvider scrip
 
     public Spell Create(string templateKey, ICollection<string>? extraScriptKeys = null)
     {
-        extraScriptKeys ??= Array.Empty<string>();
+        extraScriptKeys ??= [];
         var template = SimpleCache.Get<SpellTemplate>(templateKey);
         var spell = new Spell(template, ScriptProvider, extraScriptKeys);
 

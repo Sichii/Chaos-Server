@@ -21,7 +21,7 @@ public sealed class Equipment : PanelBase<Item>, IEquipment
     public Equipment(IEnumerable<Item>? items = null)
         : base(PanelType.Equipment, 19, [0])
     {
-        items ??= Array.Empty<Item>();
+        items ??= [];
 
         foreach (var item in items)
             Objects[item.Slot] = item;

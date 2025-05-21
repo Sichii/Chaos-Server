@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.Templates;
@@ -6,6 +7,7 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Other.Abstractions;
 using Chaos.Storage.Abstractions;
+#endregion
 
 namespace Chaos.Services.Factories;
 
@@ -33,7 +35,7 @@ public sealed class MerchantFactory(
         IPoint point,
         ICollection<string>? extraScriptKeys = null)
     {
-        extraScriptKeys ??= Array.Empty<string>();
+        extraScriptKeys ??= [];
         var template = SimpleCache.Get<MerchantTemplate>(templateKey);
         var logger = LoggerFactory.CreateLogger<Merchant>();
 

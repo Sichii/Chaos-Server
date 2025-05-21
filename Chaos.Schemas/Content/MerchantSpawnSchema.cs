@@ -1,7 +1,9 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+#endregion
 
 namespace Chaos.Schemas.Content;
 
@@ -13,7 +15,7 @@ public sealed record MerchantSpawnSchema
     /// <summary>
     ///     A collection of points that merchants created by this spawn will not spawn or wander on
     /// </summary>
-    public ICollection<IPoint> BlackList { get; set; } = Array.Empty<IPoint>();
+    public ICollection<IPoint> BlackList { get; set; } = [];
 
     /// <summary>
     ///     Default to null, causing merchants to spawn facing random directions
@@ -25,7 +27,7 @@ public sealed record MerchantSpawnSchema
     /// <summary>
     ///     A collection of extra merchant script keys to add to the monsters created by this spawn
     /// </summary>
-    public ICollection<string> ExtraScriptKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> ExtraScriptKeys { get; set; } = [];
 
     /// <summary>
     ///     The unique id for the template of the merchant to spawn

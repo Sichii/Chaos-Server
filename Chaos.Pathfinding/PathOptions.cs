@@ -1,5 +1,7 @@
+#region
 using Chaos.Geometry.Abstractions;
 using Chaos.Pathfinding.Abstractions;
+#endregion
 
 namespace Chaos.Pathfinding;
 
@@ -11,7 +13,7 @@ public sealed record PathOptions : IPathOptions
     /// <summary>
     ///     A collection of points that are blocked.
     /// </summary>
-    public IReadOnlyCollection<IPoint> BlockedPoints { get; set; } = Array.Empty<IPoint>();
+    public IReadOnlyCollection<IPoint> BlockedPoints { get; set; } = [];
 
     /// <summary>
     ///     Whether to ignore blocking reactors.

@@ -33,7 +33,7 @@ public sealed class LootTable(IItemFactory itemFactory, ISimpleCache cache, IClo
     /// <summary>
     ///     The loot drops that can be generated from the table
     /// </summary>
-    public required ICollection<LootDrop> LootDrops { get; init; } = Array.Empty<LootDrop>();
+    public required ICollection<LootDrop> LootDrops { get; init; } = [];
 
     /// <summary>
     ///     The mode in which the loot table operates

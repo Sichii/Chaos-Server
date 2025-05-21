@@ -88,7 +88,7 @@ public sealed class Merchant : Creature,
             mapInstance,
             point)
     {
-        extraScriptKeys ??= Array.Empty<string>();
+        extraScriptKeys ??= [];
 
         Template = template;
         Logger = logger;
@@ -101,13 +101,12 @@ public sealed class Merchant : Creature,
         BlackList = new HashSet<IPoint>(PointEqualityComparer.Instance);
 
         ItemsForSale = template.ItemsForSale
-                               .Select(
-                                   kvp =>
-                                   {
-                                       var item = itemFactory.CreateFaux(kvp.Key);
+                               .Select(kvp =>
+                               {
+                                   var item = itemFactory.CreateFaux(kvp.Key);
 
-                                       return item;
-                                   })
+                                   return item;
+                               })
                                .ToList();
 
         ItemsToBuy = template.ItemsToBuy

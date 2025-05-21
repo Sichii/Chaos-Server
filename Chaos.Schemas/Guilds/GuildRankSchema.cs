@@ -1,4 +1,6 @@
+#region
 using System.Text.Json.Serialization;
+#endregion
 
 namespace Chaos.Schemas.Guilds;
 
@@ -10,7 +12,7 @@ public sealed record GuildRankSchema
     /// <summary>
     ///     The members of this rank
     /// </summary>
-    public ICollection<string> Members { get; set; } = Array.Empty<string>();
+    public ICollection<string> Members { get; set; } = [];
 
     /// <summary>
     ///     The name of the rank. This must be unique within the guild and match the file name

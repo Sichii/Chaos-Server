@@ -1,9 +1,11 @@
+#region
 using Chaos.Formulae.Abstractions;
 using Chaos.Formulae.Regen;
+#endregion
 
 namespace Chaos.Formulae;
 
 public static class RegenFormulae
 {
-    public static IRegenFormula Default { get; } = new DefaultRegenFormula();
+    public static DefaultRegenFormula Default { get; } = new();
 }

@@ -54,6 +54,7 @@ public sealed class MonsterMapperProfile(IMonsterFactory monsterFactory, ISimple
 
         return new MonsterTemplate
         {
+            AbilityReward = obj.AbilityReward,
             AggroRange = obj.AggroRange,
             AssailIntervalMs = obj.AssailIntervalMs,
             SkillIntervalMs = obj.SkillIntervalMs,

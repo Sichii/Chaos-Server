@@ -23,7 +23,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         : base(PanelType.Inventory, 60, [0])
     {
         ItemCloner = null!;
-        items ??= Array.Empty<Item>();
+        items ??= [];
 
         foreach (var item in items)
             Objects[item.Slot] = item;

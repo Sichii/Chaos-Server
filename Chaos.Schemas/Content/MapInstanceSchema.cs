@@ -1,6 +1,8 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.DarkAges.Definitions;
 using Chaos.Schemas.Data;
+#endregion
 
 namespace Chaos.Schemas.Content;
 
@@ -62,7 +64,7 @@ public sealed record MapInstanceSchema
     /// <summary>
     ///     A collection of script keys for scripts to load for this map (TODO: scripts section)
     /// </summary>
-    public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> ScriptKeys { get; set; } = [];
 
     /// <summary>
     ///     Default null

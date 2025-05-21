@@ -1,5 +1,7 @@
+#region
 using Chaos.Geometry.Abstractions;
 using Chaos.Pathfinding.Abstractions;
+#endregion
 
 namespace Chaos.Pathfinding;
 
@@ -7,13 +9,13 @@ namespace Chaos.Pathfinding;
 public sealed class GridDetails : IGridDetails
 {
     /// <inheritdoc />
-    public ICollection<IPoint> BlockingReactors { get; init; } = Array.Empty<IPoint>();
+    public ICollection<IPoint> BlockingReactors { get; init; } = [];
 
     /// <inheritdoc />
     public int Height { get; init; }
 
     /// <inheritdoc />
-    public ICollection<IPoint> Walls { get; init; } = Array.Empty<IPoint>();
+    public ICollection<IPoint> Walls { get; init; } = [];
 
     /// <inheritdoc />
     public int Width { get; init; }

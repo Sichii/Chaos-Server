@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.Templates;
@@ -5,6 +6,7 @@ using Chaos.Models.World;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Storage.Abstractions;
+#endregion
 
 namespace Chaos.Services.Factories;
 
@@ -28,7 +30,7 @@ public sealed class MonsterFactory(
         IPoint point,
         ICollection<string>? extraScriptKeys = null)
     {
-        extraScriptKeys ??= Array.Empty<string>();
+        extraScriptKeys ??= [];
         var template = SimpleCache.Get<MonsterTemplate>(templateKey);
         var logger = LoggerFactory.CreateLogger<Monster>();
 

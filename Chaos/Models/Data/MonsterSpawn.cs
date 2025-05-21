@@ -18,8 +18,8 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 {
     public required ICollection<IPoint> BlackList { get; init; }
     public required Direction? Direction { get; init; }
-    public required ICollection<LootTable> ExtraLootTables { get; set; } = Array.Empty<LootTable>();
-    public required ICollection<string> ExtraScriptKeys { get; init; } = Array.Empty<string>();
+    public required ICollection<LootTable> ExtraLootTables { get; set; } = [];
+    public required ICollection<string> ExtraScriptKeys { get; init; } = [];
     public ILootTable? FinalLootTable { get; set; }
     public MapInstance MapInstance { get; set; } = null!;
     public required int MaxAmount { get; init; }

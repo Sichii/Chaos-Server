@@ -32,7 +32,7 @@ public abstract class KnowledgeBookBase<T> : PanelBase<T>, IKnowledgeBook<T> whe
                 72
             ])
     {
-        abilities ??= Array.Empty<T>();
+        abilities ??= [];
 
         foreach (var ability in abilities)
             Objects[ability.Slot] = ability;

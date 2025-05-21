@@ -1,7 +1,9 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.DarkAges.Definitions;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions.Definitions;
+#endregion
 
 namespace Chaos.Schemas.Aisling;
 
@@ -25,7 +27,7 @@ public sealed record AislingSchema
     /// <summary>
     ///     The aislings settings for the channels that they are in
     /// </summary>
-    public ICollection<ChannelSettingsSchema> ChannelSettings { get; set; } = Array.Empty<ChannelSettingsSchema>();
+    public ICollection<ChannelSettingsSchema> ChannelSettings { get; set; } = [];
 
     /// <summary>
     ///     The direction the aisling is facing
@@ -79,7 +81,7 @@ public sealed record AislingSchema
     /// <summary>
     ///     A collection of names of other aislings that this aisling has ignored
     /// </summary>
-    public ICollection<string> IgnoreList { get; set; } = Array.Empty<string>();
+    public ICollection<string> IgnoreList { get; set; } = [];
 
     /// <summary>
     ///     Whether or not this aisling has admin privileges
@@ -118,7 +120,7 @@ public sealed record AislingSchema
     /// <summary>
     ///     A collecti of titles the aisling has
     /// </summary>
-    public ICollection<string> Titles { get; set; } = Array.Empty<string>();
+    public ICollection<string> Titles { get; set; } = [];
 
     /// <summary>
     ///     The aisling's user options

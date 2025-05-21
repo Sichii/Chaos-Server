@@ -52,7 +52,7 @@ public sealed class GuildRank
     /// </param>
     public GuildRank(string name, int tier, ICollection<string>? memberNames = null)
     {
-        memberNames ??= Array.Empty<string>();
+        memberNames ??= [];
 
         Name = name;
         Tier = tier;

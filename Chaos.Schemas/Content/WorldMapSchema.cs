@@ -1,4 +1,6 @@
+#region
 using System.Text.Json.Serialization;
+#endregion
 
 namespace Chaos.Schemas.Content;
 
@@ -16,7 +18,7 @@ public sealed class WorldMapSchema
     /// <summary>
     ///     A collection of keys for the nodes that are displayed on this world map
     /// </summary>
-    public ICollection<string> NodeKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> NodeKeys { get; set; } = [];
 
     /// <summary>
     ///     A unique id specific to this world map

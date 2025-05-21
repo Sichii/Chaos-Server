@@ -1,7 +1,9 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
 using Chaos.DarkAges.Definitions;
 using Chaos.Schemas.Data;
+#endregion
 
 namespace Chaos.Schemas.Templates;
 
@@ -10,6 +12,11 @@ namespace Chaos.Schemas.Templates;
 /// </summary>
 public sealed record MonsterTemplateSchema
 {
+    /// <summary>
+    ///     The amount of ability this monster will reward when killed
+    /// </summary>
+    public int AbilityReward { get; set; }
+
     /// <summary>
     ///     Defaults to 0
     ///     <br />
@@ -30,7 +37,7 @@ public sealed record MonsterTemplateSchema
     /// <summary>
     ///     A collection of loot table keys that this monster can drop from
     /// </summary>
-    public ICollection<string> LootTableKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> LootTableKeys { get; set; } = [];
 
     /// <summary>
     ///     Maximum amount of gold for this monster to drop
@@ -58,7 +65,7 @@ public sealed record MonsterTemplateSchema
     ///     <br />
     ///     TODO: scripts section
     /// </summary>
-    public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> ScriptKeys { get; set; } = [];
 
     /// <summary>
     ///     A collection of key-value pairs of key-value pairs
@@ -77,7 +84,7 @@ public sealed record MonsterTemplateSchema
     /// <summary>
     ///     A collection of template keys of skills this monster will use
     /// </summary>
-    public ICollection<string> SkillTemplateKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> SkillTemplateKeys { get; set; } = [];
 
     /// <summary>
     ///     The number of milliseconds between usages of spells
@@ -87,7 +94,7 @@ public sealed record MonsterTemplateSchema
     /// <summary>
     ///     A collection of template keys of spells this monster will cast
     /// </summary>
-    public ICollection<string> SpellTemplateKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> SpellTemplateKeys { get; set; } = [];
 
     /// <summary>
     ///     The sprite id of the monster minus the offset

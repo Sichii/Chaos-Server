@@ -1,5 +1,7 @@
+#region
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Entities.Server;
 
@@ -11,7 +13,7 @@ public sealed record WorldListArgs : IPacketSerializable
     /// <summary>
     ///     A collection of information about characters in the current country
     /// </summary>
-    public ICollection<WorldListMemberInfo> CountryList { get; set; } = Array.Empty<WorldListMemberInfo>();
+    public ICollection<WorldListMemberInfo> CountryList { get; set; } = [];
 
     /// <summary>
     ///     The number of players in the world
