@@ -1,7 +1,9 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Data;
 using Chaos.Networking.Options;
 using ConnectionInfo = Chaos.Networking.Options.ConnectionInfo;
+#endregion
 
 namespace Chaos.Services.Servers.Options;
 
@@ -45,6 +47,9 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
 
     /// <inheritdoc />
     public int? LootDropsLockToRewardTargetSecs { get; init; }
+
+    /// <inheritdoc />
+    public int MaxAbilityLevel { get; init; }
 
     /// <inheritdoc />
     public required int MaxActionsPerSecond { get; init; }

@@ -1,5 +1,7 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Data;
+#endregion
 
 namespace Chaos.Services.Servers.Options;
 
@@ -83,6 +85,12 @@ public interface IWorldOptions
     ///     If null, loot drops are not locked to the reward target.
     /// </summary>
     int? LootDropsLockToRewardTargetSecs { get; }
+
+    /// <summary>
+    ///     This is the ability level cap for players. AbilityLevel formulas can be changed, but with the default abilitylevel
+    ///     formula, if you reach this abilitylevel you will stop gaining ability.
+    /// </summary>
+    int MaxAbilityLevel { get; }
 
     /// <summary>
     ///     It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown

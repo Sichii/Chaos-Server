@@ -195,6 +195,8 @@ public record StatSheet : Attributes
             _atkSpeedPct = 500
         };
 
+    public void AddAbilityLevel(int amount = 1) => Interlocked.Add(ref _abilityLevel, amount);
+
     public void AddBonus(Attributes other)
     {
         Interlocked.Add(ref _acMod, other.Ac);
