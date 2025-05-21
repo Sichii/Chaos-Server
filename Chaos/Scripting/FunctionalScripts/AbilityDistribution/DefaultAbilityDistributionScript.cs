@@ -15,7 +15,7 @@ using Chaos.Services.Servers.Options;
 
 namespace Chaos.Scripting.FunctionalScripts.AbilityDistribution;
 
-public class DefaultAbilityDistributionScript : ScriptBase, IAbilityDistributionScript
+public sealed class DefaultAbilityDistributionScript : ScriptBase, IAbilityDistributionScript
 {
     /// <inheritdoc />
     public IAbilityFormula AbilityFormula { get; set; } = AbilityFormulae.Default;
