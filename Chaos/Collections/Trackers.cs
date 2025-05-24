@@ -36,6 +36,11 @@ public class Trackers : IDeltaUpdatable
     public EnumCollection Enums { get; init; } = new();
 
     /// <summary>
+    ///     A collection of tag strings organized by key
+    /// </summary>
+    public ConcurrentDictionary<string, string> Tags { get; init; } = new(StringComparer.OrdinalIgnoreCase);
+
+    /// <summary>
     ///     A collection of enum flags organized by type
     /// </summary>
     /// <remarks>

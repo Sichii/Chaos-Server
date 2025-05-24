@@ -1,4 +1,5 @@
 #region
+using System.Collections.Concurrent;
 using System.Net;
 using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
@@ -29,6 +30,12 @@ public class TrackersSchema
     /// </summary>
     [JsonRequired]
     public FlagCollection Flags { get; set; } = null!;
+
+    /// <summary>
+    ///     A collection of tag strings organized by key
+    /// </summary>
+    [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
+    public ConcurrentDictionary<string, string> Tags { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     ///     A collection of timed events.

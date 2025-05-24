@@ -50,6 +50,7 @@ public sealed record DialogTemplateSchema
     ///     Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of
     ///     propertyName-Value pairs
     /// </summary>
+    [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
     public IDictionary<string, DynamicVars> ScriptVars { get; set; }
         = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
 
