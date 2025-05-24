@@ -1,5 +1,6 @@
 #region
 using System.Buffers;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -24,6 +25,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     private readonly Memory<byte> Memory;
     private readonly ConcurrentQueue<SocketAsyncEventArgs> SocketArgsQueue;
     private int Count;
+
+    private NetworkMonitor? NetworkMonitor;
     private int Sequence;
 
     /// <inheritdoc />
@@ -157,6 +160,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Connected = true;
         await Task.Yield();
 
+        NetworkMonitor = new NetworkMonitor(this, Logger);
+
         var args = new SocketAsyncEventArgs();
         args.SetBuffer(Memory);
         args.Completed += ReceiveEventHandler;
@@ -199,8 +204,14 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
                 try
                 {
+                    var start = Stopwatch.GetTimestamp();
+                    var opcode = Buffer[offset + 3];
+
                     await HandlePacketAsync(Buffer.Slice(offset, packetLength))
                         .ConfigureAwait(false);
+
+                    var elapsed = Stopwatch.GetElapsedTime(start);
+                    NetworkMonitor.Digest(opcode, elapsed);
                 } catch (Exception ex)
                 {
                     //required so we can use Span<byte> in an async method

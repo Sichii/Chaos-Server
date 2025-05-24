@@ -1,8 +1,10 @@
+#region
 using System.Net.Sockets;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
 using Microsoft.Extensions.Logging;
+#endregion
 
 namespace Chaos.Networking.Abstractions;
 

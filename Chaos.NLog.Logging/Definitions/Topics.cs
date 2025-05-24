@@ -79,6 +79,7 @@ public static class Topics
         public static string Message => nameof(Message);
         public static string MetaData => nameof(MetaData);
         public static string Monster => nameof(Monster);
+        public static string NetworkMonitor => nameof(NetworkMonitor);
         public static string Options => nameof(Options);
         public static string Packet => nameof(Packet);
         public static string Post => nameof(Post);

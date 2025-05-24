@@ -54,7 +54,12 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
                     Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Delete)
                           .LogTrace("Deleting backup {@Backup}", fileInfo.FullName);
 
+                    var metricsLogger = Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Delete)
+                                              .WithMetrics();
+
                     fileInfo.Delete();
+
+                    metricsLogger.LogTrace("Backup deleted {@Backup}", fileInfo.FullName);
                 } catch
                 {
                     //ignored, not even worth logging
@@ -93,14 +98,18 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
             if (token.IsCancellationRequested)
                 return default;
 
-            saveDirectory.SafeExecute(
-                saveDir =>
-                {
-                    Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
-                          .LogTrace("Backing up directory {@SaveDir}", saveDirectory);
+            saveDirectory.SafeExecute(saveDir =>
+            {
+                Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
+                      .LogTrace("Backing up directory {@SaveDir}", saveDirectory);
 
-                    ZipFile.CreateFromDirectory(saveDir, backupPath);
-                });
+                var metricsLogger = Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
+                                          .WithMetrics();
+
+                ZipFile.CreateFromDirectory(saveDir, backupPath);
+
+                metricsLogger.LogTrace("Backup completed for {@SaveDir}", saveDirectory);
+            });
         } catch (Exception e)
         {
             Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
