@@ -32,6 +32,7 @@ using Chaos.Site.Utilities;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Options;
 using NLog;
+using NLog.Config;
 using NLog.Extensions.Logging;
 using AppContext = Chaos.AppContext;
 #endregion
@@ -440,5 +441,21 @@ static void RegisterStructuredLoggingTransformations()
                          Subject = obj.Subject,
                          Message = obj.Message,
                          Creation = obj.CreationDate
+                     });
+
+                     builder.RegisterObjectTransformation<List<NetworkStatistic>>(obj =>
+                     {
+                         var ret = obj.Select(x => new
+                                      {
+                                          OpCode = x.OpCode,
+                                          Average = x.Average,
+                                          Max = x.Max,
+                                          Upper95thPercentile = x.Upper95thPercentile,
+                                          Median = x.Median,
+                                          Count = x.Count
+                                      })
+                                      .ToList();
+
+                         return ret;
                      });
                  });

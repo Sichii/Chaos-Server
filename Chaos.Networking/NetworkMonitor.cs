@@ -8,6 +8,16 @@ using TDigestNet;
 
 namespace Chaos.Networking;
 
+public sealed class NetworkStatistic
+{
+    public double Average { get; init; }
+    public long Count { get; init; }
+    public double Max { get; init; }
+    public double Median { get; init; }
+    public byte OpCode { get; init; }
+    public double Upper95thPercentile { get; init; }
+}
+
 /// <summary>
 ///     Stores the execution time of network packets. This is used to monitor the performance of the network layer.
 /// </summary>
@@ -54,6 +64,9 @@ public sealed class NetworkMonitor
     {
         var digests = Digests.ToArray();
 
+        if (digests.Length == 0)
+            return;
+
         var serverTopic = Client switch
         {
             ILobbyClient => Topics.Servers.LobbyServer,
@@ -64,22 +77,33 @@ public sealed class NetworkMonitor
         var logEvent = Logger.WithTopics(serverTopic, Topics.Entities.Client, Topics.Entities.NetworkMonitor)
                              .WithProperty(Client);
 
+        var statistics = new List<NetworkStatistic>(digests.Length);
+
         foreach ((var opcode, var digest) in digests.OrderBy(d => d.Key))
         {
             var average = digest.Average / TimeSpan.TicksPerMillisecond;
             var max = digest.Max / TimeSpan.TicksPerMillisecond;
-            var count = digest.Count;
+            var count = (long)digest.Count;
             var upperPct = digest.Quantile(0.95) / TimeSpan.TicksPerMillisecond;
             var median = digest.Quantile(0.5) / TimeSpan.TicksPerMillisecond;
 
-            logEvent = logEvent.WithProperty(
-                $"Average: {average:N1}ms, Median: {median:N1}ms, 95th%: {upperPct:N1}ms, Max: {max:N1}ms, Samples: {count}",
-                $"OpCode[{opcode:D3}]");
+            var statistic = new NetworkStatistic
+            {
+                OpCode = opcode,
+                Average = average,
+                Max = max,
+                Upper95thPercentile = upperPct,
+                Median = median,
+                Count = count
+            };
+
+            statistics.Add(statistic);
         }
 
         Digests.Clear();
 
-        logEvent.LogTrace("Network Monitor [{@ClientId}]", Client.Id);
+        logEvent.WithProperty(statistics)
+                .LogTrace("Network Monitor [{@ClientId}]", Client.Id);
     }
 
     private Task RunMonitorLoop()
