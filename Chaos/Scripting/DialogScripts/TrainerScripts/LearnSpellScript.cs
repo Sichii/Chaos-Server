@@ -162,10 +162,10 @@ public class LearnSpellScript : DialogScriptBase
         //name matches
         //source has the spell's class
         //adv class matches if there is one
-        spell = SpellTeacherSource.SpellsToTeach.FirstOrDefault(
-            spell => spell.Template.Name.EqualsI(spellName)
-                     && source.HasClass(spell.Template.Class!.Value)
-                     && (!spell.Template.AdvClass.HasValue || (source.UserStatSheet.AdvClass == spell.Template.AdvClass.Value)));
+        spell = SpellTeacherSource.SpellsToTeach.FirstOrDefault(spell
+            => spell.Template.Name.EqualsI(spellName)
+               && source.HasClass(spell.Template.Class!.Value)
+               && (!spell.Template.AdvClass.HasValue || (source.UserStatSheet.AdvClass == spell.Template.AdvClass.Value)));
 
         return spell != null;
     }
@@ -230,6 +230,13 @@ public class LearnSpellScript : DialogScriptBase
         if (template.RequiresMaster && !source.UserStatSheet.Master)
         {
             dialog.Reply(source, "Come back when you have mastered your art.", "generic_learnspell_initial");
+
+            return false;
+        }
+
+        if (source.StatSheet.AbilityLevel < template.AbilityLevel)
+        {
+            dialog.Reply(source, "Come back when you have more ability.", "generic_learnspell_initial");
 
             return false;
         }

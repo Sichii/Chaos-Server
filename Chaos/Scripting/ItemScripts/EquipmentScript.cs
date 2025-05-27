@@ -1,7 +1,9 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Scripting.ItemScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.ItemScripts;
 
@@ -55,6 +57,13 @@ public class EquipmentScript(Item subject) : ConfigurableItemScriptBase(subject)
         }
 
         if (template.RequiresMaster && !source.UserStatSheet.Master)
+        {
+            source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you, but you could grow into it");
+
+            return;
+        }
+
+        if (template.AbilityLevel > source.UserStatSheet.AbilityLevel)
         {
             source.SendOrangeBarMessage($"{Subject.DisplayName} does not seem to fit you, but you could grow into it");
 
