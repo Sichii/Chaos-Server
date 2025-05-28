@@ -314,31 +314,47 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     {
         boardBase = null;
 
-        switch (args.BoardId)
+        try
         {
-            case null:
-                break;
-            case MailBox.BOARD_ID:
+            switch (args.BoardId)
             {
-                //if the "To" property is populated, we are sending mail to someone
-                //we want to return their mailbox
-                //otherwise, return our mailbox
-                boardBase = !string.IsNullOrEmpty(args.To) ? MailStore.Load(args.To) : client.Aisling.MailBox;
+                case null:
+                    break;
+                case MailBox.BOARD_ID:
+                {
+                    //if the "To" property is populated, we are sending mail to someone
+                    //we want to return their mailbox
+                    //otherwise, return our mailbox
+                    boardBase = !string.IsNullOrEmpty(args.To) ? MailStore.Load(args.To) : client.Aisling.MailBox;
 
-                break;
+                    break;
+                }
+                default:
+                {
+                    var key = BulletinBoardKeyMapper.GetKey(args.BoardId.Value);
+
+                    if (!string.IsNullOrEmpty(key))
+                        boardBase = BulletinBoardStore.Load(key);
+
+                    break;
+                }
             }
-            default:
+
+            if (boardBase is null)
             {
-                var key = BulletinBoardKeyMapper.GetKey(args.BoardId.Value);
+                Logger.WithTopics(
+                          Topics.Entities.Aisling,
+                          Topics.Entities.BulletinBoard,
+                          Topics.Entities.MailBox,
+                          Topics.Actions.Read)
+                      .WithProperty(client)
+                      .LogError("{@AislingName} requested an invalid board id: {@BoardId}", client.Aisling.Name, args.BoardId);
 
-                if (!string.IsNullOrEmpty(key))
-                    boardBase = BulletinBoardStore.Load(key);
-
-                break;
+                return false;
             }
-        }
 
-        if (boardBase is null)
+            return true;
+        } catch (Exception e)
         {
             Logger.WithTopics(
                       Topics.Entities.Aisling,
@@ -346,12 +362,14 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                       Topics.Entities.MailBox,
                       Topics.Actions.Read)
                   .WithProperty(client)
-                  .LogError("{@AislingName} requested an invalid board id: {@BoardId}", client.Aisling.Name, args.BoardId);
+                  .LogError(
+                      e,
+                      "{@AislingName} requested an invalid board id: {@BoardId}",
+                      client.Aisling.Name,
+                      args.BoardId);
 
             return false;
         }
-
-        return true;
     }
     #endregion
 
@@ -397,7 +415,24 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case BoardRequestType.ViewBoard:
                 {
                     if (!TryGetBoard(localClient, localArgs, out var board))
+                    {
+                        localClient.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "That board does not exist.", false);
+
+                        Logger.WithTopics(
+                                  Topics.Entities.Aisling,
+                                  Topics.Entities.BulletinBoard,
+                                  Topics.Entities.MailBox,
+                                  Topics.Actions.Read,
+                                  Topics.Qualifiers.Cheating)
+                              .WithProperty(client)
+                              .LogError(
+                                  "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
+                                  client.Aisling.Name,
+                                  localArgs.BoardRequestType,
+                                  args.BoardId);
+
                         return default;
+                    }
 
                     board.Show(localClient.Aisling, localArgs.StartPostId!.Value);
 
@@ -406,7 +441,24 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case BoardRequestType.ViewPost:
                 {
                     if (!TryGetBoard(localClient, localArgs, out var board))
+                    {
+                        localClient.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "That board does not exist.", false);
+
+                        Logger.WithTopics(
+                                  Topics.Entities.Aisling,
+                                  Topics.Entities.BulletinBoard,
+                                  Topics.Entities.MailBox,
+                                  Topics.Actions.Read,
+                                  Topics.Qualifiers.Cheating)
+                              .WithProperty(client)
+                              .LogError(
+                                  "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
+                                  client.Aisling.Name,
+                                  localArgs.BoardRequestType,
+                                  args.BoardId);
+
                         return default;
+                    }
 
                     board.ShowPost(localClient.Aisling, localArgs.PostId!.Value, localArgs.Controls!.Value);
 
@@ -415,7 +467,23 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case BoardRequestType.NewPost:
                 {
                     if (!TryGetBoard(localClient, localArgs, out var board))
+                    {
+                        localClient.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "That board does not exist", false);
+
+                        Logger.WithTopics(
+                                  Topics.Entities.Aisling,
+                                  Topics.Entities.BulletinBoard,
+                                  Topics.Actions.Read,
+                                  Topics.Qualifiers.Cheating)
+                              .WithProperty(client)
+                              .LogError(
+                                  "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
+                                  client.Aisling.Name,
+                                  localArgs.BoardRequestType,
+                                  args.BoardId);
+
                         return default;
+                    }
 
                     //mailboxes use a different boardRequestType for sending mail
                     if (board is MailBox)
@@ -424,7 +492,8 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                                   Topics.Entities.Aisling,
                                   Topics.Entities.BulletinBoard,
                                   Topics.Entities.MailBox,
-                                  Topics.Actions.Read)
+                                  Topics.Actions.Read,
+                                  Topics.Qualifiers.Cheating)
                               .WithProperty(client)
                               .LogError(
                                   "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
@@ -446,7 +515,24 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case BoardRequestType.Delete:
                 {
                     if (!TryGetBoard(localClient, localArgs, out var board))
+                    {
+                        localClient.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "That board does not exist.", false);
+
+                        Logger.WithTopics(
+                                  Topics.Entities.Aisling,
+                                  Topics.Entities.BulletinBoard,
+                                  Topics.Entities.MailBox,
+                                  Topics.Actions.Read,
+                                  Topics.Qualifiers.Cheating)
+                              .WithProperty(client)
+                              .LogError(
+                                  "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
+                                  client.Aisling.Name,
+                                  localArgs.BoardRequestType,
+                                  args.BoardId);
+
                         return default;
+                    }
 
                     board.Delete(localClient.Aisling, localArgs.PostId!.Value);
 
@@ -455,7 +541,11 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case BoardRequestType.SendMail:
                 {
                     if (!TryGetBoard(localClient, localArgs, out var board))
+                    {
+                        localClient.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, $"{localArgs.To} does not exist.", false);
+
                         return default;
+                    }
 
                     board.Post(
                         localClient.Aisling,

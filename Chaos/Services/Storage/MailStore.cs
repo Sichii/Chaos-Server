@@ -28,7 +28,7 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
                                   .WithMetrics();
 
         if (!Directory.Exists(dir))
-            throw new InvalidOperationException($"Directory {dir} does not exist");
+            throw new DirectoryNotFoundException($"Directory {dir} does not exist");
 
         var path = Path.Combine(dir, "mail.json");
 
@@ -54,17 +54,16 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
         {
             var directory = Path.Combine(Options.Directory, obj.Key);
 
-            directory.SafeExecute(
-                dir =>
-                {
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
+            directory.SafeExecute(dir =>
+            {
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
 
-                    var path = Path.Combine(dir, "mail.json");
+                var path = Path.Combine(dir, "mail.json");
 
-                    EntityRepository.SaveAndMap<MailBox, MailBoxSchema>(obj, path);
-                    Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
-                });
+                EntityRepository.SaveAndMap<MailBox, MailBoxSchema>(obj, path);
+                Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+            });
 
             metricsLogger.LogDebug("Saved {@TypeName} entry with key {@Key}", nameof(MailBox), obj.Key);
         } catch (Exception e)
@@ -92,17 +91,16 @@ public class MailStore : PeriodicSaveStoreBase<MailBox, MailStoreOptions>
         {
             var directory = Path.Combine(Options.Directory, obj.Key);
 
-            await directory.SafeExecuteAsync(
-                async dir =>
-                {
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
+            await directory.SafeExecuteAsync(async dir =>
+            {
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
 
-                    var path = Path.Combine(dir, "mail.json");
+                var path = Path.Combine(dir, "mail.json");
 
-                    await EntityRepository.SaveAndMapAsync<MailBox, MailBoxSchema>(obj, path);
-                    Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
-                });
+                await EntityRepository.SaveAndMapAsync<MailBox, MailBoxSchema>(obj, path);
+                Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+            });
 
             metricsLogger.LogTrace("Saved {@TypeName} entry with key {@Key}", nameof(MailBox), obj.Key);
         } catch (Exception e)
