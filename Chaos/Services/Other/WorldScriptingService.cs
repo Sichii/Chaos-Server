@@ -48,7 +48,8 @@ public sealed class WorldScriptingService : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
             try
             {
-                await timer.WaitForNextTickAsync(stoppingToken);
+                await timer.WaitForNextTickAsync(stoppingToken)
+                           .ConfigureAwait(false);
                 var currentDelta = deltaTime.GetDelta;
                 monitor.Update(currentDelta);
 

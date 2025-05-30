@@ -1,8 +1,10 @@
+#region
 using Chaos.Networking.Abstractions;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+#endregion
 
 namespace Chaos.Networking.Entities;
 
@@ -51,7 +53,8 @@ public sealed class RedirectManager : BackgroundService, IRedirectManager
         while (!stoppingToken.IsCancellationRequested)
             try
             {
-                await timer.WaitForNextTickAsync(stoppingToken);
+                await timer.WaitForNextTickAsync(stoppingToken)
+                           .ConfigureAwait(false);
                 var now = DateTime.UtcNow;
 
                 foreach (var redirect in Redirects.Values)

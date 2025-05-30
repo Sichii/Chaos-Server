@@ -67,7 +67,8 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         while (true)
             try
             {
-                await PersistUsedMapsTimer.WaitForNextTickAsync();
+                await PersistUsedMapsTimer.WaitForNextTickAsync()
+                                          .ConfigureAwait(false);
 
                 //checks each map for aislings
                 //if the map has aislings on it, re-access the map to keep it in the cache

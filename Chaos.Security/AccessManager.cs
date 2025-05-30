@@ -237,7 +237,8 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         {
             try
             {
-                await CleanupTimer.WaitForNextTickAsync(stoppingToken);
+                await CleanupTimer.WaitForNextTickAsync(stoppingToken)
+                                  .ConfigureAwait(false);
             } catch (OperationCanceledException)
             {
                 return;

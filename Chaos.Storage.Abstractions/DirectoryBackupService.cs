@@ -136,7 +136,8 @@ public class DirectoryBackupService<TOptions> : BackgroundService, IDirectoryBac
         while (!stoppingToken.IsCancellationRequested)
             try
             {
-                await backupTimer.WaitForNextTickAsync(stoppingToken);
+                await backupTimer.WaitForNextTickAsync(stoppingToken)
+                                 .ConfigureAwait(false);
 
                 Logger.WithTopics(Topics.Entities.Backup, Topics.Actions.Save)
                       .LogDebug("Performing backup");

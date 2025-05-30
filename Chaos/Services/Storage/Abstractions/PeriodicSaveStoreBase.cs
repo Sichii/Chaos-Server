@@ -90,7 +90,8 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
         while (!stoppingToken.IsCancellationRequested)
             try
             {
-                await saveTimer.WaitForNextTickAsync(stoppingToken);
+                await saveTimer.WaitForNextTickAsync(stoppingToken)
+                               .ConfigureAwait(false);
 
                 Logger.WithTopics(Topics.Actions.Save)
                       .LogDebug("Performing save");

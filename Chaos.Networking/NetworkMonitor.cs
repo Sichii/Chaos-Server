@@ -114,7 +114,8 @@ public sealed class NetworkMonitor
             while (Client.Connected)
                 try
                 {
-                    await periodicTimer.WaitForNextTickAsync();
+                    await periodicTimer.WaitForNextTickAsync()
+                                       .ConfigureAwait(false);
 
                     PrintStatistics();
                 } catch

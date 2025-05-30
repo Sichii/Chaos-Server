@@ -37,7 +37,8 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
         while (!stoppingToken.IsCancellationRequested)
             try
             {
-                await saveTimer.WaitForNextTickAsync(stoppingToken);
+                await saveTimer.WaitForNextTickAsync(stoppingToken)
+                               .ConfigureAwait(false);
                 var delta = deltaTime.GetDelta;
 
                 foreach (var board in Cache.Values)
@@ -143,17 +144,16 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
         {
             var directory = Path.Combine(Options.Directory, obj.Key);
 
-            directory.SafeExecute(
-                dir =>
-                {
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
+            directory.SafeExecute(dir =>
+            {
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
 
-                    var path = Path.Combine(dir, "board.json");
+                var path = Path.Combine(dir, "board.json");
 
-                    EntityRepository.SaveAndMap<BulletinBoard, BulletinBoardSchema>(obj, path);
-                    Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
-                });
+                EntityRepository.SaveAndMap<BulletinBoard, BulletinBoardSchema>(obj, path);
+                Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+            });
 
             metricsLogger.LogDebug("Saved {@TypeName} entry with key {@Key}", nameof(BulletinBoard), obj.Key);
         } catch (Exception e)
@@ -181,17 +181,16 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
         {
             var directory = Path.Combine(Options.Directory, obj.Key);
 
-            await directory.SafeExecuteAsync(
-                async dir =>
-                {
-                    if (!Directory.Exists(dir))
-                        Directory.CreateDirectory(dir);
+            await directory.SafeExecuteAsync(async dir =>
+            {
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
 
-                    var path = Path.Combine(dir, "board.json");
+                var path = Path.Combine(dir, "board.json");
 
-                    await EntityRepository.SaveAndMapAsync<BulletinBoard, BulletinBoardSchema>(obj, path);
-                    Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
-                });
+                await EntityRepository.SaveAndMapAsync<BulletinBoard, BulletinBoardSchema>(obj, path);
+                Directory.SetLastWriteTimeUtc(directory, DateTime.UtcNow);
+            });
 
             metricsLogger.LogTrace("Saved {@TypeName} entry with key {@Key}", nameof(BulletinBoard), obj.Key);
         } catch (Exception e)

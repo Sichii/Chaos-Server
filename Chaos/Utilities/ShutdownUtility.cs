@@ -67,7 +67,8 @@ public static class ShutdownUtility
         {
             try
             {
-                await periodicTimer.WaitForNextTickAsync(cancellationToken);
+                await periodicTimer.WaitForNextTickAsync(cancellationToken)
+                                   .ConfigureAwait(false);
             } catch
             {
                 break;

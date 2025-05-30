@@ -1593,7 +1593,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                 try
                 {
-                    await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken);
+                    await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken)
+                                    .ConfigureAwait(false);
                 } catch (OperationCanceledException)
                 {
                     return;
