@@ -4,6 +4,7 @@ using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.NLog.Logging.Abstractions;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Services.Servers.Options;
@@ -15,7 +16,7 @@ namespace Chaos.Collections;
 /// <summary>
 ///     Represents a group of players
 /// </summary>
-public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel
+public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel, ITransformableCollection
 {
     private readonly IChannelService ChannelService;
     private readonly ILogger<Group> Logger;

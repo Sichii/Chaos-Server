@@ -392,13 +392,6 @@ static void RegisterStructuredLoggingTransformations()
                          PreventBanking = obj.Item.Color
                      });
 
-                     builder.RegisterObjectTransformation<Group>(obj => new
-                     {
-                         Id = obj.Id,
-                         LeaderName = obj.Leader.Name,
-                         MemberCount = obj.Count
-                     });
-
                      builder.RegisterObjectTransformation<Dialog>(obj => new
                      {
                          TemplateKey = obj.Template.TemplateKey,
@@ -411,27 +404,6 @@ static void RegisterStructuredLoggingTransformations()
                      builder.RegisterObjectTransformation<Exchange>(obj => new
                      {
                          obj.ExchangeId
-                     });
-
-                     builder.RegisterObjectTransformation<BoardBase>(obj => new
-                     {
-                         Key = obj.Key,
-                         Name = obj.Name,
-                         Posts = obj.Posts.Count
-                     });
-
-                     builder.RegisterObjectTransformation<MailBox>(obj => new
-                     {
-                         Key = obj.Key,
-                         Name = obj.Name,
-                         Posts = obj.Posts.Count
-                     });
-
-                     builder.RegisterObjectTransformation<BulletinBoard>(obj => new
-                     {
-                         Key = obj.Key,
-                         Name = obj.Name,
-                         Posts = obj.Posts.Count
                      });
 
                      builder.RegisterObjectTransformation<Post>(obj => new
@@ -458,4 +430,30 @@ static void RegisterStructuredLoggingTransformations()
 
                          return ret;
                      });
+
+                     builder.RegisterCollectionTransformations(
+                         (BoardBase obj) => new
+                         {
+                             Key = obj.Key,
+                             Name = obj.Name,
+                             Posts = obj.Posts.Count
+                         },
+                         (MailBox obj) => new
+                         {
+                             Key = obj.Key,
+                             Name = obj.Name,
+                             Posts = obj.Posts.Count
+                         },
+                         (BulletinBoard obj) => new
+                         {
+                             Key = obj.Key,
+                             Name = obj.Name,
+                             Posts = obj.Posts.Count
+                         },
+                         (Group obj) => new
+                         {
+                             Id = obj.Id,
+                             LeaderName = obj.Leader.Name,
+                             MemberCount = obj.Count
+                         });
                  });

@@ -1,7 +1,11 @@
+#region
 using System.Collections;
 using System.Diagnostics;
 using Chaos.Extensions.Common;
+using Chaos.NLog.Logging.Abstractions;
+using Chaos.NLog.Logging.Extensions;
 using Microsoft.Extensions.Logging;
+#endregion
 
 namespace Chaos.NLog.Logging;
 
@@ -91,6 +95,9 @@ internal sealed class LogEvent : ILogger, IReadOnlyList<KeyValuePair<string, obj
 
         if (!char.IsUpper(name[0]))
             name = name.FirstUpper();
+
+        if (value is ITransformableCollection itc)
+            value = SetupSerializationBuilderExtensions.Transform(itc);
 
         ExtraProperties.Add(new KeyValuePair<string, object>(name, value));
 

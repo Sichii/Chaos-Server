@@ -1076,10 +1076,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                     if (target.GroupBox is null)
                     {
                         Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Group, Topics.Qualifiers.Cheating)
+                              .WithProperty(localClient.Aisling)
+                              .WithProperty(target)
                               .LogWarning(
-                                  "{@Aisling} attempted to view {@Target}'s group box, but they do not have one",
-                                  localClient.Aisling,
-                                  target);
+                                  "{@AislingName} attempted to view {@TargetName}'s group box, but they do not have one",
+                                  localClient.Aisling.Name,
+                                  target.Name);
 
                         return default;
                     }
