@@ -1,0 +1,234 @@
+---
+description: Scripting system patterns, component architecture, and script development best practices. Use when developing scripts, components, or extending game behavior. Covers the 4 script types (Base, Configurable, Component, Composite), ComponentExecutor patterns, script variables, and component interaction. Essential for understanding Chaos Server's sophisticated component-based scripting architecture.
+globs: 
+alwaysApply: false
+---
+# Scripting System & Components
+
+**WHEN TO USE:** Developing scripts, components, or extending game behavior.
+
+## 📜 SCRIPT TYPES
+
+### 1. Base Scripts
+- **Purpose:** Empty implementations for override patterns
+- **Use Case:** When no external configuration is necessary
+- **Pattern:** Override virtual methods to add functionality
+- **Example:** `ItemScriptBase`, `SpellScriptBase`, `MonsterScriptBase`
+
+### 2. Configurable Scripts
+- **Purpose:** JSON-driven with `scriptVars` support
+- **Use Case:** When behavior needs external configuration
+- **Pattern:** Properties automatically populated from JSON
+- **Base Class:** `ConfigurableScriptBase`
+
+### 3. Component Scripts
+- **Purpose:** Reusable logic components
+- **Use Case:** Shared functionality across multiple script types
+- **Pattern:** Composition-based architecture
+- **Examples:** Animation, sound, damage components
+
+### 4. Composite Scripts
+- **Purpose:** Multiple script combinations
+- **Use Case:** Complex behaviors requiring multiple scripts
+- **Pattern:** Script aggregation and orchestration
+
+## 🧩 COMPONENT ARCHITECTURE
+
+### Component Types
+
+#### IComponent
+- **Purpose:** Execute logic without return value
+- **Use Cases:** Animations, sounds, visual effects
+- **Signature:** `void Execute(ActivationContext context, ComponentVars vars)`
+- **Example:** Play animation, trigger sound effect
+
+#### IConditionalComponent
+- **Purpose:** Execute logic with boolean return
+- **Use Cases:** Validation, costs, prerequisites
+- **Signature:** `bool Execute(ActivationContext context, ComponentVars vars)`
+- **Example:** Check mana cost, validate target
+
+### Component Execution Pattern
+
+```csharp
+public class MyScript : ConfigurableScriptBase,
+                       ComponentA.IComponentAOptions,
+                       ComponentB.IComponentBOptions
+{
+    public override OnUse(Context context) =>
+        new ComponentExecutor(context)
+            .WithOptions(this)
+            .Execute<ComponentA>()
+            .ExecuteAndCheck<ComponentB>()
+            ?.Execute<ComponentC>();
+            
+    #region ScriptVars
+    // JSON-configurable properties
+    #endregion
+}
+```
+
+### Component Variables (ComponentVars)
+- **Purpose:** Share data between components
+- **Common Methods:** `GetPoints()`, `GetTargets<T>()`
+- **Custom Variables:** Extend `ComponentVars` for new shared data
+- **Execution Order:** Components using shared data must run after providers
+
+## 🔧 SCRIPT DEVELOPMENT PATTERNS
+
+### Configurable Script Structure
+
+```csharp
+[ScriptVars]
+public class ExampleScript : ConfigurableItemScriptBase,
+                            ComponentA.IComponentAOptions,
+                            ComponentB.IComponentBOptions
+{
+    // Component options inherited from interfaces
+    
+    public override void OnUse(ItemUseContext context)
+    {
+        new ComponentExecutor(context)
+            .WithOptions(this)
+            .Execute<ComponentA>()
+            .ExecuteAndCheck<ComponentB>()
+            ?.Execute<ComponentC>();
+    }
+    
+    #region ScriptVars
+    public int SomeValue { get; init; }
+    public string SomeText { get; init; }
+    public bool SomeFlag { get; init; }
+    #endregion
+}
+```
+
+### Component Options Pattern
+
+```csharp
+public class MyComponent : IComponent
+{
+    public interface IMyComponentOptions
+    {
+        int RequiredValue { get; }
+        string OptionalText { get; }
+    }
+
+    public void Execute(ActivationContext context, ComponentVars vars)
+    {
+        var options = vars.GetOptions<IMyComponentOptions>();
+        // Use options.RequiredValue, options.OptionalText
+    }
+}
+```
+
+### Inherited Component Options
+
+```csharp
+public class ComplexComponent : IComponent
+{
+    public interface IComplexComponentOptions : 
+        SimpleComponent.ISimpleComponentOptions,
+        AnotherComponent.IAnotherComponentOptions
+    {
+        // Additional options specific to this component
+        bool ComplexFlag { get; }
+    }
+}
+```
+
+## 🎯 BEST PRACTICES
+
+### Script Design
+- **Single Responsibility:** Each script should have one clear purpose
+- **Composition over Inheritance:** Use components for reusable logic
+- **Proper Cleanup:** Implement `IDisposable` when managing resources
+- **Naming Convention:** ScriptKey = ClassName without "Script" suffix
+
+### Component Design
+- **Stateless:** Components should not maintain internal state
+- **Focused:** Each component should do one thing well
+- **Testable:** Design components for easy unit testing
+- **Performance:** Minimize allocations in hot paths
+
+### Configuration Management
+- **Default Values:** Provide sensible defaults for all script variables
+- **Validation:** Validate configuration at script initialization
+- **Documentation:** Document all configurable properties
+- **Type Safety:** Use strongly-typed properties instead of dictionaries
+
+## 🔄 COMPONENT EXECUTOR FLOW
+
+### Execution Chain
+1. **Initialize:** `new ComponentExecutor(context)`
+2. **Set Options:** `.WithOptions(this)`
+3. **Execute Components:** `.Execute<ComponentType>()`
+4. **Conditional Execution:** `.ExecuteAndCheck<ComponentType>()`
+5. **Safe Navigation:** Use `?.` for conditional components
+
+### Error Handling
+- **Component Failures:** Handle gracefully without crashing script
+- **Logging:** Use structured logging for component execution
+- **Fallbacks:** Provide fallback behavior for failed components
+- **Recovery:** Allow script execution to continue when possible
+
+## 📝 SCRIPTVAR CONFIGURATION
+
+### JSON Configuration Example
+
+```json
+{
+  "templateKey": "exampleItem",
+  "scriptKeys": ["exampleScript"],
+  "scriptVars": {
+    "exampleScript": {
+      "someValue": 100,
+      "someText": "Hello World",
+      "someFlag": true,
+      "componentA": {
+        "duration": 5000,
+        "intensity": 0.8
+      },
+      "componentB": {
+        "cost": 50,
+        "cooldown": 30
+      }
+    }
+  }
+}
+```
+
+### Script Variable Guidelines
+- **Flat Structure:** Avoid deep nesting in script variables
+- **Clear Names:** Use descriptive property names
+- **Consistent Types:** Maintain consistent data types
+- **Optional Properties:** Make non-essential properties optional
+
+## 🧪 TESTING SCRIPTS & COMPONENTS
+
+### Unit Testing
+- **Mock Dependencies:** Use mocking for external dependencies
+- **Test Components:** Test individual components in isolation
+- **Test Scripts:** Test complete script execution flows
+- **Edge Cases:** Test error conditions and edge cases
+
+### Integration Testing
+- **Context Setup:** Create realistic test contexts
+- **Data Validation:** Verify script variable binding
+- **Component Interaction:** Test component execution chains
+- **Performance:** Monitor execution time and allocations
+
+## 🔌 SCRIPT REGISTRY INTEGRATION
+
+### Registration Patterns
+- **Automatic:** Scripts auto-register based on naming conventions
+- **Manual:** Explicit registration for custom scenarios
+- **Dynamic:** Runtime registration for plugin scenarios
+- **Validation:** Verify script registration at startup
+
+### Lifecycle Management
+- **Initialization:** Proper script initialization with dependencies
+- **Cleanup:** Dispose resources when scripts are unloaded
+- **Hot-Reload:** Support script reloading during development
+- **Error Recovery:** Handle script loading failures gracefully
+

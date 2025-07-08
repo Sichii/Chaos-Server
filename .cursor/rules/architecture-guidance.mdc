@@ -1,0 +1,95 @@
+---
+description: Architecture patterns, library organization, and codebase structure guidance for Chaos Server. Use when questions involve project structure, library responsibilities, dependency patterns, service registration, or modular integration. Covers the 20+ specialized libraries, their purposes, and how they interact. Essential for understanding the separation of concerns and adding new features.
+globs: 
+alwaysApply: false
+---
+# Architecture & Codebase Understanding
+
+**WHEN TO USE:** Questions about project structure, library organization, dependencies, or architectural decisions.
+
+## 🏗️ ARCHITECTURAL PRINCIPLES
+
+1. **Separation of Concerns:** Each library has a specific responsibility
+2. **Dependency Injection:** Use existing DI container patterns
+3. **Configuration-Driven:** Leverage JSON-based configuration system
+4. **Event-Driven:** Use existing event patterns for game interactions
+5. **Modular Design:** New features should integrate, not replace
+
+## 📁 CODE ORGANIZATION PATTERNS
+
+```
+Chaos.LibraryName/
+├── Abstractions/          # Interfaces and base classes
+├── Extensions/           # Extension methods
+├── Options/             # Configuration classes
+├── Definitions/         # Constants and enums
+└── [Specific folders]   # Library-specific organization
+```
+
+## 🔧 LIBRARY RESPONSIBILITIES
+
+### Infrastructure Libraries
+- **Chaos.Common.Abstractions** → Core abstractions and interfaces
+- **Chaos.Extensions.Common** → Shared extension methods
+- **Chaos.Extensions.Geometry** → Spatial calculation extensions
+- **Chaos.Geometry** → Spatial mathematics and pathfinding
+
+### Core Systems Libraries
+- **Chaos.Networking** → TCP client/server infrastructure, packet handling
+- **Chaos.Cryptography** → Security and encryption services
+- **Chaos.Storage** → Data persistence, caching, backup systems
+- **Chaos.Time** → Timing, scheduling, and delta management
+- **Chaos.TypeMapper** → Object transformation services
+
+### Game Logic Libraries
+- **Chaos.Scripting** → Dynamic script execution system
+- **Chaos.Models** → Game entity models (Aislings, Monsters, Items)
+- **Chaos.Collections** → Specialized game data collections
+- **Chaos.MetaData** → Game metadata and rendering information
+
+### Service Libraries
+- **Chaos.Messaging** → Inter-component communication
+- **Chaos.Security** → Authentication and authorization
+- **Chaos.Pathfinding** → AI movement and navigation
+
+## 🔄 DEPENDENCY PATTERNS
+
+### Service Registration
+- Use existing `ServiceCollectionExtensions` patterns
+- Register services by library with clear lifetime scopes
+- Maintain separation between abstractions and implementations
+
+### Configuration Integration
+- Leverage `IOptions<T>` pattern for strongly-typed configuration
+- Validate configuration at startup
+
+### Event Handling
+- Use existing event patterns for game interactions
+- Implement proper event cleanup and disposal
+- Consider concurrent access for event handlers
+
+## 🏭 FACTORY PATTERNS
+
+### Entity Creation
+- Use template-based factory patterns for game entities
+- Separate concerns between templates, metadata, and runtime objects
+- Support dynamic script attachment during creation
+
+### Service Factories
+- Implement factory patterns for complex service initialization
+- Use dependency injection for factory dependencies
+- Support configuration-driven factory behavior
+
+## 📦 MODULAR INTEGRATION
+
+### Adding New Libraries
+1. Follow existing naming conventions (`Chaos.NewModule`)
+2. Create corresponding abstractions library if needed
+3. Implement proper service registration extensions
+4. Add appropriate project references and package dependencies
+
+### Cross-Library Communication
+- Use abstractions for cross-library dependencies
+- Implement proper error handling and logging
+- Consider performance implications of cross-library calls
+

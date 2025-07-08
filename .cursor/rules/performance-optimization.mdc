@@ -1,0 +1,255 @@
+---
+description: Performance optimization patterns, memory management, and scalability best practices for game server development. Use when addressing performance concerns, memory issues, concurrent access problems, or scalability questions. Covers Server GC optimization, object pooling, thread-safe patterns, caching strategies, and game-specific optimizations. Critical for maintaining production game server performance.
+globs: 
+alwaysApply: false
+---
+# Performance & Optimization
+
+**WHEN TO USE:** Performance concerns, optimization questions, or scalability issues.
+
+## ⚡ PERFORMANCE PRIORITIES
+
+1. **Memory Management:** Object pooling, proper disposal, GC optimization
+2. **Concurrent Access:** Thread-safe operations, lock minimization
+3. **Network Efficiency:** Minimal packet overhead, delta updates
+4. **Caching Strategy:** Appropriate cache usage and invalidation
+5. **Database Operations:** Batch operations, async patterns
+
+## 🖥️ SERVER CONFIGURATION
+
+### Garbage Collection Optimization
+- **Server GC:** Enabled for throughput optimization (`<ServerGarbageCollection>true</ServerGarbageCollection>`)
+- **Concurrent GC:** Low-latency garbage collection (`<ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>`)
+- **Tiered PGO:** Profile-guided optimization active (`<TieredPGO>true</TieredPGO>`)
+- **Process Priority:** High priority for game server (`ProcessPriorityClass.High`)
+
+### Runtime Settings
+```csharp
+// In Program.cs startup
+GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
+Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+```
+
+## 🧠 MEMORY MANAGEMENT PATTERNS
+
+### Proper Disposal
+```csharp
+public class GameEntity : IDisposable
+{
+    private bool _disposed = false;
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                // Dispose managed resources
+                _timer?.Dispose();
+                _eventSubscriptions?.Clear();
+            }
+            _disposed = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+}
+```
+
+## 🔄 CONCURRENT ACCESS PATTERNS
+
+### Thread-Safe Collections
+```csharp
+// Use ConcurrentDictionary<T> for thread-safe operations
+private readonly ConcurrentDictionary<uint, Player> _players = new();
+
+// Prefer TryAdd/TryUpdate over direct assignment
+_players.TryAdd(playerId, player);
+_players.TryUpdate(playerId, newPlayer, oldPlayer);
+```
+
+### Async Patterns
+```csharp
+// Prefer ValueTask<T> for hot paths
+public ValueTask<Player> GetPlayerAsync(uint id)
+{
+    if (_cache.TryGetValue(id, out var player))
+        return new ValueTask<Player>(player);
+    
+    return LoadPlayerFromStorageAsync(id);
+}
+```
+
+## 🌐 NETWORK EFFICIENCY
+
+### Connection Management
+```csharp
+// Efficient client registry patterns
+public class ClientRegistry
+{
+    private readonly ConcurrentDictionary<IPEndPoint, IClient> _clients = new();
+    
+    public void RegisterClient(IClient client)
+    {
+        _clients.TryAdd(client.RemoteEndPoint, client);
+    }
+    
+    public void BroadcastToArea(IEnumerable<IClient> clients, IPacketSerializable packet)
+    {
+        var data = packet.Serialize();
+        Parallel.ForEach(clients, client => client.SendAsync(data));
+    }
+}
+```
+
+## 💾 CACHING STRATEGIES
+
+### Multi-Level Caching
+```csharp
+public class EntityCache<T>
+{
+    private readonly IMemoryCache _memoryCache;
+    private readonly IAsyncStore<T> _storage;
+    
+    public async ValueTask<T> GetAsync(string key)
+    {
+        // L1: Memory cache
+        if (_memoryCache.TryGetValue(key, out T value))
+            return value;
+            
+        // L2: Storage
+        value = await _storage.LoadAsync(key);
+        if (value != null)
+        {
+            _memoryCache.Set(key, value, TimeSpan.FromMinutes(30));
+        }
+        
+        return value;
+    }
+}
+```
+
+### Cache Invalidation
+- **Time-based:** Set appropriate expiration times
+- **Event-based:** Invalidate on data changes
+
+## 📊 MONITORING POINTS
+
+### Key Metrics
+- **Memory Allocation Patterns:** Monitor GC pressure and allocation rates
+- **Lock Contention:** Track lock wait times and contention
+- **Database Performance:** Track query execution times
+- **Script Execution:** Monitor script performance and bottlenecks
+
+### Performance Counters
+```csharp
+// Use Chaos.NLog.Logging for automatic performance metrics
+using Chaos.NLog.Logging.Extensions;
+
+// Initial debug log without metrics
+Logger.WithTopics(Topics.Entities.Script, Topics.Actions.Execute)
+      .WithProperty(script)
+      .LogDebug("Executing {@TypeName} script with key {@Key}", nameof(Script), script.ScriptKey);
+
+// Create metrics logger for performance measurement
+var metricsLogger = Logger.WithTopics(Topics.Entities.Script, Topics.Actions.Execute)
+                          .WithMetrics()
+                          .WithProperty(script)
+                          .WithProperty(entity);
+
+try
+{
+    // Execute script logic here
+    script.Execute(entity);
+    
+    metricsLogger.LogDebug("Script execution completed for {@ScriptKey}", script.ScriptKey);
+} 
+catch (Exception e)
+{
+    metricsLogger.LogError(e, "Script execution failed for {@ScriptKey}", script.ScriptKey);
+}
+
+// Use custom performance counters for critical metrics
+private readonly Counter<long> _scriptExecutions = 
+    Meter.CreateCounter<long>("chaos.scripts.executions");
+```
+
+## 🎮 GAME-SPECIFIC OPTIMIZATIONS
+
+### Entity Management
+- **Spatial Partitioning:** Use spatial data structures for proximity queries
+- **Update Frequency:** Different update rates for different entity types
+- **Culling:** Don't process entities outside player view
+- **Pooling:** Reuse monster/item instances
+
+### Script Performance
+```csharp
+// Cache compiled expressions
+private static readonly ConcurrentDictionary<string, Func<Player, bool>> 
+    CompiledConditions = new();
+
+// Minimize allocations in hot paths
+public bool CheckCondition(Player player, string condition)
+{
+    var compiled = CompiledConditions.GetOrAdd(condition, 
+        c => CompileCondition(c));
+    return compiled(player);
+}
+```
+
+## ⚙️ PROFILING & DIAGNOSTICS
+
+### Benchmarking
+```csharp
+[MemoryDiagnoser]
+[SimpleJob(RuntimeMoniker.Net90)]
+public class ScriptBenchmark
+{
+    [Benchmark]
+    public void ExecuteScript()
+    {
+        _script.Execute(_context);
+    }
+}
+```
+
+### Memory Profiling
+- **Use dotMemory or PerfView** for memory analysis
+- **Monitor Gen 2 collections** as indicator of memory pressure
+- **Track large object heap** for buffer allocations
+- **Profile during peak load** to identify bottlenecks
+
+### Performance Testing
+- **Load Testing:** Simulate realistic player loads
+- **Stress Testing:** Test beyond normal capacity
+- **Endurance Testing:** Long-running stability tests
+- **Profiling:** Identify hot paths and bottlenecks
+
+## 🎯 OPTIMIZATION GUIDELINES
+
+### Code Patterns
+- **Minimize Boxing:** Use generics instead of object parameters
+- **String Operations:** Use StringBuilder or string interpolation efficiently
+- **LINQ Performance:** Be aware of LINQ allocation patterns
+- **Reflection Caching:** Cache reflection operations
+
+### Data Structures
+- **Choose Appropriately:** Array vs List vs Dictionary
+- **Size Appropriately:** Set initial capacities when known
+- **Memory Layout:** Consider struct vs class for small data
+- **Access Patterns:** Optimize for most common operations
+
+### Async Considerations
+- **ConfigureAwait(false):** Use in library code
+- **Task vs ValueTask:** Choose based on allocation patterns
+- **Parallel Operations:** Use Parallel.ForEach for CPU-bound work
+- **Async Enumerable:** Use for streaming scenarios
+
+
+
+
+

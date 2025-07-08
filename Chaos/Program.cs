@@ -32,7 +32,6 @@ using Chaos.Site.Utilities;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Options;
 using NLog;
-using NLog.Config;
 using NLog.Extensions.Logging;
 using AppContext = Chaos.AppContext;
 #endregion

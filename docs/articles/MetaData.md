@@ -21,7 +21,7 @@ up in metadata, you would create a mutator that simulates enchantments through n
 node.
 
 Implement your own mutator as implementations of
-the [IItemMetaNodeMutator](<xref:Chaos.MetaData.Abstractions.IItemMetaNodeMutator`1>) interface and add it to
+the [IItemMetaNodeMutator](<xref:Chaos.MetaData.Abstractions.IItemMetaNodeMutator>) interface and add it to
 the `MetaDataStoreOptions` via the `Chaos.Services.Configuration.OptionsConfigurer`
 
 ### Example

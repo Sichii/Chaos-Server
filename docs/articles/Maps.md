@@ -12,6 +12,43 @@ an automatic map sharding system that will be explained later.
 A map template contains a bare minimum of information about a map. Contained within this project are a large amount of
 auto-generated map templates that should match up to the maps in original Dark Ages.
 
+## Object Mapping and TypeMapper Profiles
+
+Chaos uses a two-tier object system for data management:
+
+1. **Schema Objects** - Simple data transfer objects (DTOs) used for JSON serialization/deserialization
+2. **Domain Objects** - Rich objects with behavior and business logic used at runtime
+
+**TypeMapper profiles** are responsible for converting between these object types. They implement the
+`IMapperProfile<T1, T2>` interface and handle the conversion logic between schema and domain objects.
+
+### MapInstanceMapperProfile Responsibilities
+
+The [MapInstanceMapperProfile](<xref:Chaos.Services.MapperProfiles.MapInstanceMapperProfile>) handles three key
+conversions:
+
+- **MapTemplateSchema ↔ MapTemplate** - Converts map template data from JSON to domain objects
+- **MapInstanceSchema ↔ MapInstance** - Converts map instance data from JSON to domain objects
+- **MapInstance → MapInfoArgs** - Converts domain objects to network protocol arguments
+
+This mapping process allows the system to:
+
+- Keep JSON schemas simple and focused on data structure
+- Build rich domain objects with complex behavior and validation
+- Maintain separation between data storage and business logic
+
+### Mapping Lifecycle
+
+The object mapping lifecycle follows this pattern:
+
+1. **File Loading** - JSON configuration files are read from disk
+2. **Schema Deserialization** - JSON is deserialized into schema objects (e.g., `MapTemplateSchema`)
+3. **Domain Conversion** - TypeMapper profiles convert schemas to domain objects (e.g., `MapTemplate`)
+4. **Cache Storage** - Domain objects are stored in memory caches for performance
+5. **Runtime Usage** - Domain objects are used throughout the application with full behavior
+6. **Network Serialization** - When needed, domain objects are converted to network protocol objects for client
+   communication
+
 ## How do I create them?
 
 There are 2 things you will need to create.
@@ -40,7 +77,7 @@ Map instances are initially serialized into [MapInstanceSchema](<xref:Chaos.Sche
 being mapped to a [MapInstance](<xref:Chaos.Collections.MapInstance>). The schema object is mapped via the
 the [MapInstanceMapperProfile](<xref:Chaos.Services.MapperProfiles.MapInstanceMapperProfile>).
 
-Map instances are serialized from multiple files, so each map instance should be in it's own directory. Here is the
+Map instances are loaded from multiple files, so each map instance should be in its own directory. Here is the
 folder structure for a map instance:
 
 <pre>
@@ -55,10 +92,10 @@ folder structure for a map instance:
 
 For a list of all configurable properties with descriptions, see:
 
-- `instance.json` will be serialized from [MapInstanceSchema](<xref:Chaos.Schemas.Content.MapInstanceSchema>)
-- `merchants.json` will be a jArray of [MerchantSpawnSchema](<xref:Chaos.Schemas.Content.MerchantSpawnSchema>)
-- `monsters.json` will be a jArray of [MonsterSpawnSchema](<xref:Chaos.Schemas.Content.MonsterSpawnSchema>)
-- `reactors.json` will be a jArray of [ReactorTileSchema](<xref:Chaos.Schemas.Content.ReactorTileSchema>)
+- `instance.json` will be deserialized as [MapInstanceSchema](<xref:Chaos.Schemas.Content.MapInstanceSchema>)
+- `merchants.json` will be a JSON array of [MerchantSpawnSchema](<xref:Chaos.Schemas.Content.MerchantSpawnSchema>)
+- `monsters.json` will be a JSON array of [MonsterSpawnSchema](<xref:Chaos.Schemas.Content.MonsterSpawnSchema>)
+- `reactors.json` will be a JSON array of [ReactorTileSchema](<xref:Chaos.Schemas.Content.ReactorTileSchema>)
 
 ## How do I use them?
 

@@ -140,6 +140,13 @@ higher AC = more damage taken.
 This is the level cap for players. Level formulas can be changed, but with the default level formula, if you reach this
 level you will stop gaining experience.
 
+### MaxAbilityLevel
+
+This is the ability level cap for players. Ability level formulas can be changed, but with the default ability level
+formula, if you reach this ability level you will stop gaining ability points. The ability system is a separate
+progression system from experience levels that allows characters to continue advancing their power and learning new
+skills/spells even after reaching the maximum character level.
+
 ### ClearOrangeBarTimerSecs
 
 This is the amount of time in seconds after the last orange bar message was sent to an aisling where the server will
@@ -286,6 +293,7 @@ include refreshes utilized by the server, such as for refreshing a player's posi
   "MinimumAislingAc": -90,
   "MaximumAislingAc": 100,
   "MaxLevel": 30,
+  "MaxAbilityLevel": 30,
   "MaxActionsPerSecond": 10,
   "MaxSkillsPerSecond": 5,
   "MaxSpellsPerSecond": 3,

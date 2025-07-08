@@ -26,6 +26,8 @@ bld/
 [Bb]in/
 [Oo]bj/
 PersistentId*.json
+.cursor/mcp.json
+.taskmaster/
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -249,3 +251,26 @@ PATH.txt
 Data/Saved/
 Data/SavedBackups/
 Tests/Reports/CoverageReport/
+
+# Logs
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-debug.log
+# Dependency directories
+# Environment variables
+.env
+# Editor directories and files
+.idea
+.vscode
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# OS specific
+.DS_Store
+
+# Task files
+# tasks.json
+# tasks/ 

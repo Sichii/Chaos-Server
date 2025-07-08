@@ -1,0 +1,133 @@
+---
+description: Game system development patterns for Items, Spells, Skills, Monsters, NPCs, and Maps. Use when working with game entities, JSON templates, game logic, or content creation. Covers template + script + metadata patterns, entity-specific guidelines, data persistence, and integration with the scripting system. Essential for any game content development.
+globs: 
+alwaysApply: false
+---
+# Game System Development
+
+**WHEN TO USE:** Working with Items, Spells, Skills, Monsters, NPCs, Maps, or other game entities.
+
+## 🎮 GAME ENTITY PATTERNS
+
+All game entities follow a consistent pattern:
+- **Templates:** JSON-based configuration defining entity properties
+- **Scripts:** Behavior logic attached to entities
+- **Metadata:** Additional data for rendering and game mechanics
+- **Factories:** Creation patterns for game objects
+
+## 🔧 SCRIPTING INTEGRATION
+
+### Core Interfaces
+- Always implement `IScript` interfaces for game behaviors
+- Use `ConfigurableScriptBase` for JSON-configurable scripts
+- Follow component-based architecture for reusable logic
+
+### Script Key Convention
+- Script key = Class name without "Script" suffix
+- Example: `VitalityConsumableScript` → key: `vitalityConsumable`
+
+## 📋 ENTITY-SPECIFIC GUIDELINES
+
+### 1. Items
+- **Pattern:** Template + Script + Metadata
+- **Location:** `Data/Configuration/Templates/Items/`
+- **Scripts:** Inherit from `ItemScriptBase` or `ConfigurableItemScriptBase`
+- **Key Properties:** `templateKey`, `name`, `description`, `scriptKeys`, `scriptVars`
+
+### 2. Monsters/NPCs
+- **Pattern:** AI scripts + spawn configurations
+- **Location:** `Data/Configuration/Templates/Monsters/`
+- **Scripts:** Inherit from `MonsterScriptBase` or `ConfigurableMonsterScriptBase`
+- **Key Systems:** AI behavior, spawn patterns, loot tables
+
+### 3. Spells/Skills
+- **Pattern:** Component-based ability system
+- **Location:** `Data/Configuration/Templates/Spells/` or `Skills/`
+- **Scripts:** Use component executor pattern
+- **Components:** Animation, damage, sound, effects
+
+### 4. Maps
+- **Pattern:** Instance-based with reactor tiles
+- **Location:** `Data/Configuration/Templates/Maps/`
+- **Features:** Dynamic loading, instancing, reactor tiles
+- **Scripts:** Map instance scripts for special behaviors
+
+### 5. Merchants
+- **Pattern:** Dialog-driven with inventory management
+- **Location:** `Data/Configuration/Templates/Merchants/`
+- **Features:** Buy/sell logic, dialog integration, stock management
+
+## 💾 DATA PERSISTENCE
+
+### Storage Patterns
+- Use existing `IAsyncStore<T>` patterns for entity persistence
+- Follow backup and versioning conventions
+- Respect safe save mechanisms to prevent data corruption
+- Consider caching implications for frequently accessed entities
+
+### Template Management
+- Templates are cached and hot-reloadable
+- Use consistent naming conventions for template files
+- Validate templates at load time
+- Support template inheritance where appropriate
+
+## 🔗 INTEGRATION POINTS
+
+### Configuration System
+- Templates integrate with existing configuration hierarchy
+- Support environment-specific overrides
+- Use `IOptions<T>` pattern for typed configuration access
+
+## 📝 JSON TEMPLATE STRUCTURE
+
+### Basic Template Format
+```json
+{
+  "templateKey": "uniqueIdentifier",
+  "name": "Display Name",
+  "description": "Entity description",
+  "scriptKeys": ["scriptKey1", "scriptKey2"],
+  "scriptVars": {
+    "scriptKey1": {
+      "property1": "value1",
+      "property2": 123
+    }
+  }
+}
+```
+
+### Script Variables
+- Use `scriptVars` object for configurable script parameters
+- Support nested configuration objects
+- Validate script variables at runtime
+- Provide sensible defaults for missing variables
+
+## 🧪 TESTING GAME ENTITIES
+
+### Template Validation
+- Validate JSON syntax and required fields
+- Test script key resolution
+- Verify script variable binding
+- Check for missing dependencies
+
+### Script Testing
+- Unit test individual script components
+- Integration test entity creation and behavior
+- Performance test script execution
+- Mock external dependencies appropriately
+
+## 🎯 BEST PRACTICES
+
+### Performance
+- Minimize object allocation in hot paths
+- Use object pooling for frequently created entities
+- Cache expensive calculations
+- Consider multi-threading implications
+
+### Maintainability
+- Keep scripts focused and single-purpose
+- Use composition over inheritance
+- Document complex game mechanics
+- Follow consistent naming conventions
+
+

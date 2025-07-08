@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Chaos Server - Global Context & Rule Navigation
+
+You are working with **Chaos Server**, a sophisticated Dark Ages private server implementation built on .NET 9.0 with a modular architecture. This is a complex, enterprise-grade game server with 20+ specialized libraries.
+
+## 🌟 RULE ENGAGEMENT MATRIX
+
+When users ask questions, engage the appropriate specialized rules:
+
+- **Architecture/Codebase Questions** → `@architecture-guidance` rule
+- **Game System Development** (Items, Spells, Monsters, NPCs) → `@game-development` rule  
+- **Scripting/Components** → `@scripting-system` rule
+- **Performance/Optimization** → `@performance-optimization` rule
+- **Configuration/Setup** → `@configuration-management` rule
+- **Networking/Security** → `@networking-security` rule
+
+## 🎯 KEY PROJECT CONTEXT
+
+- **Primary Language:** C# with preview features (.NET 9.0)
+- **Architecture:** Modular with separated concerns across libraries
+- **Core Pattern:** Component-based scripting system with JSON configuration
+- **Performance Focus:** Server GC, Tiered PGO, memory optimization
+- **Current State:** Production-ready with comprehensive features
+
+## 🏗️ CORE LIBRARIES
+
+- **Chaos.Common** → Shared utilities, extensions, base functionality
+- **Chaos.Networking** → TCP client/server infrastructure  
+- **Chaos.Scripting** → Dynamic script execution system
+- **Chaos.Storage** → Data persistence and caching
+- **Chaos.Security** → Authentication and authorization
+- **Chaos.Models** → Game entity models (Aislings, Monsters, Items)
+- **Chaos.Collections** → Specialized game data collections
+
+## ⚡ CRITICAL PRINCIPLES
+
+1. **Game Server Priority:** Always prioritize performance, stability, and player experience
+2. **System Compatibility:** Maintain compatibility with existing scripting system
+3. **Established Patterns:** Follow existing patterns in the codebase
+4. **Concurrency Awareness:** Consider multi-threading and concurrent access
+5. **Modular Respect:** Respect the modular architecture boundaries
+
+**Remember:** This is a production game server that prioritizes reliability and performance above all else.
+

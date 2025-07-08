@@ -1,0 +1,285 @@
+---
+description: Configuration management patterns, setup guidance, and deployment best practices. Use when working with appsettings.json, game content templates, environment-specific configs, or deployment concerns. Covers strongly-typed options, hot-reload, validation, and the configuration hierarchy. Essential for server setup, game balance, and operational deployment.
+globs: 
+alwaysApply: false
+---
+# Configuration Management & Setup
+
+**WHEN TO USE:** Configuration questions, setup issues, or deployment concerns.
+
+## ⚙️ CONFIGURATION HIERARCHY
+
+### 1. Application Settings (`appsettings.json`)
+- **Base Configuration:** Core server settings and default values
+- **Environment-Specific:** Development, production, logging configurations
+- **Hot-Reload:** Support runtime configuration updates where possible
+
+### 2. Game Content Templates (`Data/Configuration/`)
+- **Entity Templates:** JSON definitions for items, spells, monsters, etc.
+- **Map Data:** Map configurations and instance settings
+- **Metadata:** Game rendering and behavior metadata
+
+### 3. Runtime Options
+- **Memory Cache:** Dynamic configuration updates without restart
+- **Event-Driven:** Configuration change notifications and handlers
+
+## 📁 CONFIGURATION STRUCTURE
+
+### appsettings.json Layout
+```json
+{
+  "Options": {
+    "ChaosOptions": {
+      "StagingDirectory": "..\\..\\..\\..\\",
+      "LogRawPackets": false
+    },
+    "LobbyOptions": { /* Lobby server configuration */ },
+    "LoginOptions": { /* Login server configuration */ },
+    "WorldOptions": { /* World server configuration */ },
+    "AccessManagerOptions": { /* Security and validation */ },
+    "EntityRepositoryOptions": { /* Data persistence */ }
+  }
+}
+```
+
+### Environment-Specific Files
+- **appsettings.local.json** → Development environment overrides
+- **appsettings.prod.json** → Production environment settings
+- **appsettings.logging.json** → Logging configuration
+- **appsettings.seq.json** → SEQ logging integration
+
+## 🔧 CONFIGURATION PATTERNS
+
+### Strongly-Typed Options
+```csharp
+// Define options class
+public class WorldOptions
+{
+    public int Port { get; set; } = 4202;
+    public int RefreshIntervalMs { get; set; } = 1000;
+    public int MaxLevel { get; set; } = 30;
+    public int SaveIntervalMins { get; set; } = 5;
+}
+
+// Consume in services
+public class WorldService
+{
+    private readonly WorldOptions _options;
+    
+    public WorldService(IOptions<WorldOptions> options)
+    {
+        _options = options.Value;
+    }
+}
+```
+
+### Configuration Validation
+```csharp
+public class WorldOptionsValidator : IValidateOptions<WorldOptions>
+{
+    public ValidateOptionsResult Validate(string name, WorldOptions options)
+    {
+        var failures = new List<string>();
+        
+        if (options.Port < 1000 || options.Port > 65535)
+            failures.Add("Port must be between 1000 and 65535");
+            
+        if (options.RefreshIntervalMs < 100)
+            failures.Add("RefreshIntervalMs must be at least 100");
+            
+        return failures.Count > 0 
+            ? ValidateOptionsResult.Fail(failures)
+            : ValidateOptionsResult.Success;
+    }
+}
+```
+
+## 🏗️ KEY CONFIGURATION AREAS
+
+### Server Options
+```json
+{
+  "LobbyOptions": {
+    "Port": 4200,
+    "Servers": []
+  },
+  "LoginOptions": {
+    "Port": 4201,
+    "WorldRedirect": {
+      "HostName": "localhost",
+      "Port": 4202
+    },
+    "StartingMapInstanceId": "TestTown",
+    "StartingPointStr": "(25, 26)"
+  },
+  "WorldOptions": {
+    "Port": 4202,
+    "RefreshIntervalMs": 1000,
+    "UpdatesPerSecond": 30,
+    "SaveIntervalMins": 5
+  }
+}
+```
+
+### Game Balance Configuration
+```json
+{
+  "WorldOptions": {
+    "MaxLevel": 30,
+    "MaxGoldHeld": 500000000,
+    "GroundItemDespawnTimeMins": 120,
+    "LootDropsLockToRewardTargetSecs": 30,
+    "MaxActionsPerSecond": 10,
+    "MaxSkillsPerSecond": 5,
+    "MaxSpellsPerSecond": 3
+  }
+}
+```
+
+### Security Configuration
+```json
+{
+  "AccessManagerOptions": {
+    "ValidCharactersPattern": "[a-zA-Z0-9 ]+",
+    "ValidFormatPattern": "^[a-zA-Z]{3,}$|[a-zA-Z]{3,} ?[a-zA-Z]{3,}",
+    "MaxUsernameLength": 12,
+    "MinUsernameLength": 3,
+    "MaxPasswordLength": 8,
+    "MinPasswordLength": 5,
+    "HashAlgorithmName": "SHA512",
+    "MaxCredentialAttempts": 5,
+    "LockoutMins": 5
+  }
+}
+```
+
+### Storage Configuration
+```json
+{
+  "AislingStoreOptions": {
+    "Directory": "Data\\Saved\\Aislings",
+    "BackupDirectory": "Data\\Backups\\Aislings",
+    "BackupIntervalMins": 30,
+    "BackupRetentionDays": 30
+  },
+  "EntityRepositoryOptions": {
+    "SafeSaves": true
+  }
+}
+```
+
+## 🗂️ TEMPLATE CONFIGURATION
+
+### Entity Template Structure
+```json
+{
+  "templateKey": "uniqueIdentifier",
+  "name": "Display Name",
+  "description": "Entity description",
+  "scriptKeys": ["script1", "script2"],
+  "scriptVars": {
+    "script1": {
+      "property1": "value1",
+      "property2": 123
+    }
+  }
+}
+```
+
+### Cache Configuration
+```json
+{
+  "ItemTemplateCacheOptions": {
+    "Directory": "Data\\Configuration\\Templates\\Items",
+    "FilePattern": "*.json",
+    "SearchType": "Files",
+    "Recursive": true,
+    "ExpirationMins": 60,
+    "Expires": true
+  }
+}
+```
+
+## 🔒 ENVIRONMENT MANAGEMENT
+
+### Development Environment
+```json
+// appsettings.local.json
+{
+  "Options": {
+    "ChaosOptions": {
+      "LogRawPackets": true
+    },
+    "WorldOptions": {
+      "RefreshIntervalMs": 500,
+      "SaveIntervalMins": 1
+    }
+  }
+}
+```
+
+### Production Environment
+```json
+// appsettings.prod.json
+{
+  "Options": {
+    "ChaosOptions": {
+      "LogRawPackets": false
+    },
+    "WorldOptions": {
+      "RefreshIntervalMs": 1000,
+      "SaveIntervalMins": 5
+    }
+  }
+}
+```
+
+### Logging Configuration
+```json
+// appsettings.logging.json
+{
+  "NLog": {
+    "targets": {
+      "logfile": {
+        "type": "File",
+        "fileName": "logs/${shortdate}.log",
+        "layout": "${longdate} ${level:uppercase=true} ${logger} ${message} ${exception:format=tostring}"
+      }
+    },
+    "rules": [
+      {
+        "logger": "*",
+        "minLevel": "Info",
+        "writeTo": "logfile"
+      }
+    ]
+  }
+}
+```
+
+## 🛠️ CONFIGURATION BEST PRACTICES
+
+### Default Values
+- **Provide sensible defaults** for all configuration options
+- **Document configuration options** with comments or documentation
+- **Validate configuration** at application startup
+- **Use environment variables** for sensitive data
+
+### Performance Considerations
+- **Cache configuration** to avoid repeated parsing
+- **Minimize configuration access** in hot paths
+- **Use typed options** instead of accessing IConfiguration directly
+- **Monitor configuration changes** for performance impact
+
+### Security Guidelines
+- **Never store secrets** in configuration files
+- **Use secure key management** for production secrets
+- **Validate all input** from configuration sources
+- **Log configuration changes** for audit purposes
+
+### Deployment Strategies
+- **Environment-specific configurations** for different deployment targets
+- **Configuration validation** as part of deployment pipeline
+- **Rollback procedures** for configuration changes
+- **Monitoring and alerting** for configuration-related issues
+

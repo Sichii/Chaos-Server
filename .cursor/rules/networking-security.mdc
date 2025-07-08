@@ -1,0 +1,326 @@
+---
+description: Networking protocols, security patterns, and authentication best practices for game server development. Use when working with the custom TCP protocol, client-server communication, security concerns, or authentication systems. Covers the multi-server architecture (Lobby/Login/World), packet systems, access management, and security principles. Critical for network programming and security implementation.
+globs: 
+alwaysApply: false
+---
+# Networking & Security
+
+**WHEN TO USE:** Network protocol, security, authentication, or client communication questions.
+
+## 🌐 NETWORK ARCHITECTURE
+
+### Multi-Server Setup
+- **Lobby Server** → Server listing and selection (Port 4200)
+- **Login Server** → Authentication and character selection (Port 4201)  
+- **World Server** → Main game world simulation (Port 4202)
+
+### Connection Flow
+```
+Client → Lobby Server → Login Server → World Server
+  ↓         ↓             ↓            ↓
+Select   Authenticate   Character    Game Play
+Server     Player       Selection
+```
+
+### Custom TCP Protocol
+- **Optimized for game communication** with minimal overhead
+- **Packet serialization** using custom protocol implementation
+- **Client registry** for connection management and tracking
+- **Async networking** with proper resource cleanup
+
+## 📦 PACKET SYSTEM
+
+### Actual Packet Structure (ref struct for performance)
+```csharp
+// Chaos.Packets.Packet - High-performance ref struct
+public readonly ref struct Packet
+{
+    public readonly byte Signature;
+    public readonly OpCode OpCode;
+    public readonly uint Sequence;
+    public readonly ReadOnlySpan<byte> Buffer;
+    public readonly bool IsEncrypted;
+    
+    // Constructor and methods for packet creation
+}
+
+// IPacketSerializable is just a marker interface
+public interface IPacketSerializable
+{
+    // No methods - used for type identification only
+}
+```
+
+### Packet Converter Implementation (Actual Pattern)
+```csharp
+// Base class for all packet converters
+public abstract class PacketConverterBase<T> : IPacketConverter<T>
+{
+    public abstract OpCode OpCode { get; }
+    
+    public abstract T Deserialize(in Packet packet);
+    public abstract void Serialize(ref SpanWriter writer, T args);
+}
+
+// Real example from codebase - VersionConverter
+public sealed class VersionConverter : PacketConverterBase<VersionArgs>
+{
+    public override OpCode OpCode => OpCode.Version;
+
+    public override VersionArgs Deserialize(in Packet packet)
+    {
+        var reader = new SpanReader(packet.Buffer);
+        
+        return new VersionArgs
+        {
+            Version = reader.ReadUInt16()
+        };
+    }
+
+    public override void Serialize(ref SpanWriter writer, VersionArgs args)
+    {
+        writer.WriteUInt16(args.Version);
+    }
+}
+```
+
+### PacketSerializer (Actual Implementation)
+```csharp
+// Uses FrozenDictionary for high-performance converter lookup
+public static class PacketSerializer
+{
+    private static readonly FrozenDictionary<Type, IPacketConverter> Converters;
+    
+    public static void Serialize<T>(ref SpanWriter writer, T args)
+    {
+        if (Converters.TryGetValue(typeof(T), out var converter))
+        {
+            ((IPacketConverter<T>)converter).Serialize(ref writer, args);
+        }
+    }
+    
+    public static T? Deserialize<T>(in Packet packet) where T : class
+    {
+        if (Converters.TryGetValue(typeof(T), out var converter))
+        {
+            return ((IPacketConverter<T>)converter).Deserialize(packet);
+        }
+        return null;
+    }
+}
+```
+
+### Client Registry (Actual Implementation)
+```csharp
+// Generic client registry using uint IDs, not IPEndPoint
+public class ClientRegistry<T> : IClientRegistry<T> where T : ISocketClient
+{
+    private readonly ConcurrentDictionary<uint, T> _clients = new();
+    
+    public void Register(T client)
+    {
+        _clients.TryAdd(client.Id, client);
+    }
+    
+    public T? TryGetClient(uint id)
+    {
+        _clients.TryGetValue(id, out var client);
+        return client;
+    }
+    
+    public void UnRegister(T client)
+    {
+        _clients.TryRemove(client.Id, out _);
+    }
+    
+    public IEnumerable<T> GetClients() => _clients.Values;
+}
+```
+
+## 🔒 SECURITY PRINCIPLES
+
+### 1. Authentication
+- **Secure login** with proper credential validation
+- **Session management** with timeout and validation
+- **Multi-factor support** for enhanced security
+- **Rate limiting** to prevent brute force attacks
+
+### 2. Authorization  
+- **Role-based access control** through `IAccessManager`
+- **Permission validation** for sensitive operations
+- **Command authorization** for administrative functions
+- **Resource-level permissions** for game entities
+
+### 3. Input Validation
+- **Sanitize all input** from client packets
+- **Bounds checking** for numeric values
+- **Pattern validation** for text input
+- **Command validation** for administrative operations
+
+### 4. Encryption
+- **Secure client-server communication** with encryption
+- **Password hashing** using secure algorithms
+- **Data protection** for sensitive information
+- **Key management** for cryptographic operations
+
+### 5. Rate Limiting
+- **Anti-spam protection** for chat and commands
+- **DoS protection** with connection limits
+- **Action throttling** to prevent automation
+- **Bandwidth management** for large operations
+
+## 🛡️ ACCESS MANAGER IMPLEMENTATION
+
+### Configuration
+```json
+{
+  "AccessManagerOptions": {
+    "ValidCharactersPattern": "[a-zA-Z0-9 ]+",
+    "ValidFormatPattern": "^[a-zA-Z]{3,}$|[a-zA-Z]{3,} ?[a-zA-Z]{3,}",
+    "MaxUsernameLength": 12,
+    "MinUsernameLength": 3,
+    "MaxPasswordLength": 8,
+    "MinPasswordLength": 5,
+    "HashAlgorithmName": "SHA512",
+    "MaxCredentialAttempts": 5,
+    "LockoutMins": 5
+  }
+}
+```
+
+### Usage Patterns
+```csharp
+public class GameService
+{
+    private readonly IAccessManager _accessManager;
+    
+    public async Task<bool> AuthenticatePlayerAsync(string username, string password)
+    {
+        var result = await _accessManager.ValidateCredentialsAsync(username, password);
+        
+        return result switch
+        {
+            CredentialValidationResult.Success => true,
+            CredentialValidationResult.Locked => false,
+            CredentialValidationResult.Invalid => false,
+            _ => false
+        };
+    }
+    
+    public bool HasPermission(Player player, string permission)
+    {
+        return _accessManager.HasPermission(player.Name, permission);
+    }
+}
+```
+
+## 🔐 CRYPTOGRAPHY PATTERNS
+
+### Password Hashing
+```csharp
+public class SecurePasswordService
+{
+    private readonly ICrypto _crypto;
+    
+    public string HashPassword(string password, string salt = null)
+    {
+        salt ??= _crypto.GenerateSalt();
+        return _crypto.Hash(password + salt);
+    }
+    
+    public bool VerifyPassword(string password, string hash, string salt)
+    {
+        var computed = HashPassword(password, salt);
+        return _crypto.TimingSafeEquals(computed, hash);
+    }
+}
+```
+
+### Data Encryption
+```csharp
+public class EncryptedDataService
+{
+    private readonly ICrypto _crypto;
+    
+    public byte[] EncryptData(byte[] data, byte[] key)
+    {
+        return _crypto.Encrypt(data, key);
+    }
+    
+    public byte[] DecryptData(byte[] encryptedData, byte[] key)
+    {
+        return _crypto.Decrypt(encryptedData, key);
+    }
+}
+```
+
+## 🌐 CLIENT REGISTRY PATTERNS
+
+### Connection Management (Actual Implementation)
+```csharp
+// Generic client registry with uint IDs for performance
+public class ClientRegistry<T> : IClientRegistry<T> where T : ISocketClient
+{
+    private readonly ConcurrentDictionary<uint, T> _clients = new();
+    
+    public void Register(T client)
+    {
+        _clients.TryAdd(client.Id, client);
+        client.Disconnected += OnClientDisconnected;
+    }
+    
+    public void UnRegister(T client)
+    {
+        _clients.TryRemove(client.Id, out _);
+        client.Disconnected -= OnClientDisconnected;
+    }
+    
+    public T? TryGetClient(uint id)
+    {
+        _clients.TryGetValue(id, out var client);
+        return client;
+    }
+    
+    public IEnumerable<T> GetClients() => _clients.Values;
+    
+    private void OnClientDisconnected(object sender, EventArgs e)
+    {
+        if (sender is T client)
+            UnRegister(client);
+    }
+}
+```
+
+## 🛡️ SECURITY BEST PRACTICES
+
+### Rate Limiting
+```csharp
+public class RateLimiter
+{
+    private readonly Dictionary<string, Queue<DateTime>> _requestHistory = new();
+    private readonly object _lock = new();
+    
+    public bool IsAllowed(string identifier, int maxRequests, TimeSpan window)
+    {
+        lock (_lock)
+        {
+            if (!_requestHistory.TryGetValue(identifier, out var history))
+            {
+                history = new Queue<DateTime>();
+                _requestHistory[identifier] = history;
+            }
+            
+            var cutoff = DateTime.UtcNow - window;
+            while (history.Count > 0 && history.Peek() < cutoff)
+                history.Dequeue();
+                
+            if (history.Count >= maxRequests)
+                return false;
+                
+            history.Enqueue(DateTime.UtcNow);
+            return true;
+        }
+    }
+}
+```
+
