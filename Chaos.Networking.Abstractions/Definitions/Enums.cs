@@ -286,11 +286,11 @@ public enum ClientOpCode : byte
     Unequip = 68,
 
     /// <summary>
-    ///     OpCode used when a client sends a heartbeat(keep-alive) ping
+    ///     OpCode used when a client responds to a server's heartbeat request
     ///     <br />
     ///     Hex value: 0x45
     /// </summary>
-    HeartBeat = 69,
+    HeartBeatResponse = 69,
 
     /// <summary>
     ///     OpCode used when a client requests to raise a stat
@@ -356,11 +356,11 @@ public enum ClientOpCode : byte
     HomepageRequest = 104,
 
     /// <summary>
-    ///     OpCode used when a client sends it's Environment.Ticks value
+    ///     OpCode used when a client responds to a request to synchronize ticks with the server
     ///     <br />
     ///     Hex value: 0x75
     /// </summary>
-    SynchronizeTicks = 117,
+    SynchronizeTicksResponse = 117,
 
     /// <summary>
     ///     OpCode used when a client changes their social status
@@ -667,11 +667,11 @@ public enum ServerOpCode : byte
     Effect = 58,
 
     /// <summary>
-    ///     OpCode used to respond to a client's heartbeat
+    ///     OpCode used to request a heartbeat response from a client
     ///     <br />
     ///     Hex value: 0x3B
     /// </summary>
-    HeartBeatResponse = 59,
+    HeartBeat = 59,
 
     /// <summary>
     ///     OpCode used to send a client tile data for a map
@@ -769,7 +769,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x68
     /// </summary>
-    SynchronizeTicksResponse = 104,
+    SynchronizeTicks = 104,
 
     /// <summary>
     ///     OpCode used to send metadata data to a client

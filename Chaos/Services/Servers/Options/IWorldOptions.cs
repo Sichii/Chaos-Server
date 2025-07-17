@@ -14,6 +14,12 @@ public interface IWorldOptions
     int ClearOrangeBarTimerSecs { get; set; }
 
     /// <summary>
+    ///     The length of time between heartbeats in seconds. If a heartbeat occurs and the client has still not responsed to
+    ///     the previous heartbeat, the client will be disconnected.
+    /// </summary>
+    int HeartbeatIntervalSecs { get; set; }
+
+    /// <summary>
     ///     This is the amount of time in minutes after a player's last action where the server will play the sleep animation
     /// </summary>
     int SleepAnimationTimerMins { get; set; }

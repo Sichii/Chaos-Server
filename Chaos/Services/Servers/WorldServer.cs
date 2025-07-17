@@ -42,6 +42,7 @@ using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Options;
+using HeartBeatResponseArgs = Chaos.Networking.Entities.Client.HeartBeatResponseArgs;
 #endregion
 
 namespace Chaos.Services.Servers;
@@ -1262,6 +1263,44 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     }
 
     /// <inheritdoc />
+    public override ValueTask OnHeartBeatAsync(IChaosWorldClient client, in Packet packet)
+    {
+        var args = PacketSerializer.Deserialize<HeartBeatResponseArgs>(in packet);
+
+        if ((args.First != client.Heartbeat2) || (args.Second != client.Heartbeat1))
+        {
+            Logger.WithTopics(Topics.Servers.WorldServer, Topics.Entities.Client, Topics.Actions.Processing)
+                  .WithProperty(client)
+                  .LogWarning(
+                      "Client {@ClientIp} sent an invalid heartbeat. Expected: {@Expected}, Received: {@Received}",
+                      client.RemoteIp,
+                      (client.Heartbeat2, client.Heartbeat1),
+                      (args.First, args.Second));
+
+            client.Disconnect();
+        }
+
+        client.Heartbeat1 = null;
+        client.Heartbeat2 = null;
+
+        return default;
+    }
+
+    /// <inheritdoc />
+    public override ValueTask OnSynchronizeTicksAsync(IChaosWorldClient client, in Packet packet)
+    {
+        _ = PacketSerializer.Deserialize<SynchronizeTicksResponseArgs>(in packet);
+
+        //var diff = Math.Abs((long)args.ClientTicks - args.ServerTicks);
+        //var deltaPct = (double)diff / args.ServerTicks * 100;
+
+        //if(deltaPct > 1)
+        //log something?
+
+        return default;
+    }
+
+    /// <inheritdoc />
     public ValueTask OnSetNotepad(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<SetNotepadArgs>(in packet);
@@ -2111,6 +2150,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         }
 
         client.BeginReceive();
+        client.SendSynchronizeTicks();
     }
 
     private async void OnDisconnect(object? sender, EventArgs e)

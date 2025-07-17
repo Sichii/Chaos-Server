@@ -6,6 +6,7 @@ using Chaos.Cryptography.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.DarkAges.Extensions;
 using Chaos.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Networking;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Models.Board;
@@ -22,6 +23,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
+using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
@@ -35,7 +37,10 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
     private readonly ITypeMapper Mapper;
     private readonly IWorldServer<IChaosWorldClient> Server;
     private Animation? CurrentAnimation;
+    private Task HeartbeatTask = null!;
     public Aisling Aisling { get; set; } = null!;
+    public byte? Heartbeat1 { get; set; }
+    public byte? Heartbeat2 { get; set; }
 
     /// <inheritdoc />
     public uint LoginId1 { get; set; }
@@ -62,6 +67,13 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         LogReceivePacketCode = chaosOptions.Value.LogReceivePacketCode;
         Mapper = mapper;
         Server = server;
+    }
+
+    /// <inheritdoc />
+    public override void BeginReceive()
+    {
+        base.BeginReceive();
+        HeartbeatTask = DoHeartbeatAsync();
     }
 
     public void SendAddItemToPane(Item item)
@@ -870,6 +882,36 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         var args = Mapper.Map<WorldMapArgs>(worldMap);
 
         Send(args);
+    }
+
+    private async Task DoHeartbeatAsync()
+    {
+        var timer = new PeriodicTimer(TimeSpan.FromSeconds(WorldOptions.Instance.HeartbeatIntervalSecs));
+
+        while (Connected)
+        {
+            try
+            {
+                await timer.WaitForNextTickAsync();
+
+                //if heartbeat is still populated, that means the client has not responded to the last heartbeat
+                //assume the client has disconnected
+                if (Heartbeat1.HasValue || Heartbeat2.HasValue)
+                {
+                    Disconnect();
+
+                    return;
+                }
+
+                Heartbeat1 = Random.Shared.Next<byte>();
+                Heartbeat2 = Random.Shared.Next<byte>();
+
+                SendHeartBeat(Heartbeat1.Value, Heartbeat2.Value);
+            } catch
+            {
+                //ignored
+            }
+        }
     }
 
     /// <inheritdoc />

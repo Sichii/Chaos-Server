@@ -40,6 +40,9 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     public required MessageColor GuildMessageColor { get; init; }
 
     /// <inheritdoc />
+    public int HeartbeatIntervalSecs { get; set; }
+
+    /// <inheritdoc />
     public override string HostName { get; set; } = string.Empty;
 
     public static IWorldOptions Instance { get; set; } = null!;

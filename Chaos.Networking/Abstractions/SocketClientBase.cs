@@ -152,6 +152,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
     #region Networking
     /// <inheritdoc />
+
+    // ReSharper disable once AsyncVoidMethod
     public virtual async void BeginReceive()
     {
         if (!Socket.Connected)
@@ -168,6 +170,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Socket.ReceiveAndForget(args, ReceiveEventHandler);
     }
 
+    // ReSharper disable once AsyncVoidMethod
     private async void ReceiveEventHandler(object? sender, SocketAsyncEventArgs e)
     {
         await ReceiveSync.WaitAsync()
@@ -211,7 +214,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                         .ConfigureAwait(false);
 
                     var elapsed = Stopwatch.GetElapsedTime(start);
-                    NetworkMonitor.Digest(opcode, elapsed);
+                    NetworkMonitor!.Digest(opcode, elapsed);
                 } catch (Exception ex)
                 {
                     //required so we can use Span<byte> in an async method

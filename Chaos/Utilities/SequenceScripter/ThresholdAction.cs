@@ -5,7 +5,7 @@ using Chaos.Utilities.SequenceScripter.Builder;
 
 namespace Chaos.Utilities.SequenceScripter;
 
-public class ThresholdAction<T> where T: Creature
+public sealed class ThresholdAction<T> where T: Creature
 {
     private readonly Action<T> Action;
     private readonly int Threshold;

@@ -10,6 +10,7 @@ namespace Chaos.Utilities.SequenceScripter;
 public sealed class ScriptedSequence<T> : IDeltaUpdatable where T: Creature
 {
     private readonly List<ConditionalAction<T>> ConditionalActions = [];
+    private readonly List<ConditionalTimedActionSequence<T>> ConditionalTimedActionSequences = [];
     private readonly T Entity;
     private readonly List<ConditionalAction<T>> OneTimeConditionalActions = [];
     private readonly List<TimedAction<T>> RepeatedTimedActions = [];
@@ -29,32 +30,36 @@ public sealed class ScriptedSequence<T> : IDeltaUpdatable where T: Creature
         List<TimedActionSequenceDescriptor<T>> timedActionSequences,
         List<TimedActionSequenceDescriptor<T>> repeatedTimedActionSequences,
         List<ConditionalActionDescriptor<T>> conditionalActions,
-        List<ConditionalActionDescriptor<T>> oneTimeConditionalActions)
+        List<ConditionalActionDescriptor<T>> oneTimeConditionalActions,
+        List<ConditionalTimedActionSequenceDescriptor<T>> conditionalTimedActionSequences)
     {
         Entity = entity;
         ScriptUpdateInterval = scriptUpdateInterval;
         ScriptTimer = new IntervalTimer(scriptUpdateInterval);
 
-        foreach (var action in thresholdActions)
-            ThresholdActions.Add(new ThresholdAction<T>(action));
+        foreach (var descriptor in thresholdActions)
+            ThresholdActions.Add(new ThresholdAction<T>(descriptor));
 
-        foreach (var action in timedActions)
-            TimedActions.Add(new TimedAction<T>(action));
+        foreach (var descriptor in timedActions)
+            TimedActions.Add(new TimedAction<T>(descriptor));
 
-        foreach (var action in repeatedTimedActions)
-            RepeatedTimedActions.Add(new TimedAction<T>(action));
+        foreach (var descriptor in repeatedTimedActions)
+            RepeatedTimedActions.Add(new TimedAction<T>(descriptor));
 
-        foreach (var action in timedActionSequences)
-            TimedActionSequences.Add(new TimedActionSequence<T>(action));
+        foreach (var descriptor in timedActionSequences)
+            TimedActionSequences.Add(new TimedActionSequence<T>(descriptor));
 
-        foreach (var action in repeatedTimedActionSequences)
-            RepeatedTimedActionSequences.Add(new TimedActionSequence<T>(action));
+        foreach (var descriptor in repeatedTimedActionSequences)
+            RepeatedTimedActionSequences.Add(new TimedActionSequence<T>(descriptor));
 
-        foreach (var action in conditionalActions)
-            ConditionalActions.Add(new ConditionalAction<T>(action));
+        foreach (var descriptor in conditionalActions)
+            ConditionalActions.Add(new ConditionalAction<T>(descriptor));
 
-        foreach (var action in oneTimeConditionalActions)
-            OneTimeConditionalActions.Add(new ConditionalAction<T>(action));
+        foreach (var descriptor in oneTimeConditionalActions)
+            OneTimeConditionalActions.Add(new ConditionalAction<T>(descriptor));
+
+        foreach (var descriptor in conditionalTimedActionSequences)
+            ConditionalTimedActionSequences.Add(new ConditionalTimedActionSequence<T>(descriptor));
     }
 
     /// <inheritdoc />
@@ -89,5 +94,8 @@ public sealed class ScriptedSequence<T> : IDeltaUpdatable where T: Creature
         foreach (var action in OneTimeConditionalActions.ToList())
             if (action.Update(Entity))
                 OneTimeConditionalActions.Remove(action);
+
+        foreach (var action in ConditionalTimedActionSequences.ToList())
+            action.Update(Entity, ScriptUpdateInterval);
     }
 }

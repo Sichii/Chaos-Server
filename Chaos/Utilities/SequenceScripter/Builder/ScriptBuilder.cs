@@ -7,6 +7,7 @@ namespace Chaos.Utilities.SequenceScripter.Builder;
 public sealed class ScriptBuilder<T> where T: Creature
 {
     private readonly List<ConditionalActionDescriptor<T>> ConditionalActions = [];
+    private readonly List<ConditionalTimedActionSequenceDescriptor<T>> ConditionalTimedActionSequences = [];
     private readonly List<ConditionalActionDescriptor<T>> OneTimeConditionalActions = [];
     private readonly List<TimedActionDescriptor<T>> RepeatedTimedActions = [];
     private readonly List<TimedActionSequenceDescriptor<T>> RepeatedTimedActionSequences = [];
@@ -72,7 +73,8 @@ public sealed class ScriptBuilder<T> where T: Creature
             TimedActionSequences,
             RepeatedTimedActionSequences,
             ConditionalActions,
-            OneTimeConditionalActions);
+            OneTimeConditionalActions,
+            ConditionalTimedActionSequences);
 
     public ScriptBuilder<T> RepeatEvery(TimeSpan time, Action<T> action, bool startAsElapsed = false)
     {
@@ -122,6 +124,15 @@ public sealed class ScriptBuilder<T> where T: Creature
     public ScriptBuilder<T> WhenThenOnce(Func<T, bool> condition, Action<T> action)
     {
         OneTimeConditionalActions.Add(new ConditionalActionDescriptor<T>(condition, action));
+
+        return this;
+    }
+
+    public ScriptBuilder<T> WhileThen(Func<T, bool> condition, TimedActionSequenceBuilder<T> builder)
+    {
+        var sequence = builder.Build(TimeSpan.Zero);
+        var descriptor = new ConditionalTimedActionSequenceDescriptor<T>(condition, sequence);
+        ConditionalTimedActionSequences.Add(descriptor);
 
         return this;
     }
