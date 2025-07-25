@@ -1,0 +1,762 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>MetaData | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="MetaData | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/MetaData.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="metadata">MetaData</h1>
+
+<p>When a client logs into the game, one of the first things it does is request the server's metadata. There are various
+kinds of metadata and
+each kind will be detailed below. Generation of metadata is handled by
+the <a class="xref" href="../api/Chaos.Services.Storage.MetaDataStore.html">MetaDataStore</a> class. Configuration for this class can be specified
+via <code>Options:MetaDataStoreOptions</code>.</p>
+<h2 id="metadatacacheoptions">MetaDataCacheOptions</h2>
+<p>The <code>MetaDataStoreOptions</code> class contains configuration for the <code>MetaDataStore</code> class. The following properties are
+available:</p>
+<pre><code class="lang-csharp">using Chaos.Common.Abstractions;
+using Chaos.MetaData.Abstractions;
+
+namespace Chaos.Services.Storage.Options;
+
+public sealed class MetaDataStoreOptions : IDirectoryBound
+{
+    /// &lt;summary&gt;
+    ///     The path to the event meta file
+    /// &lt;/summary&gt;
+    public string EventMetaPath { get; set; } = null!;
+
+    /// &lt;summary&gt;
+    ///     The path to the light meta file
+    /// &lt;/summary&gt;
+    public string LightMetaPath { get; set; } = null!;
+
+    /// &lt;summary&gt;
+    ///     The path to the mundane illustration meta file
+    /// &lt;/summary&gt;
+    public string MundaneIllustrationMetaPath { get; set; } = null!;
+
+    public ICollection&lt;IItemMetaNodeMutator&gt; PrefixMutators { get; } = new List&lt;IItemMetaNodeMutator&gt;();
+
+    public ICollection&lt;IItemMetaNodeMutator&gt; SuffixMutators { get; } = new List&lt;IItemMetaNodeMutator&gt;();
+
+    /// &lt;inheritdoc /&gt;
+    public void UseBaseDirectory(string baseDirectory)
+    {
+        EventMetaPath = Path.Combine(baseDirectory, EventMetaPath);
+        LightMetaPath = Path.Combine(baseDirectory, LightMetaPath);
+        MundaneIllustrationMetaPath = Path.Combine(baseDirectory, MundaneIllustrationMetaPath);
+    }
+}
+</code></pre><h3 id="mutators">Mutators</h3>
+<p>Mutators are used to modify item metadata before it is finalized. For example, if you implement a system in your server
+for enchanting items, the enchanted items would not be completely new items. You could achieve those enchantments by
+setting the values on Item.cs and letting them serialize as overrides to the template values. To have these items show
+up in metadata, you would create a mutator that simulates enchantments through non-destructive mutation of an item meta
+node.</p>
+<p>Implement your own mutator as implementations of
+the <a href="xref:Chaos.MetaData.Abstractions.IItemMetaNodeMutator%601">IItemMetaNodeMutator</a> interface and add it to
+the <code>MetaDataStoreOptions</code> via the <code>Chaos.Services.Configuration.OptionsConfigurer</code></p>
+<h3 id="example">Example</h3>
+<p>Here is an example of a mutator that generates mutations of items similarly to the original enchantment system.</p>
+<pre><code class="lang-csharp">using Chaos.Extensions.Common;
+using Chaos.MetaData.ItemMetaData;
+using Chaos.Models.Data;
+using Chaos.Models.Panel;
+using Chaos.Models.Templates;
+using Chaos.Scripting.ItemScripts.Abstractions;
+
+namespace Chaos.Scripting.ItemScripts.Enchantments;
+
+public class MagicPrefixScript : ItemScriptBase, IEnchantmentScript
+{
+    /// &lt;inheritdoc /&gt;
+    public MagicPrefixScript(Item subject)
+        : base(subject)
+    {
+        Subject.Prefix = &quot;Magic&quot;;
+
+        var attributes = new Attributes
+        {
+            MaximumMp = 50
+        };
+
+        subject.Modifiers.Add(attributes);
+    }
+
+    /// &lt;inheritdoc /&gt;
+    public static IEnumerable&lt;ItemMetaNode&gt; Mutate(ItemMetaNode node, ItemTemplate template)
+    {
+        if (!node.Name.StartsWithI(&quot;Magic&quot;))
+            yield return node with
+            {
+                Name = $&quot;Magic {node.Name}&quot;
+            };
+    }
+}
+</code></pre>
+<p>This mutator is then added to the <code>MetaDataStoreOptions</code> in <code>Chaos.Services.Configuration.OptionsConfigurer</code></p>
+<pre><code class="lang-csharp"></code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>You can have both Prefix and Suffix mutators. When metadata is generated, it will create a cross product of all prefix
+and suffix mutations</p>
+</div>
+<h2 id="item-metadata">Item MetaData</h2>
+<p>Item metadata is shown when a player hovers over an item in a shop or the bank. Item metadata is pulled from the details
+in the <code>ItemTemplate</code>s that you have already created.</p>
+<h3 id="item-metadata-mapping">Item MetaData Mapping</h3>
+<table>
+<thead>
+<tr>
+<th>Meta Property</th>
+<th>ItemTemplate Property</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name</td>
+<td>Name</td>
+<td>The name of the item</td>
+</tr>
+<tr>
+<td>Level</td>
+<td>Level</td>
+<td>The level required to equip the item<br> If no level is specified, metadata is displayed as &quot;no limit&quot;</td>
+</tr>
+<tr>
+<td>Class</td>
+<td>Class</td>
+<td>The class required to equip the item<br> If no class is specified, metadata is displayed as &quot;all classes&quot;</td>
+</tr>
+<tr>
+<td>Weight</td>
+<td>Weight</td>
+<td>The weight of the item</td>
+</tr>
+<tr>
+<td>Category</td>
+<td>Category</td>
+<td>The name of the tab the item appears under when displayed in a shop or the bank</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>Description</td>
+<td>A short description of the item. This will show under &quot;Features&quot; in shop and bank windows</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ability-metadata">Ability MetaData</h2>
+<p>Ability metadata is shown per-class in the character's profile under the <code>Skills</code> tab. Ability metadata is pulled from
+the details in the <code>SkillTemplates</code> and <code>SpellTemplates</code> that you have already created. Each <code>SClass</code> metadata file is
+for a specific class. They follow the pattern laid out in the <a class="xref" href="../api/Chaos.DarkAges.Definitions.BaseClass.html">Class</a>
+enum.For example, the <code>SClass1</code> metadata file is for the Warrior class.The <code>SClass2</code> metadata file is for the Rogue
+class.</p>
+<h3 id="ability-metadata-mapping">Ability MetaData Mapping</h3>
+<table>
+<thead>
+<tr>
+<th>Meta Property</th>
+<th>ItemTemplate Property</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IconId</td>
+<td>PanelSprite</td>
+<td>The icon of the ability</td>
+</tr>
+<tr>
+<td>Name</td>
+<td>Name</td>
+<td>The name of the ability</td>
+</tr>
+<tr>
+<td>Level</td>
+<td>Level</td>
+<td>The level requires to learn the ability</td>
+</tr>
+<tr>
+<td>RequiresMaster</td>
+<td>RequiresMaster</td>
+<td>Whether or not you must be a master to learn the ability</td>
+</tr>
+<tr>
+<td>Ability</td>
+<td>-</td>
+<td>TODO</td>
+</tr>
+<tr>
+<td>PreReq1Name</td>
+<td>LearningRequirements</td>
+<td>The name of a prerequisite skill or spell</td>
+</tr>
+<tr>
+<td>PreReq1Level</td>
+<td>-</td>
+<td></td>
+</tr>
+<tr>
+<td>PreReq2Name</td>
+<td>LearningRequirements</td>
+<td>The name of a prerequisite skill or spell</td>
+</tr>
+<tr>
+<td>PreReq2Level</td>
+<td>-</td>
+<td></td>
+</tr>
+<tr>
+<td>Str</td>
+<td>LearningRequirements</td>
+<td>The STR required to learn the ability</td>
+</tr>
+<tr>
+<td>Int</td>
+<td>LearningRequirements</td>
+<td>The INT required to learn the ability</td>
+</tr>
+<tr>
+<td>Wis</td>
+<td>LearningRequirements</td>
+<td>The WIS required to learn the ability</td>
+</tr>
+<tr>
+<td>Con</td>
+<td>LearningRequirements</td>
+<td>The CON required to learn the ability</td>
+</tr>
+<tr>
+<td>Dex</td>
+<td>LearningRequirements</td>
+<td>The DEX required to learn the ability</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>Description</td>
+<td>A brief description of the ability</td>
+</tr>
+</tbody>
+</table>
+<h2 id="light-metadata">Light MetaData</h2>
+<p>Light metadata controls the &quot;Light&quot; on maps that are specified within it. Within this metadata you can specify different
+colors of light, the hours associated with them, and the enum value used to activate it.</p>
+<h3 id="lightsjson-mapping">Lights.json Mapping</h3>
+<table>
+<thead>
+<tr>
+<th>Meta Property</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LightTypeName</td>
+<td>The name of the light type. This name will be specified on map templates to allow them to use this light type</td>
+</tr>
+<tr>
+<td>EnumValue</td>
+<td>The numeric value of the <a class="xref" href="../api/Chaos.DarkAges.Definitions.LightLevel.html">LightLevel</a> enum that will activate this light color</td>
+</tr>
+<tr>
+<td>StartHour</td>
+<td>The hour that the light starts (this would be used to update the ingame clock, but there isn't one anymore)</td>
+</tr>
+<tr>
+<td>EndHour</td>
+<td>The hour that the light ends (this would be used to update the ingame clock, but there isn't one anymore)</td>
+</tr>
+<tr>
+<td>Alpha</td>
+<td>The value of the alpha channel for the color of the light. Acceptable values are 0-32, where 32 is fully transparent</td>
+</tr>
+<tr>
+<td>Red</td>
+<td>The value of the red channel for the color of the light. Acceptable values are 0-255, where 255 is fully red</td>
+</tr>
+<tr>
+<td>Green</td>
+<td>The value of the green channel for the color of the light. Acceptable values are 0-255, where 255 is fully green</td>
+</tr>
+<tr>
+<td>Blue</td>
+<td>The value of the blue channel for the color of the light. Acceptable values are 0-255, where 255 is fully blue</td>
+</tr>
+</tbody>
+</table>
+<p>Lights.json defines light types and the enum value to activate them, but you must also specify what light type to use
+for each map that you want light levels to be on. You do this by setting the <code>LightType</code> property on the map template.</p>
+<h3 id="example-json">Example json</h3>
+<p>This example json defines 6 different colors for the <code>default</code> light type. This light type has been added on a number of
+the default maps that come with the server. You can experiment with them by using the <code>/setlightlevel &lt;lightlevel&gt;</code>
+command while on the map.</p>
+<p>This example also defines 6 different colors for <code>bloodmoon</code> light type, just as another example of what you can do.</p>
+<pre><code class="lang-json">[
+    {
+        &quot;lightTypeName&quot;: &quot;default&quot;,
+        &quot;enumValue&quot;: 0,
+        &quot;startHour&quot;: 0,
+        &quot;endHour&quot;: 1,
+        &quot;alpha&quot;: 18,
+        &quot;red&quot;: 6,
+        &quot;green&quot;: 11,
+        &quot;blue&quot;: 60
+    },
+    {
+        &quot;lightTypeName&quot;: &quot;default&quot;,
+        &quot;enumValue&quot;: 1,
+        &quot;startHour&quot;: 2,
+        &quot;endHour&quot;: 3,
+        &quot;alpha&quot;: 20,
+        &quot;red&quot;: 27,
+        &quot;green&quot;: 1,
+        &quot;blue&quot;: 59
+    },
+    {
+        &quot;lightTypeName&quot;: &quot;default&quot;,
+        &quot;enumValue&quot;: 2,
+        &quot;startHour&quot;: 4,
+        &quot;endHour&quot;: 5,
+        &quot;alpha&quot;: 23,
+        &quot;red&quot;: 100,
+        &quot;green&quot;: 10,
+        &quot;blue&quot;: 100
+    },
+    {
+        &quot;lightTypeName&quot;: &quot;default&quot;,
+        &quot;enumValue&quot;: 3,
+        &quot;startHour&quot;: 6,
+        &quot;endHour&quot;: 7,
+        &quot;alpha&quot;: 26,
+        &quot;red&quot;: 170,
+        &quot;green&quot;: 36,
+        &quot;blue&quot;: 50
+    },
+    {
+        &quot;lightTypeName&quot;: &quot;default&quot;,
+        &quot;enumValue&quot;: 4,
+        &quot;startHour&quot;: 8,
+        &quot;endHour&quot;: 9,
+        &quot;alpha&quot;: 32,
+        &quot;red&quot;: 0,
+        &quot;green&quot;: 0,
+        &quot;blue&quot;: 255
+    },
+    {
+        &quot;lightTypeName&quot;: &quot;default&quot;,
+        &quot;enumValue&quot;: 5,
+        &quot;startHour&quot;: 10,
+        &quot;endHour&quot;: 11,
+        &quot;alpha&quot;: 32,
+        &quot;red&quot;: 0,
+        &quot;green&quot;: 0,
+        &quot;blue&quot;: 255
+    },
+
+    {
+        &quot;lightTypeName&quot;: &quot;bloodmoon&quot;,
+        &quot;enumValue&quot;: 0,
+        &quot;startHour&quot;: 0,
+        &quot;endHour&quot;: 1,
+        &quot;alpha&quot;: 16,
+        &quot;red&quot;: 139,
+        &quot;green&quot;: 0,
+        &quot;blue&quot;: 0
+    },
+    {
+        &quot;lightTypeName&quot;: &quot;bloodmoon&quot;,
+        &quot;enumValue&quot;: 1,
+        &quot;startHour&quot;: 2,
+        &quot;endHour&quot;: 3,
+        &quot;alpha&quot;: 20,
+        &quot;red&quot;: 139,
+        &quot;green&quot;: 0,
+        &quot;blue&quot;: 0
+    },
+    {
+        &quot;lightTypeName&quot;: &quot;bloodmoon&quot;,
+        &quot;enumValue&quot;: 2,
+        &quot;startHour&quot;: 4,
+        &quot;endHour&quot;: 5,
+        &quot;alpha&quot;: 24,
+        &quot;red&quot;: 139,
+        &quot;green&quot;: 0,
+        &quot;blue&quot;: 0
+    },
+    {
+        &quot;lightTypeName&quot;: &quot;bloodmoon&quot;,
+        &quot;enumValue&quot;: 3,
+        &quot;startHour&quot;: 6,
+        &quot;endHour&quot;: 7,
+        &quot;alpha&quot;: 28,
+        &quot;red&quot;: 139,
+        &quot;green&quot;: 0,
+        &quot;blue&quot;: 0
+    },
+    {
+        &quot;lightTypeName&quot;: &quot;bloodmoon&quot;,
+        &quot;enumValue&quot;: 4,
+        &quot;startHour&quot;: 8,
+        &quot;endHour&quot;: 9,
+        &quot;alpha&quot;: 32,
+        &quot;red&quot;: 139,
+        &quot;green&quot;: 0,
+        &quot;blue&quot;: 0
+    },
+    {
+        &quot;lightTypeName&quot;: &quot;bloodmoon&quot;,
+        &quot;enumValue&quot;: 5,
+        &quot;startHour&quot;: 10,
+        &quot;endHour&quot;: 11,
+        &quot;alpha&quot;: 32,
+        &quot;red&quot;: 139,
+        &quot;green&quot;: 0,
+        &quot;blue&quot;: 0
+    }
+]
+</code></pre><h2 id="event-metadata">Event MetaData</h2>
+<p>Event metadata appears in the character's profile under the <code>Events</code> tab. It is a list of events a player can complete,
+along with details about those events. These events can be in one of 3 states: unavailable, available, or completed.
+Here are the requirements for an event to be in each state:</p>
+<h3 id="unavailable-gray-with-a-crossed-out-circle">Unavailable (gray with a crossed out circle)</h3>
+<ul>
+<li>The criteria for available are not met</li>
+<li>If the character is a master, all events before circle 6 will be unavailable</li>
+<li>If the character has an Advanced Class, all events before circle 7 will be unavailable</li>
+</ul>
+<h3 id="available-blue-with-an-exclamation-mark">Available (blue with an exclamation mark)</h3>
+<ul>
+<li>The character must be at a level within the designated Circle (
+see <a class="xref" href="../api/Chaos.DarkAges.Definitions.LevelCircle.html">LevelCircle</a>)</li>
+<li>The character must be one of the classes the quest is available to</li>
+</ul>
+<h3 id="completed-green-check-mark">Completed (green check mark)</h3>
+<ul>
+<li>The character must have a legend mark with a key equal to the id of the event</li>
+</ul>
+<p>Since no objects directly correlate to events, the metadata must be specified directly
+through <a class="xref" href="../api/Chaos.Schemas.MetaData.EventMetaSchema.html">EventMetaSchema</a>.</p>
+<p>This file is located at <code>StagingDir/MetaData/Events.json</code> by default</p>
+<h3 id="eventmetaschema-properties">EventMetaSchema Properties</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td>Id</td>
+<td>A unique id specific to this event. In order for the event to show up as completed, a legend mark with a key equal to this Id must be given</td>
+</tr>
+<tr>
+<td>string</td>
+<td>Title</td>
+<td>The title of the event</td>
+</tr>
+<tr>
+<td>int?</td>
+<td>PageOverride</td>
+<td>Default null<br>If set, this is the page that the event will show up on(starting at index of 1). If null, the page will be determined by the event's lowest qualifying circle</td>
+</tr>
+<tr>
+<td>ICollection&lt;<a class="xref" href="../api/Chaos.DarkAges.Definitions.LevelCircle.html">LevelCircle</a>&gt;?</td>
+<td>QualifyingCircles</td>
+<td>Default null<br>if set, these are the circles this quest is available to. If null, the event will be available to all circles</td>
+</tr>
+<tr>
+<td>ICollection&lt;<a class="xref" href="../api/Chaos.DarkAges.Definitions.BaseClass.html">BaseClass</a>&gt;?</td>
+<td>QualifyingClasses</td>
+<td>Default null<br>If set, these are the classes this event is available to.<br>If null, the event will be available to all classes</td>
+</tr>
+<tr>
+<td>string?</td>
+<td>PrerequisiteEventId</td>
+<td>The id of the event that must be completed before this event can be completed. This event will only show up blue(available) if the previous event was completed</td>
+</tr>
+<tr>
+<td>string</td>
+<td>Summary</td>
+<td>A brief summary of the event</td>
+</tr>
+<tr>
+<td>string?</td>
+<td>Rewards</td>
+<td>Default null.<br>The rewards given when the event is completed</td>
+</tr>
+<tr>
+<td>string</td>
+<td>Result</td>
+<td>When the event is completed, the event will be marked green(completed) and show this text in place of it's summary</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-json-1">Example json</h3>
+<pre><code class="lang-json">[
+    {
+        &quot;pageOverride&quot;: 2,
+        &quot;title&quot;: &quot;I like apples&quot;,
+        &quot;summary&quot;: &quot;I like apples, go get me some&quot;,
+        &quot;rewards&quot;: &quot;literally nothing&quot;,
+        &quot;prerequisiteEventId&quot;: &quot;&quot;,
+        &quot;qualifyingCircles&quot;: [&quot;one&quot;, &quot;two&quot;, &quot;three&quot;],
+        &quot;id&quot;: &quot;Apples1&quot;,
+        &quot;result&quot;: &quot;i ate some apples&quot;
+    },
+    {
+        &quot;title&quot;: &quot;I like oranges&quot;,
+        &quot;summary&quot;: &quot;I like oranges too, go get me some&quot;,
+        &quot;rewards&quot;: &quot;literally nothing still&quot;,
+        &quot;prerequisiteEventId&quot;: &quot;Apples1&quot;,
+        &quot;qualifyingCircles&quot;: [&quot;three&quot;, &quot;four&quot;, &quot;five&quot;],
+        &quot;id&quot;: &quot;Oranges1&quot;,
+        &quot;result&quot;: &quot;i ate some apples and oranges&quot;
+    },
+    {
+        &quot;title&quot;: &quot;I like carrots&quot;,
+        &quot;summary&quot;: &quot;I like carrots, go get me some&quot;,
+        &quot;rewards&quot;: &quot;literally nothing still&quot;,
+        &quot;qualifyingCircles&quot;: [&quot;four&quot;, &quot;five&quot;, &quot;six&quot;, &quot;seven&quot;],
+        &quot;id&quot;: &quot;Carrots1&quot;,
+        &quot;result&quot;: &quot;i ate some carrots&quot;
+    },
+    {
+        &quot;title&quot;: &quot;I like melons&quot;,
+        &quot;summary&quot;: &quot;I like melons, go get me some&quot;,
+        &quot;rewards&quot;: &quot;literally nothing still&quot;,
+        &quot;qualifyingCircles&quot;: [&quot;one&quot;, &quot;two&quot;, &quot;three&quot;, &quot;four&quot;],
+        &quot;id&quot;: &quot;Melons1&quot;,
+        &quot;result&quot;: &quot;i ate some melons&quot;
+    },
+    {
+        &quot;pageOverride&quot;: 6,
+        &quot;title&quot;: &quot;I like pie&quot;,
+        &quot;summary&quot;: &quot;I like pie, go get me some&quot;,
+        &quot;rewards&quot;: &quot;literally nothing still&quot;,
+        &quot;qualifyingCircles&quot;: [&quot;five&quot;, &quot;six&quot;, &quot;seven&quot;],
+        &quot;id&quot;: &quot;Pie1&quot;,
+        &quot;result&quot;: &quot;i ate some pie&quot;
+    }
+]
+</code></pre><h2 id="nation-description-metadata">Nation Description MetaData</h2>
+<p>Nation description metadata is used to display the description of a nation in the character's profile.
+the <a class="xref" href="../api/Chaos.DarkAges.Definitions.Nation.html">Nation</a> enum technically only controls the emblem that is displayed on
+the profile. The words next to it are controlled by the nation description metadata. This metadata is automatically
+generated from the <a class="xref" href="../api/Chaos.DarkAges.Definitions.Nation.html">Nation</a> enum.</p>
+<h3 id="nation-metadata-mapping">Nation MetaData Mapping</h3>
+<p>The nation enum is mapped by it's number and name. For example, <code>Nation.Suomi</code> is mapped so that the description of the
+emblem for that number is &quot;Suomi&quot;.</p>
+<h2 id="mundane-illustration-metadata">Mundane Illustration MetaData</h2>
+<p>Mundane illustration metadata is used by the client to determine which full art illustrations to display for mundanes,
+if any. This metadata must be specified directly
+through <a class="xref" href="../api/Chaos.Schemas.MetaData.MundaneIllustrationMetaSchema.html">MundaneIllustrationMetaSchema</a>.</p>
+<p>This file is located at <code>StagingDir/MetaData/MundaneIllustrations.json</code> by default</p>
+<p>See <a href="#illustrations">below</a> for a list of possible illustrations</p>
+<h3 id="example-json-2">Example json</h3>
+<pre><code class="lang-json">[
+    {
+        &quot;name&quot;: &quot;Shop Tester&quot;,
+        &quot;imageName&quot;: &quot;buls.spf&quot;
+    },
+    {
+        &quot;name&quot;: &quot;Bank Tester&quot;,
+        &quot;imageName&quot;: &quot;bank.spf&quot;
+    },
+    {
+        &quot;name&quot;: &quot;Trainer Tester&quot;,
+        &quot;imageName&quot;: &quot;black.spf&quot;
+    },
+    {
+        &quot;name&quot;: &quot;Guild Tester&quot;,
+        &quot;imageName&quot;: &quot;seba.spf&quot;
+    },
+    {
+        &quot;name&quot;: &quot;Misc Tester 1&quot;,
+        &quot;imageName&quot;: &quot;metus.spf&quot;
+    }
+]
+</code></pre><h3 id="illustrations">Illustrations</h3>
+<p>bank.spf<br>
+<img src="../images/bank.png" alt="bank.spf"><br>
+black.spf<br>
+<img src="../images/black.png" alt="black.spf"><br>
+boy.spf<br>
+<img src="../images/boy.png" alt="boy.spf"><br>
+buls.spf<br>
+<img src="../images/buls.png" alt="bank.spf"><br>
+ed.spf<br>
+<img src="../images/ed.png" alt="ed.spf"><br>
+ed1.spf<br>
+<img src="../images/ed1.png" alt="ed1.spf"><br>
+girl.spf<br>
+<img src="../images/girl.png" alt="girl.spf"><br>
+girl2.spf<br>
+<img src="../images/girl2.png" alt="girl2.spf"><br>
+helper.spf<br>
+<img src="../images/helper.png" alt="helper.spf"><br>
+hof.spf<br>
+<img src="../images/hof.png" alt="hof.spf"><br>
+ia.spf<br>
+<img src="../images/ia.png" alt="ia.spf"><br>
+inn.spf<br>
+<img src="../images/inn.png" alt="inn.spf"><br>
+kan.spf<br>
+<img src="../images/kan.png" alt="kan.spf"><br>
+kan2.spf<br>
+<img src="../images/kan2.png" alt="kan2.spf"><br>
+knight.spf<br>
+<img src="../images/knight.png" alt="knight.spf"><br>
+knight1.spf<br>
+<img src="../images/knight1.png" alt="knight1.spf"><br>
+lady.spf<br>
+<img src="../images/lady.png" alt="lady.spf"><br>
+mage.spf<br>
+<img src="../images/mage.png" alt="mage.spf"><br>
+man1.spf<br>
+<img src="../images/man1.png" alt="man1.spf"><br>
+metus.spf<br>
+<img src="../images/metus.png" alt="metus.spf"><br>
+murkhan.spf<br>
+<img src="../images/murkhan.png" alt="murkhan.spf"><br>
+nori.spf<br>
+<img src="../images/nori.png" alt="nori.spf"><br>
+rho.spf<br>
+<img src="../images/rho.png" alt="rho.spf"><br>
+rose.spf<br>
+<img src="../images/rose.png" alt="rose.spf"><br>
+rose1.spf<br>
+<img src="../images/rose1.png" alt="rose1.spf"><br>
+rose2.spf<br>
+<img src="../images/rose2.png" alt="rose2.spf"><br>
+saser.spf<br>
+<img src="../images/saser.png" alt="saser.spf"><br>
+saser1.spf<br>
+<img src="../images/saser1.png" alt="saser1.spf"><br>
+seaus.spf<br>
+<img src="../images/seaus.png" alt="seaus.spf"><br>
+seba.spf<br>
+<img src="../images/seba.png" alt="seba.spf"><br>
+seoj.spf<br>
+<img src="../images/seoj.png" alt="seoj.spf"><br>
+setoa.spf<br>
+<img src="../images/setoa.png" alt="setoa.spf"><br>
+shaman.spf<br>
+<img src="../images/shaman.png" alt="shaman.spf"><br>
+spskill.spf<br>
+<img src="../images/spskill.png" alt="spskill.spf"><br>
+west1.spf<br>
+<img src="../images/west1.png" alt="west1.spf"><br>
+white.spf<br>
+<img src="../images/white.png" alt="white.spf"></p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/MetaData.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

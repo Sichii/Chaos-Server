@@ -1,0 +1,449 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Enum ServerOpCode
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Enum ServerOpCode
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Networking_Abstractions_Definitions_ServerOpCode.md&amp;value=---%0Auid%3A%20Chaos.Networking.Abstractions.Definitions.ServerOpCode%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Networking.Abstractions.Definitions.ServerOpCode">
+
+
+
+
+  <h1 id="Chaos_Networking_Abstractions_Definitions_ServerOpCode" data-uid="Chaos.Networking.Abstractions.Definitions.ServerOpCode" class="text-break">
+    Enum ServerOpCode
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Networking.Abstractions/Definitions/Enums.cs/#L387"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Networking.html">Networking</a>.<a class="xref" href="Chaos.Networking.Abstractions.html">Abstractions</a>.<a class="xref" href="Chaos.Networking.Abstractions.Definitions.html">Definitions</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.Networking.Abstractions.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>OpCodes used when sending packets to a client</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public enum ServerOpCode : byte</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+  <h2 id="fields">Fields
+</h2>
+  <dl class="parameters">
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_AcceptConnection"><code>AcceptConnection</code></dt>
+    <dd><p>OpCode sent to a client to confirm their initial connection
+<br>
+Hex value: 0x7E</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_AddItemToPane"><code>AddItemToPane</code></dt>
+    <dd><p>OpCode used to add an item to the client's inventory
+<br>
+Hex value: 0x0F</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_AddSkillToPane"><code>AddSkillToPane</code></dt>
+    <dd><p>OpCode used to add a skill to a client's skillbook
+<br>
+Hex value: 0x2C</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_AddSpellToPane"><code>AddSpellToPane</code></dt>
+    <dd><p>OpCode used to add a spell to the client's spellbook
+<br>
+Hex value: 0x17</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_Animation"><code>Animation</code></dt>
+    <dd><p>OpCode used to play an animation on a point or object
+<br>
+Hex value: 0x29</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_Attributes"><code>Attributes</code></dt>
+    <dd><p>OpCode used to send a client it's attributes
+<br>
+Hex value: 0x08</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_BodyAnimation"><code>BodyAnimation</code></dt>
+    <dd><p>OpCode used to animate a creature's body
+<br>
+Hex value: 0x1A</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_CancelCasting"><code>CancelCasting</code></dt>
+    <dd><p>OpCode used to tell a client to cancel a spellcast
+<br>
+Hex value: 0x48</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_ClientWalkResponse"><code>ClientWalkResponse</code></dt>
+    <dd><p>OpCode used to respond to a client's request to walk
+<br>
+Hex value: 0x0B</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_ConnectionInfo"><code>ConnectionInfo</code></dt>
+    <dd><p>OpCode used to send the encryption details and checksum of the details of available login servers
+<br>
+Hex value: 0x00</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_Cooldown"><code>Cooldown</code></dt>
+    <dd><p>OpCode used to send a skill or spell cooldown to a client
+<br>
+Hex value: 0x3F</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_CreatureTurn"><code>CreatureTurn</code></dt>
+    <dd><p>OpCode used to send a client another creature's turn
+<br>
+Hex value: 0x11</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_CreatureWalk"><code>CreatureWalk</code></dt>
+    <dd><p>OpCode used to send a client another creature's walk
+<br>
+Hex value: 0x0C</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayAisling"><code>DisplayAisling</code></dt>
+    <dd><p>OpCode used to display an aisling to a client
+<br>
+Hex value: 0x33</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayBoard"><code>DisplayBoard</code></dt>
+    <dd><p>OpCode used to display a board to a client
+<br>
+Hex value: 0x31</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayDialog"><code>DisplayDialog</code></dt>
+    <dd><p>OpCode used to display a dialog to a client
+<br>
+Hex value: 0x30</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayExchange"><code>DisplayExchange</code></dt>
+    <dd><p>OpCode used to send data displayed int an exchange window to a client
+<br>
+Hex value: 0x42</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayGroupInvite"><code>DisplayGroupInvite</code></dt>
+    <dd><p>OpCode used to send a client a group request
+<br>
+Hex value: 0x63</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayMenu"><code>DisplayMenu</code></dt>
+    <dd><p>OpCode used to display a merchant menu to a client
+<br>
+Hex value: 0x2F</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayNotepad"><code>DisplayNotepad</code></dt>
+    <dd><p>OpCode used to associate text with an object
+<br>
+Hex value: 0x1B</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayPublicMessage"><code>DisplayPublicMessage</code></dt>
+    <dd><p>OpCode used to send a client a public message
+<br>
+Hex value: 0x0D</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayUnequip"><code>DisplayUnequip</code></dt>
+    <dd><p>OpCode used to send a client a removal from an equipment slot
+<br>
+Hex value: 0x38</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayVisibleEntities"><code>DisplayVisibleEntities</code></dt>
+    <dd><p>OpCode used to send a client all non-aisling objects in it's viewport
+<br>
+Hex value: 0x07</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_Door"><code>Door</code></dt>
+    <dd><p>OpCode used to give details of nearby doors to a client
+<br>
+Hex value: 0x32</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_EditableProfileRequest"><code>EditableProfileRequest</code></dt>
+    <dd><p>OpCode used to request profile details from a client
+<br>
+Hex value: 0x49</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_Effect"><code>Effect</code></dt>
+    <dd><p>OpCode used to display an effect on the bar on the right hand side of the viewport
+<br>
+Hex value: 0x3A</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_Equipment"><code>Equipment</code></dt>
+    <dd><p>OpCode used to send a client a change in an equipment slot
+<br>
+Hex value: 0x37</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_ExitResponse"><code>ExitResponse</code></dt>
+    <dd><p>OpCode used to send a client confirmation of a request to exit to the login server
+<br>
+Hex value: 0x4C</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_ForceClientPacket"><code>ForceClientPacket</code></dt>
+    <dd><p>OpCode used to force a client to send back a specified packet
+<br>
+Hex value: 0x4B</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_HealthBar"><code>HealthBar</code></dt>
+    <dd><p>OpCode used to display a creature's health bar
+<br>
+Hex value: 0x13</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_HeartBeat"><code>HeartBeat</code></dt>
+    <dd><p>OpCode used to request a heartbeat response from a client
+<br>
+Hex value: 0x3B</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_LightLevel"><code>LightLevel</code></dt>
+    <dd><p>OpCode used to change the light level of the map
+<br>
+Hex value: 0x20</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_Location"><code>Location</code></dt>
+    <dd><p>OpCode used to send a client it's location
+<br>
+Hex value: 0x04</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_LoginControl"><code>LoginControl</code></dt>
+    <dd><p>OpCode used to send a client data for the login screen
+<br>
+Hex value: 0x66</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_LoginMessage"><code>LoginMessage</code></dt>
+    <dd><p>OpCode used to send a message to a client on the login server
+<br>
+Hex value: 0x02</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_LoginNotice"><code>LoginNotice</code></dt>
+    <dd><p>OpCode used to send a client the EULA / login notice
+<br>
+Hex value: 0x60</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_MapChangeComplete"><code>MapChangeComplete</code></dt>
+    <dd><p>OpCode used to signal to the client that a map change operation has completed
+<br>
+Hex value: 0x1F</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_MapChangePending"><code>MapChangePending</code></dt>
+    <dd><p>OpCode used to signal a client that it is changing maps
+<br>
+Hex value: 0x67</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_MapData"><code>MapData</code></dt>
+    <dd><p>OpCode used to send a client tile data for a map
+<br>
+Hex value: 0x3C</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_MapInfo"><code>MapInfo</code></dt>
+    <dd><p>OpCode used to send map details to a client
+<br>
+Hex value: 0x15</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_MapLoadComplete"><code>MapLoadComplete</code></dt>
+    <dd><p>OpCode used to signal a client that it has finished sending map data
+<br>
+Hex value: 0x58</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_MetaData"><code>MetaData</code></dt>
+    <dd><p>OpCode used to send metadata data to a client
+<br>
+Hex value: 0x6F</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_OtherProfile"><code>OtherProfile</code></dt>
+    <dd><p>OpCode used to display an aisling's profile to a client
+<br>
+Hex value: 0x34</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_Redirect"><code>Redirect</code></dt>
+    <dd><p>OpCode used to redirect a client to another server
+<br>
+Hex value: 0x03</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_RefreshResponse"><code>RefreshResponse</code></dt>
+    <dd><p>OpCode used to respond to a client's request to refresh the viewport
+<br>
+Hex value: 0x22</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_RemoveEntity"><code>RemoveEntity</code></dt>
+    <dd><p>OpCode used to remove an object from the client's viewport
+<br>
+Hex value: 0x0E</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_RemoveItemFromPane"><code>RemoveItemFromPane</code></dt>
+    <dd><p>OpCode used to remove an item from the client's inventory
+<br>
+Hex value: 0x10</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_RemoveSkillFromPane"><code>RemoveSkillFromPane</code></dt>
+    <dd><p>OpCode used to remove a skill from a client's skillbook
+<br>
+Hex value: 0x2D</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_RemoveSpellFromPane"><code>RemoveSpellFromPane</code></dt>
+    <dd><p>OpCode used to remove a spell from the client's spellbook
+<br>
+Hex value: 0x18</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_SelfProfile"><code>SelfProfile</code></dt>
+    <dd><p>OpCode used to send a client it's own profile
+<br>
+Hex value: 0x39</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_ServerMessage"><code>ServerMessage</code></dt>
+    <dd><p>OpCode used to send a client a non-public message
+<br>
+Hex value: 0x0A</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_ServerTableResponse"><code>ServerTableResponse</code></dt>
+    <dd><p>OpCode used to send a client a list of available servers
+<br>
+Hex value: 0x56</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_Sound"><code>Sound</code></dt>
+    <dd><p>OpCode used to tell the client to play a sound
+<br>
+Hex value: 0x19</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_SynchronizeTicks"><code>SynchronizeTicks</code></dt>
+    <dd><p>OpCode used to synchronize the server's ticks with a client's
+<br>
+Hex value: 0x68</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_UserId"><code>UserId</code></dt>
+    <dd><p>OpCode used to send a client it's id
+<br>
+Hex value: 0x05</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_WorldList"><code>WorldList</code></dt>
+    <dd><p>OpCode used to display the world list to a client
+<br>
+Hex value: 0x36</p>
+</dd>
+    <dt id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_WorldMap"><code>WorldMap</code></dt>
+    <dd><p>OpCode used to transition a client to the world map
+<br>
+Hex value: 0x2E</p>
+</dd>
+  </dl>
+
+
+  <h2 id="Chaos_Networking_Abstractions_Definitions_ServerOpCode_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>In networking, an opcode is used to identify the type of packet that is being sent. The opcode is generally part of
+a header near the beginning of the data stream</p>
+</div>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Networking.Abstractions/Definitions/Enums.cs/#L387" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

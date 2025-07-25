@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IKnowledgeBook&lt;T&gt;
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IKnowledgeBook&lt;T&gt;
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Collections_Abstractions_IKnowledgeBook_1.md&amp;value=---%0Auid%3A%20Chaos.Collections.Abstractions.IKnowledgeBook%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Collections.Abstractions.IKnowledgeBook`1">
+
+
+
+  <h1 id="Chaos_Collections_Abstractions_IKnowledgeBook_1" data-uid="Chaos.Collections.Abstractions.IKnowledgeBook`1" class="text-break">
+    Interface IKnowledgeBook&lt;T&gt;
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Collections/Abstractions/IKnowledgeBook.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Collections.html">Collections</a>.<a class="xref" href="Chaos.Collections.Abstractions.html">Abstractions</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Provides methods for managing knowledge books (skill/spell panels)</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IKnowledgeBook&lt;T&gt; : IPanel&lt;T&gt;, IEnumerable&lt;T&gt;, IDeltaUpdatable where T : PanelEntityBase</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>An implementation of <a class="xref" href="Chaos.Models.Panel.Abstractions.PanelEntityBase.html">PanelEntityBase</a></p>
+</dd>
+  </dl>
+
+
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.AvailableSlots.html#Chaos_Collections_Abstractions_IPanel_1_AvailableSlots">IPanel&lt;T&gt;.AvailableSlots</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.IsFull.html#Chaos_Collections_Abstractions_IPanel_1_IsFull">IPanel&lt;T&gt;.IsFull</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.PanelType.html#Chaos_Collections_Abstractions_IPanel_1_PanelType">IPanel&lt;T&gt;.PanelType</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.AddObserver.html#Chaos_Collections_Abstractions_IPanel_1_AddObserver_Chaos_Observers_Abstractions_IObserver__0__">IPanel&lt;T&gt;.AddObserver(IObserver&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.Clear.html#Chaos_Collections_Abstractions_IPanel_1_Clear">IPanel&lt;T&gt;.Clear()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.Contains.html#Chaos_Collections_Abstractions_IPanel_1_Contains__0_">IPanel&lt;T&gt;.Contains(T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.Contains.html#Chaos_Collections_Abstractions_IPanel_1_Contains_System_Byte_">IPanel&lt;T&gt;.Contains(byte)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.Contains.html#Chaos_Collections_Abstractions_IPanel_1_Contains_System_String_">IPanel&lt;T&gt;.Contains(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.ContainsByTemplateKey.html#Chaos_Collections_Abstractions_IPanel_1_ContainsByTemplateKey_System_String_">IPanel&lt;T&gt;.ContainsByTemplateKey(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.ForceAdd.html#Chaos_Collections_Abstractions_IPanel_1_ForceAdd__0_">IPanel&lt;T&gt;.ForceAdd(T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.IsValidSlot.html#Chaos_Collections_Abstractions_IPanel_1_IsValidSlot_System_Byte_">IPanel&lt;T&gt;.IsValidSlot(byte)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.Item.html#Chaos_Collections_Abstractions_IPanel_1_Item_System_Byte_">IPanel&lt;T&gt;.this[byte]</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.Item.html#Chaos_Collections_Abstractions_IPanel_1_Item_System_String_">IPanel&lt;T&gt;.this[string]</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.Remove.html#Chaos_Collections_Abstractions_IPanel_1_Remove_System_Byte_">IPanel&lt;T&gt;.Remove(byte)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.Remove.html#Chaos_Collections_Abstractions_IPanel_1_Remove_System_String_">IPanel&lt;T&gt;.Remove(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.RemoveByTemplateKey.html#Chaos_Collections_Abstractions_IPanel_1_RemoveByTemplateKey_System_String_">IPanel&lt;T&gt;.RemoveByTemplateKey(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.TryAdd.html#Chaos_Collections_Abstractions_IPanel_1_TryAdd_System_Byte__0_">IPanel&lt;T&gt;.TryAdd(byte, T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.TryAddToNextSlot.html#Chaos_Collections_Abstractions_IPanel_1_TryAddToNextSlot__0_">IPanel&lt;T&gt;.TryAddToNextSlot(T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.TryGetObject.html#Chaos_Collections_Abstractions_IPanel_1_TryGetObject_System_Byte__0__">IPanel&lt;T&gt;.TryGetObject(byte, out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.TryGetObject.html#Chaos_Collections_Abstractions_IPanel_1_TryGetObject_System_String__0__">IPanel&lt;T&gt;.TryGetObject(string, out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.TryGetObjectByTemplateKey.html#Chaos_Collections_Abstractions_IPanel_1_TryGetObjectByTemplateKey_System_String__0__">IPanel&lt;T&gt;.TryGetObjectByTemplateKey(string, out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.TryGetRemove.html#Chaos_Collections_Abstractions_IPanel_1_TryGetRemove_System_Byte__0__">IPanel&lt;T&gt;.TryGetRemove(byte, out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.TryGetRemove.html#Chaos_Collections_Abstractions_IPanel_1_TryGetRemove_System_String__0__">IPanel&lt;T&gt;.TryGetRemove(string, out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.TryGetRemoveByTemplateKey.html#Chaos_Collections_Abstractions_IPanel_1_TryGetRemoveByTemplateKey_System_String__0__">IPanel&lt;T&gt;.TryGetRemoveByTemplateKey(string, out T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.TrySwap.html#Chaos_Collections_Abstractions_IPanel_1_TrySwap_System_Byte_System_Byte_">IPanel&lt;T&gt;.TrySwap(byte, byte)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.Update.html#Chaos_Collections_Abstractions_IPanel_1_Update_System_Byte_System_Nullable_Action__0___">IPanel&lt;T&gt;.Update(byte, Action&lt;T&gt;?)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.IKnowledgeBook-1.GetFirstSlotInPage.html#Chaos_Collections_Abstractions_IKnowledgeBook_1_GetFirstSlotInPage_PageType_">GetFirstSlotInPage(PageType)</a></dt>
+    <dd><p>Retrieves the first slot index for the specified page</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.IKnowledgeBook-1.GetLastSlotInPage.html#Chaos_Collections_Abstractions_IKnowledgeBook_1_GetLastSlotInPage_PageType_">GetLastSlotInPage(PageType)</a></dt>
+    <dd><p>Retrieves the last slot index available in the specified page</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.IKnowledgeBook-1.TryAddToNextSlot.html#Chaos_Collections_Abstractions_IKnowledgeBook_1_TryAddToNextSlot_PageType__0_">TryAddToNextSlot(PageType, T)</a></dt>
+    <dd><p>Attempts to add the specified object to the next available slot within the specified page</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Collections/Abstractions/IKnowledgeBook.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

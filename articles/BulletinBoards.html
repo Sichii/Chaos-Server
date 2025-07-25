@@ -1,0 +1,265 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Bulletin Boards | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Bulletin Boards | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/BulletinBoards.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="bulletin-boards">Bulletin Boards</h1>
+
+<p>Boards in Chaos are both templated and scripted objects. When you define a board, you are defining the read-only
+configuration of that board across the game. BulletinBoards are created from that configuration, with it's posts being
+separately serialized and deserialized elsewhere.</p>
+<h2 id="bulletinboard-templates">BulletinBoard Templates</h2>
+<p>A bulletin board template is a configuration object that defines the read-only configuration of a bulletin board.</p>
+<h2 id="how-do-i-create-them">How do I create them?</h2>
+<p>By default, bulletin board templates should be created in <code>Data\Configuration\Tempaltes\BulletinBoards</code>. Configuration
+of how bulletin boards are loaded can be found in <code>appsettings.json</code> at <code>Options:BulletinBoardTemplateCacheOptions</code>.</p>
+<p>BulletinBoard templates are initially serialized
+into <a class="xref" href="../api/Chaos.Schemas.Templates.BulletinBoardTemplateSchema.html">BulletinBoardTemplateSchema</a> before being mapped to
+a <a class="xref" href="../api/Chaos.Models.Templates.BulletinBoardTemplate.html">BulletinBoardTemplate</a>. The schema object is mapped via
+the <a class="xref" href="../api/Chaos.Services.MapperProfiles.BoardMapperProfile.html">BoardMapperProfile</a>.</p>
+<p>See <a class="xref" href="../api/Chaos.Schemas.Templates.BulletinBoardTemplateSchema.html">BulletinBoardTemplateSchema</a> for a list of all
+configurable properties with descriptions.</p>
+<h2 id="how-do-i-use-them">How do I use them?</h2>
+<p>BulletinBoards are loaded via the <a class="xref" href="../api/Chaos.Services.Storage.BulletinBoardStore.html">BulletinBoardStore</a>,
+which is an implementation of <a class="xref" href="../api/Chaos.Storage.Abstractions.IStore-1.html">IStore&lt;T&gt;</a>.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Objects stored via <code>IStore&lt;T&gt;</code> are loaded on-demand, and never go out of scope</p>
+</div>
+<pre><code class="lang-cs">private readonly IStore&lt;BulletinBoard&gt; BulletinBoardStore;
+
+public Foo(IStore&lt;BulletinBoard&gt; bulletinBoardStore) =&gt; BulletinBoardStore = bulletinBoardStore;
+
+public void Bar()
+{
+    //this will fetch the bulletin board that has the key specified
+    var bulletinBoard = BulletinBoardStore.Load(&quot;myBoardKey&quot;);
+}
+</code></pre>
+<h2 id="mailboxes">MailBoxes</h2>
+<p>MailBoxes are handled slightly differently, and are serialized to and
+from <a class="xref" href="../api/Chaos.Schemas.Boards.MailBoxSchema.html">MailBoxSchema</a>. MailBoxes are not configurable or scripted, and are
+created when an Aisling is created. Configuration of how MailBoxes are saved and backed up can be found
+in <code>appsettings.json</code> at <code>Options:MailBoxStoreOptions</code>.</p>
+<h3 id="how-do-i-use-them-1">How do I use them?</h3>
+<p>MailBoxes are made accessible through the <a class="xref" href="../api/Chaos.Services.Storage.MailStore.html">MailStore</a>, which is an
+implementation of <a class="xref" href="../api/Chaos.Storage.Abstractions.IStore-1.html">IStore&lt;T&gt;</a>.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Objects stored via <code>IStore&lt;T&gt;</code> are loaded on-demand, and never go out of scope</p>
+</div>
+<pre><code class="lang-cs">private readonly IStore&lt;MailBox&gt; MailStore;
+
+public Foo(IStore&lt;MailBox&gt; mailStore) =&gt; MailStore = mailStore;
+
+public void Bar()
+{
+    //this will fetch the mailbox for the specified aisling name
+    var mailBox = MailStore.Load(&quot;sichi&quot;);
+}
+</code></pre>
+<h2 id="board-list">Board List</h2>
+<p>When logged onto a character, there's a button you can press to see a list of boards that you have access to. This list
+of boards is configurable through the <code>DefaultAislingScript</code>.</p>
+<p>You can also display a list of boards via other scripts, such as a reactor tile, by calling</p>
+<pre><code class="lang-cs">private readonly IStore&lt;MailBox&gt; MailStore;
+private readonly IStore&lt;BulletinBoard&gt; BulletinBoardStore;
+
+public Foo(IStore&lt;MailBox&gt; mailStore, IStore&lt;BulletinBoard&gt; bulletinBoardStore)
+{
+    MailStore = mailStore;
+    BulletinBoardStore = bulletinBoardStore;
+}
+
+public void Bar(IWorldClient client)
+{
+    //fetch mailbox
+    var mailBox = MailStore.Load(&quot;sichi&quot;);
+    //fetch other board
+    var bulletinBoard = BulletinBoardStore.Load(&quot;myBoardKey&quot;);
+    
+    //display both boards to the client
+    client.SendBoardList(new[] { mailBox, bulletinBoard });
+}
+</code></pre>
+<h2 id="bulletinboards-in-the-world">BulletinBoards in the world</h2>
+<p>If you want to display a board by clicking a tile on the map, you can use a reactor tile. Just place a reactor tile on
+the point the tile is at, and add a script to that reactor tile to display the board when clicked.</p>
+<h2 id="scripting">Scripting</h2>
+<p>BulletinBoards are scripted
+via <a class="xref" href="../api/Chaos.Scripting.BulletinBoardScripts.Abstractions.IBulletinBoardScript.html">IBulletinBoardScript</a>.</p>
+<ul>
+<li>Inherit
+from <a class="xref" href="../api/Chaos.Scripting.BulletinBoardScripts.Abstractions.BulletinBoardScriptBase.html">BulletinBoardScriptBase</a> for a
+basic script that requires no external configuration</li>
+<li>Inherit
+from <a class="xref" href="../api/Chaos.Scripting.BulletinBoardScripts.Abstractions.ConfigurableBulletinBoardScriptBase.html">ConfigurableBulletinBoardScriptBase</a>
+for a script that requires external configuration via ScriptVars</li>
+</ul>
+<p>Specify any number of script keys in the <code>BulletinBoardTemplate.ScriptKeys</code> property, and those scripts will
+automatically be attached to the <code>BulletinBoard</code> when it is created.</p>
+<p>If the script is configurable, you must also have an entry for that script in the <code>BulletinBoardTemplate.ScriptVars</code>
+property.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The key of a script is the name of the class without 'Script' at the end</p>
+</div>
+<p>Here are the events overridable in bulletinBoard scripts</p>
+<table>
+<thead>
+<tr>
+<th>Event Name</th>
+<th>Context</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AllowedToDelete</td>
+<td>Called when an aisling is trying to delete a post</td>
+</tr>
+<tr>
+<td>AllowedToHighlight</td>
+<td>Called when an aisling is trying to highlight a post. It's also used to determine if an aisling has the ability to see the highlight button in the UI</td>
+</tr>
+<tr>
+<td>AllowedToPost</td>
+<td>Called when an aisling is trying to post to the board</td>
+</tr>
+<tr>
+<td>AllowedToView</td>
+<td>Called when an aisling is trying to view the board, or a post on the board</td>
+</tr>
+<tr>
+<td>ShouldRejectPost</td>
+<td>Called when an aisling is trying to post to the board. This event should be used to filter out posts for whatever reason you decide</td>
+</tr>
+<tr>
+<td>Update</td>
+<td>Called every time boards update, which is about once per minute. Boards update separately from all other objects. Only boards that have been loaded will be updated</td>
+</tr>
+</tbody>
+</table>
+<p>See <a href="Scripting.html">Scripting</a> for more details on scripting in general</p>
+<h2 id="example">Example</h2>
+<p>Here is an example of a public bulletin board that is configured to use the &quot;publicBoard&quot; script, which retains posts
+indefinitely, and is moderated by a character named &quot;fooBar&quot;. (more on scripts later)</p>
+<pre><code class="lang-json">{
+    &quot;templateKey&quot;: &quot;public_test_board&quot;,
+    &quot;name&quot;: &quot;Test Board&quot;,
+    &quot;scriptKeys&quot;: [&quot;publicBoard&quot;],
+
+    &quot;scriptVars&quot;: {
+        &quot;publicBoard&quot;: {
+            &quot;postRetentionHours&quot;: -1,
+            &quot;moderators&quot;: [&quot;fooBar&quot;]
+        }
+    }
+}
+</code></pre>
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/BulletinBoards.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

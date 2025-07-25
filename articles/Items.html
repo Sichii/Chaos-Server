@@ -1,0 +1,268 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Items | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Items | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Items.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="items">Items</h1>
+
+<p>Items in Chaos are both templated and scripted objects. When you define an item, you are actually defining an item
+template that will be used to create new instances of that item as requested. Each item that is created is a fresh
+instance of that item created from it's template.</p>
+<h2 id="item-templates">Item Templates</h2>
+<p>An item template is used to create new instances of items as required. The template defines the base properties of the
+item, but the item itself can be modified separately (more on that later). As with all templates objects, the template
+is shared between all instances of the item.</p>
+<h2 id="how-do-i-create-them">How do I create them?</h2>
+<p>By default, item templates should be created in <code>Data\Configuration\Templates\Items</code>. Configuration of how item
+templates are loaded can be found in <code>appsettings.json</code> at <code>Options:ItemTemplateCacheOptions</code>.</p>
+<p>Item templates are initially serialized into <a class="xref" href="../api/Chaos.Schemas.Templates.ItemTemplateSchema.html">ItemTemplateSchema</a>
+before being mapped to an <a class="xref" href="../api/Chaos.Models.Templates.ItemTemplate.html">ItemTemplate</a>. The schema object is mapped via
+the <a class="xref" href="../api/Chaos.Services.MapperProfiles.ItemMapperProfile.html">ItemMapperProfile</a>.</p>
+<p>See <a class="xref" href="../api/Chaos.Schemas.Templates.ItemTemplateSchema.html">ItemTemplateSchema</a> for a list of all configurable properties
+with descriptions.</p>
+<h2 id="how-do-i-use-them">How do I use them?</h2>
+<p>Items can be created by using the <a class="xref" href="../api/Chaos.Services.Factories.ItemFactory.html">ItemFactory</a>, which is an implementation
+of <a class="xref" href="../api/Chaos.Services.Factories.Abstractions.IItemFactory.html">IItemFactory</a>.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Each item is a fresh instance of an item created from a template. Any changes made to the template will apply to all
+instances of that item.</p>
+</div>
+<pre><code class="lang-cs">private readonly IItemFactory ItemFactory;
+
+public Foo(IItemFactory itemFactory) =&gt; ItemFactory = itemFactory;
+
+public void Bar()
+{
+    // create a new instance of an apple (defaults to count of 1)
+    // extraScriptKeys is optional, and can be used to pass in extra script keys that are not part of the templated item
+    var item = ItemFactory.Create(&quot;apple&quot;, extraScriptKeys);
+}
+</code></pre>
+<h2 id="modifying-items-at-runtime">Modifying items at runtime</h2>
+<p>Sometimes you may want to implement systems into your game that allow players to modify items. There are a couple of
+things to know before implementing these systems.</p>
+<ul>
+<li>If you are allowing players to modify the stats on an item, the item must be flagged with <code>IsModifiable</code>. This allows
+the meta node of that item to be mutated.</li>
+<li>Modifications must be done through a script, preferably
+using <a class="xref" href="../api/Chaos.Scripting.ItemScripts.Abstractions.IEnchantmentScript.html">IEnchantmentScript</a></li>
+<li>Items that have been modified must have a unique <code>DisplayName</code> that is specific to the modifications that were made</li>
+<li><code>DisplayName</code> is a property of the item, not the template, and overrides the template's <code>Name</code> property</li>
+<li>You must mutate the meta node of the item so that there is a separate meta node for each modification.
+See <a href="MetaData.html#mutators">this article</a> on how to do that</li>
+</ul>
+<p>When the item is serialized back to file, the extra script key of the script you added that contains the modifications
+will be serialized as well. This will allow that modification script to be re-applied when the item is deserialized.</p>
+<p>To add a script to an object at runtime, just use the extension method <code>AddScript</code>.</p>
+<h2 id="notepad-text">Notepad Text</h2>
+<p>Items have a <code>NotepadText</code> property that can be used to store text. This is in place to support the <code>DisplayNotepad</code> and
+<code>SetNotepad</code> packets. This text is not guaranteed to persist through banking or stackable item transfer.</p>
+<h2 id="dyeable-items">Dyeable items</h2>
+<p>The color of the item (not the item template) can be changed, but in order for this change to be persisted,
+the <code>ItemTemplate.IsDyeable</code> must be set to true.</p>
+<h2 id="scripting">Scripting</h2>
+<p>Items are scripted via <a class="xref" href="../api/Chaos.Scripting.ItemScripts.Abstractions.IItemScript.html">IItemScript</a>.</p>
+<ul>
+<li>Inherit from <a class="xref" href="../api/Chaos.Scripting.ItemScripts.Abstractions.ItemScriptBase.html">ItemScriptBase</a> for a basic script that
+requires no external configuration</li>
+<li>Inherit from <a class="xref" href="../api/Chaos.Scripting.ItemScripts.Abstractions.ConfigurableItemScriptBase.html">ConfigurableItemScriptBase</a>
+for a script that requires external configuration via ScriptVars</li>
+</ul>
+<p>Specify any number of script keys in the <code>ItemTemplate.ScriptKeys</code> property, and those scripts will automatically be
+attached to the <code>Item</code> when it is created.</p>
+<p>If the script is configurable, you must also have an entry for that script in the <code>ItemTemplate.ScriptVars</code> property.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The key of a script is the name of the class without 'Script' at the end</p>
+</div>
+<p>Here are the events overridable in item scripts:</p>
+<table>
+<thead>
+<tr>
+<th>Event Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CanBeDropped</td>
+<td>Called before the item is dropped. Return false to prevent the item from being dropped</td>
+</tr>
+<tr>
+<td>CanBeDroppedOn</td>
+<td>Called before the item is dropped on a creature. Return false to prevent the item from being dropped on the creature</td>
+</tr>
+<tr>
+<td>CanBePickedUp</td>
+<td>Called before the item is picked up. Return false to prevent the item from being picked up</td>
+</tr>
+<tr>
+<td>CanUse</td>
+<td>Called before the item is used. Return false to prevent the item from being used</td>
+</tr>
+<tr>
+<td>OnDropped</td>
+<td>Called after the item is dropped, but before reactor tiles are notified</td>
+</tr>
+<tr>
+<td>OnEquipped</td>
+<td>Called after the item has been equipped</td>
+</tr>
+<tr>
+<td>OnNotepadTextUpdated</td>
+<td>Called after the item's <code>NotepadText</code> property is updated</td>
+</tr>
+<tr>
+<td>OnPickup</td>
+<td>Called after the item has been picked up. Beware that if a stackable item is picked up, this event will be fired from the item after it has been merged into another stack.<br>Details about the original item will be properties in the event</td>
+</tr>
+<tr>
+<td>OnUnEquipped</td>
+<td>Called after the item has been unequipped</td>
+</tr>
+<tr>
+<td>OnUse</td>
+<td>Called when the item is used. Provide functionality to items via this event</td>
+</tr>
+<tr>
+<td>Update</td>
+<td>Called every time the map updates. Items will update if they're on the ground, in an inventory, or equipped, but will not update if they are in the bank</td>
+</tr>
+</tbody>
+</table>
+<h2 id="example">Example</h2>
+<p>Here is an example of an item template json. This item template is for an apple. In the json you can see that the item
+uses the <a class="xref" href="../api/Chaos.Scripting.ItemScripts.VitalityConsumableScript.html">VitalityConsumable</a> script. This script takes in
+some configurable values that will determine how much health and mana are given when the item is used. The script will
+also remove 1 of the item when it is used. In this case, our apple will provide 100 health when used.</p>
+<pre><code class="lang-json">{
+  &quot;buyCost&quot;: 100,
+  &quot;category&quot;: &quot;food&quot;,
+  &quot;color&quot;: &quot;Default&quot;,
+  &quot;isModifiable&quot;: true,
+  &quot;maxStacks&quot;: 100,
+  &quot;sellValue&quot;: 50,
+  &quot;weight&quot;: 1,
+  &quot;description&quot;: &quot;A shiny red apple. Looks edible!&quot;,
+  &quot;name&quot;: &quot;Apple&quot;,
+  &quot;panelSprite&quot;: 40,
+  &quot;scriptKeys&quot;: [
+    &quot;vitalityConsumable&quot;
+  ],
+  &quot;scriptVars&quot;: {
+    &quot;vitalityConsumable&quot;: {
+      &quot;baseHeal&quot;: 100,
+      &quot;filter&quot;: &quot;selfOnly, aliveOnly&quot;
+    }
+  },
+  &quot;templateKey&quot;: &quot;apple&quot;
+}
+</code></pre>
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Items.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,345 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Method Contains
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Method Contains
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Extensions_Geometry_PolygonExtensions_Contains_.md&amp;value=---%0Auid%3A%20Chaos.Extensions.Geometry.PolygonExtensions.Contains*%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Extensions.Geometry.PolygonExtensions.Contains*">
+
+
+
+
+
+<h1 id="Chaos_Extensions_Geometry_PolygonExtensions_Contains_" data-uid="Chaos.Extensions.Geometry.PolygonExtensions.Contains*" class="text-break">
+  Method Contains
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Extensions.Geometry/PolygonExtensions.cs/#L16"><i class="bi bi-code-slash"></i></a>
+</h1>
+
+<div class="facts text-secondary">
+  <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Extensions.html">Extensions</a>.<a class="xref" href="Chaos.Extensions.Geometry.html">Geometry</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.Extensions.Geometry.dll</dd></dl>
+</div>
+
+<div class="markdown summary"></div>
+<div class="markdown conceptual"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a id="Chaos_Extensions_Geometry_PolygonExtensions_Contains_" data-uid="Chaos.Extensions.Geometry.PolygonExtensions.Contains*"></a>
+
+<h3 id="Chaos_Extensions_Geometry_PolygonExtensions_Contains_Chaos_Geometry_ValuePolygon_Chaos_Geometry_ValuePoint_" data-uid="Chaos.Extensions.Geometry.PolygonExtensions.Contains(Chaos.Geometry.ValuePolygon,Chaos.Geometry.ValuePoint)">
+  Contains(ValuePolygon, ValuePoint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Extensions.Geometry/PolygonExtensions.cs/#L16"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"></div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static bool Contains(this ValuePolygon polygon, ValuePoint point)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>polygon</code> <a class="xref" href="Chaos.Geometry.ValuePolygon.html">ValuePolygon</a></dt>
+  <dd></dd>
+  <dt><code>point</code> <a class="xref" href="Chaos.Geometry.ValuePoint.html">ValuePoint</a></dt>
+  <dd></dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><span class="xref">bool</span></dt>
+  <dd></dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="Chaos_Extensions_Geometry_PolygonExtensions_Contains_" data-uid="Chaos.Extensions.Geometry.PolygonExtensions.Contains*"></a>
+
+<h3 id="Chaos_Extensions_Geometry_PolygonExtensions_Contains_Chaos_Geometry_ValuePolygon_Chaos_Geometry_Point_" data-uid="Chaos.Extensions.Geometry.PolygonExtensions.Contains(Chaos.Geometry.ValuePolygon,Chaos.Geometry.Point)">
+  Contains(ValuePolygon, Point)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Extensions.Geometry/PolygonExtensions.cs/#L40"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"></div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static bool Contains(this ValuePolygon polygon, Point point)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>polygon</code> <a class="xref" href="Chaos.Geometry.ValuePolygon.html">ValuePolygon</a></dt>
+  <dd></dd>
+  <dt><code>point</code> <a class="xref" href="Chaos.Geometry.Point.html">Point</a></dt>
+  <dd></dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><span class="xref">bool</span></dt>
+  <dd></dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="Chaos_Extensions_Geometry_PolygonExtensions_Contains_" data-uid="Chaos.Extensions.Geometry.PolygonExtensions.Contains*"></a>
+
+<h3 id="Chaos_Extensions_Geometry_PolygonExtensions_Contains_IPolygon_Chaos_Geometry_Point_" data-uid="Chaos.Extensions.Geometry.PolygonExtensions.Contains(IPolygon,Chaos.Geometry.Point)">
+  Contains(IPolygon, Point)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Extensions.Geometry/PolygonExtensions.cs/#L64"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"></div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static bool Contains(this IPolygon polygon, Point point)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>polygon</code> <span class="xref">IPolygon</span></dt>
+  <dd></dd>
+  <dt><code>point</code> <a class="xref" href="Chaos.Geometry.Point.html">Point</a></dt>
+  <dd></dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><span class="xref">bool</span></dt>
+  <dd></dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+<a id="Chaos_Extensions_Geometry_PolygonExtensions_Contains_" data-uid="Chaos.Extensions.Geometry.PolygonExtensions.Contains*"></a>
+
+<h3 id="Chaos_Extensions_Geometry_PolygonExtensions_Contains_IPolygon_IPoint_" data-uid="Chaos.Extensions.Geometry.PolygonExtensions.Contains(IPolygon,IPoint)">
+  Contains(IPolygon, IPoint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Extensions.Geometry/PolygonExtensions.cs/#L142"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"><p>Determines whether the given Chaos.Geometry.Abstractions.IPolygon contains the given
+Chaos.Geometry.Abstractions.IPoint</p>
+</div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public static bool Contains(this IPolygon polygon, IPoint point)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>polygon</code> <span class="xref">IPolygon</span></dt>
+  <dd><p>The polygon to check</p>
+</dd>
+  <dt><code>point</code> <span class="xref">IPoint</span></dt>
+  <dd><p>The point to check</p>
+</dd>
+</dl>
+
+<h4 class="section">Returns</h4>
+<dl class="parameters">
+  <dt><span class="xref">bool</span></dt>
+  <dd><code>
+    true
+</code>
+if the polygon contains the point, otherwise
+<code>
+    false
+</code>
+</dd>
+</dl>
+
+
+
+
+
+
+
+<h4 class="section" id="Chaos_Extensions_Geometry_PolygonExtensions_Contains_IPolygon_IPoint__remarks">Remarks</h4>
+<div class="markdown level1 remarks"><p>This is a long-form implementation of pnpoly that allows for fast-path failures
+<br>
+<a href="https://wrfranklin.org/Research/Short_Notes/pnpoly.html">https://wrfranklin.org/Research/Short_Notes/pnpoly.html</a>
+<br>
+Vertices may be in either clock-wise or counter-clockwise order, but the vertices must be in one of those orders
+<br>
+The shape may be either convex or concave
+<br>
+The shape may contains holes, but please read the above link for further details about that
+<br>
+<br>
+Copyright (c) 1970-2003, Wm. Randolph Franklin
+<br>
+<br>
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to the following conditions:
+<br>
+<br>
+Redistributions of source code must retain the above copyright notice, this list of conditions and the following
+disclaimers.
+<br>
+Redistributions in binary form must reproduce the above copyright notice in the documentation and/or other
+materials provided with the distribution.
+<br>
+The name of W. Randolph Franklin may not be used to endorse or promote products derived from this Software without
+specific prior written permission.
+<br>
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+</div>
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Extensions.Geometry/PolygonExtensions.cs/#L16" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class CascadingDamageScript
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class CascadingDamageScript
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Scripting_SpellScripts_CascadingDamageScript.md&amp;value=---%0Auid%3A%20Chaos.Scripting.SpellScripts.CascadingDamageScript%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Scripting.SpellScripts.CascadingDamageScript">
+
+
+
+  <h1 id="Chaos_Scripting_SpellScripts_CascadingDamageScript" data-uid="Chaos.Scripting.SpellScripts.CascadingDamageScript" class="text-break">
+    Class CascadingDamageScript
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Scripting/SpellScripts/CascadingDamageScript.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Scripting.html">Scripting</a>.<a class="xref" href="Chaos.Scripting.SpellScripts.html">SpellScripts</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class CascadingDamageScript : ConfigurableSpellScriptBase, ISpellScript, IScript, IDeltaUpdatable, GenericAbilityComponent&lt;Creature&gt;.IAbilityComponentOptions, GetTargetsAbilityComponent&lt;Creature&gt;.IGetTargetsComponentOptions, SoundAbilityComponent.ISoundComponentOptions, BodyAnimationAbilityComponent.IBodyAnimationComponentOptions, AnimationAbilityComponent.IAnimationComponentOptions, ManaCostAbilityComponent.IManaCostComponentOptions, BreaksHideAbilityComponent.IBreaksHideComponentOptions, DamageAbilityComponent.IDamageComponentOptions, CascadingAbilityComponent&lt;CascadingDamageTileScript&gt;.ICascadingComponentOptions</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><a class="xref" href="Chaos.Scripting.SpellScripts.Abstractions.ConfigurableSpellScriptBase.html">ConfigurableSpellScriptBase</a></div>
+      <div><span class="xref">CascadingDamageScript</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Scripting.SpellScripts.Abstractions.ISpellScript.html">ISpellScript</a></div>
+      <div><span class="xref">IScript</span></div>
+      <div><span class="xref">IDeltaUpdatable</span></div>
+      <div><a class="xref" href="Chaos.Scripting.Components.AbilityComponents.GenericAbilityComponent-1.html">GenericAbilityComponent</a>&lt;<a class="xref" href="Chaos.Models.World.Abstractions.Creature.html">Creature</a>&gt;.<a class="xref" href="Chaos.Scripting.Components.AbilityComponents.GenericAbilityComponent-1.IAbilityComponentOptions.html">IAbilityComponentOptions</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Components.AbilityComponents.GetTargetsAbilityComponent-1.html">GetTargetsAbilityComponent</a>&lt;<a class="xref" href="Chaos.Models.World.Abstractions.Creature.html">Creature</a>&gt;.<a class="xref" href="Chaos.Scripting.Components.AbilityComponents.GetTargetsAbilityComponent-1.IGetTargetsComponentOptions.html">IGetTargetsComponentOptions</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Components.AbilityComponents.SoundAbilityComponent.html">SoundAbilityComponent</a>.<a class="xref" href="Chaos.Scripting.Components.AbilityComponents.SoundAbilityComponent.ISoundComponentOptions.html">ISoundComponentOptions</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Components.AbilityComponents.BodyAnimationAbilityComponent.html">BodyAnimationAbilityComponent</a>.<a class="xref" href="Chaos.Scripting.Components.AbilityComponents.BodyAnimationAbilityComponent.IBodyAnimationComponentOptions.html">IBodyAnimationComponentOptions</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Components.AbilityComponents.AnimationAbilityComponent.html">AnimationAbilityComponent</a>.<a class="xref" href="Chaos.Scripting.Components.AbilityComponents.AnimationAbilityComponent.IAnimationComponentOptions.html">IAnimationComponentOptions</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Components.AbilityComponents.ManaCostAbilityComponent.html">ManaCostAbilityComponent</a>.<a class="xref" href="Chaos.Scripting.Components.AbilityComponents.ManaCostAbilityComponent.IManaCostComponentOptions.html">IManaCostComponentOptions</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Components.AbilityComponents.BreaksHideAbilityComponent.html">BreaksHideAbilityComponent</a>.<a class="xref" href="Chaos.Scripting.Components.AbilityComponents.BreaksHideAbilityComponent.IBreaksHideComponentOptions.html">IBreaksHideComponentOptions</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Components.AbilityComponents.DamageAbilityComponent.html">DamageAbilityComponent</a>.<a class="xref" href="Chaos.Scripting.Components.AbilityComponents.DamageAbilityComponent.IDamageComponentOptions.html">IDamageComponentOptions</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Components.AbilityComponents.CascadingAbilityComponent-1.html">CascadingAbilityComponent</a>&lt;<a class="xref" href="Chaos.Scripting.ReactorTileScripts.CascadingDamageTileScript.html">CascadingDamageTileScript</a>&gt;.<a class="xref" href="Chaos.Scripting.Components.AbilityComponents.CascadingAbilityComponent-1.ICascadingComponentOptions.html">ICascadingComponentOptions</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Scripting.SpellScripts.Abstractions.ConfigurableSpellScriptBase.CanUse.html#Chaos_Scripting_SpellScripts_Abstractions_ConfigurableSpellScriptBase_CanUse_Chaos_Models_Data_SpellContext_">ConfigurableSpellScriptBase.CanUse(SpellContext)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.SpellScripts.Abstractions.ConfigurableSpellScriptBase.Update.html#Chaos_Scripting_SpellScripts_Abstractions_ConfigurableSpellScriptBase_Update_TimeSpan_">ConfigurableSpellScriptBase.Update(TimeSpan)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.-ctor.html#Chaos_Scripting_SpellScripts_CascadingDamageScript__ctor_Chaos_Models_Panel_Spell_Chaos_Services_Factories_Abstractions_IReactorTileFactory_">CascadingDamageScript(Spell, IReactorTileFactory)</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.AnimatePoints.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_AnimatePoints">AnimatePoints</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.Animation.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_Animation">Animation</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.AnimationSpeed.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_AnimationSpeed">AnimationSpeed</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.ApplyDamageScript.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_ApplyDamageScript">ApplyDamageScript</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.BaseDamage.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_BaseDamage">BaseDamage</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.BodyAnimation.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_BodyAnimation">BodyAnimation</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.CascadeOnlyFromEntities.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_CascadeOnlyFromEntities">CascadeOnlyFromEntities</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.CascadeScriptVars.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_CascadeScriptVars">CascadeScriptVars</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.DamageStat.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_DamageStat">DamageStat</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.DamageStatMultiplier.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_DamageStatMultiplier">DamageStatMultiplier</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.Element.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_Element">Element</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.ExclusionRange.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_ExclusionRange">ExclusionRange</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.Filter.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_Filter">Filter</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.ManaCost.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_ManaCost">ManaCost</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.MustHaveTargets.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_MustHaveTargets">MustHaveTargets</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.PctHpDamage.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_PctHpDamage">PctHpDamage</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.PctManaCost.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_PctManaCost">PctManaCost</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.Range.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_Range">Range</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.ReactorTileFactory.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_ReactorTileFactory">ReactorTileFactory</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.ScaleBodyAnimationSpeedByAttackSpeed.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_ScaleBodyAnimationSpeedByAttackSpeed">ScaleBodyAnimationSpeedByAttackSpeed</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.Shape.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_Shape">Shape</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.ShouldNotBreakHide.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_ShouldNotBreakHide">ShouldNotBreakHide</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.SingleTarget.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_SingleTarget">SingleTarget</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.Sound.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_Sound">Sound</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CascadingDamageScript.OnUse.html#Chaos_Scripting_SpellScripts_CascadingDamageScript_OnUse_Chaos_Models_Data_SpellContext_">OnUse(SpellContext)</a></dt>
+    <dd><p>Triggers when the spell subject is used in the given context of activation</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Scripting/SpellScripts/CascadingDamageScript.cs/#L19" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

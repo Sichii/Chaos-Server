@@ -1,0 +1,245 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface ICrypto
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface ICrypto
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Cryptography_Abstractions_ICrypto.md&amp;value=---%0Auid%3A%20Chaos.Cryptography.Abstractions.ICrypto%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Cryptography.Abstractions.ICrypto">
+
+
+
+  <h1 id="Chaos_Cryptography_Abstractions_ICrypto" data-uid="Chaos.Cryptography.Abstractions.ICrypto" class="text-break">
+    Interface ICrypto
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Cryptography.Abstractions/ICrypto.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Cryptography.html">Cryptography</a>.<a class="xref" href="Chaos.Cryptography.Abstractions.html">Abstractions</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.Cryptography.Abstractions.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Defines a pattern for encryption and decryption on spans using opcodes</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface ICrypto</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.Key.html#Chaos_Cryptography_Abstractions_ICrypto_Key">Key</a></dt>
+    <dd><p>Encryption key</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.Seed.html#Chaos_Cryptography_Abstractions_ICrypto_Seed">Seed</a></dt>
+    <dd><p>The seed is used to generate key salts</p>
+</dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.ClientDecrypt.html#Chaos_Cryptography_Abstractions_ICrypto_ClientDecrypt_Span_System_Byte___System_Byte_System_Byte_">ClientDecrypt(ref Span&lt;byte&gt;, byte, byte)</a></dt>
+    <dd><p>Decrypts a packet that's been sent to a client</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.ClientEncrypt.html#Chaos_Cryptography_Abstractions_ICrypto_ClientEncrypt_Span_System_Byte___System_Byte_System_Byte_">ClientEncrypt(ref Span&lt;byte&gt;, byte, byte)</a></dt>
+    <dd><p>Encrypts a packet that's being sent from a client</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.DecryptDialog.html#Chaos_Cryptography_Abstractions_ICrypto_DecryptDialog_Span_System_Byte___">DecryptDialog(ref Span&lt;byte&gt;)</a></dt>
+    <dd><p>Decrypts the dialog of a packet sent from a client.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.EncryptDialog.html#Chaos_Cryptography_Abstractions_ICrypto_EncryptDialog_Span_System_Byte___">EncryptDialog(ref Span&lt;byte&gt;)</a></dt>
+    <dd><p>Encrypts the dialog of a packet sent from a client.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.GenerateEncryptionParameters.html#Chaos_Cryptography_Abstractions_ICrypto_GenerateEncryptionParameters">GenerateEncryptionParameters()</a></dt>
+    <dd><p>Generates and sets randomized encryption parameters (Seed/Key)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.GenerateKey.html#Chaos_Cryptography_Abstractions_ICrypto_GenerateKey_System_UInt16_System_Byte_">GenerateKey(ushort, byte)</a></dt>
+    <dd><p>Generates a random encryption key from the given values</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.GenerateKeySalts.html#Chaos_Cryptography_Abstractions_ICrypto_GenerateKeySalts_System_String_">GenerateKeySalts(string)</a></dt>
+    <dd><p>Generates pseudo-random bytes from a seed</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.GetClientEncryptionType.html#Chaos_Cryptography_Abstractions_ICrypto_GetClientEncryptionType_System_Byte_">GetClientEncryptionType(byte)</a></dt>
+    <dd><p>Which type of encryption, if any, should be used with the given opcode on a packet sent from the client</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.GetMd5Hash.html#Chaos_Cryptography_Abstractions_ICrypto_GetMd5Hash_System_String_">GetMd5Hash(string)</a></dt>
+    <dd><p>Generates an md5 hash of the given string</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.GetServerEncryptionType.html#Chaos_Cryptography_Abstractions_ICrypto_GetServerEncryptionType_System_Byte_">GetServerEncryptionType(byte)</a></dt>
+    <dd><p>Which type of encryption, if any, should be used with the given opcode on a packet sent from the server</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.IsClientEncrypted.html#Chaos_Cryptography_Abstractions_ICrypto_IsClientEncrypted_System_Byte_">IsClientEncrypted(byte)</a></dt>
+    <dd><p>Whether or not a packet with the given opcode sent from the client should be encrypted</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.IsServerEncrypted.html#Chaos_Cryptography_Abstractions_ICrypto_IsServerEncrypted_System_Byte_">IsServerEncrypted(byte)</a></dt>
+    <dd><p>Whether or not a packet with the given opcode sent from the server should be encrypted</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.ServerDecrypt.html#Chaos_Cryptography_Abstractions_ICrypto_ServerDecrypt_Span_System_Byte___System_Byte_System_Byte_">ServerDecrypt(ref Span&lt;byte&gt;, byte, byte)</a></dt>
+    <dd><p>Decrypts a packet that's been sent to a server</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Cryptography.Abstractions.ICrypto.ServerEncrypt.html#Chaos_Cryptography_Abstractions_ICrypto_ServerEncrypt_Span_System_Byte___System_Byte_System_Byte_">ServerEncrypt(ref Span&lt;byte&gt;, byte, byte)</a></dt>
+    <dd><p>Encrypts a packet that's being sent from a server</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Cryptography.Abstractions/ICrypto.cs/#L8" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

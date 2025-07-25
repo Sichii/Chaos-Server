@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class AislingScriptBase
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class AislingScriptBase
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase.md&amp;value=---%0Auid%3A%20Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase">
+
+
+
+  <h1 id="Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase" data-uid="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase" class="text-break">
+    Class AislingScriptBase
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Scripting/AislingScripts/Abstractions/AislingScriptBase.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Scripting.html">Scripting</a>.<a class="xref" href="Chaos.Scripting.AislingScripts.html">AislingScripts</a>.<a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.html">Abstractions</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class AislingScriptBase : SubjectiveScriptBase&lt;Aisling&gt;, IAislingScript, ICreatureScript, IScript, IDeltaUpdatable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><span class="xref">AislingScriptBase</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.IAislingScript.html">IAislingScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.CreatureScripts.Abstractions.ICreatureScript.html">ICreatureScript</a></div>
+      <div><span class="xref">IScript</span></div>
+      <div><span class="xref">IDeltaUpdatable</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Scripting.AislingScripts.DefaultAislingScript.html">DefaultAislingScript</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.-ctor.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase__ctor_Chaos_Models_World_Aisling_">AislingScriptBase(Aisling)</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.Items.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_Items">Items</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.Map.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_Map">Map</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.Skills.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_Skills">Skills</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.Spells.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_Spells">Spells</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanDropItem.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanDropItem_Chaos_Models_Panel_Item_">CanDropItem(Item)</a></dt>
+    <dd><p>Triggers when an aisling tries to drop an item</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanDropItemOn.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanDropItemOn_Chaos_Models_World_Aisling_Chaos_Models_Panel_Item_">CanDropItemOn(Aisling, Item)</a></dt>
+    <dd><p>Determines if the specified item can be dropped on the creature subject by the source aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanDropMoney.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanDropMoney_System_Int32_">CanDropMoney(int)</a></dt>
+    <dd><p>Triggers when an aisling tries to drop money</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanDropMoneyOn.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanDropMoneyOn_Chaos_Models_World_Aisling_System_Int32_">CanDropMoneyOn(Aisling, int)</a></dt>
+    <dd><p>Determines if the specified amount of money can be dropped on the creature subject by the source aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanMove.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanMove">CanMove()</a></dt>
+    <dd><p>Determines if the creature subject is allowed to move (check for paralysis, sleep, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanPickupItem.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanPickupItem_Chaos_Models_World_GroundItem_">CanPickupItem(GroundItem)</a></dt>
+    <dd><p>Triggers when an aisling tries to pick up an item</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanPickupMoney.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanPickupMoney_Chaos_Models_World_Money_">CanPickupMoney(Money)</a></dt>
+    <dd><p>Triggers when an aisling tries to pick up money</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanSee.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanSee_Chaos_Models_World_Abstractions_VisibleEntity_">CanSee(VisibleEntity)</a></dt>
+    <dd><p>Determines if the creature subject can see the specified entity</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanTalk.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanTalk">CanTalk()</a></dt>
+    <dd><p>Determines if the creature subject is allowed to talk. (check for silence, mute, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanTurn.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanTurn">CanTurn()</a></dt>
+    <dd><p>Determines if the creature subject is allowed to turn (check for paralysis, sleep, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanUseItem.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanUseItem_Chaos_Models_Panel_Item_">CanUseItem(Item)</a></dt>
+    <dd><p>Determines if the specified item can be used by the aisling subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanUseSkill.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanUseSkill_Chaos_Models_Panel_Skill_">CanUseSkill(Skill)</a></dt>
+    <dd><p>Determines if the creature subject is allowed to use the specified skill (check for paralysis, sleep, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.CanUseSpell.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_CanUseSpell_Chaos_Models_Panel_Spell_">CanUseSpell(Spell)</a></dt>
+    <dd><p>Determines if the creature subject is allowed to use the specified spell (check for paralysis, sleep, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.GetBoardList.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_GetBoardList">GetBoardList()</a></dt>
+    <dd><p>Determines what boards are visible to the aisling when viewing the boards panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.IsFriendlyTo.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_IsFriendlyTo_Chaos_Models_World_Abstractions_Creature_">IsFriendlyTo(Creature)</a></dt>
+    <dd><p>Determines if the creature subject is friently to the specified creature (often for the purposes of acquiring
+targets of beneficial abilities)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.IsHostileTo.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_IsHostileTo_Chaos_Models_World_Abstractions_Creature_">IsHostileTo(Creature)</a></dt>
+    <dd><p>Determines if the creature subject is hostile to the specified creature (often for the purposes of acquiring
+targets of hostile abilities)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnApproached.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnApproached_Chaos_Models_World_Abstractions_Creature_">OnApproached(Creature)</a></dt>
+    <dd><p>Triggers when the specified creature becomes observable to the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnAttacked.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnAttacked_Chaos_Models_World_Abstractions_Creature_System_Int32_">OnAttacked(Creature, int)</a></dt>
+    <dd><p>Triggers when the specified creature attacks the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnClicked.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnClicked_Chaos_Models_World_Aisling_">OnClicked(Aisling)</a></dt>
+    <dd><p>Triggers when the creature subject is clicked by the specified aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnDeath.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnDeath">OnDeath()</a></dt>
+    <dd><p>Triggers when the creature subject dies. (Triggered by ApplyDamageScripts)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnDeparture.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnDeparture_Chaos_Models_World_Abstractions_Creature_">OnDeparture(Creature)</a></dt>
+    <dd><p>Triggers when the specified creature is no longer observable to the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnGoldDroppedOn.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnGoldDroppedOn_Chaos_Models_World_Aisling_System_Int32_">OnGoldDroppedOn(Aisling, int)</a></dt>
+    <dd><p>Triggers when the specified aisling drops gold on the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnHealed.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnHealed_Chaos_Models_World_Abstractions_Creature_System_Int32_">OnHealed(Creature, int)</a></dt>
+    <dd><p>Triggers when the specified creature heals the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnItemDroppedOn.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnItemDroppedOn_Chaos_Models_World_Aisling_Chaos_Models_Panel_Item_">OnItemDroppedOn(Aisling, Item)</a></dt>
+    <dd><p>Triggers when the specified aisling drops an item on the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnLogin.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnLogin">OnLogin()</a></dt>
+    <dd><p>Triggers when the aisling logs in (after they have been added to the world)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnLogout.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnLogout">OnLogout()</a></dt>
+    <dd><p>Triggers when the aisling logs out (before they are removed from the world)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnPublicMessage.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnPublicMessage_Chaos_Models_World_Abstractions_Creature_System_String_">OnPublicMessage(Creature, string)</a></dt>
+    <dd><p>Triggers when the specified creature sends a public message</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.OnStatIncrease.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_OnStatIncrease_Stat_">OnStatIncrease(Stat)</a></dt>
+    <dd><p>Triggers when the aisling's stat is increased</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.AislingScriptBase.Update.html#Chaos_Scripting_AislingScripts_Abstractions_AislingScriptBase_Update_TimeSpan_">Update(TimeSpan)</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Scripting/AislingScripts/Abstractions/AislingScriptBase.cs/#L13" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,386 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IWorldServer&lt;TClient&gt;
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IWorldServer&lt;TClient&gt;
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Networking_Abstractions_IWorldServer_1.md&amp;value=---%0Auid%3A%20Chaos.Networking.Abstractions.IWorldServer%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Networking.Abstractions.IWorldServer`1">
+
+
+
+  <h1 id="Chaos_Networking_Abstractions_IWorldServer_1" data-uid="Chaos.Networking.Abstractions.IWorldServer`1" class="text-break">
+    Interface IWorldServer&lt;TClient&gt;
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Networking.Abstractions/IWorldServer.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Networking.html">Networking</a>.<a class="xref" href="Chaos.Networking.Abstractions.html">Abstractions</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.Networking.Abstractions.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Defines a pattern for a server that facilites all aspects of actual gameplay</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IWorldServer&lt;in TClient&gt; : IServer&lt;TClient&gt;, IHostedService where TClient : IConnectedClient</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TClient</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.IServer-1.HandlePacketAsync.html#Chaos_Networking_Abstractions_IServer_1_HandlePacketAsync__0_Chaos_Packets_Packet__">IServer&lt;TClient&gt;.HandlePacketAsync(TClient, in Packet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.IServer-1.OnClientException.html#Chaos_Networking_Abstractions_IServer_1_OnClientException__0_Chaos_Packets_Packet__">IServer&lt;TClient&gt;.OnClientException(TClient, in Packet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.IServer-1.OnHeartBeatAsync.html#Chaos_Networking_Abstractions_IServer_1_OnHeartBeatAsync__0_Chaos_Packets_Packet__">IServer&lt;TClient&gt;.OnHeartBeatAsync(TClient, in Packet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.IServer-1.OnSequenceChangeAsync.html#Chaos_Networking_Abstractions_IServer_1_OnSequenceChangeAsync__0_Chaos_Packets_Packet__">IServer&lt;TClient&gt;.OnSequenceChangeAsync(TClient, in Packet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.IServer-1.OnSynchronizeTicksAsync.html#Chaos_Networking_Abstractions_IServer_1_OnSynchronizeTicksAsync__0_Chaos_Packets_Packet__">IServer&lt;TClient&gt;.OnSynchronizeTicksAsync(TClient, in Packet)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnBeginChant.html#Chaos_Networking_Abstractions_IWorldServer_1_OnBeginChant__0_Chaos_Packets_Packet__">OnBeginChant(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client begins casting a spell with cast lines</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnBoardInteraction.html#Chaos_Networking_Abstractions_IWorldServer_1_OnBoardInteraction__0_Chaos_Packets_Packet__">OnBoardInteraction(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client accesses a board or mail</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnChant.html#Chaos_Networking_Abstractions_IWorldServer_1_OnChant__0_Chaos_Packets_Packet__">OnChant(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client uses an ability that has chant lines</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnClick.html#Chaos_Networking_Abstractions_IWorldServer_1_OnClick__0_Chaos_Packets_Packet__">OnClick(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client clicks on an object</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnClientRedirected.html#Chaos_Networking_Abstractions_IWorldServer_1_OnClientRedirected__0_Chaos_Packets_Packet__">OnClientRedirected(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client is redirected to this server</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnClientWalk.html#Chaos_Networking_Abstractions_IWorldServer_1_OnClientWalk__0_Chaos_Packets_Packet__">OnClientWalk(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client walks in a direction</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnDialogInteraction.html#Chaos_Networking_Abstractions_IWorldServer_1_OnDialogInteraction__0_Chaos_Packets_Packet__">OnDialogInteraction(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client responds to a dialog</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnDisplayEntityRequest.html#Chaos_Networking_Abstractions_IWorldServer_1_OnDisplayEntityRequest__0_Chaos_Packets_Packet__">OnDisplayEntityRequest(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests an object be re-sent</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnEditableProfile.html#Chaos_Networking_Abstractions_IWorldServer_1_OnEditableProfile__0_Chaos_Packets_Packet__">OnEditableProfile(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client responds to a request for profile data (portrait, text)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnEmote.html#Chaos_Networking_Abstractions_IWorldServer_1_OnEmote__0_Chaos_Packets_Packet__">OnEmote(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client uses an emote</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnExchangeInteraction.html#Chaos_Networking_Abstractions_IWorldServer_1_OnExchangeInteraction__0_Chaos_Packets_Packet__">OnExchangeInteraction(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client interacts with an exchange window</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnExitRequest.html#Chaos_Networking_Abstractions_IWorldServer_1_OnExitRequest__0_Chaos_Packets_Packet__">OnExitRequest(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client tries to log out</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnGoldDrop.html#Chaos_Networking_Abstractions_IWorldServer_1_OnGoldDrop__0_Chaos_Packets_Packet__">OnGoldDrop(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client drops gold on the ground</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnGoldDroppedOnCreature.html#Chaos_Networking_Abstractions_IWorldServer_1_OnGoldDroppedOnCreature__0_Chaos_Packets_Packet__">OnGoldDroppedOnCreature(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client drops gold on a creature</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnGroupInvite.html#Chaos_Networking_Abstractions_IWorldServer_1_OnGroupInvite__0_Chaos_Packets_Packet__">OnGroupInvite(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client invites another player to a group, responds to a group invite, or creates or destroys a group
+box</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnIgnore.html#Chaos_Networking_Abstractions_IWorldServer_1_OnIgnore__0_Chaos_Packets_Packet__">OnIgnore(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client ignores or un-ignores another player, or requests a list of ignored players</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnItemDrop.html#Chaos_Networking_Abstractions_IWorldServer_1_OnItemDrop__0_Chaos_Packets_Packet__">OnItemDrop(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client drops an item on the ground</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnItemDroppedOnCreature.html#Chaos_Networking_Abstractions_IWorldServer_1_OnItemDroppedOnCreature__0_Chaos_Packets_Packet__">OnItemDroppedOnCreature(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client drops an item on a creature</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnItemUse.html#Chaos_Networking_Abstractions_IWorldServer_1_OnItemUse__0_Chaos_Packets_Packet__">OnItemUse(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client uses an item</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnMapDataRequest.html#Chaos_Networking_Abstractions_IWorldServer_1_OnMapDataRequest__0_Chaos_Packets_Packet__">OnMapDataRequest(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests tile data for the current map</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnMenuInteraction.html#Chaos_Networking_Abstractions_IWorldServer_1_OnMenuInteraction__0_Chaos_Packets_Packet__">OnMenuInteraction(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client responds to a merchant menu</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnMetaDataRequest.html#Chaos_Networking_Abstractions_IWorldServer_1_OnMetaDataRequest__0_Chaos_Packets_Packet__">OnMetaDataRequest(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests metadata details or data</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnOptionToggle.html#Chaos_Networking_Abstractions_IWorldServer_1_OnOptionToggle__0_Chaos_Packets_Packet__">OnOptionToggle(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client toggles a user option</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnPickup.html#Chaos_Networking_Abstractions_IWorldServer_1_OnPickup__0_Chaos_Packets_Packet__">OnPickup(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client picks up an item from the ground</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnPublicMessage.html#Chaos_Networking_Abstractions_IWorldServer_1_OnPublicMessage__0_Chaos_Packets_Packet__">OnPublicMessage(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client sends a publicly visible message</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnRaiseStat.html#Chaos_Networking_Abstractions_IWorldServer_1_OnRaiseStat__0_Chaos_Packets_Packet__">OnRaiseStat(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests to raise a stat</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnRefreshRequest.html#Chaos_Networking_Abstractions_IWorldServer_1_OnRefreshRequest__0_Chaos_Packets_Packet__">OnRefreshRequest(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client refreshes their viewport</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnSelfProfileRequest.html#Chaos_Networking_Abstractions_IWorldServer_1_OnSelfProfileRequest__0_Chaos_Packets_Packet__">OnSelfProfileRequest(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests the profile of another player</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnSetNotepad.html#Chaos_Networking_Abstractions_IWorldServer_1_OnSetNotepad__0_Chaos_Packets_Packet__">OnSetNotepad(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client edits an item's notepad and submits the changes</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnSkillUse.html#Chaos_Networking_Abstractions_IWorldServer_1_OnSkillUse__0_Chaos_Packets_Packet__">OnSkillUse(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client uses a skill</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnSocialStatus.html#Chaos_Networking_Abstractions_IWorldServer_1_OnSocialStatus__0_Chaos_Packets_Packet__">OnSocialStatus(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client changes their social status</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnSpacebar.html#Chaos_Networking_Abstractions_IWorldServer_1_OnSpacebar__0_Chaos_Packets_Packet__">OnSpacebar(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client presses their spacebar</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnSpellUse.html#Chaos_Networking_Abstractions_IWorldServer_1_OnSpellUse__0_Chaos_Packets_Packet__">OnSpellUse(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client uses a spell</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnSwapSlot.html#Chaos_Networking_Abstractions_IWorldServer_1_OnSwapSlot__0_Chaos_Packets_Packet__">OnSwapSlot(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client swaps two panel objects</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnToggleGroup.html#Chaos_Networking_Abstractions_IWorldServer_1_OnToggleGroup__0_Chaos_Packets_Packet__">OnToggleGroup(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client toggles their group availability</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnTurn.html#Chaos_Networking_Abstractions_IWorldServer_1_OnTurn__0_Chaos_Packets_Packet__">OnTurn(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client changes their character's direction</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnUnequip.html#Chaos_Networking_Abstractions_IWorldServer_1_OnUnequip__0_Chaos_Packets_Packet__">OnUnequip(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client unequips an item</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnWhisper.html#Chaos_Networking_Abstractions_IWorldServer_1_OnWhisper__0_Chaos_Packets_Packet__">OnWhisper(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client sends a private message to the server</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnWorldListRequest.html#Chaos_Networking_Abstractions_IWorldServer_1_OnWorldListRequest__0_Chaos_Packets_Packet__">OnWorldListRequest(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client requests a list of all online players</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldServer-1.OnWorldMapClick.html#Chaos_Networking_Abstractions_IWorldServer_1_OnWorldMapClick__0_Chaos_Packets_Packet__">OnWorldMapClick(TClient, in Packet)</a></dt>
+    <dd><p>Occurs when a client clicks on a world map node</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Networking.Abstractions/IWorldServer.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

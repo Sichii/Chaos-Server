@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ExpiringFileCache&lt;T, TSchema, TOptions&gt;
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ExpiringFileCache&lt;T, TSchema, TOptions&gt;
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Storage_ExpiringFileCache_3.md&amp;value=---%0Auid%3A%20Chaos.Storage.ExpiringFileCache%603%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Storage.ExpiringFileCache`3">
+
+
+
+  <h1 id="Chaos_Storage_ExpiringFileCache_3" data-uid="Chaos.Storage.ExpiringFileCache`3" class="text-break">
+    Class ExpiringFileCache&lt;T, TSchema, TOptions&gt;
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Storage/ExpiringFileCache.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Storage.html">Storage</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.Storage.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>An <a class="xref" href="Chaos.Storage.Abstractions.ISimpleCache-1.html">ISimpleCache&lt;TResult&gt;</a> that loads data from a file and caches it. The
+data has a configurable expiration.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ExpiringFileCache&lt;T, TSchema, TOptions&gt; : ISimpleCache&lt;T&gt;, IEnumerable&lt;T&gt; where TSchema : class where TOptions : class, IExpiringFileCacheOptions</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of object stored in the cache</p>
+</dd>
+    <dt><code>TSchema</code></dt>
+    <dd><p>The type of object the files is initially deserialized into</p>
+</dd>
+    <dt><code>TOptions</code></dt>
+    <dd></dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><span class="xref">ExpiringFileCache&lt;T, TSchema, TOptions&gt;</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Storage.Abstractions.ISimpleCache-1.html">ISimpleCache</a>&lt;T&gt;</div>
+      <div><span class="xref">IEnumerable</span>&lt;T&gt;</div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Services.Storage.ExpiringMapInstanceCache.html">ExpiringMapInstanceCache</a></div>
+      <div><a class="xref" href="Chaos.Services.Storage.ExpiringMapTemplateCache.html">ExpiringMapTemplateCache</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.-ctor.html#Chaos_Storage_ExpiringFileCache_3__ctor_IMemoryCache_Chaos_Storage_Abstractions_IEntityRepository_IOptions__2__ILogger_Chaos_Storage_ExpiringFileCache__0__1__2___">ExpiringFileCache(IMemoryCache, IEntityRepository, IOptions&lt;TOptions&gt;, ILogger&lt;ExpiringFileCache&lt;T, TSchema, TOptions&gt;&gt;)</a></dt>
+    <dd><p>Initializes a new instance of the <a class="xref" href="Chaos.Storage.ExpiringFileCache-3.html">ExpiringFileCache&lt;T, TSchema, TOptions&gt;</a> class.</p>
+</dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.Cache.html#Chaos_Storage_ExpiringFileCache_3_Cache">Cache</a></dt>
+    <dd><p>The memory cache used to store the data.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.EntityRepository.html#Chaos_Storage_ExpiringFileCache_3_EntityRepository">EntityRepository</a></dt>
+    <dd><p>The store used to load and save objects that map to a different type when serialized</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.KeyPrefix.html#Chaos_Storage_ExpiringFileCache_3_KeyPrefix">KeyPrefix</a></dt>
+    <dd><p>The prefix used for cache keys.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.LocalLookup.html#Chaos_Storage_ExpiringFileCache_3_LocalLookup">LocalLookup</a></dt>
+    <dd><p>Many different types of objects are stored in the memory cache, this lookup is used to store the data for this
+specific type</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.Logger.html#Chaos_Storage_ExpiringFileCache_3_Logger">Logger</a></dt>
+    <dd><p>The logger instance for logging events in this cache.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.Options.html#Chaos_Storage_ExpiringFileCache_3_Options">Options</a></dt>
+    <dd><p>The options used for configuring this cache.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.Paths.html#Chaos_Storage_ExpiringFileCache_3_Paths">Paths</a></dt>
+    <dd><p>The set of paths that are used for loading data.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.Sync.html#Chaos_Storage_ExpiringFileCache_3_Sync">Sync</a></dt>
+    <dd><p>The synchronization object used to manage concurrent access to the cache.</p>
+</dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.ConstructKeyForType.html#Chaos_Storage_ExpiringFileCache_3_ConstructKeyForType_System_String_">ConstructKeyForType(string)</a></dt>
+    <dd><p>Constructs a cache key for the specified object type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.CreateFromEntry.html#Chaos_Storage_ExpiringFileCache_3_CreateFromEntry_ICacheEntry_">CreateFromEntry(ICacheEntry)</a></dt>
+    <dd><p>Searches the configured directory for an object matching the configured parameters that correlates to the provided
+key</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.DeconstructKeyForType.html#Chaos_Storage_ExpiringFileCache_3_DeconstructKeyForType_System_String_">DeconstructKeyForType(string)</a></dt>
+    <dd><p>Deconstructs a cache key for the specified object type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.ForceLoad.html#Chaos_Storage_ExpiringFileCache_3_ForceLoad">ForceLoad()</a></dt>
+    <dd><p>Forcefully loads all objects into the cache</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.Get.html#Chaos_Storage_ExpiringFileCache_3_Get_System_String_">Get(string)</a></dt>
+    <dd><p>Gets an object from the cache</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.GetEnumerator.html#Chaos_Storage_ExpiringFileCache_3_GetEnumerator">GetEnumerator()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.GetPathForKey.html#Chaos_Storage_ExpiringFileCache_3_GetPathForKey_System_String_">GetPathForKey(string)</a></dt>
+    <dd><p>Loads the paths for the configured directory and returns it</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.LoadPaths.html#Chaos_Storage_ExpiringFileCache_3_LoadPaths">LoadPaths()</a></dt>
+    <dd><p>Loads all potential paths from the configured directory</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.ReloadAsync.html#Chaos_Storage_ExpiringFileCache_3_ReloadAsync">ReloadAsync()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.ReloadAsync.html#Chaos_Storage_ExpiringFileCache_3_ReloadAsync_System_String_">ReloadAsync(string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Storage.ExpiringFileCache-3.RemoveValueCallback.html#Chaos_Storage_ExpiringFileCache_3_RemoveValueCallback_System_Object_System_Nullable_System_Object__EvictionReason_System_Nullable_System_Object__">RemoveValueCallback(object, object?, EvictionReason, object?)</a></dt>
+    <dd><p>Callback for when an entry is removed from the cache</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Storage/ExpiringFileCache.cs/#L28" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

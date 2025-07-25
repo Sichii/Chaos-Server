@@ -1,0 +1,346 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class DisplayAislingArgs
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class DisplayAislingArgs
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Networking_Entities_Server_DisplayAislingArgs.md&amp;value=---%0Auid%3A%20Chaos.Networking.Entities.Server.DisplayAislingArgs%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Networking.Entities.Server.DisplayAislingArgs">
+
+
+
+  <h1 id="Chaos_Networking_Entities_Server_DisplayAislingArgs" data-uid="Chaos.Networking.Entities.Server.DisplayAislingArgs" class="text-break">
+    Class DisplayAislingArgs
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Networking/Entities/Server/DisplayAislingArgs.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Networking.html">Networking</a>.<a class="xref" href="Chaos.Networking.Entities.html">Entities</a>.<a class="xref" href="Chaos.Networking.Entities.Server.html">Server</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.Networking.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents the serialization of the <a class="xref" href="Chaos.Networking.Abstractions.Definitions.ServerOpCode.html#Chaos_Networking_Abstractions_Definitions_ServerOpCode_DisplayAisling">DisplayAisling</a> packet</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed record DisplayAislingArgs : IPacketSerializable, IEquatable&lt;DisplayAislingArgs&gt;</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><span class="xref">DisplayAislingArgs</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><span class="xref">IEquatable</span>&lt;<a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.html">DisplayAislingArgs</a>&gt;</div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.AccessoryColor1.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_AccessoryColor1">AccessoryColor1</a></dt>
+    <dd><p>The color of the accessory in the first accessory slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.AccessoryColor2.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_AccessoryColor2">AccessoryColor2</a></dt>
+    <dd><p>The color of the accessory in the second accessory slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.AccessoryColor3.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_AccessoryColor3">AccessoryColor3</a></dt>
+    <dd><p>The color of the accessory in the third accessory slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.AccessorySprite1.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_AccessorySprite1">AccessorySprite1</a></dt>
+    <dd><p>The sprite of the accessory in the first accessory slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.AccessorySprite2.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_AccessorySprite2">AccessorySprite2</a></dt>
+    <dd><p>The sprite of the accessory in the second accessory slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.AccessorySprite3.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_AccessorySprite3">AccessorySprite3</a></dt>
+    <dd><p>The sprite of the accessory in the third accessory slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.ArmorSprite1.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_ArmorSprite1">ArmorSprite1</a></dt>
+    <dd><p>The sprite of the armor in the armor slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.ArmorSprite2.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_ArmorSprite2">ArmorSprite2</a></dt>
+    <dd><p>Also.. the sprite of the armor in the armor slot (not sure what the difference is atm)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.BodyColor.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_BodyColor">BodyColor</a></dt>
+    <dd><p>The color of the aisling's body</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.BodySprite.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_BodySprite">BodySprite</a></dt>
+    <dd><p>The sprite used for the aisling's body</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.BootsColor.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_BootsColor">BootsColor</a></dt>
+    <dd><p>The color of the boots in the boots slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.BootsSprite.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_BootsSprite">BootsSprite</a></dt>
+    <dd><p>The sprite of the boots in the boots slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.Direction.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_Direction">Direction</a></dt>
+    <dd><p>The direction the aisling is facing</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.FaceSprite.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_FaceSprite">FaceSprite</a></dt>
+    <dd><p>The sprite used for the aisling's face</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.Gender.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_Gender">Gender</a></dt>
+    <dd><p>The aisling's gender</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.GroupBoxText.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_GroupBoxText">GroupBoxText</a></dt>
+    <dd><p>If the aisling has a group box, this is the text displayed in it</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.HeadColor.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_HeadColor">HeadColor</a></dt>
+    <dd><p>The color of the aisling's helmet in the overhelm slot, or the color of the helmet in the helmet slot, or the color
+of the aisling's hair</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.HeadSprite.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_HeadSprite">HeadSprite</a></dt>
+    <dd><p>The sprite of the aisling's helmet in the overhelm slot, or the sprite of the helmet in the helmet slot, or the
+sprite of the aisling's hair</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.Id.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_Id">Id</a></dt>
+    <dd><p>The id of the aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.IsDead.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_IsDead">IsDead</a></dt>
+    <dd><p>Whether or not the aisling is dead. If true, the aisling will show up as a ghost</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.IsHidden.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_IsHidden">IsHidden</a></dt>
+    <dd><p>Whether or not the aisling is hidden. If true, the aisling will be fully invisible</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.IsTransparent.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_IsTransparent">IsTransparent</a></dt>
+    <dd><p>Whether or not the aisling is hidden. If true, the aisling will be semitransparent</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.LanternSize.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_LanternSize">LanternSize</a></dt>
+    <dd><p>If the aisling is on a dark map and has a light source, this is the size of the visible area around the aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.Name.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_Name">Name</a></dt>
+    <dd><p>The name of the aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.NameTagStyle.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_NameTagStyle">NameTagStyle</a></dt>
+    <dd><p>The style of the aisling's nametag</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.OvercoatColor.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_OvercoatColor">OvercoatColor</a></dt>
+    <dd><p>The color of the aisling's armor in the overcoat slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.OvercoatSprite.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_OvercoatSprite">OvercoatSprite</a></dt>
+    <dd><p>The sprite of the aisling's armor in the overcoat slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.PantsColor.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_PantsColor">PantsColor</a></dt>
+    <dd><p>The color of the aisling's pants, if they have any</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.RestPosition.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_RestPosition">RestPosition</a></dt>
+    <dd><p>If the aisling is sitting in a resting position, this is the identifier for that position</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.ShieldSprite.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_ShieldSprite">ShieldSprite</a></dt>
+    <dd><p>The color of the aisling's shield in the shield slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.Sprite.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_Sprite">Sprite</a></dt>
+    <dd><p>If the aisling is in a form that has a sprite that should override the aisling's equipment, this is that sprite id</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.WeaponSprite.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_WeaponSprite">WeaponSprite</a></dt>
+    <dd><p>The color of the aisling's weapon in the weapon slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.X.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_X">X</a></dt>
+    <dd><p>The x coordinate of the aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Entities.Server.DisplayAislingArgs.Y.html#Chaos_Networking_Entities_Server_DisplayAislingArgs_Y">Y</a></dt>
+    <dd><p>The y coordinate of the aisling</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Networking/Entities/Server/DisplayAislingArgs.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

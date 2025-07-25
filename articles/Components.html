@@ -1,0 +1,237 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Components | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Components | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Components.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="components">Components</h1>
+
+<p>Components are a way of separating functionality into smaller, more manageable pieces. They let you pull pieces of
+logic out of scripts so that you can reuse them in multiple places and multiple different script types. For example,
+both skills and spells can have animations, body animations, sounds, deal damage, and more. Each of these things can be
+separated into their own components.</p>
+<h2 id="component-types">Component types</h2>
+<p>There are 2 kinds of components: <a class="xref" href="../api/Chaos.Scripting.Components.Abstractions.IComponent.html">IComponent</a>
+and <a class="xref" href="../api/Chaos.Scripting.Components.Abstractions.IConditionalComponent.html">IConditionalComponent</a>.</p>
+<p><code>IComponent</code> is used to execute a piece of logic when nothing depends on its execution. For example, animation or
+sound. There is no way for these actions to &quot;fail&quot;, and thus nothing is going to depend on those components' execution.
+Most components will be of this type.</p>
+<pre><code class="lang-csharp">public class MyComponent : IComponent
+{
+    public void Execute(ActivationContext context, ComponentVars vars)
+    {
+        // Do something
+    }
+}
+</code></pre>
+<p><code>IConditionalComponent</code> is used when something depends on the execution of the component. For example, a component that
+makes an ability occasionally fail, or a component to make abilities cost mana. If components like these fail, the rest
+of the components that come after it should not execute.</p>
+<pre><code class="lang-csharp">public class MyConditionalComponent : IConditionalComponent
+{
+    public bool Execute(ActivationContext context, ComponentVars vars)
+    {
+        // Do something
+        
+        // Return true if the component succeeded, false if it failed
+        return true;
+    }
+}
+</code></pre>
+<h2 id="component-options">Component options</h2>
+<p>Any component that has options associated with it should create an interface that specifies those options. The component
+should expect its options to be contained within the <code>ComponentVars</code> passed to the <code>Execute</code> method of the component.
+The options can be obtained via <code>ComponentVars.GetOptions&lt;TOptions&gt;()</code>.</p>
+<pre><code class="lang-csharp">public class MyComponent : IComponent
+{
+    public interface IMyComponentOptions
+    {
+        // Options go here
+    }
+
+    public void Execute(ActivationContext context, ComponentVars vars)
+    {
+        var options = vars.GetOptions&lt;IMyComponentOptions&gt;();
+        
+        // Do something with the options
+    }
+}
+</code></pre>
+<p>Any component that utilizes another component should ensure that its own options interface inherits from the options
+interfaces of its subcomponents.</p>
+<pre><code class="lang-csharp">public class MyComponent : IComponent
+{
+    public interface IMyComponentOptions : SubComponent.ISubComponentOptions
+    {
+        // Options go here
+        // Since this inherits from SubComponent.ISubComponentOptions, it will also contain the options for SubComponent
+    }
+
+    public void Execute(ActivationContext context, ComponentVars vars)
+    {
+        var options = vars.GetOptions&lt;IMyComponentOptions&gt;();
+        
+        // Do something with the options
+        
+        new ComponentExecutor(context, vars)
+            .Execute&lt;SubComponent&gt;();
+    }
+}
+</code></pre>
+<h2 id="variable-sharing">Variable Sharing</h2>
+<p>Components can share variables with each other via the <code>ComponentVars</code> object. Some examples of this
+are <code>vars.GetPoints()</code> and <code>vars.GetTargets&lt;T&gt;()</code>. These are populated by another component,
+the <a class="xref" href="../api/Chaos.Scripting.Components.AbilityComponents.GetTargetsAbilityComponent-1.html">GetTargetsComponent</a>. The only
+caveat is, any components that use variables populated by another component must be executed after that component.</p>
+<pre><code class="lang-csharp">public class MyComponent : IComponent
+{
+    public void Execute(ActivationContext context, ComponentVars vars)
+    {
+        var targets = vars.GetTargets&lt;Creature&gt;();
+        
+        // Do something with the targets
+    }
+}
+</code></pre>
+<p>If you create a component that needs to share variables with other components, you should create methods
+inside <code>ComponentVars</code> to store and retrieve that information.</p>
+<h2 id="scripting">Scripting</h2>
+<p>Components are intended to be used in scripts. The first step is to know what components you will be utilizing within
+your script. For example, if you want to create a script that plays a body animation, gets targets, deals damage to
+those targets, animates those targets, and plays a sound, it might look something like this.</p>
+<pre><code class="lang-csharp">    public class DamageScript : ConfigurableSpellScriptBase,
+                                BodyAnimationComponent.IBodyAnimationComponentOptions,
+                                GetTargetsComponent&lt;Creature&gt;.IGetTargetsComponentOptions,
+                                DamageComponent.IDamageComponentOptions,
+                                AnimationComponent.IAnimationComponentOptions,
+                                SoundComponent.ISoundComponentOptions
+    {
+        public override OnUse(SpellContext context) =&gt;
+            new ComponentExecutor(context)
+                .WithOptions(this)
+                .Execute&lt;BodyAnimationComponent&gt;()
+                .ExecuteAndCheck&lt;GetTargetsComponent&lt;Creature&gt;&gt;()
+                ?
+                .Execute&lt;DamageComponent&gt;()
+                .Execute&lt;AnimationComponent&gt;()
+                .Execute&lt;SoundComponent&gt;();
+        
+        #region ScriptVars
+        // All of the combined options from the component options interfaces
+        #endregion
+    }
+</code></pre>
+<p>In the above example, the script is utilizing 5 components. Each of those components has an options interface that the
+script inherits from. The script also inherits from the <code>ConfigurableSpellScriptBase</code>. More about this script base can
+be found in the <a href="Scripting.html">Scripting article</a>.</p>
+<p>Another important thing to notice is that the <code>GetTargetsComponent&lt;T&gt;</code> is an <code>IConditionalComponent</code>. These types of
+components are executed via <code>ExecuteAndCheck&lt;TComponent&gt;()</code>. If the conditional part of the component fails, it causes
+the execution of <code>ExecuteAndCheck&lt;TComponent&gt;()</code> to return <code>null</code>. By using the <code>Safe Navigation Operator (?)</code>, we can
+cause all of the method invocations that come after it to not occur if it returns <code>null</code>.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Components.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

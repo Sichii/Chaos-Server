@@ -1,0 +1,768 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Aisling
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Aisling
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Models_World_Aisling.md&amp;value=---%0Auid%3A%20Chaos.Models.World.Aisling%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Models.World.Aisling">
+
+
+
+  <h1 id="Chaos_Models_World_Aisling" data-uid="Chaos.Models.World.Aisling" class="text-break">
+    Class Aisling
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Models/World/Aisling.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Models.html">Models</a>.<a class="xref" href="Chaos.Models.World.html">World</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class Aisling : Creature, ILocation, IAffected, IDeltaUpdatable, IScripted&lt;ICreatureScript&gt;, IScripted&lt;IAislingScript&gt;, IDialogSourceEntity, ICommandSubject, IChannelSubscriber</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.html">WorldEntity</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.html">MapEntity</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.InteractableEntity.html">InteractableEntity</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.html">VisibleEntity</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.NamedEntity.html">NamedEntity</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.Creature.html">Creature</a></div>
+      <div><span class="xref">Aisling</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><span class="xref">ILocation</span></div>
+      <div><a class="xref" href="Chaos.Scripting.EffectScripts.Abstractions.IAffected.html">IAffected</a></div>
+      <div><span class="xref">IDeltaUpdatable</span></div>
+      <div><span class="xref">IScripted</span>&lt;<a class="xref" href="Chaos.Scripting.CreatureScripts.Abstractions.ICreatureScript.html">ICreatureScript</a>&gt;</div>
+      <div><span class="xref">IScripted</span>&lt;<a class="xref" href="Chaos.Scripting.AislingScripts.Abstractions.IAislingScript.html">IAislingScript</a>&gt;</div>
+      <div><a class="xref" href="Chaos.Models.Abstractions.IDialogSourceEntity.html">IDialogSourceEntity</a></div>
+      <div><a class="xref" href="Chaos.Messaging.Abstractions.ICommandSubject.html">ICommandSubject</a></div>
+      <div><a class="xref" href="Chaos.Messaging.Abstractions.IChannelSubscriber.html">IChannelSubscriber</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.Direction.html#Chaos_Models_World_Abstractions_Creature_Direction">Creature.Direction</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.Effects.html#Chaos_Models_World_Abstractions_Creature_Effects">Creature.Effects</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.GamePoints.html#Chaos_Models_World_Abstractions_Creature_GamePoints">Creature.GamePoints</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.Gold.html#Chaos_Models_World_Abstractions_Creature_Gold">Creature.Gold</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.IsDead.html#Chaos_Models_World_Abstractions_Creature_IsDead">Creature.IsDead</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.Vision.html#Chaos_Models_World_Abstractions_Creature_Vision">Creature.Vision</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.ApproachTime.html#Chaos_Models_World_Abstractions_Creature_ApproachTime">Creature.ApproachTime</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.RegenTimer.html#Chaos_Models_World_Abstractions_Creature_RegenTimer">Creature.RegenTimer</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.EffectiveAssailIntervalMs.html#Chaos_Models_World_Abstractions_Creature_EffectiveAssailIntervalMs">Creature.EffectiveAssailIntervalMs</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.IsAlive.html#Chaos_Models_World_Abstractions_Creature_IsAlive">Creature.IsAlive</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.IsBlind.html#Chaos_Models_World_Abstractions_Creature_IsBlind">Creature.IsBlind</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.Animate.html#Chaos_Models_World_Abstractions_Creature_Animate_Chaos_Models_Data_Animation_System_Nullable_System_UInt32__">Creature.Animate(Animation, uint?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.AnimateBody.html#Chaos_Models_World_Abstractions_Creature_AnimateBody_BodyAnimation_System_UInt16_System_Nullable_System_Byte__">Creature.AnimateBody(BodyAnimation, ushort, byte?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.Chant.html#Chaos_Models_World_Abstractions_Creature_Chant_System_String_">Creature.Chant(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.FindPath.html#Chaos_Models_World_Abstractions_Creature_FindPath_IPoint_System_Nullable_IPathOptions__System_Boolean_">Creature.FindPath(IPoint, IPathOptions?, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.HandleMapDeparture.html#Chaos_Models_World_Abstractions_Creature_HandleMapDeparture">Creature.HandleMapDeparture()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.IsFriendlyTo.html#Chaos_Models_World_Abstractions_Creature_IsFriendlyTo_Chaos_Models_World_Abstractions_Creature_">Creature.IsFriendlyTo(Creature)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.IsHostileTo.html#Chaos_Models_World_Abstractions_Creature_IsHostileTo_Chaos_Models_World_Abstractions_Creature_">Creature.IsHostileTo(Creature)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.OnApproached.html#Chaos_Models_World_Abstractions_Creature_OnApproached_Chaos_Models_World_Abstractions_VisibleEntity_System_Boolean_">Creature.OnApproached(VisibleEntity, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.OnDeparture.html#Chaos_Models_World_Abstractions_Creature_OnDeparture_Chaos_Models_World_Abstractions_VisibleEntity_System_Boolean_">Creature.OnDeparture(VisibleEntity, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.Pathfind.html#Chaos_Models_World_Abstractions_Creature_Pathfind_IPoint_System_Int32_System_Nullable_IPathOptions__System_Boolean_">Creature.Pathfind(IPoint, int, IPathOptions?, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.Say.html#Chaos_Models_World_Abstractions_Creature_Say_System_String_">Creature.Say(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.SetVisibility.html#Chaos_Models_World_Abstractions_Creature_SetVisibility_Chaos_Definitions_VisibilityType_">Creature.SetVisibility(VisibilityType)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.Shout.html#Chaos_Models_World_Abstractions_Creature_Shout_System_String_">Creature.Shout(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.ShowHealth.html#Chaos_Models_World_Abstractions_Creature_ShowHealth_System_Nullable_System_Byte__">Creature.ShowHealth(byte?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.TraverseMap.html#Chaos_Models_World_Abstractions_Creature_TraverseMap_Chaos_Collections_MapInstance_IPoint_System_Boolean_System_Boolean_System_Nullable_Func_Task___">Creature.TraverseMap(MapInstance, IPoint, bool, bool, Func&lt;Task&gt;?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.TraverseMapAsync.html#Chaos_Models_World_Abstractions_Creature_TraverseMapAsync_Chaos_Collections_MapInstance_IPoint_System_Boolean_System_Boolean_System_Nullable_Func_Task___">Creature.TraverseMapAsync(MapInstance, IPoint, bool, bool, Func&lt;Task&gt;?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.TryDrop.html#Chaos_Models_World_Abstractions_Creature_TryDrop_IPoint_IEnumerable_Chaos_Models_Panel_Item__Chaos_Models_World_GroundItem____">Creature.TryDrop(IPoint, IEnumerable&lt;Item&gt;, out GroundItem[])</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.TryDrop.html#Chaos_Models_World_Abstractions_Creature_TryDrop_IPoint_Chaos_Models_World_GroundItem____IEnumerable_Chaos_Models_Panel_Item__">Creature.TryDrop(IPoint, out GroundItem[], params IEnumerable&lt;Item&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.Wander.html#Chaos_Models_World_Abstractions_Creature_Wander_System_Nullable_IPathOptions__System_Boolean_">Creature.Wander(IPathOptions?, bool)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.WillCollideWith.html#Chaos_Models_World_Abstractions_Creature_WillCollideWith_Chaos_Models_World_Abstractions_Creature_">Creature.WillCollideWith(Creature)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.Creature.WithinLevelRange.html#Chaos_Models_World_Abstractions_Creature_WithinLevelRange_Chaos_Models_World_Abstractions_Creature_">Creature.WithinLevelRange(Creature)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.NamedEntity.Name.html#Chaos_Models_World_Abstractions_NamedEntity_Name">NamedEntity.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.Sprite.html#Chaos_Models_World_Abstractions_VisibleEntity_Sprite">VisibleEntity.Sprite</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.Visibility.html#Chaos_Models_World_Abstractions_VisibleEntity_Visibility">VisibleEntity.Visibility</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.Display.html#Chaos_Models_World_Abstractions_VisibleEntity_Display">VisibleEntity.Display()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.Hide.html#Chaos_Models_World_Abstractions_VisibleEntity_Hide">VisibleEntity.Hide()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.HideFrom.html#Chaos_Models_World_Abstractions_VisibleEntity_HideFrom_Chaos_Models_World_Aisling_">VisibleEntity.HideFrom(Aisling)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.ShouldRegisterClick.html#Chaos_Models_World_Abstractions_VisibleEntity_ShouldRegisterClick_System_UInt32_">VisibleEntity.ShouldRegisterClick(uint)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.MapInstance.html#Chaos_Models_World_Abstractions_MapEntity_MapInstance">MapEntity.MapInstance</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.X.html#Chaos_Models_World_Abstractions_MapEntity_X">MapEntity.X</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.Y.html#Chaos_Models_World_Abstractions_MapEntity_Y">MapEntity.Y</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.SetLocation.html#Chaos_Models_World_Abstractions_MapEntity_SetLocation_IPoint_">MapEntity.SetLocation(IPoint)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.SetLocation.html#Chaos_Models_World_Abstractions_MapEntity_SetLocation_Chaos_Collections_MapInstance_IPoint_">MapEntity.SetLocation(MapInstance, IPoint)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.Creation.html#Chaos_Models_World_Abstractions_WorldEntity_Creation">WorldEntity.Creation</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.Id.html#Chaos_Models_World_Abstractions_WorldEntity_Id">WorldEntity.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.IdComparer.html#Chaos_Models_World_Abstractions_WorldEntity_IdComparer">WorldEntity.IdComparer</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.Equals.html#Chaos_Models_World_Abstractions_WorldEntity_Equals_Chaos_Models_World_Abstractions_WorldEntity_">WorldEntity.Equals(WorldEntity)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.Equals.html#Chaos_Models_World_Abstractions_WorldEntity_Equals_System_Nullable_System_Object__">WorldEntity.Equals(object?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.GetHashCode.html#Chaos_Models_World_Abstractions_WorldEntity_GetHashCode">WorldEntity.GetHashCode()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.-ctor.html#Chaos_Models_World_Aisling__ctor_System_String_Chaos_Collections_MapInstance_IPoint_IFactory_Chaos_Collections_Exchange__IScriptProvider_ILogger_Chaos_Models_World_Aisling__ICloningService_Chaos_Models_Panel_Item__">Aisling(string, MapInstance, IPoint, IFactory&lt;Exchange&gt;, IScriptProvider, ILogger&lt;Aisling&gt;, ICloningService&lt;Item&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.-ctor.html#Chaos_Models_World_Aisling__ctor_System_String_Gender_System_Int32_DisplayColor_Chaos_Collections_MapInstance_IPoint_">Aisling(string, Gender, int, DisplayColor, MapInstance, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ActionThrottle.html#Chaos_Models_World_Aisling_ActionThrottle">ActionThrottle</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ActiveDialog.html#Chaos_Models_World_Aisling_ActiveDialog">ActiveDialog</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ActiveObject.html#Chaos_Models_World_Aisling_ActiveObject">ActiveObject</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.AssailIntervalMs.html#Chaos_Models_World_Aisling_AssailIntervalMs">AssailIntervalMs</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Bank.html#Chaos_Models_World_Aisling_Bank">Bank</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.BodyColor.html#Chaos_Models_World_Aisling_BodyColor">BodyColor</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.BodySprite.html#Chaos_Models_World_Aisling_BodySprite">BodySprite</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ChannelSettings.html#Chaos_Models_World_Aisling_ChannelSettings">ChannelSettings</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ChantTimer.html#Chaos_Models_World_Aisling_ChantTimer">ChantTimer</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Client.html#Chaos_Models_World_Aisling_Client">Client</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.DialogHistory.html#Chaos_Models_World_Aisling_DialogHistory">DialogHistory</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Equipment.html#Chaos_Models_World_Aisling_Equipment">Equipment</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.FaceSprite.html#Chaos_Models_World_Aisling_FaceSprite">FaceSprite</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Gender.html#Chaos_Models_World_Aisling_Gender">Gender</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Group.html#Chaos_Models_World_Aisling_Group">Group</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.GroupBox.html#Chaos_Models_World_Aisling_GroupBox">GroupBox</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Guild.html#Chaos_Models_World_Aisling_Guild">Guild</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.GuildRank.html#Chaos_Models_World_Aisling_GuildRank">GuildRank</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.HairColor.html#Chaos_Models_World_Aisling_HairColor">HairColor</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.HairStyle.html#Chaos_Models_World_Aisling_HairStyle">HairStyle</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.IgnoreList.html#Chaos_Models_World_Aisling_IgnoreList">IgnoreList</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Inventory.html#Chaos_Models_World_Aisling_Inventory">Inventory</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.IsAdmin.html#Chaos_Models_World_Aisling_IsAdmin">IsAdmin</a></dt>
+    <dd><p>Whether or not the subject has admin privileges</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.IsOnWorldMap.html#Chaos_Models_World_Aisling_IsOnWorldMap">IsOnWorldMap</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ItemThrottle.html#Chaos_Models_World_Aisling_ItemThrottle">ItemThrottle</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.LanternSize.html#Chaos_Models_World_Aisling_LanternSize">LanternSize</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Legend.html#Chaos_Models_World_Aisling_Legend">Legend</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Logger.html#Chaos_Models_World_Aisling_Logger">Logger</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.MailBox.html#Chaos_Models_World_Aisling_MailBox">MailBox</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Muted.html#Chaos_Models_World_Aisling_Muted">Muted</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Nation.html#Chaos_Models_World_Aisling_Nation">Nation</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Options.html#Chaos_Models_World_Aisling_Options">Options</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Portrait.html#Chaos_Models_World_Aisling_Portrait">Portrait</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ProfileText.html#Chaos_Models_World_Aisling_ProfileText">ProfileText</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.RestPosition.html#Chaos_Models_World_Aisling_RestPosition">RestPosition</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SaveTimer.html#Chaos_Models_World_Aisling_SaveTimer">SaveTimer</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Script.html#Chaos_Models_World_Aisling_Script">Script</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ScriptKeys.html#Chaos_Models_World_Aisling_ScriptKeys">ScriptKeys</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ShouldRefresh.html#Chaos_Models_World_Aisling_ShouldRefresh">ShouldRefresh</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ShouldWalk.html#Chaos_Models_World_Aisling_ShouldWalk">ShouldWalk</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SkillBook.html#Chaos_Models_World_Aisling_SkillBook">SkillBook</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SkillThrottle.html#Chaos_Models_World_Aisling_SkillThrottle">SkillThrottle</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SpellBook.html#Chaos_Models_World_Aisling_SpellBook">SpellBook</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SpellThrottle.html#Chaos_Models_World_Aisling_SpellThrottle">SpellThrottle</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.StatSheet.html#Chaos_Models_World_Aisling_StatSheet">StatSheet</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Titles.html#Chaos_Models_World_Aisling_Titles">Titles</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Trackers.html#Chaos_Models_World_Aisling_Trackers">Trackers</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TurnThrottle.html#Chaos_Models_World_Aisling_TurnThrottle">TurnThrottle</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Type.html#Chaos_Models_World_Aisling_Type">Type</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.UserStatSheet.html#Chaos_Models_World_Aisling_UserStatSheet">UserStatSheet</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.UserState.html#Chaos_Models_World_Aisling_UserState">UserState</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.WalkCounter.html#Chaos_Models_World_Aisling_WalkCounter">WalkCounter</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.BeginObserving.html#Chaos_Models_World_Aisling_BeginObserving">BeginObserving()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.CanCarry.html#Chaos_Models_World_Aisling_CanCarry_IEnumerable_Chaos_Models_Panel_Item__">CanCarry(params IEnumerable&lt;Item&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.CanCarry.html#Chaos_Models_World_Aisling_CanCarry_IEnumerable_System_ValueTuple_Chaos_Models_Panel_Item_System_Int32___">CanCarry(params IEnumerable&lt;(Item Item, int Count)&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.CanObserve.html#Chaos_Models_World_Aisling_CanObserve_Chaos_Models_World_Abstractions_VisibleEntity_System_Boolean_">CanObserve(VisibleEntity, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.CanSee.html#Chaos_Models_World_Aisling_CanSee_Chaos_Models_World_Abstractions_VisibleEntity_">CanSee(VisibleEntity)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.CanUse.html#Chaos_Models_World_Aisling_CanUse_Chaos_Models_Panel_Item_">CanUse(Item)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.CanUse.html#Chaos_Models_World_Aisling_CanUse_Chaos_Models_Panel_Skill_Chaos_Models_Data_ActivationContext__">CanUse(Skill, out ActivationContext)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.CanUse.html#Chaos_Models_World_Aisling_CanUse_Chaos_Models_Panel_Spell_Chaos_Models_World_Abstractions_Creature_System_Nullable_System_String__Chaos_Models_Data_SpellContext__">CanUse(Spell, Creature, string?, out SpellContext)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Equip.html#Chaos_Models_World_Aisling_Equip_EquipmentType_Chaos_Models_Panel_Item_">Equip(EquipmentType, Item)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.GetLanternRadius.html#Chaos_Models_World_Aisling_GetLanternRadius">GetLanternRadius()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.GiveItemOrSendToBank.html#Chaos_Models_World_Aisling_GiveItemOrSendToBank_Chaos_Models_Panel_Item_">GiveItemOrSendToBank(Item)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.HasClass.html#Chaos_Models_World_Aisling_HasClass_BaseClass_">HasClass(BaseClass)</a></dt>
+    <dd><p>Determines whether or not an aisling's class counts as being a certain class</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Illuminates.html#Chaos_Models_World_Aisling_Illuminates_Chaos_Models_World_Abstractions_VisibleEntity_">Illuminates(VisibleEntity)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Initialize.html#Chaos_Models_World_Aisling_Initialize_System_String_Chaos_Collections_Bank_Chaos_Collections_Equipment_Chaos_Collections_Inventory_Chaos_Collections_SkillBook_Chaos_Collections_SpellBook_Chaos_Collections_Legend_Chaos_Collections_EffectsBar_Chaos_Collections_AislingTrackers_">Initialize(string, Bank, Equipment, Inventory, SkillBook, SpellBook, Legend, EffectsBar, AislingTrackers)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.IsIgnoring.html#Chaos_Models_World_Aisling_IsIgnoring_System_String_">IsIgnoring(string)</a></dt>
+    <dd><p>Determines whether or not the subscriber is ignoring the given name</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.OnClicked.html#Chaos_Models_World_Aisling_OnClicked_Chaos_Models_World_Aisling_">OnClicked(Aisling)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.OnGoldDroppedOn.html#Chaos_Models_World_Aisling_OnGoldDroppedOn_Chaos_Models_World_Aisling_System_Int32_">OnGoldDroppedOn(Aisling, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.OnItemDroppedOn.html#Chaos_Models_World_Aisling_OnItemDroppedOn_Chaos_Models_World_Aisling_System_Byte_System_Byte_">OnItemDroppedOn(Aisling, byte, byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Refresh.html#Chaos_Models_World_Aisling_Refresh_System_Boolean_">Refresh(bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SendActiveMessage.html#Chaos_Models_World_Aisling_SendActiveMessage_System_String_">SendActiveMessage(string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SendMessage.html#Chaos_Models_World_Aisling_SendMessage_System_String_">SendMessage(string)</a></dt>
+    <dd><p>Sends a message to the subscriber</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SendOrangeBarMessage.html#Chaos_Models_World_Aisling_SendOrangeBarMessage_System_String_">SendOrangeBarMessage(string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SendPersistentMessage.html#Chaos_Models_World_Aisling_SendPersistentMessage_System_String_">SendPersistentMessage(string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SendServerMessage.html#Chaos_Models_World_Aisling_SendServerMessage_ServerMessageType_System_String_">SendServerMessage(ServerMessageType, string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SetLanternSize.html#Chaos_Models_World_Aisling_SetLanternSize_LanternSize_">SetLanternSize(LanternSize)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SetSprite.html#Chaos_Models_World_Aisling_SetSprite_System_UInt16_">SetSprite(ushort)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.SetVision.html#Chaos_Models_World_Aisling_SetVision_Chaos_Definitions_VisionType_">SetVision(VisionType)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ShowPublicMessage.html#Chaos_Models_World_Aisling_ShowPublicMessage_PublicMessageType_System_String_">ShowPublicMessage(PublicMessageType, string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.ShowTo.html#Chaos_Models_World_Aisling_ShowTo_Chaos_Models_World_Aisling_">ShowTo(Aisling)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryDrop.html#Chaos_Models_World_Aisling_TryDrop_IPoint_System_Byte_Chaos_Models_World_GroundItem____System_Nullable_System_Int32__">TryDrop(IPoint, byte, out GroundItem[], int?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryDropGold.html#Chaos_Models_World_Aisling_TryDropGold_IPoint_System_Int32_Chaos_Models_World_Money__">TryDropGold(IPoint, int, out Money)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryGiveGold.html#Chaos_Models_World_Aisling_TryGiveGold_System_Int32_">TryGiveGold(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryGiveItem.html#Chaos_Models_World_Aisling_TryGiveItem_Chaos_Models_Panel_Item__System_Nullable_System_Byte__">TryGiveItem(ref Item, byte?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryGiveItems.html#Chaos_Models_World_Aisling_TryGiveItems_ICollection_Chaos_Models_Panel_Item__">TryGiveItems(params ICollection&lt;Item&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryPickupItem.html#Chaos_Models_World_Aisling_TryPickupItem_Chaos_Models_World_GroundItem_System_Byte_">TryPickupItem(GroundItem, byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryPickupMoney.html#Chaos_Models_World_Aisling_TryPickupMoney_Chaos_Models_World_Money_">TryPickupMoney(Money)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryTakeGold.html#Chaos_Models_World_Aisling_TryTakeGold_System_Int32_">TryTakeGold(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryUseItem.html#Chaos_Models_World_Aisling_TryUseItem_Chaos_Models_Panel_Item_">TryUseItem(Item)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryUseItem.html#Chaos_Models_World_Aisling_TryUseItem_System_Byte_">TryUseItem(byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryUseSkill.html#Chaos_Models_World_Aisling_TryUseSkill_Chaos_Models_Panel_Skill_">TryUseSkill(Skill)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryUseSkill.html#Chaos_Models_World_Aisling_TryUseSkill_System_Byte_">TryUseSkill(byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryUseSpell.html#Chaos_Models_World_Aisling_TryUseSpell_Chaos_Models_Panel_Spell_System_Nullable_System_UInt32__System_Nullable_System_String__">TryUseSpell(Spell, uint?, string?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.TryUseSpell.html#Chaos_Models_World_Aisling_TryUseSpell_System_Byte_System_Nullable_System_UInt32__System_Nullable_System_String__">TryUseSpell(byte, uint?, string?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Turn.html#Chaos_Models_World_Aisling_Turn_Direction_System_Boolean_">Turn(Direction, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Turn.html#Chaos_Models_World_Aisling_Turn_Direction_System_Boolean_System_Boolean_">Turn(Direction, bool, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.UnEquip.html#Chaos_Models_World_Aisling_UnEquip_EquipmentSlot_">UnEquip(EquipmentSlot)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Update.html#Chaos_Models_World_Aisling_Update_TimeSpan_">Update(TimeSpan)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.UpdateViewPort.html#Chaos_Models_World_Aisling_UpdateViewPort_System_Nullable_HashSet_Chaos_Models_World_Abstractions_VisibleEntity___System_Boolean_">UpdateViewPort(HashSet&lt;VisibleEntity&gt;?, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.Walk.html#Chaos_Models_World_Aisling_Walk_Direction_System_Nullable_System_Boolean__System_Nullable_System_Boolean__System_Nullable_System_Boolean__">Walk(Direction, bool?, bool?, bool?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Aisling.WarpTo.html#Chaos_Models_World_Aisling_WarpTo_IPoint_">WarpTo(IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Models/World/Aisling.cs/#L37" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

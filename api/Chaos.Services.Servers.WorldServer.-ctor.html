@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Constructor WorldServer
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Constructor WorldServer
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Services_Servers_WorldServer__ctor_.md&amp;value=---%0Auid%3A%20Chaos.Services.Servers.WorldServer.%23ctor*%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Services.Servers.WorldServer.#ctor*">
+
+
+
+
+
+<h1 id="Chaos_Services_Servers_WorldServer__ctor_" data-uid="Chaos.Services.Servers.WorldServer.#ctor*" class="text-break">
+  Constructor WorldServer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Services/Servers/WorldServer.cs/#L73"><i class="bi bi-code-slash"></i></a>
+</h1>
+
+<div class="facts text-secondary">
+  <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Services.html">Services</a>.<a class="xref" href="Chaos.Services.Servers.html">Servers</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+</div>
+
+<div class="markdown summary"></div>
+<div class="markdown conceptual"></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<a id="Chaos_Services_Servers_WorldServer__ctor_" data-uid="Chaos.Services.Servers.WorldServer.#ctor*"></a>
+
+<h3 id="Chaos_Services_Servers_WorldServer__ctor_IClientRegistry_Chaos_Networking_Abstractions_IChaosWorldClient__IFactory_Chaos_Networking_Abstractions_IChaosWorldClient__Chaos_Storage_Abstractions_IAsyncStore_Chaos_Models_World_Aisling__IRedirectManager_IPacketSerializer_Chaos_Messaging_Abstractions_ICommandInterceptor_Chaos_Models_World_Aisling__Chaos_Services_Other_Abstractions_IGroupService_Chaos_Services_Factories_Abstractions_IMerchantFactory_IOptions_Chaos_Services_Servers_Options_WorldOptions__ILogger_Chaos_Services_Servers_WorldServer__Chaos_Services_Storage_Abstractions_IMetaDataStore_Chaos_Messaging_Abstractions_IChannelService_Chaos_Storage_Abstractions_IStore_Chaos_Collections_MailBox__Chaos_Services_Other_BulletinBoardKeyMapper_Chaos_Storage_Abstractions_IStore_Chaos_Collections_BulletinBoard__Chaos_Services_Storage_AislingFacadeCache_Chaos_Services_Factories_Abstractions_IMonsterFactory_Chaos_Services_Factories_Abstractions_ISkillFactory_Chaos_Services_Factories_Abstractions_ISpellFactory_Chaos_Services_Factories_Abstractions_IItemFactory_" data-uid="Chaos.Services.Servers.WorldServer.#ctor(IClientRegistry{Chaos.Networking.Abstractions.IChaosWorldClient},IFactory{Chaos.Networking.Abstractions.IChaosWorldClient},Chaos.Storage.Abstractions.IAsyncStore{Chaos.Models.World.Aisling},IRedirectManager,IPacketSerializer,Chaos.Messaging.Abstractions.ICommandInterceptor{Chaos.Models.World.Aisling},Chaos.Services.Other.Abstractions.IGroupService,Chaos.Services.Factories.Abstractions.IMerchantFactory,IOptions{Chaos.Services.Servers.Options.WorldOptions},ILogger{Chaos.Services.Servers.WorldServer},Chaos.Services.Storage.Abstractions.IMetaDataStore,Chaos.Messaging.Abstractions.IChannelService,Chaos.Storage.Abstractions.IStore{Chaos.Collections.MailBox},Chaos.Services.Other.BulletinBoardKeyMapper,Chaos.Storage.Abstractions.IStore{Chaos.Collections.BulletinBoard},Chaos.Services.Storage.AislingFacadeCache,Chaos.Services.Factories.Abstractions.IMonsterFactory,Chaos.Services.Factories.Abstractions.ISkillFactory,Chaos.Services.Factories.Abstractions.ISpellFactory,Chaos.Services.Factories.Abstractions.IItemFactory)">
+  WorldServer(IClientRegistry&lt;IChaosWorldClient&gt;, IFactory&lt;IChaosWorldClient&gt;, IAsyncStore&lt;Aisling&gt;, IRedirectManager, IPacketSerializer, ICommandInterceptor&lt;Aisling&gt;, IGroupService, IMerchantFactory, IOptions&lt;WorldOptions&gt;, ILogger&lt;WorldServer&gt;, IMetaDataStore, IChannelService, IStore&lt;MailBox&gt;, BulletinBoardKeyMapper, IStore&lt;BulletinBoard&gt;, AislingFacadeCache, IMonsterFactory, ISkillFactory, ISpellFactory, IItemFactory)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Services/Servers/WorldServer.cs/#L73"><i class="bi bi-code-slash"></i></a>
+</h3>
+
+<div class="markdown level1 summary"></div>
+<div class="markdown level1 conceptual"></div>
+
+<div class="codewrapper">
+  <pre><code class="lang-csharp hljs">public WorldServer(IClientRegistry&lt;IChaosWorldClient&gt; clientRegistry, IFactory&lt;IChaosWorldClient&gt; clientFactory, IAsyncStore&lt;Aisling&gt; aislingStore, IRedirectManager redirectManager, IPacketSerializer packetSerializer, ICommandInterceptor&lt;Aisling&gt; commandInterceptor, IGroupService groupService, IMerchantFactory merchantFactory, IOptions&lt;WorldOptions&gt; options, ILogger&lt;WorldServer&gt; logger, IMetaDataStore metaDataStore, IChannelService channelService, IStore&lt;MailBox&gt; mailStore, BulletinBoardKeyMapper bulletinBoardKeyMapper, IStore&lt;BulletinBoard&gt; bulletinBoardStore, AislingFacadeCache facadeCache, IMonsterFactory monsterFactory, ISkillFactory skillFactory, ISpellFactory spellFactory, IItemFactory itemFactory)</code></pre>
+</div>
+
+<h4 class="section">Parameters</h4>
+<dl class="parameters">
+  <dt><code>clientRegistry</code> <span class="xref">IClientRegistry</span>&lt;<a class="xref" href="Chaos.Networking.Abstractions.IChaosWorldClient.html">IChaosWorldClient</a>&gt;</dt>
+  <dd></dd>
+  <dt><code>clientFactory</code> <span class="xref">IFactory</span>&lt;<a class="xref" href="Chaos.Networking.Abstractions.IChaosWorldClient.html">IChaosWorldClient</a>&gt;</dt>
+  <dd></dd>
+  <dt><code>aislingStore</code> <a class="xref" href="Chaos.Storage.Abstractions.IAsyncStore-1.html">IAsyncStore</a>&lt;<a class="xref" href="Chaos.Models.World.Aisling.html">Aisling</a>&gt;</dt>
+  <dd></dd>
+  <dt><code>redirectManager</code> <span class="xref">IRedirectManager</span></dt>
+  <dd></dd>
+  <dt><code>packetSerializer</code> <span class="xref">IPacketSerializer</span></dt>
+  <dd></dd>
+  <dt><code>commandInterceptor</code> <a class="xref" href="Chaos.Messaging.Abstractions.ICommandInterceptor-1.html">ICommandInterceptor</a>&lt;<a class="xref" href="Chaos.Models.World.Aisling.html">Aisling</a>&gt;</dt>
+  <dd></dd>
+  <dt><code>groupService</code> <a class="xref" href="Chaos.Services.Other.Abstractions.IGroupService.html">IGroupService</a></dt>
+  <dd></dd>
+  <dt><code>merchantFactory</code> <a class="xref" href="Chaos.Services.Factories.Abstractions.IMerchantFactory.html">IMerchantFactory</a></dt>
+  <dd></dd>
+  <dt><code>options</code> <span class="xref">IOptions</span>&lt;<a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.html">WorldOptions</a>&gt;</dt>
+  <dd></dd>
+  <dt><code>logger</code> <span class="xref">ILogger</span>&lt;<a class="xref" href="Chaos.Services.Servers.WorldServer.html">WorldServer</a>&gt;</dt>
+  <dd></dd>
+  <dt><code>metaDataStore</code> <a class="xref" href="Chaos.Services.Storage.Abstractions.IMetaDataStore.html">IMetaDataStore</a></dt>
+  <dd></dd>
+  <dt><code>channelService</code> <a class="xref" href="Chaos.Messaging.Abstractions.IChannelService.html">IChannelService</a></dt>
+  <dd></dd>
+  <dt><code>mailStore</code> <a class="xref" href="Chaos.Storage.Abstractions.IStore-1.html">IStore</a>&lt;<a class="xref" href="Chaos.Collections.MailBox.html">MailBox</a>&gt;</dt>
+  <dd></dd>
+  <dt><code>bulletinBoardKeyMapper</code> <a class="xref" href="Chaos.Services.Other.BulletinBoardKeyMapper.html">BulletinBoardKeyMapper</a></dt>
+  <dd></dd>
+  <dt><code>bulletinBoardStore</code> <a class="xref" href="Chaos.Storage.Abstractions.IStore-1.html">IStore</a>&lt;<a class="xref" href="Chaos.Collections.BulletinBoard.html">BulletinBoard</a>&gt;</dt>
+  <dd></dd>
+  <dt><code>facadeCache</code> <a class="xref" href="Chaos.Services.Storage.AislingFacadeCache.html">AislingFacadeCache</a></dt>
+  <dd></dd>
+  <dt><code>monsterFactory</code> <a class="xref" href="Chaos.Services.Factories.Abstractions.IMonsterFactory.html">IMonsterFactory</a></dt>
+  <dd></dd>
+  <dt><code>skillFactory</code> <a class="xref" href="Chaos.Services.Factories.Abstractions.ISkillFactory.html">ISkillFactory</a></dt>
+  <dd></dd>
+  <dt><code>spellFactory</code> <a class="xref" href="Chaos.Services.Factories.Abstractions.ISpellFactory.html">ISpellFactory</a></dt>
+  <dd></dd>
+  <dt><code>itemFactory</code> <a class="xref" href="Chaos.Services.Factories.Abstractions.IItemFactory.html">IItemFactory</a></dt>
+  <dd></dd>
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Services/Servers/WorldServer.cs/#L73" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

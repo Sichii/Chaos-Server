@@ -1,0 +1,447 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class WorldOptions
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class WorldOptions
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Services_Servers_Options_WorldOptions.md&amp;value=---%0Auid%3A%20Chaos.Services.Servers.Options.WorldOptions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Services.Servers.Options.WorldOptions">
+
+
+
+  <h1 id="Chaos_Services_Servers_Options_WorldOptions" data-uid="Chaos.Services.Servers.Options.WorldOptions" class="text-break">
+    Class WorldOptions
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Services/Servers/Options/WorldOptions.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Services.html">Services</a>.<a class="xref" href="Chaos.Services.Servers.html">Servers</a>.<a class="xref" href="Chaos.Services.Servers.Options.html">Options</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed record WorldOptions : ServerOptions, IConnectionInfo, IEquatable&lt;ConnectionInfo&gt;, IEquatable&lt;ServerOptions&gt;, IWorldOptions, IEquatable&lt;WorldOptions&gt;</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><a class="xref" href="Chaos.Networking.Options.ConnectionInfo.html">ConnectionInfo</a></div>
+      <div><a class="xref" href="Chaos.Networking.Options.ServerOptions.html">ServerOptions</a></div>
+      <div><span class="xref">WorldOptions</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Networking.Abstractions.IConnectionInfo.html">IConnectionInfo</a></div>
+      <div><span class="xref">IEquatable</span>&lt;<a class="xref" href="Chaos.Networking.Options.ConnectionInfo.html">ConnectionInfo</a>&gt;</div>
+      <div><span class="xref">IEquatable</span>&lt;<a class="xref" href="Chaos.Networking.Options.ServerOptions.html">ServerOptions</a>&gt;</div>
+      <div><a class="xref" href="Chaos.Services.Servers.Options.IWorldOptions.html">IWorldOptions</a></div>
+      <div><span class="xref">IEquatable</span>&lt;<a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.html">WorldOptions</a>&gt;</div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Networking.Options.ConnectionInfo.Address.html#Chaos_Networking_Options_ConnectionInfo_Address">ConnectionInfo.Address</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Options.ConnectionInfo.Port.html#Chaos_Networking_Options_ConnectionInfo_Port">ConnectionInfo.Port</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.AislingAssailIntervalMs.html#Chaos_Services_Servers_Options_WorldOptions_AislingAssailIntervalMs">AislingAssailIntervalMs</a></dt>
+    <dd><p>All creatures have an AssailInterval. AssailInterval is essentially the cooldown in milliseconds for skills marked
+as assails. This value ismodified by the AtkSpeedPct attribute and can be modified to be 3x faster or slower than
+the base value. This property sets the base interval for all aislings.
+<br><br>
+A good starting value is 1500</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.ClearOrangeBarTimerSecs.html#Chaos_Services_Servers_Options_WorldOptions_ClearOrangeBarTimerSecs">ClearOrangeBarTimerSecs</a></dt>
+    <dd><p>This is the amount of time in seconds after the last orange bar message was sent to a player where the server will
+clear the orange bar</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.DefaultChannels.html#Chaos_Services_Servers_Options_WorldOptions_DefaultChannels">DefaultChannels</a></dt>
+    <dd><p>This is a collection of channel names that new characters will join by default. These channels are also registered
+with the channel service during startup.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.DropRange.html#Chaos_Services_Servers_Options_WorldOptions_DropRange">DropRange</a></dt>
+    <dd><p>This is the maximum distance from a player that they can drop items or gold on the ground.
+<br>
+A value of -1 would effectively disable dropping items
+<br>
+A value of 0 would only allow players to drop items directly beneath them
+<br>
+A value of 12 would allow players to drop items anywhere in their viewport</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.F1MerchantTemplateKey.html#Chaos_Services_Servers_Options_WorldOptions_F1MerchantTemplateKey">F1MerchantTemplateKey</a></dt>
+    <dd><p>This is the template key of the merchant to display when a player presses F1. This is generally some kind of help
+npc</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.GroundItemDespawnTimeMins.html#Chaos_Services_Servers_Options_WorldOptions_GroundItemDespawnTimeMins">GroundItemDespawnTimeMins</a></dt>
+    <dd><p>The number of minutes that ground items will remain on the ground before despawning. This includes items dropped by
+players for any reason</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.GroupChatName.html#Chaos_Services_Servers_Options_WorldOptions_GroupChatName">GroupChatName</a></dt>
+    <dd><p>When whispering a target name in the client, this is the name that will redirect to group chat</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.GroupMessageColor.html#Chaos_Services_Servers_Options_WorldOptions_GroupMessageColor">GroupMessageColor</a></dt>
+    <dd><p>The default message color used for group chat</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.GuildChatName.html#Chaos_Services_Servers_Options_WorldOptions_GuildChatName">GuildChatName</a></dt>
+    <dd><p>When whispering a target name in the client, this is the name that will redirect to guild chat</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.GuildMessageColor.html#Chaos_Services_Servers_Options_WorldOptions_GuildMessageColor">GuildMessageColor</a></dt>
+    <dd><p>The default message color used for guild chat</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.HeartbeatIntervalSecs.html#Chaos_Services_Servers_Options_WorldOptions_HeartbeatIntervalSecs">HeartbeatIntervalSecs</a></dt>
+    <dd><p>The length of time between heartbeats in seconds. If a heartbeat occurs and the client has still not responsed to
+the previous heartbeat, the client will be disconnected.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.HostName.html#Chaos_Services_Servers_Options_WorldOptions_HostName">HostName</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.Instance.html#Chaos_Services_Servers_Options_WorldOptions_Instance">Instance</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.LoginRedirect.html#Chaos_Services_Servers_Options_WorldOptions_LoginRedirect">LoginRedirect</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.LootDropsLockToRewardTargetSecs.html#Chaos_Services_Servers_Options_WorldOptions_LootDropsLockToRewardTargetSecs">LootDropsLockToRewardTargetSecs</a></dt>
+    <dd><p>Default null.
+<br>
+If specified, locks loot drops to the reward target for this many seconds.
+<br>
+If null, loot drops are not locked to the reward target.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaxAbilityLevel.html#Chaos_Services_Servers_Options_WorldOptions_MaxAbilityLevel">MaxAbilityLevel</a></dt>
+    <dd><p>This is the ability level cap for players. AbilityLevel formulas can be changed, but with the default abilitylevel
+formula, if you reach this abilitylevel you will stop gaining ability.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaxActionsPerSecond.html#Chaos_Services_Servers_Options_WorldOptions_MaxActionsPerSecond">MaxActionsPerSecond</a></dt>
+    <dd><p>It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown
+could become a huge burden on the server. This value is used to control the maximum number of actions a player can
+take in a second. An action is defined as using any spell, skill, or item. This includes equipping items.
+<br><br>
+A good range of values for this would be 4 - 10
+<br>
+If desired, this value can be set to 3 to emulate the original game</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaxChantTimeBurdenMs.html#Chaos_Services_Servers_Options_WorldOptions_MaxChantTimeBurdenMs">MaxChantTimeBurdenMs</a></dt>
+    <dd><p>When players cast spells, each spell line takes approximately 1000ms to chant. The amount of time a spell will take
+to cast can be predicted to be 1000ms * (NumSpellLines).
+<br><br>
+Due to latency and jitter, players will often cast spells for slightly more or less than the expected amount of
+time. With big latency spikes, the observed amount of time could be far off than the expected value. To be able to
+tolerate this while also prohibiting &quot;speed casting&quot;, the server will allow spell casts that occur too quickly and
+add up a time burden.
+<br><br>
+Each time a player casts a spell that completes faster than expected, the difference in time will be added to the
+time burden. This burden will accumulate with every consecutive spell that occurs too quickly, and be subtracted
+from if a spell completes too slowly. The time burden will also decrease while not casting spells.
+<br><br>
+If the time burden exceeds MaxChantTimeBurdenMs, the spell cast will be ignored.
+<br>
+A good range of values for this setting would be 500 - 1500, with lower values being more strict.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaxGoldHeld.html#Chaos_Services_Servers_Options_WorldOptions_MaxGoldHeld">MaxGoldHeld</a></dt>
+    <dd><p>This is the maximum amount of gold a player can hold in their inventory.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaxGroupSize.html#Chaos_Services_Servers_Options_WorldOptions_MaxGroupSize">MaxGroupSize</a></dt>
+    <dd><p>The maximum number of players that can be in a group together. If a group reaches this size, invites and invite
+accepts will fail.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaxItemsPerSecond.html#Chaos_Services_Servers_Options_WorldOptions_MaxItemsPerSecond">MaxItemsPerSecond</a></dt>
+    <dd><p>The maximum number of items a player can use in a second</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaxLevel.html#Chaos_Services_Servers_Options_WorldOptions_MaxLevel">MaxLevel</a></dt>
+    <dd><p>This is the level cap for players. Level formulas can be changed, but with the default level formula, if you reach
+this level you will stop gaining experience.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaxSkillsPerSecond.html#Chaos_Services_Servers_Options_WorldOptions_MaxSkillsPerSecond">MaxSkillsPerSecond</a></dt>
+    <dd><p>The maximum number of skills a player can use in a second</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaxSpellsPerSecond.html#Chaos_Services_Servers_Options_WorldOptions_MaxSpellsPerSecond">MaxSpellsPerSecond</a></dt>
+    <dd><p>The maximum number of spells a player can use in a second</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaximumAislingAc.html#Chaos_Services_Servers_Options_WorldOptions_MaximumAislingAc">MaximumAislingAc</a></dt>
+    <dd><p>This is the maximum amount of AC a player can have. damage formulas can be changed, but with the default damage
+formula, higher AC = more damage taken.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MaximumMonsterAc.html#Chaos_Services_Servers_Options_WorldOptions_MaximumMonsterAc">MaximumMonsterAc</a></dt>
+    <dd><p>This is the maximum amount of AC a monster can have. damage formulas can be changed, but with the default damage
+formula, higher AC = more damage taken.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MinimumAislingAc.html#Chaos_Services_Servers_Options_WorldOptions_MinimumAislingAc">MinimumAislingAc</a></dt>
+    <dd><p>This is the minimum amount of AC a player can have. damage formulas can be changed, but with the default damage
+formula, lower AC = less damage taken.
+<br>
+With the default damage formula, AC is a percentile, so -100 AC would make you invulnerable.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.MinimumMonsterAc.html#Chaos_Services_Servers_Options_WorldOptions_MinimumMonsterAc">MinimumMonsterAc</a></dt>
+    <dd><p>This is the minimum amount of AC a monster can have. damage formulas can be changed, but with the default damage
+formula, lower AC = less damage taken.
+<br>
+With the default damage formula, AC is a percentile, so -100 AC would make you invulnerable.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.PickupRange.html#Chaos_Services_Servers_Options_WorldOptions_PickupRange">PickupRange</a></dt>
+    <dd><p>This is the maximum distance from a player that they pick up items or money from the ground.
+<br>
+A value of -1 would effectively disable picking up items
+<br>
+A value of 0 would only allow players to pick up items from directly beneath them
+<br>
+A value of 12 would allow players to pick up items from anywhere in their viewport
+<br></p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.ProhibitF5Walk.html#Chaos_Services_Servers_Options_WorldOptions_ProhibitF5Walk">ProhibitF5Walk</a></dt>
+    <dd><p>When this is enabled it will prevent players from utilizing refreshing(F5) to walk faster.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.ProhibitItemSwitchWalk.html#Chaos_Services_Servers_Options_WorldOptions_ProhibitItemSwitchWalk">ProhibitItemSwitchWalk</a></dt>
+    <dd><p>When this is enabled it will prevent players from utilizing item switching to walk faster.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.ProhibitSpeedWalk.html#Chaos_Services_Servers_Options_WorldOptions_ProhibitSpeedWalk">ProhibitSpeedWalk</a></dt>
+    <dd><p>When this is enabled it will prevent players from utilizing more nefarious methods to walk faster.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.RefreshIntervalMs.html#Chaos_Services_Servers_Options_WorldOptions_RefreshIntervalMs">RefreshIntervalMs</a></dt>
+    <dd><p>This is the quickest interval in milliseconds that players will be allowed to refresh their client. This will not
+include refreshes utilized by the server, such as for refreshing a player's position if they walk into a wall. A
+good value here would be 1000</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.SaveIntervalMins.html#Chaos_Services_Servers_Options_WorldOptions_SaveIntervalMins">SaveIntervalMins</a></dt>
+    <dd><p>This is the amount of time in minutes between global character saves. This is on top of players automatically
+saving when they log out.
+<br><br>
+Do not set this value too low or it will become a burden on the server.
+<br>
+A good range of values would be anywhere from 0.5 - 10</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.SleepAnimationTimerMins.html#Chaos_Services_Servers_Options_WorldOptions_SleepAnimationTimerMins">SleepAnimationTimerMins</a></dt>
+    <dd><p>This is the amount of time in minutes after a player's last action where the server will play the sleep animation</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.TradeRange.html#Chaos_Services_Servers_Options_WorldOptions_TradeRange">TradeRange</a></dt>
+    <dd><p>This is the maximum distance from a player that they can initiate a trade with another player
+<br>
+A value of -1 would effectively disable trading
+<br>
+A value of 0 would only allow players to only trade with players on the same tile, which is generally impossible
+<br>
+A value of 12 would allow players to trade with anyone in their viewport
+<br></p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.UpdatesPerSecond.html#Chaos_Services_Servers_Options_WorldOptions_UpdatesPerSecond">UpdatesPerSecond</a></dt>
+    <dd><p>This is the number of times per second that the server will update the game state. .NET isn't great for this kind
+of workload due garbage collection and JIT recompilation/OSR.
+<br><br>
+I suggest a hard cap of 60 with a good default value of 30
+<br>
+If desired you can set this to 3 to emulate the original game</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Services/Servers/Options/WorldOptions.cs/#L10" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

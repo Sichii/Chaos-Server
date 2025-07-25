@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Spells | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Spells | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Spells.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="spells">Spells</h1>
+
+<p>Spells in Chaos are both templated and scripted objects. When you define a spell, you are actually defining a spell
+template that will be used to create new instances of that spell as requested. Each spell that is created is a fresh
+instance of that spell created from it's template.</p>
+<h2 id="spell-templates">Spell Templates</h2>
+<p>A spell template is used to create new instances of spells as required. The template defines the base properties of the
+spell, but most of the effects of spells are determine through their scripts.</p>
+<h2 id="how-do-i-create-them">How do I create them?</h2>
+<p>By default, spell templates should be created in <code>Data\Configuration\Templates\Spells</code>. Configuration of how spell
+templates are loaded can be found in <code>appsettings.json</code> at <code>Options:SpellTemplateCacheOptions</code>.</p>
+<p>Spell templates are initially serialized into <a class="xref" href="../api/Chaos.Schemas.Templates.SpellTemplateSchema.html">SpellTemplateSchema</a>
+before being mapped to a <a class="xref" href="../api/Chaos.Models.Templates.SpellTemplate.html">SpellTemplate</a>. The schema object is mapped via
+the <a class="xref" href="../api/Chaos.Services.MapperProfiles.SpellMapperProfile.html">SpellMapperProfile</a>.</p>
+<p>See <a class="xref" href="../api/Chaos.Schemas.Templates.SpellTemplateSchema.html">SpellTemplateSchema</a> for a list of all configurable properties
+with descriptions.</p>
+<h2 id="how-do-i-use-them">How do I use them?</h2>
+<p>Spells can be created by using the <a class="xref" href="../api/Chaos.Services.Factories.SpellFactory.html">SpellFactory</a>, which is an
+implementation of <a class="xref" href="../api/Chaos.Services.Factories.Abstractions.ISpellFactory.html">ISpellFactory</a>.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Each spell is a fresh instance of a spell created from a template. Any changes made to the template will apply to all
+instances of that spell.</p>
+</div>
+<pre><code class="lang-cs">private readonly ISpellFactory SpellFactory;
+
+public Foo(ISpellFactory spellFactory) =&gt; SpellFactory = spellFactory;
+
+public void Bar()
+{
+    // create a new instance of the &quot;hide&quot; spell
+    // extraScriptKeys is optional, and can be used to pass in extra script keys that are not part of the templated spell
+    var spell = SpellFactory.Create(&quot;hide&quot;, extraScriptKeys);
+}
+</code></pre>
+<p>Every spell has a unique id, however, if you only want to create a spell for the purposes of finding or displaying
+information about it, you can instead use <code>CreateFaux</code>. This will create a spell without a unique id.</p>
+<h2 id="scripting">Scripting</h2>
+<p>Spells are scripted via <a class="xref" href="../api/Chaos.Scripting.SpellScripts.Abstractions.ISpellScript.html">ISpellScript</a>.</p>
+<ul>
+<li>Inherit from <a class="xref" href="../api/Chaos.Scripting.SpellScripts.Abstractions.SpellScriptBase.html">SpellScriptBase</a> for a basic script
+that requires no external configuration</li>
+<li>Inherit
+from <a class="xref" href="../api/Chaos.Scripting.SpellScripts.Abstractions.ConfigurableSpellScriptBase.html">ConfigurableSpellScriptBase</a>
+for a script that requires external configuration via ScriptVars</li>
+</ul>
+<p>Specify any number of script keys in the <code>SpellTemplate.ScriptKeys</code> property, and those scripts will automatically be
+attached to the <code>Spell</code> when it is created.</p>
+<p>If the script is configurable, you must also have an entry for the script in the <code>SpellTemplate.ScriptVars</code> property.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The key of a script is the name of the class without 'Script' at the end</p>
+</div>
+<p>Here are the events overridable in spell scripts:</p>
+<table>
+<thead>
+<tr>
+<th>Event Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CanUse</td>
+<td>Called when a spell is about to be used. Return false to prevent the spell from being used</td>
+</tr>
+<tr>
+<td>OnUse</td>
+<td>Called when a spell is used. Provide functionality to spells via this event</td>
+</tr>
+<tr>
+<td>Update</td>
+<td>Called every time the map updates. Spells will update only if they're in a creature's spellbook</td>
+</tr>
+</tbody>
+</table>
+<h2 id="example">Example</h2>
+<p>Here is an example of a spell that functions similarly to &quot;Hide&quot; from original DarkAges.</p>
+<pre><code class="lang-json">{
+  &quot;learningRequirements&quot;: {
+    &quot;itemRequirements&quot;: [
+      {
+        &quot;amountRequired&quot;: 1,
+        &quot;itemTemplateKey&quot;: &quot;apple&quot;
+      }
+    ],
+    &quot;prerequisiteSkills&quot;: [],
+    &quot;prerequisiteSpells&quot;: [],
+    &quot;requiredGold&quot;: 10000,
+    &quot;requiredStats&quot;: {
+      &quot;con&quot;: 1,
+      &quot;dex&quot;: 5,
+      &quot;int&quot;: 1,
+      &quot;str&quot;: 1,
+      &quot;wis&quot;: 2
+    }
+  },
+  &quot;spellType&quot;: &quot;NoTarget&quot;,
+  &quot;class&quot;: &quot;Rogue&quot;,
+  &quot;description&quot;: &quot;Shrouds you in darkness, hiding you from sight&quot;,
+  &quot;level&quot;: 15,
+  &quot;name&quot;: &quot;Hide&quot;,
+  &quot;panelSprite&quot;: 10,
+  &quot;scriptKeys&quot;: [
+    &quot;applyEffect&quot;
+  ],
+  &quot;scriptVars&quot;: {
+    &quot;applyEffect&quot;: {
+      &quot;filter&quot;: &quot;selfOnly, aliveOnly&quot;,
+      &quot;effectKey&quot;: &quot;hide&quot;
+    }
+  },
+  &quot;templateKey&quot;: &quot;hide&quot;
+}
+</code></pre>
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Spells.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

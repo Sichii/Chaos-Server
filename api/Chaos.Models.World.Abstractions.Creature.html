@@ -1,0 +1,491 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Creature
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Creature
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Models_World_Abstractions_Creature.md&amp;value=---%0Auid%3A%20Chaos.Models.World.Abstractions.Creature%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Models.World.Abstractions.Creature">
+
+
+
+  <h1 id="Chaos_Models_World_Abstractions_Creature" data-uid="Chaos.Models.World.Abstractions.Creature" class="text-break">
+    Class Creature
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Models/World/Abstractions/Creature.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Models.html">Models</a>.<a class="xref" href="Chaos.Models.World.html">World</a>.<a class="xref" href="Chaos.Models.World.Abstractions.html">Abstractions</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class Creature : NamedEntity, ILocation, IAffected, IDeltaUpdatable, IScripted&lt;ICreatureScript&gt;</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.html">WorldEntity</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.html">MapEntity</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.InteractableEntity.html">InteractableEntity</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.html">VisibleEntity</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Abstractions.NamedEntity.html">NamedEntity</a></div>
+      <div><span class="xref">Creature</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><span class="xref">ILocation</span></div>
+      <div><a class="xref" href="Chaos.Scripting.EffectScripts.Abstractions.IAffected.html">IAffected</a></div>
+      <div><span class="xref">IDeltaUpdatable</span></div>
+      <div><span class="xref">IScripted</span>&lt;<a class="xref" href="Chaos.Scripting.CreatureScripts.Abstractions.ICreatureScript.html">ICreatureScript</a>&gt;</div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Models.World.Aisling.html">Aisling</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Merchant.html">Merchant</a></div>
+      <div><a class="xref" href="Chaos.Models.World.Monster.html">Monster</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.NamedEntity.Name.html#Chaos_Models_World_Abstractions_NamedEntity_Name">NamedEntity.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.LastClicked.html#Chaos_Models_World_Abstractions_VisibleEntity_LastClicked">VisibleEntity.LastClicked</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.Sprite.html#Chaos_Models_World_Abstractions_VisibleEntity_Sprite">VisibleEntity.Sprite</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.Visibility.html#Chaos_Models_World_Abstractions_VisibleEntity_Visibility">VisibleEntity.Visibility</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.Display.html#Chaos_Models_World_Abstractions_VisibleEntity_Display">VisibleEntity.Display()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.Hide.html#Chaos_Models_World_Abstractions_VisibleEntity_Hide">VisibleEntity.Hide()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.HideFrom.html#Chaos_Models_World_Abstractions_VisibleEntity_HideFrom_Chaos_Models_World_Aisling_">VisibleEntity.HideFrom(Aisling)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.ShouldRegisterClick.html#Chaos_Models_World_Abstractions_VisibleEntity_ShouldRegisterClick_System_UInt32_">VisibleEntity.ShouldRegisterClick(uint)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.VisibleEntity.ShowTo.html#Chaos_Models_World_Abstractions_VisibleEntity_ShowTo_Chaos_Models_World_Aisling_">VisibleEntity.ShowTo(Aisling)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.MapInstance.html#Chaos_Models_World_Abstractions_MapEntity_MapInstance">MapEntity.MapInstance</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.X.html#Chaos_Models_World_Abstractions_MapEntity_X">MapEntity.X</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.Y.html#Chaos_Models_World_Abstractions_MapEntity_Y">MapEntity.Y</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.SetLocation.html#Chaos_Models_World_Abstractions_MapEntity_SetLocation_IPoint_">MapEntity.SetLocation(IPoint)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.MapEntity.SetLocation.html#Chaos_Models_World_Abstractions_MapEntity_SetLocation_Chaos_Collections_MapInstance_IPoint_">MapEntity.SetLocation(MapInstance, IPoint)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.Creation.html#Chaos_Models_World_Abstractions_WorldEntity_Creation">WorldEntity.Creation</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.Id.html#Chaos_Models_World_Abstractions_WorldEntity_Id">WorldEntity.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.IdComparer.html#Chaos_Models_World_Abstractions_WorldEntity_IdComparer">WorldEntity.IdComparer</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.Equals.html#Chaos_Models_World_Abstractions_WorldEntity_Equals_Chaos_Models_World_Abstractions_WorldEntity_">WorldEntity.Equals(WorldEntity)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.Equals.html#Chaos_Models_World_Abstractions_WorldEntity_Equals_System_Nullable_System_Object__">WorldEntity.Equals(object?)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.World.Abstractions.WorldEntity.GetHashCode.html#Chaos_Models_World_Abstractions_WorldEntity_GetHashCode">WorldEntity.GetHashCode()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.-ctor.html#Chaos_Models_World_Abstractions_Creature__ctor_System_String_System_UInt16_Chaos_Collections_MapInstance_IPoint_">Creature(string, ushort, MapInstance, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.ApproachTime.html#Chaos_Models_World_Abstractions_Creature_ApproachTime">ApproachTime</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.AssailIntervalMs.html#Chaos_Models_World_Abstractions_Creature_AssailIntervalMs">AssailIntervalMs</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Direction.html#Chaos_Models_World_Abstractions_Creature_Direction">Direction</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.EffectiveAssailIntervalMs.html#Chaos_Models_World_Abstractions_Creature_EffectiveAssailIntervalMs">EffectiveAssailIntervalMs</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Effects.html#Chaos_Models_World_Abstractions_Creature_Effects">Effects</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.GamePoints.html#Chaos_Models_World_Abstractions_Creature_GamePoints">GamePoints</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Gold.html#Chaos_Models_World_Abstractions_Creature_Gold">Gold</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.IsAlive.html#Chaos_Models_World_Abstractions_Creature_IsAlive">IsAlive</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.IsBlind.html#Chaos_Models_World_Abstractions_Creature_IsBlind">IsBlind</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.IsDead.html#Chaos_Models_World_Abstractions_Creature_IsDead">IsDead</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Logger.html#Chaos_Models_World_Abstractions_Creature_Logger">Logger</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.RegenTimer.html#Chaos_Models_World_Abstractions_Creature_RegenTimer">RegenTimer</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Script.html#Chaos_Models_World_Abstractions_Creature_Script">Script</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.ScriptKeys.html#Chaos_Models_World_Abstractions_Creature_ScriptKeys">ScriptKeys</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.StatSheet.html#Chaos_Models_World_Abstractions_Creature_StatSheet">StatSheet</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Trackers.html#Chaos_Models_World_Abstractions_Creature_Trackers">Trackers</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Type.html#Chaos_Models_World_Abstractions_Creature_Type">Type</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Vision.html#Chaos_Models_World_Abstractions_Creature_Vision">Vision</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Animate.html#Chaos_Models_World_Abstractions_Creature_Animate_Chaos_Models_Data_Animation_System_Nullable_System_UInt32__">Animate(Animation, uint?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.AnimateBody.html#Chaos_Models_World_Abstractions_Creature_AnimateBody_BodyAnimation_System_UInt16_System_Nullable_System_Byte__">AnimateBody(BodyAnimation, ushort, byte?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.CanObserve.html#Chaos_Models_World_Abstractions_Creature_CanObserve_Chaos_Models_World_Abstractions_VisibleEntity_System_Boolean_">CanObserve(VisibleEntity, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.CanSee.html#Chaos_Models_World_Abstractions_Creature_CanSee_Chaos_Models_World_Abstractions_VisibleEntity_">CanSee(VisibleEntity)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.CanUse.html#Chaos_Models_World_Abstractions_Creature_CanUse_Chaos_Models_Panel_Skill_Chaos_Models_Data_ActivationContext__">CanUse(Skill, out ActivationContext)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.CanUse.html#Chaos_Models_World_Abstractions_Creature_CanUse_Chaos_Models_Panel_Spell_Chaos_Models_World_Abstractions_Creature_System_Nullable_System_String__Chaos_Models_Data_SpellContext__">CanUse(Spell, Creature, string?, out SpellContext)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Chant.html#Chaos_Models_World_Abstractions_Creature_Chant_System_String_">Chant(string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.FindPath.html#Chaos_Models_World_Abstractions_Creature_FindPath_IPoint_System_Nullable_IPathOptions__System_Boolean_">FindPath(IPoint, IPathOptions?, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.HandleMapDeparture.html#Chaos_Models_World_Abstractions_Creature_HandleMapDeparture">HandleMapDeparture()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.IsFriendlyTo.html#Chaos_Models_World_Abstractions_Creature_IsFriendlyTo_Chaos_Models_World_Abstractions_Creature_">IsFriendlyTo(Creature)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.IsHostileTo.html#Chaos_Models_World_Abstractions_Creature_IsHostileTo_Chaos_Models_World_Abstractions_Creature_">IsHostileTo(Creature)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.OnApproached.html#Chaos_Models_World_Abstractions_Creature_OnApproached_Chaos_Models_World_Abstractions_VisibleEntity_System_Boolean_">OnApproached(VisibleEntity, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.OnClicked.html#Chaos_Models_World_Abstractions_Creature_OnClicked_Chaos_Models_World_Aisling_">OnClicked(Aisling)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.OnDeparture.html#Chaos_Models_World_Abstractions_Creature_OnDeparture_Chaos_Models_World_Abstractions_VisibleEntity_System_Boolean_">OnDeparture(VisibleEntity, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.OnGoldDroppedOn.html#Chaos_Models_World_Abstractions_Creature_OnGoldDroppedOn_Chaos_Models_World_Aisling_System_Int32_">OnGoldDroppedOn(Aisling, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.OnItemDroppedOn.html#Chaos_Models_World_Abstractions_Creature_OnItemDroppedOn_Chaos_Models_World_Aisling_System_Byte_System_Byte_">OnItemDroppedOn(Aisling, byte, byte)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Pathfind.html#Chaos_Models_World_Abstractions_Creature_Pathfind_IPoint_System_Int32_System_Nullable_IPathOptions__System_Boolean_">Pathfind(IPoint, int, IPathOptions?, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Say.html#Chaos_Models_World_Abstractions_Creature_Say_System_String_">Say(string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.SetVisibility.html#Chaos_Models_World_Abstractions_Creature_SetVisibility_Chaos_Definitions_VisibilityType_">SetVisibility(VisibilityType)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.SetVision.html#Chaos_Models_World_Abstractions_Creature_SetVision_Chaos_Definitions_VisionType_">SetVision(VisionType)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Shout.html#Chaos_Models_World_Abstractions_Creature_Shout_System_String_">Shout(string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.ShowHealth.html#Chaos_Models_World_Abstractions_Creature_ShowHealth_System_Nullable_System_Byte__">ShowHealth(byte?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.ShowPublicMessage.html#Chaos_Models_World_Abstractions_Creature_ShowPublicMessage_PublicMessageType_System_String_">ShowPublicMessage(PublicMessageType, string)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.TraverseMap.html#Chaos_Models_World_Abstractions_Creature_TraverseMap_Chaos_Collections_MapInstance_IPoint_System_Boolean_System_Boolean_System_Nullable_Func_Task___">TraverseMap(MapInstance, IPoint, bool, bool, Func&lt;Task&gt;?)</a></dt>
+    <dd><p>Attempts to move this entity from its current map to the destination map</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.TraverseMapAsync.html#Chaos_Models_World_Abstractions_Creature_TraverseMapAsync_Chaos_Collections_MapInstance_IPoint_System_Boolean_System_Boolean_System_Nullable_Func_Task___">TraverseMapAsync(MapInstance, IPoint, bool, bool, Func&lt;Task&gt;?)</a></dt>
+    <dd><p>Attempts to move this entity from its current map to the destination map</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.TryDrop.html#Chaos_Models_World_Abstractions_Creature_TryDrop_IPoint_Chaos_Models_World_GroundItem____IEnumerable_Chaos_Models_Panel_Item__">TryDrop(IPoint, out GroundItem[], params IEnumerable&lt;Item&gt;)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.TryDrop.html#Chaos_Models_World_Abstractions_Creature_TryDrop_IPoint_IEnumerable_Chaos_Models_Panel_Item__Chaos_Models_World_GroundItem____">TryDrop(IPoint, IEnumerable&lt;Item&gt;, out GroundItem[])</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.TryDropGold.html#Chaos_Models_World_Abstractions_Creature_TryDropGold_IPoint_System_Int32_Chaos_Models_World_Money__">TryDropGold(IPoint, int, out Money)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.TryUseSkill.html#Chaos_Models_World_Abstractions_Creature_TryUseSkill_Chaos_Models_Panel_Skill_">TryUseSkill(Skill)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.TryUseSpell.html#Chaos_Models_World_Abstractions_Creature_TryUseSpell_Chaos_Models_Panel_Spell_System_Nullable_System_UInt32__System_Nullable_System_String__">TryUseSpell(Spell, uint?, string?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Turn.html#Chaos_Models_World_Abstractions_Creature_Turn_Direction_System_Boolean_">Turn(Direction, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Update.html#Chaos_Models_World_Abstractions_Creature_Update_TimeSpan_">Update(TimeSpan)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.UpdateViewPort.html#Chaos_Models_World_Abstractions_Creature_UpdateViewPort_System_Nullable_HashSet_Chaos_Models_World_Abstractions_VisibleEntity___System_Boolean_">UpdateViewPort(HashSet&lt;VisibleEntity&gt;?, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Walk.html#Chaos_Models_World_Abstractions_Creature_Walk_Direction_System_Nullable_System_Boolean__System_Nullable_System_Boolean__System_Nullable_System_Boolean__">Walk(Direction, bool?, bool?, bool?)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.Wander.html#Chaos_Models_World_Abstractions_Creature_Wander_System_Nullable_IPathOptions__System_Boolean_">Wander(IPathOptions?, bool)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.WarpTo.html#Chaos_Models_World_Abstractions_Creature_WarpTo_IPoint_">WarpTo(IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.WillCollideWith.html#Chaos_Models_World_Abstractions_Creature_WillCollideWith_Chaos_Models_World_Abstractions_Creature_">WillCollideWith(Creature)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.World.Abstractions.Creature.WithinLevelRange.html#Chaos_Models_World_Abstractions_Creature_WithinLevelRange_Chaos_Models_World_Abstractions_Creature_">WithinLevelRange(Creature)</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Models/World/Abstractions/Creature.cs/#L32" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

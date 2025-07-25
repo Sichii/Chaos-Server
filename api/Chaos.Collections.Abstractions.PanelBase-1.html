@@ -1,0 +1,394 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class PanelBase&lt;T&gt;
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class PanelBase&lt;T&gt;
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Collections_Abstractions_PanelBase_1.md&amp;value=---%0Auid%3A%20Chaos.Collections.Abstractions.PanelBase%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Collections.Abstractions.PanelBase`1">
+
+
+
+  <h1 id="Chaos_Collections_Abstractions_PanelBase_1" data-uid="Chaos.Collections.Abstractions.PanelBase`1" class="text-break">
+    Class PanelBase&lt;T&gt;
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Collections/Abstractions/PanelBase.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Collections.html">Collections</a>.<a class="xref" href="Chaos.Collections.Abstractions.html">Abstractions</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Defines the base functionality for a panel</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class PanelBase&lt;T&gt; : IPanel&lt;T&gt;, IEnumerable&lt;T&gt;, IDeltaUpdatable where T : PanelEntityBase</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of object that the panel will contain</p>
+</dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><span class="xref">PanelBase&lt;T&gt;</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Collections.Abstractions.IPanel-1.html">IPanel</a>&lt;T&gt;</div>
+      <div><span class="xref">IEnumerable</span>&lt;T&gt;</div>
+      <div><span class="xref">IDeltaUpdatable</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Collections.Abstractions.KnowledgeBookBase-1.html">KnowledgeBookBase&lt;T&gt;</a></div>
+      <div><a class="xref" href="Chaos.Collections.Equipment.html">Equipment</a></div>
+      <div><a class="xref" href="Chaos.Collections.Inventory.html">Inventory</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.-ctor.html#Chaos_Collections_Abstractions_PanelBase_1__ctor_PanelType_System_Int32_System_Byte___">PanelBase(PanelType, int, byte[])</a></dt>
+    <dd><p>Initializes a new instance of the <a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.html">PanelBase&lt;T&gt;</a> class</p>
+</dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.AvailableSlots.html#Chaos_Collections_Abstractions_PanelBase_1_AvailableSlots">AvailableSlots</a></dt>
+    <dd><p>The number of available slots in the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Count.html#Chaos_Collections_Abstractions_PanelBase_1_Count">Count</a></dt>
+    <dd><p>The number of objects currently in the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.InvalidSlots.html#Chaos_Collections_Abstractions_PanelBase_1_InvalidSlots">InvalidSlots</a></dt>
+    <dd><p>The slots that are considered invalid</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.IsFull.html#Chaos_Collections_Abstractions_PanelBase_1_IsFull">IsFull</a></dt>
+    <dd><p>Indicates whether the panel has no available slots</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Item.html#Chaos_Collections_Abstractions_PanelBase_1_Item_System_Byte_">this[byte]</a></dt>
+    <dd><p>Retrieves the object at the specified slot in the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Item.html#Chaos_Collections_Abstractions_PanelBase_1_Item_System_String_">this[string]</a></dt>
+    <dd><p>Retrieves the object with the specified name from the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Length.html#Chaos_Collections_Abstractions_PanelBase_1_Length">Length</a></dt>
+    <dd><p>The length of the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Objects.html#Chaos_Collections_Abstractions_PanelBase_1_Objects">Objects</a></dt>
+    <dd><p>The objects contained within the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Observers.html#Chaos_Collections_Abstractions_PanelBase_1_Observers">Observers</a></dt>
+    <dd><p>The observers that are registered to this panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.PanelType.html#Chaos_Collections_Abstractions_PanelBase_1_PanelType">PanelType</a></dt>
+    <dd><p>The type of the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Sync.html#Chaos_Collections_Abstractions_PanelBase_1_Sync">Sync</a></dt>
+    <dd><p>The synchronization mechanism used to ensure thread safety</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.TotalSlots.html#Chaos_Collections_Abstractions_PanelBase_1_TotalSlots">TotalSlots</a></dt>
+    <dd><p>The total number of slots available in the panel</p>
+</dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.AddObserver.html#Chaos_Collections_Abstractions_PanelBase_1_AddObserver_Chaos_Observers_Abstractions_IObserver__0__">AddObserver(IObserver&lt;T&gt;)</a></dt>
+    <dd><p>Adds an observer to the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.BroadcastOnAdded.html#Chaos_Collections_Abstractions_PanelBase_1_BroadcastOnAdded__0_">BroadcastOnAdded(T)</a></dt>
+    <dd><p>Notifies all registered observers that a new object has been added.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.BroadcastOnRemoved.html#Chaos_Collections_Abstractions_PanelBase_1_BroadcastOnRemoved_System_Byte__0_">BroadcastOnRemoved(byte, T)</a></dt>
+    <dd><p>Notifies all observers about the removal of an object from a specified slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.BroadcastOnUpdated.html#Chaos_Collections_Abstractions_PanelBase_1_BroadcastOnUpdated_System_Byte__0_">BroadcastOnUpdated(byte, T)</a></dt>
+    <dd><p>Notifies all observers about an update performed on the specified slot and its associated object</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Contains.html#Chaos_Collections_Abstractions_PanelBase_1_Contains_System_Byte_">Contains(byte)</a></dt>
+    <dd><p>Determines whether any object exists at the given slot in the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Contains.html#Chaos_Collections_Abstractions_PanelBase_1_Contains_System_String_">Contains(string)</a></dt>
+    <dd><p>Determines whether the panel contains an item with the specified name</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Contains.html#Chaos_Collections_Abstractions_PanelBase_1_Contains__0_">Contains(T)</a></dt>
+    <dd><p>Determines whether the current panel contains the specified object</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.ContainsByTemplateKey.html#Chaos_Collections_Abstractions_PanelBase_1_ContainsByTemplateKey_System_String_">ContainsByTemplateKey(string)</a></dt>
+    <dd><p>Determines whether the panel contains an object with the specified template key</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.GetEnumerator.html#Chaos_Collections_Abstractions_PanelBase_1_GetEnumerator">GetEnumerator()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.IsValidSlot.html#Chaos_Collections_Abstractions_PanelBase_1_IsValidSlot_System_Byte_">IsValidSlot(byte)</a></dt>
+    <dd><p>Determines whether the specified slot is valid within the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Remove.html#Chaos_Collections_Abstractions_PanelBase_1_Remove_System_Byte_">Remove(byte)</a></dt>
+    <dd><p>Removes an object from the panel at the specified slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Remove.html#Chaos_Collections_Abstractions_PanelBase_1_Remove_System_String_">Remove(string)</a></dt>
+    <dd><p>Removes an item from the panel by its name</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.RemoveByTemplateKey.html#Chaos_Collections_Abstractions_PanelBase_1_RemoveByTemplateKey_System_String_">RemoveByTemplateKey(string)</a></dt>
+    <dd><p>Removes an object from the panel based on its template key</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.TryAdd.html#Chaos_Collections_Abstractions_PanelBase_1_TryAdd_System_Byte__0_">TryAdd(byte, T)</a></dt>
+    <dd><p>Attempts to add the specified object to the panel at the given slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.TryAddToNextSlot.html#Chaos_Collections_Abstractions_PanelBase_1_TryAddToNextSlot__0_">TryAddToNextSlot(T)</a></dt>
+    <dd><p>Attempts to add the specified object to the next available slot in the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.TryGetObject.html#Chaos_Collections_Abstractions_PanelBase_1_TryGetObject_System_Byte__0__">TryGetObject(byte, out T)</a></dt>
+    <dd><p>Attempts to retrieve an object from the given slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.TryGetObject.html#Chaos_Collections_Abstractions_PanelBase_1_TryGetObject_System_String__0__">TryGetObject(string, out T)</a></dt>
+    <dd><p>Tries to retrieve an object by its name from the panel</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.TryGetObjectByTemplateKey.html#Chaos_Collections_Abstractions_PanelBase_1_TryGetObjectByTemplateKey_System_String__0__">TryGetObjectByTemplateKey(string, out T)</a></dt>
+    <dd><p>Attempts to retrieve an object from the panel based on the specified template key.</p>
+<param name="templateKey">
+    The template key of the object to retrieve
+<param name="obj">
+    The object retrieved if found, otherwise
+    <code>
+        null
+    </code><returns><code>
+        true
+    </code>
+    when an object with the specified template key exists in the panel, otherwise
+    <code>
+        false
+    </code></returns>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.TryGetRemove.html#Chaos_Collections_Abstractions_PanelBase_1_TryGetRemove_System_Byte__0__">TryGetRemove(byte, out T)</a></dt>
+    <dd><p>Attempts to retrieve and remove an object at the specified slot</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.TryGetRemove.html#Chaos_Collections_Abstractions_PanelBase_1_TryGetRemove_System_String__0__">TryGetRemove(string, out T)</a></dt>
+    <dd><p>Attempts to retrieve and remove an object by its name.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.TryGetRemoveByTemplateKey.html#Chaos_Collections_Abstractions_PanelBase_1_TryGetRemoveByTemplateKey_System_String__0__">TryGetRemoveByTemplateKey(string, out T)</a></dt>
+    <dd><p>Attempts to retrieve and remove an object from the panel based on its template key.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.TrySwap.html#Chaos_Collections_Abstractions_PanelBase_1_TrySwap_System_Byte_System_Byte_">TrySwap(byte, byte)</a></dt>
+    <dd><p>Attempts to swap objects between the specified slots</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Update.html#Chaos_Collections_Abstractions_PanelBase_1_Update_System_Byte_System_Nullable_Action__0___">Update(byte, Action&lt;T&gt;?)</a></dt>
+    <dd><p>Updates the object at the specified slot with an optional action</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Collections.Abstractions.PanelBase-1.Update.html#Chaos_Collections_Abstractions_PanelBase_1_Update_TimeSpan_">Update(TimeSpan)</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Collections/Abstractions/PanelBase.cs/#L15" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

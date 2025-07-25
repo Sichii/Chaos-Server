@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Access Manager | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Access Manager | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/AccessManager.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="access-manager">Access Manager</h1>
+
+<p>The access manager is exactly what it sounds like, but also more. This is either a poorly named class, or an object that
+has too many jobs.
+Maybe I'll remedy this in the future, but for now it is what it is.</p>
+<p>It handles not just access, but also player username and password rules and other various rules for character creation.</p>
+<h2 id="configuration">Configuration</h2>
+<p>The access manager is configured via the <code>Options:AccessManagerOptions</code> section of the <code>appsettings.json</code> file. These
+options are serialized
+into <a class="xref" href="../api/Chaos.Security.Options.AccessManagerOptions.html">AccessManagerOptions</a></p>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>string</td>
+<td>Directory</td>
+<td>The relative directory where the Access Manager will store its files</td>
+</tr>
+<tr>
+<td>string</td>
+<td>HashAlgorithmName</td>
+<td>The name of the hash algorithm used to hash passwords</td>
+</tr>
+<tr>
+<td>string</td>
+<td>LockoutMins</td>
+<td>The number of minutes an IP is locked out for after failing to login too many times</td>
+</tr>
+<tr>
+<td>string</td>
+<td>MaxCredentialAttempts</td>
+<td>The maximum number of times an IP can fail to login or change password before being locked out for a period of time</td>
+</tr>
+<tr>
+<td>string</td>
+<td>MaxPasswordLength</td>
+<td>The maximum number of characters allowed in a password</td>
+</tr>
+<tr>
+<td>string</td>
+<td>MaxUsernameLength</td>
+<td>The maximum number of characters allowed in a username</td>
+</tr>
+<tr>
+<td>string</td>
+<td>MinPasswordLength</td>
+<td>The minimum number of characters allowed in a password</td>
+</tr>
+<tr>
+<td>string</td>
+<td>MinUsernameLength</td>
+<td>The minimum number of characters allowed in a username</td>
+</tr>
+<tr>
+<td>string</td>
+<td>Mode</td>
+<td>The mode in which that the access manager operates</td>
+</tr>
+<tr>
+<td>string</td>
+<td>PhraseFilter</td>
+<td>A list of phrases/words that a username can not contains</td>
+</tr>
+<tr>
+<td>string</td>
+<td>ReservedUsernames</td>
+<td>A list of usernames that are reserved and can not be used</td>
+</tr>
+<tr>
+<td>string</td>
+<td>ValidCharactersPattern</td>
+<td>A regular expression used to validate that a username only contains valid characters</td>
+</tr>
+<tr>
+<td>string</td>
+<td>ValidFormatPattern</td>
+<td>A regular expression used to validate that a username is in the correct format</td>
+</tr>
+</tbody>
+</table>
+<div class="NOTE">
+<h5>Note</h5>
+<p>I suggest using <a href="https://regex101.com/">https://regex101.com/</a> to test your regular expressions</p>
+</div>
+<h2 id="example-appsettingsjson">Example <code>appsettings.json</code></h2>
+<pre><code class="lang-json">&quot;AccessManagerOptions&quot;: {
+  &quot;Directory&quot;: &quot;Data\\Configuration\\Access&quot;,
+  &quot;ValidCharactersPattern&quot;: &quot;[a-zA-Z0-9 ]+&quot;,
+  &quot;ValidFormatPattern&quot;: &quot;^[a-zA-Z]{3,}$|[a-zA-Z]{3,} ?[a-zA-Z]{3,}&quot;,
+  &quot;MaxUsernameLength&quot;: 12,
+  &quot;MinUsernameLength&quot;: 3,
+  &quot;MaxPasswordLength&quot;: 8,
+  &quot;MinPasswordLength&quot;: 5,
+  &quot;ReservedUsernames&quot;: [],
+  &quot;PhraseFilter&quot;: [],
+  &quot;HashAlgorithmName&quot;: &quot;SHA512&quot;,
+  &quot;Mode&quot;: &quot;Blacklist&quot;,
+  &quot;MaxCredentialAttempts&quot;: 5,
+  &quot;LockoutMins&quot;: 5
+},
+</code></pre>
+<h2 id="mode">Mode</h2>
+<p>The mode can be either <code>Whitelist</code>, or <code>Blacklist</code>. In whitelist mode, only the IPs in the whitelist file are allowed to
+connect. In blacklist mode, all IPs are allowed to connect, except those in the blacklist file. These files are located
+in the directory specified and the contents of these files should be IP addresses. They can be IPv4 or IPv6 addresses.
+If the file contains a line that is not a valid IP, it will be ignored.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/AccessManager.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

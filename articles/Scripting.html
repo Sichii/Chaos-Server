@@ -1,0 +1,332 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Scripting | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Scripting | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Scripting.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="scripting">Scripting</h1>
+
+<p>The server runs on scripts. Skills, Spells, Items, Dialogs, Monsters, Merchants, MapInstances, ReactorTiles, etc.. are
+all scripted objects.
+To control how these objects respond to input, a script must be written. Scripts can be found under <code>Chaos.Scripting</code>.
+There are a number of default scripts created as examples, but writing your own scripts is the only way to truly
+customize the server.</p>
+<p>There are 2 main types of scripts for most entities. <code>Base Scripts</code> and <code>Configurable Scripts</code>. Let's take item scripts
+as an example. There are 2 base types you can choose to use,
+the <a class="xref" href="../api/Chaos.Scripting.ItemScripts.Abstractions.ItemScriptBase.html">ItemScriptBase</a> and
+the <a class="xref" href="../api/Chaos.Scripting.ItemScripts.Abstractions.ConfigurableItemScriptBase.html">ConfigurableItemScriptBase</a>.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>You can add scripts to scripted objects at runtime by
+using <a class="xref" href="../api/Chaos.Extensions.ScriptExtensions.AddScript.html">AddScript</a></p>
+</div>
+<h3 id="base-scripts">Base Scripts</h3>
+<p>Base scripts are just empty scripts with no functionality. They have empty virtual implementations of all of the
+possible events that could occur for that object. These events are intended to be overridden and have functionality
+added.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>Base scripts are intended for use when no external configuration is necessary. A script inheriting from a BaseScript
+should generally do something specific</p>
+</div>
+<h3 id="configurable-scripts">Configurable Scripts</h3>
+<p>Configurable scripts are also empty scripts with all empty virtual implementations. The difference here is that these
+scripts are intended
+to have variables passed into them from json. Configurable scripts have an underlying mechanism that populates variables
+automatically if it can find that variable within the source json the entity was created from. Configurable scripts read
+from the <code>scriptVars</code> property from whatever entity is the subject of that script.</p>
+<p>For example, here is a script that is used for consumable items that give back health or mana.</p>
+<pre><code class="lang-csharp">#region
+using Chaos.DarkAges.Definitions;
+using Chaos.Definitions;
+using Chaos.Formulae;
+using Chaos.Models.Data;
+using Chaos.Models.Panel;
+using Chaos.Models.World;
+using Chaos.Scripting.Components.AbilityComponents;
+using Chaos.Scripting.Components.Execution;
+using Chaos.Scripting.FunctionalScripts.Abstractions;
+using Chaos.Scripting.FunctionalScripts.ApplyDamage;
+using Chaos.Scripting.FunctionalScripts.ApplyHealing;
+using Chaos.Scripting.ItemScripts.Abstractions;
+#endregion
+
+namespace Chaos.Scripting.ItemScripts;
+
+public class VitalityConsumableScript : ConfigurableItemScriptBase,
+                                        GenericAbilityComponent&lt;Aisling&gt;.IAbilityComponentOptions,
+                                        DamageAbilityComponent.IDamageComponentOptions,
+                                        HealAbilityComponent.IHealComponentOptions,
+                                        ManaDrainAbilityComponent.IManaDrainComponentOptions,
+                                        ManaReplenishAbilityComponent.IManaReplenishComponentOptions,
+                                        ConsumableAbilityComponent.IConsumableComponentOptions
+
+{
+    /// &lt;inheritdoc /&gt;
+    public VitalityConsumableScript(Item subject)
+        : base(subject)
+    {
+        ApplyDamageScript = ApplyNonAttackDamageScript.Create();
+        ApplyDamageScript.DamageFormula = DamageFormulae.PureDamage;
+        ApplyHealScript = ApplyNonAlertingHealScript.Create();
+        ApplyHealScript.HealFormula = HealFormulae.Default;
+        ItemName = Subject.DisplayName;
+    }
+
+    /// &lt;inheritdoc /&gt;
+    public override void OnUse(Aisling source)
+        =&gt; new ComponentExecutor(source, source).WithOptions(this)
+                                                .ExecuteAndCheck&lt;GenericAbilityComponent&lt;Aisling&gt;&gt;()
+                                                ?.Execute&lt;DamageAbilityComponent&gt;()
+                                                .Execute&lt;HealAbilityComponent&gt;()
+                                                .Execute&lt;ManaDrainAbilityComponent&gt;()
+                                                .Execute&lt;ManaReplenishAbilityComponent&gt;()
+                                                .Execute&lt;ConsumableAbilityComponent&gt;();
+
+    #region ScriptVars
+    /// &lt;inheritdoc /&gt;
+    public AoeShape Shape { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public bool SingleTarget { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public int? ExclusionRange { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public TargetFilter Filter { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public int Range { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public bool MustHaveTargets { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public byte? Sound { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public BodyAnimation BodyAnimation { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public bool? ScaleBodyAnimationSpeedByAttackSpeed { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public ushort? AnimationSpeed { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public Animation? Animation { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public bool AnimatePoints { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public int? ManaCost { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public decimal PctManaCost { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public bool ShouldNotBreakHide { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public IApplyDamageScript ApplyDamageScript { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public int? BaseDamage { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public Stat? DamageStat { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public decimal? DamageStatMultiplier { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public Element? Element { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public decimal? PctHpDamage { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public IApplyHealScript ApplyHealScript { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public int? BaseHeal { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public Stat? HealStat { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public decimal? HealStatMultiplier { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public decimal? PctHpHeal { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public int? ManaDrain { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public decimal PctManaDrain { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public int? ManaReplenish { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public decimal PctManaReplenish { get; init; }
+
+    /// &lt;inheritdoc /&gt;
+    public string ItemName { get; init; }
+    #endregion
+}
+</code></pre>
+<p>Note the <code>scriptVars</code> region. These properties don't appear to be set anywhere, but they are automatically populated by
+the script's base implementation from the item's json.</p>
+<p>Here is a json for an <code>apple</code> item, note the <code>scriptVars</code> property</p>
+<pre><code class="lang-json">{
+  &quot;buyCost&quot;: 100,
+  &quot;category&quot;: &quot;food&quot;,
+  &quot;color&quot;: &quot;Default&quot;,
+  &quot;isModifiable&quot;: true,
+  &quot;maxStacks&quot;: 100,
+  &quot;sellValue&quot;: 50,
+  &quot;weight&quot;: 1,
+  &quot;description&quot;: &quot;A shiny red apple. Looks edible!&quot;,
+  &quot;name&quot;: &quot;Apple&quot;,
+  &quot;panelSprite&quot;: 40,
+  &quot;scriptKeys&quot;: [
+    &quot;vitalityConsumable&quot;
+  ],
+  &quot;scriptVars&quot;: {
+    &quot;vitalityConsumable&quot;: {
+      &quot;baseHeal&quot;: 100,
+      &quot;filter&quot;: &quot;selfOnly, aliveOnly&quot;
+    }
+  },
+  &quot;templateKey&quot;: &quot;apple&quot;
+}
+</code></pre>
+<p>Here the <code>scriptKeys</code> collection contains the <code>vitalityConsumable</code> script key, signaling that
+the <code>VitalityConsumableScript</code> should be attached to this entity.
+The <code>scriptVars</code> object here provides configuration for that script. If multiple configurable scripts are used, multiple
+configurations can be specified.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The key of a script is the name of the class without &quot;Script&quot; at the end. So <code>VitalityConsumableScript</code> would have the
+key <code>VitalityConsumable</code></p>
+</div>
+<pre><code class="lang-json">&quot;scriptKeys&quot;: {
+  &quot;vitalityConsumable&quot;: {
+    ...
+  },
+  &quot;someQuest&quot;: {
+    ...
+  }
+}
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Scripting.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

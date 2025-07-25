@@ -1,0 +1,499 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class PointExtensions
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class PointExtensions
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Extensions_Geometry_PointExtensions.md&amp;value=---%0Auid%3A%20Chaos.Extensions.Geometry.PointExtensions%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Extensions.Geometry.PointExtensions">
+
+
+
+  <h1 id="Chaos_Extensions_Geometry_PointExtensions" data-uid="Chaos.Extensions.Geometry.PointExtensions" class="text-break">
+    Class PointExtensions
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Extensions.Geometry/PointExtensions.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Extensions.html">Extensions</a>.<a class="xref" href="Chaos.Extensions.Geometry.html">Geometry</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.Extensions.Geometry.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Provides extension methods for Chaos.Geometry.Abstractions.IPoint.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class PointExtensions</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><span class="xref">PointExtensions</span></div>
+    </dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ConalSearch.html#Chaos_Extensions_Geometry_PointExtensions_ConalSearch_Chaos_Geometry_Point_Direction_System_Int32_">ConalSearch(Point, Direction, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ConalSearch.html#Chaos_Extensions_Geometry_PointExtensions_ConalSearch_Chaos_Geometry_ValuePoint_Direction_System_Int32_">ConalSearch(ValuePoint, Direction, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ConalSearch.html#Chaos_Extensions_Geometry_PointExtensions_ConalSearch_IPoint_Direction_System_Int32_">ConalSearch(IPoint, Direction, int)</a></dt>
+    <dd><p>Lazily generates a sequence of points in a cone shape.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalOffset.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalOffset_Chaos_Geometry_Point_Direction_System_Int32_">DirectionalOffset(Point, Direction, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalOffset.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalOffset_Chaos_Geometry_ValuePoint_Direction_System_Int32_">DirectionalOffset(ValuePoint, Direction, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalOffset.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalOffset_IPoint_Direction_System_Int32_">DirectionalOffset(IPoint, Direction, int)</a></dt>
+    <dd><p>Offsets an Chaos.Geometry.Abstractions.IPoint in the specified
+Chaos.Geometry.Abstractions.Definitions.Direction by the specified <code class="paramref">distance</code></p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalRelationTo.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalRelationTo_Chaos_Geometry_Point_Chaos_Geometry_Point_">DirectionalRelationTo(Point, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalRelationTo.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalRelationTo_Chaos_Geometry_Point_Chaos_Geometry_ValuePoint_">DirectionalRelationTo(Point, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalRelationTo.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalRelationTo_Chaos_Geometry_Point_IPoint_">DirectionalRelationTo(Point, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalRelationTo.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalRelationTo_Chaos_Geometry_ValuePoint_Chaos_Geometry_Point_">DirectionalRelationTo(ValuePoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalRelationTo.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalRelationTo_Chaos_Geometry_ValuePoint_Chaos_Geometry_ValuePoint_">DirectionalRelationTo(ValuePoint, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalRelationTo.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalRelationTo_Chaos_Geometry_ValuePoint_IPoint_">DirectionalRelationTo(ValuePoint, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalRelationTo.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalRelationTo_IPoint_Chaos_Geometry_Point_">DirectionalRelationTo(IPoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.DirectionalRelationTo.html#Chaos_Extensions_Geometry_PointExtensions_DirectionalRelationTo_IPoint_IPoint_">DirectionalRelationTo(IPoint, IPoint)</a></dt>
+    <dd><p>Determines the directional relationship between this Chaos.Geometry.Abstractions.IPoint and another
+Chaos.Geometry.Abstractions.IPoint</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.EuclideanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_EuclideanDistanceFrom_Chaos_Geometry_Point_Chaos_Geometry_Point_">EuclideanDistanceFrom(Point, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.EuclideanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_EuclideanDistanceFrom_Chaos_Geometry_Point_Chaos_Geometry_ValuePoint_">EuclideanDistanceFrom(Point, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.EuclideanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_EuclideanDistanceFrom_Chaos_Geometry_Point_IPoint_">EuclideanDistanceFrom(Point, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.EuclideanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_EuclideanDistanceFrom_Chaos_Geometry_ValuePoint_Chaos_Geometry_Point_">EuclideanDistanceFrom(ValuePoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.EuclideanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_EuclideanDistanceFrom_Chaos_Geometry_ValuePoint_Chaos_Geometry_ValuePoint_">EuclideanDistanceFrom(ValuePoint, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.EuclideanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_EuclideanDistanceFrom_Chaos_Geometry_ValuePoint_IPoint_">EuclideanDistanceFrom(ValuePoint, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.EuclideanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_EuclideanDistanceFrom_IPoint_Chaos_Geometry_Point_">EuclideanDistanceFrom(IPoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.EuclideanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_EuclideanDistanceFrom_IPoint_Chaos_Geometry_ValuePoint_">EuclideanDistanceFrom(IPoint, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.EuclideanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_EuclideanDistanceFrom_IPoint_IPoint_">EuclideanDistanceFrom(IPoint, IPoint)</a></dt>
+    <dd><p>Determines the distances between this Chaos.Geometry.Abstractions.IPoint and another
+Chaos.Geometry.Abstractions.IPoint</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.FindCenterMost.html#Chaos_Extensions_Geometry_PointExtensions_FindCenterMost_ICollection_Chaos_Geometry_Point__">FindCenterMost(ICollection&lt;Point&gt;)</a></dt>
+    <dd><p>Finds the input point closest to the centroid of all points.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.FloodFill.html#Chaos_Extensions_Geometry_PointExtensions_FloodFill_IEnumerable_Chaos_Geometry_Point__Chaos_Geometry_Point_">FloodFill(IEnumerable&lt;Point&gt;, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.FloodFill.html#Chaos_Extensions_Geometry_PointExtensions_FloodFill__1_IEnumerable___0____0_">FloodFill&lt;T&gt;(IEnumerable&lt;T&gt;, T)</a></dt>
+    <dd><p>Flood fills in a given point set starting at a given point</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GenerateCardinalPoints.html#Chaos_Extensions_Geometry_PointExtensions_GenerateCardinalPoints_Chaos_Geometry_Point_Direction_System_Int32_">GenerateCardinalPoints(Point, Direction, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GenerateCardinalPoints.html#Chaos_Extensions_Geometry_PointExtensions_GenerateCardinalPoints_Chaos_Geometry_ValuePoint_Direction_System_Int32_">GenerateCardinalPoints(ValuePoint, Direction, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GenerateCardinalPoints.html#Chaos_Extensions_Geometry_PointExtensions_GenerateCardinalPoints_IPoint_Direction_System_Int32_">GenerateCardinalPoints(IPoint, Direction, int)</a></dt>
+    <dd><p>Lazily generates an enumeration of points in a line from the user, with an option for distance and direction.
+Direction.All is optional. Direction.Invalid direction returns empty list.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GenerateIntercardinalPoints.html#Chaos_Extensions_Geometry_PointExtensions_GenerateIntercardinalPoints_Chaos_Geometry_Point_Direction_System_Int32_">GenerateIntercardinalPoints(Point, Direction, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GenerateIntercardinalPoints.html#Chaos_Extensions_Geometry_PointExtensions_GenerateIntercardinalPoints_Chaos_Geometry_ValuePoint_Direction_System_Int32_">GenerateIntercardinalPoints(ValuePoint, Direction, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GenerateIntercardinalPoints.html#Chaos_Extensions_Geometry_PointExtensions_GenerateIntercardinalPoints_IPoint_Direction_System_Int32_">GenerateIntercardinalPoints(IPoint, Direction, int)</a></dt>
+    <dd><p>Lazily generates an enumeration of diagonal points in relevance to the user, with an optional distance and
+direction. Direction.All is optional. Direction.Invalid direction returns an empty enumeration</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GetDirectPath.html#Chaos_Extensions_Geometry_PointExtensions_GetDirectPath_Chaos_Geometry_Point_Chaos_Geometry_Point_">GetDirectPath(Point, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GetDirectPath.html#Chaos_Extensions_Geometry_PointExtensions_GetDirectPath_Chaos_Geometry_Point_IPoint_">GetDirectPath(Point, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GetDirectPath.html#Chaos_Extensions_Geometry_PointExtensions_GetDirectPath_Chaos_Geometry_ValuePoint_Chaos_Geometry_Point_">GetDirectPath(ValuePoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GetDirectPath.html#Chaos_Extensions_Geometry_PointExtensions_GetDirectPath_Chaos_Geometry_ValuePoint_IPoint_">GetDirectPath(ValuePoint, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GetDirectPath.html#Chaos_Extensions_Geometry_PointExtensions_GetDirectPath_IPoint_Chaos_Geometry_Point_">GetDirectPath(IPoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.GetDirectPath.html#Chaos_Extensions_Geometry_PointExtensions_GetDirectPath_IPoint_IPoint_">GetDirectPath(IPoint, IPoint)</a></dt>
+    <dd><p>Creates an enumerable list of points representing a path between two given points, and returns it.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.IsInterCardinalTo.html#Chaos_Extensions_Geometry_PointExtensions_IsInterCardinalTo_Chaos_Geometry_Point_Chaos_Geometry_Point_Direction_">IsInterCardinalTo(Point, Point, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.IsInterCardinalTo.html#Chaos_Extensions_Geometry_PointExtensions_IsInterCardinalTo_Chaos_Geometry_Point_IPoint_Direction_">IsInterCardinalTo(Point, IPoint, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.IsInterCardinalTo.html#Chaos_Extensions_Geometry_PointExtensions_IsInterCardinalTo_Chaos_Geometry_ValuePoint_Chaos_Geometry_Point_Direction_">IsInterCardinalTo(ValuePoint, Point, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.IsInterCardinalTo.html#Chaos_Extensions_Geometry_PointExtensions_IsInterCardinalTo_Chaos_Geometry_ValuePoint_Chaos_Geometry_ValuePoint_Direction_">IsInterCardinalTo(ValuePoint, ValuePoint, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.IsInterCardinalTo.html#Chaos_Extensions_Geometry_PointExtensions_IsInterCardinalTo_Chaos_Geometry_ValuePoint_IPoint_Direction_">IsInterCardinalTo(ValuePoint, IPoint, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.IsInterCardinalTo.html#Chaos_Extensions_Geometry_PointExtensions_IsInterCardinalTo_IPoint_Chaos_Geometry_Point_Direction_">IsInterCardinalTo(IPoint, Point, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.IsInterCardinalTo.html#Chaos_Extensions_Geometry_PointExtensions_IsInterCardinalTo_IPoint_IPoint_Direction_">IsInterCardinalTo(IPoint, IPoint, Direction)</a></dt>
+    <dd><p>Determines if this point is on either intercardinal diagonal in relation to another point, in the given direction</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ManhattanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_ManhattanDistanceFrom_Chaos_Geometry_Point_Chaos_Geometry_Point_">ManhattanDistanceFrom(Point, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ManhattanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_ManhattanDistanceFrom_Chaos_Geometry_Point_Chaos_Geometry_ValuePoint_">ManhattanDistanceFrom(Point, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ManhattanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_ManhattanDistanceFrom_Chaos_Geometry_Point_IPoint_">ManhattanDistanceFrom(Point, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ManhattanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_ManhattanDistanceFrom_Chaos_Geometry_ValuePoint_Chaos_Geometry_Point_">ManhattanDistanceFrom(ValuePoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ManhattanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_ManhattanDistanceFrom_Chaos_Geometry_ValuePoint_Chaos_Geometry_ValuePoint_">ManhattanDistanceFrom(ValuePoint, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ManhattanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_ManhattanDistanceFrom_Chaos_Geometry_ValuePoint_IPoint_">ManhattanDistanceFrom(ValuePoint, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ManhattanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_ManhattanDistanceFrom_IPoint_Chaos_Geometry_Point_">ManhattanDistanceFrom(IPoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ManhattanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_ManhattanDistanceFrom_IPoint_Chaos_Geometry_ValuePoint_">ManhattanDistanceFrom(IPoint, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.ManhattanDistanceFrom.html#Chaos_Extensions_Geometry_PointExtensions_ManhattanDistanceFrom_IPoint_IPoint_">ManhattanDistanceFrom(IPoint, IPoint)</a></dt>
+    <dd><p>Determines the distances between this Chaos.Geometry.Abstractions.IPoint and another
+Chaos.Geometry.Abstractions.IPoint</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OffsetTowards.html#Chaos_Extensions_Geometry_PointExtensions_OffsetTowards_Chaos_Geometry_Point_Chaos_Geometry_Point_">OffsetTowards(Point, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OffsetTowards.html#Chaos_Extensions_Geometry_PointExtensions_OffsetTowards_Chaos_Geometry_Point_Chaos_Geometry_ValuePoint_">OffsetTowards(Point, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OffsetTowards.html#Chaos_Extensions_Geometry_PointExtensions_OffsetTowards_Chaos_Geometry_Point_IPoint_">OffsetTowards(Point, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OffsetTowards.html#Chaos_Extensions_Geometry_PointExtensions_OffsetTowards_Chaos_Geometry_ValuePoint_Chaos_Geometry_Point_">OffsetTowards(ValuePoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OffsetTowards.html#Chaos_Extensions_Geometry_PointExtensions_OffsetTowards_Chaos_Geometry_ValuePoint_Chaos_Geometry_ValuePoint_">OffsetTowards(ValuePoint, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OffsetTowards.html#Chaos_Extensions_Geometry_PointExtensions_OffsetTowards_Chaos_Geometry_ValuePoint_IPoint_">OffsetTowards(ValuePoint, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OffsetTowards.html#Chaos_Extensions_Geometry_PointExtensions_OffsetTowards_IPoint_Chaos_Geometry_Point_">OffsetTowards(IPoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OffsetTowards.html#Chaos_Extensions_Geometry_PointExtensions_OffsetTowards_IPoint_Chaos_Geometry_ValuePoint_">OffsetTowards(IPoint, ValuePoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OffsetTowards.html#Chaos_Extensions_Geometry_PointExtensions_OffsetTowards_IPoint_IPoint_">OffsetTowards(IPoint, IPoint)</a></dt>
+    <dd><p>Offsets one Chaos.Geometry.Abstractions.IPoint towards another
+Chaos.Geometry.Abstractions.IPoint</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OrderByAngle.html#Chaos_Extensions_Geometry_PointExtensions_OrderByAngle_IEnumerable_Chaos_Geometry_Point__Chaos_Geometry_Point_">OrderByAngle(IEnumerable&lt;Point&gt;, Point)</a></dt>
+    <dd><p>Orders a sequence of points by their angle in relation to a given point</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.OrderByAngle.html#Chaos_Extensions_Geometry_PointExtensions_OrderByAngle__1_IEnumerable___0____0_">OrderByAngle&lt;T&gt;(IEnumerable&lt;T&gt;, T)</a></dt>
+    <dd><p>Orders a sequence of points by their angle in relation to a given point</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.RayTraceTo.html#Chaos_Extensions_Geometry_PointExtensions_RayTraceTo_Chaos_Geometry_Point_Chaos_Geometry_Point_">RayTraceTo(Point, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.RayTraceTo.html#Chaos_Extensions_Geometry_PointExtensions_RayTraceTo_Chaos_Geometry_Point_IPoint_">RayTraceTo(Point, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.RayTraceTo.html#Chaos_Extensions_Geometry_PointExtensions_RayTraceTo_Chaos_Geometry_ValuePoint_Chaos_Geometry_Point_">RayTraceTo(ValuePoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.RayTraceTo.html#Chaos_Extensions_Geometry_PointExtensions_RayTraceTo_Chaos_Geometry_ValuePoint_IPoint_">RayTraceTo(ValuePoint, IPoint)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.RayTraceTo.html#Chaos_Extensions_Geometry_PointExtensions_RayTraceTo_IPoint_Chaos_Geometry_Point_">RayTraceTo(IPoint, Point)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.RayTraceTo.html#Chaos_Extensions_Geometry_PointExtensions_RayTraceTo_IPoint_IPoint_">RayTraceTo(IPoint, IPoint)</a></dt>
+    <dd><p>Lazily generates points between two points.
+<br>
+<a href="https://playtechs.blogspot.com/2007/03/raytracing-on-grid.html">https://playtechs.blogspot.com/2007/03/raytracing-on-grid.html</a></p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.SpiralSearch.html#Chaos_Extensions_Geometry_PointExtensions_SpiralSearch_Chaos_Geometry_Point_System_Int32_">SpiralSearch(Point, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.SpiralSearch.html#Chaos_Extensions_Geometry_PointExtensions_SpiralSearch_Chaos_Geometry_ValuePoint_System_Int32_">SpiralSearch(ValuePoint, int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.SpiralSearch.html#Chaos_Extensions_Geometry_PointExtensions_SpiralSearch_IPoint_System_Int32_">SpiralSearch(IPoint, int)</a></dt>
+    <dd><p>Lazily generates points around a given point. The search expands outwards from the given point until it reaches the
+specified max distance</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.WithConsistentDirectionBias.html#Chaos_Extensions_Geometry_PointExtensions_WithConsistentDirectionBias_IEnumerable_Chaos_Geometry_Point__Direction_">WithConsistentDirectionBias(IEnumerable&lt;Point&gt;, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.WithConsistentDirectionBias.html#Chaos_Extensions_Geometry_PointExtensions_WithConsistentDirectionBias__1_IEnumerable___0__Direction_">WithConsistentDirectionBias&lt;TPoint&gt;(IEnumerable&lt;TPoint&gt;, Direction)</a></dt>
+    <dd><p>Orders points by their X or Y values, based on the direction given. The output of this method will always order
+points in the same order.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.WithDirectionBias.html#Chaos_Extensions_Geometry_PointExtensions_WithDirectionBias_IEnumerable_Chaos_Geometry_Point__Direction_">WithDirectionBias(IEnumerable&lt;Point&gt;, Direction)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Extensions.Geometry.PointExtensions.WithDirectionBias.html#Chaos_Extensions_Geometry_PointExtensions_WithDirectionBias__1_IEnumerable___0__Direction_">WithDirectionBias&lt;TPoint&gt;(IEnumerable&lt;TPoint&gt;, Direction)</a></dt>
+    <dd><p>Orders points by their X or Y values, based on the direction given.</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Extensions.Geometry/PointExtensions.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

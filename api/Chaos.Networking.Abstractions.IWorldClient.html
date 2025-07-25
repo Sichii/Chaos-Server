@@ -1,0 +1,454 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IWorldClient
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IWorldClient
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Networking_Abstractions_IWorldClient.md&amp;value=---%0Auid%3A%20Chaos.Networking.Abstractions.IWorldClient%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Networking.Abstractions.IWorldClient">
+
+
+
+  <h1 id="Chaos_Networking_Abstractions_IWorldClient" data-uid="Chaos.Networking.Abstractions.IWorldClient" class="text-break">
+    Interface IWorldClient
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Networking/Abstractions/IWorldClient.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Networking.html">Networking</a>.<a class="xref" href="Chaos.Networking.Abstractions.html">Abstractions</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.Networking.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a client that is connected to the world server.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IWorldClient : IConnectedClient, ISocketClient</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.IConnectedClient.SendAcceptConnection.html#Chaos_Networking_Abstractions_IConnectedClient_SendAcceptConnection_System_String_">IConnectedClient.SendAcceptConnection(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.IConnectedClient.SendHeartBeat.html#Chaos_Networking_Abstractions_IConnectedClient_SendHeartBeat_System_Byte_System_Byte_">IConnectedClient.SendHeartBeat(byte, byte)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.IConnectedClient.SendRedirect.html#Chaos_Networking_Abstractions_IConnectedClient_SendRedirect_Chaos_Networking_Abstractions_IRedirect_">IConnectedClient.SendRedirect(IRedirect)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.IConnectedClient.SendSynchronizeTicks.html#Chaos_Networking_Abstractions_IConnectedClient_SendSynchronizeTicks">IConnectedClient.SendSynchronizeTicks()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.Crypto.html#Chaos_Networking_Abstractions_ISocketClient_Crypto">ISocketClient.Crypto</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.Connected.html#Chaos_Networking_Abstractions_ISocketClient_Connected">ISocketClient.Connected</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.Id.html#Chaos_Networking_Abstractions_ISocketClient_Id">ISocketClient.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.ReceiveSync.html#Chaos_Networking_Abstractions_ISocketClient_ReceiveSync">ISocketClient.ReceiveSync</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.RemoteIp.html#Chaos_Networking_Abstractions_ISocketClient_RemoteIp">ISocketClient.RemoteIp</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.Socket.html#Chaos_Networking_Abstractions_ISocketClient_Socket">ISocketClient.Socket</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.BeginReceive.html#Chaos_Networking_Abstractions_ISocketClient_BeginReceive">ISocketClient.BeginReceive()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.Disconnect.html#Chaos_Networking_Abstractions_ISocketClient_Disconnect">ISocketClient.Disconnect()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.OnDisconnected.html">ISocketClient.OnDisconnected</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.Send.html#Chaos_Networking_Abstractions_ISocketClient_Send__1___0_">ISocketClient.Send&lt;T&gt;(T)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.Send.html#Chaos_Networking_Abstractions_ISocketClient_Send_Chaos_Packets_Packet__">ISocketClient.Send(ref Packet)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Networking.Abstractions.ISocketClient.SetSequence.html#Chaos_Networking_Abstractions_ISocketClient_SetSequence_System_Byte_">ISocketClient.SetSequence(byte)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendAddItemToPane.html#Chaos_Networking_Abstractions_IWorldClient_SendAddItemToPane_Chaos_Networking_Entities_Server_AddItemToPaneArgs_">SendAddItemToPane(AddItemToPaneArgs)</a></dt>
+    <dd><p>Sends a packet to display a item in a pane</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendAddSkillToPane.html#Chaos_Networking_Abstractions_IWorldClient_SendAddSkillToPane_Chaos_Networking_Entities_Server_AddSkillToPaneArgs_">SendAddSkillToPane(AddSkillToPaneArgs)</a></dt>
+    <dd><p>Sends a packet to display a skill in a pane</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendAddSpellToPane.html#Chaos_Networking_Abstractions_IWorldClient_SendAddSpellToPane_Chaos_Networking_Entities_Server_AddSpellToPaneArgs_">SendAddSpellToPane(AddSpellToPaneArgs)</a></dt>
+    <dd><p>Sends a packet to display a spell in a pane</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendAnimation.html#Chaos_Networking_Abstractions_IWorldClient_SendAnimation_Chaos_Networking_Entities_Server_AnimationArgs_">SendAnimation(AnimationArgs)</a></dt>
+    <dd><p>Sends a packet to display an animation.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendAttributes.html#Chaos_Networking_Abstractions_IWorldClient_SendAttributes_Chaos_Networking_Entities_Server_AttributesArgs_">SendAttributes(AttributesArgs)</a></dt>
+    <dd><p>Sends a packet to update the client's attributes</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendBodyAnimation.html#Chaos_Networking_Abstractions_IWorldClient_SendBodyAnimation_Chaos_Networking_Entities_Server_BodyAnimationArgs_">SendBodyAnimation(BodyAnimationArgs)</a></dt>
+    <dd><p>Sends a packet to animate an aisling's body</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendCancelCasting.html#Chaos_Networking_Abstractions_IWorldClient_SendCancelCasting">SendCancelCasting()</a></dt>
+    <dd><p>Sends a packet signaling the client to cancel casting (chanting) of the current spell</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendClientWalkResponse.html#Chaos_Networking_Abstractions_IWorldClient_SendClientWalkResponse_Chaos_Networking_Entities_Server_ClientWalkResponseArgs_">SendClientWalkResponse(ClientWalkResponseArgs)</a></dt>
+    <dd><p>Sends a packet to respond to a client's walk request</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendCooldown.html#Chaos_Networking_Abstractions_IWorldClient_SendCooldown_Chaos_Networking_Entities_Server_CooldownArgs_">SendCooldown(CooldownArgs)</a></dt>
+    <dd><p>Sends a packet to start the cooldown of a skill or spell</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendCreatureTurn.html#Chaos_Networking_Abstractions_IWorldClient_SendCreatureTurn_Chaos_Networking_Entities_Server_CreatureTurnArgs_">SendCreatureTurn(CreatureTurnArgs)</a></dt>
+    <dd><p>Sends a packet to turn a creature (that isnt the current user) in a specific direction</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendCreatureWalk.html#Chaos_Networking_Abstractions_IWorldClient_SendCreatureWalk_Chaos_Networking_Entities_Server_CreatureWalkArgs_">SendCreatureWalk(CreatureWalkArgs)</a></dt>
+    <dd><p>Sends a packet to move a creature (that isnt the current user) in a specific direction</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendDisplayAisling.html#Chaos_Networking_Abstractions_IWorldClient_SendDisplayAisling_Chaos_Networking_Entities_Server_DisplayAislingArgs_">SendDisplayAisling(DisplayAislingArgs)</a></dt>
+    <dd><p>Sends a packet to display an aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendDisplayBoard.html#Chaos_Networking_Abstractions_IWorldClient_SendDisplayBoard_Chaos_Networking_Entities_Server_DisplayBoardArgs_">SendDisplayBoard(DisplayBoardArgs)</a></dt>
+    <dd><p>Sends a packet to display a board, list of boards, or a board response.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendDisplayDialog.html#Chaos_Networking_Abstractions_IWorldClient_SendDisplayDialog_Chaos_Networking_Entities_Server_DisplayDialogArgs_">SendDisplayDialog(DisplayDialogArgs)</a></dt>
+    <dd><p>Sends a packet to display a dialog</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendDisplayExchange.html#Chaos_Networking_Abstractions_IWorldClient_SendDisplayExchange_Chaos_Networking_Entities_Server_DisplayExchangeArgs_">SendDisplayExchange(DisplayExchangeArgs)</a></dt>
+    <dd><p>Sends a packet to display, close, or update an exchange</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendDisplayGroupInvite.html#Chaos_Networking_Abstractions_IWorldClient_SendDisplayGroupInvite_Chaos_Networking_Entities_Server_DisplayGroupInviteArgs_">SendDisplayGroupInvite(DisplayGroupInviteArgs)</a></dt>
+    <dd><p>Sends a packet to display a group invite</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendDisplayNotepad.html#Chaos_Networking_Abstractions_IWorldClient_SendDisplayNotepad_Chaos_Networking_Entities_Server_DisplayNotepadArgs_">SendDisplayNotepad(DisplayNotepadArgs)</a></dt>
+    <dd><p>Sends a packet to display a notepad</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendDisplayPublicMessage.html#Chaos_Networking_Abstractions_IWorldClient_SendDisplayPublicMessage_Chaos_Networking_Entities_Server_DisplayPublicMessageArgs_">SendDisplayPublicMessage(DisplayPublicMessageArgs)</a></dt>
+    <dd><p>Sends a packet to display a public message. (Normal, Shout, Chant)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendDisplayUnequip.html#Chaos_Networking_Abstractions_IWorldClient_SendDisplayUnequip_Chaos_Networking_Entities_Server_DisplayUnequipArgs_">SendDisplayUnequip(DisplayUnequipArgs)</a></dt>
+    <dd><p>Sends a packet to unequip an item (remove from equipment pane)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendDisplayVisibleEntities.html#Chaos_Networking_Abstractions_IWorldClient_SendDisplayVisibleEntities_Chaos_Networking_Entities_Server_DisplayVisibleEntitiesArgs_">SendDisplayVisibleEntities(DisplayVisibleEntitiesArgs)</a></dt>
+    <dd><p>Sends a packet to display visible entities to the client (Monsters, Merchants, GroundItems only)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendDoors.html#Chaos_Networking_Abstractions_IWorldClient_SendDoors_Chaos_Networking_Entities_Server_DoorArgs_">SendDoors(DoorArgs)</a></dt>
+    <dd><p>Sends a packet to display doors</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendEditableProfileRequest.html#Chaos_Networking_Abstractions_IWorldClient_SendEditableProfileRequest">SendEditableProfileRequest()</a></dt>
+    <dd><p>Sends a packet to request the editable profile from the client. (Profile text and image)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendEffect.html#Chaos_Networking_Abstractions_IWorldClient_SendEffect_Chaos_Networking_Entities_Server_EffectArgs_">SendEffect(EffectArgs)</a></dt>
+    <dd><p>Sends a packet to display an effect in the effect bar (top right of screen)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendEquipment.html#Chaos_Networking_Abstractions_IWorldClient_SendEquipment_Chaos_Networking_Entities_Server_EquipmentArgs_">SendEquipment(EquipmentArgs)</a></dt>
+    <dd><p>Sends a packet to display an item in the equipment pane</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendExitResponse.html#Chaos_Networking_Abstractions_IWorldClient_SendExitResponse_Chaos_Networking_Entities_Server_ExitResponseArgs_">SendExitResponse(ExitResponseArgs)</a></dt>
+    <dd><p>Sends a packet to respond to a client's exit request</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendForceClientPacket.html#Chaos_Networking_Abstractions_IWorldClient_SendForceClientPacket_Chaos_Networking_Entities_Server_ForceClientPacketArgs_">SendForceClientPacket(ForceClientPacketArgs)</a></dt>
+    <dd><p>Sends a packet to force a client to send a packet to the server</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendHealthBar.html#Chaos_Networking_Abstractions_IWorldClient_SendHealthBar_Chaos_Networking_Entities_Server_HealthBarArgs_">SendHealthBar(HealthBarArgs)</a></dt>
+    <dd><p>Sends a packet to display a health bar</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendLightLevel.html#Chaos_Networking_Abstractions_IWorldClient_SendLightLevel_Chaos_Networking_Entities_Server_LightLevelArgs_">SendLightLevel(LightLevelArgs)</a></dt>
+    <dd><p>Sends a packet to update the light level of the client (day/night)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendLocation.html#Chaos_Networking_Abstractions_IWorldClient_SendLocation_Chaos_Networking_Entities_Server_LocationArgs_">SendLocation(LocationArgs)</a></dt>
+    <dd><p>Sends a packet to update the client's location</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendMapChangeComplete.html#Chaos_Networking_Abstractions_IWorldClient_SendMapChangeComplete">SendMapChangeComplete()</a></dt>
+    <dd><p>Sends a packet to signal the client that a map change is complete</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendMapChangePending.html#Chaos_Networking_Abstractions_IWorldClient_SendMapChangePending">SendMapChangePending()</a></dt>
+    <dd><p>Sends a packet to signal the client that a map change is pending</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendMapData.html#Chaos_Networking_Abstractions_IWorldClient_SendMapData_Chaos_Networking_Entities_Server_MapDataArgs_">SendMapData(MapDataArgs)</a></dt>
+    <dd><p>Sends a packet to send map data to the client</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendMapInfo.html#Chaos_Networking_Abstractions_IWorldClient_SendMapInfo_Chaos_Networking_Entities_Server_MapInfoArgs_">SendMapInfo(MapInfoArgs)</a></dt>
+    <dd><p>Sends a packet to send map information to the client</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendMapLoadComplete.html#Chaos_Networking_Abstractions_IWorldClient_SendMapLoadComplete">SendMapLoadComplete()</a></dt>
+    <dd><p>Sends a packet to signal the client that the map has finished loading</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendMetaData.html#Chaos_Networking_Abstractions_IWorldClient_SendMetaData_Chaos_Networking_Entities_Server_MetaDataArgs_">SendMetaData(MetaDataArgs)</a></dt>
+    <dd><p>Sends meta data to the client</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendNotepad.html#Chaos_Networking_Abstractions_IWorldClient_SendNotepad_Chaos_Networking_Entities_Server_DisplayNotepadArgs_">SendNotepad(DisplayNotepadArgs)</a></dt>
+    <dd><p>Sends a packet to display an editable notepad</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendOtherProfile.html#Chaos_Networking_Abstractions_IWorldClient_SendOtherProfile_Chaos_Networking_Entities_Server_OtherProfileArgs_">SendOtherProfile(OtherProfileArgs)</a></dt>
+    <dd><p>Sends a packet to display another player's profile</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendRefreshResponse.html#Chaos_Networking_Abstractions_IWorldClient_SendRefreshResponse">SendRefreshResponse()</a></dt>
+    <dd><p>Sends a packet to respond to a request to refresh the client. This is more for signalling that the refresh
+operation has completed.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendRemoveEntity.html#Chaos_Networking_Abstractions_IWorldClient_SendRemoveEntity_Chaos_Networking_Entities_Server_RemoveEntityArgs_">SendRemoveEntity(RemoveEntityArgs)</a></dt>
+    <dd><p>Sends a packet to remove an entity from the client</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendRemoveItemFromPane.html#Chaos_Networking_Abstractions_IWorldClient_SendRemoveItemFromPane_Chaos_Networking_Entities_Server_RemoveItemFromPaneArgs_">SendRemoveItemFromPane(RemoveItemFromPaneArgs)</a></dt>
+    <dd><p>Sends a packet to remove an item from a pane</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendRemoveSkillFromPane.html#Chaos_Networking_Abstractions_IWorldClient_SendRemoveSkillFromPane_Chaos_Networking_Entities_Server_RemoveSkillFromPaneArgs_">SendRemoveSkillFromPane(RemoveSkillFromPaneArgs)</a></dt>
+    <dd><p>Sends a packet to remove a skill from a pane</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendRemoveSpellFromPane.html#Chaos_Networking_Abstractions_IWorldClient_SendRemoveSpellFromPane_Chaos_Networking_Entities_Server_RemoveSpellFromPaneArgs_">SendRemoveSpellFromPane(RemoveSpellFromPaneArgs)</a></dt>
+    <dd><p>Sends a packet to remove a spell from a pane</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendSelfProfile.html#Chaos_Networking_Abstractions_IWorldClient_SendSelfProfile_Chaos_Networking_Entities_Server_SelfProfileArgs_">SendSelfProfile(SelfProfileArgs)</a></dt>
+    <dd><p>Sends a packet containing the client's profile</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendServerMessage.html#Chaos_Networking_Abstractions_IWorldClient_SendServerMessage_Chaos_Networking_Entities_Server_ServerMessageArgs_">SendServerMessage(ServerMessageArgs)</a></dt>
+    <dd><p>Sends a packet to display a server message (Whisper, Guild, Group, OrangeBar, WhiteText, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendSound.html#Chaos_Networking_Abstractions_IWorldClient_SendSound_Chaos_Networking_Entities_Server_SoundArgs_">SendSound(SoundArgs)</a></dt>
+    <dd><p>Sends a packet to play a sound (or music)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendUserId.html#Chaos_Networking_Abstractions_IWorldClient_SendUserId_Chaos_Networking_Entities_Server_UserIdArgs_">SendUserId(UserIdArgs)</a></dt>
+    <dd><p>Sends a packet to give the client it's user id. This is what the client uses to attach it's viewport to an aisling.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendWorldList.html#Chaos_Networking_Abstractions_IWorldClient_SendWorldList_Chaos_Networking_Entities_Server_WorldListArgs_">SendWorldList(WorldListArgs)</a></dt>
+    <dd><p>Sends a packet to display a world list to the client</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Networking.Abstractions.IWorldClient.SendWorldMap.html#Chaos_Networking_Abstractions_IWorldClient_SendWorldMap_Chaos_Networking_Entities_Server_WorldMapArgs_">SendWorldMap(WorldMapArgs)</a></dt>
+    <dd><p>Sends a packet to display a world map to the client</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos.Networking/Abstractions/IWorldClient.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,285 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Monsters | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Monsters | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Monsters.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="monsters">Monsters</h1>
+
+<p>Monsters in Chaos are both templated and scripted objects. When you define a monster, you are actually defining a
+monster template that will be used to create new instances of that monster as requested. Each monster that is created is
+a fresh instance of that monster created from it's template.</p>
+<h2 id="monster-templates">Monster Templates</h2>
+<p>A monster template is used to create new instances of monsters as required. It contains all the information required to
+create an instance of a new monster.</p>
+<h2 id="how-do-i-create-them">How do I create them?</h2>
+<p>By default, monster templates should be created in <code>Data\Configuration\Templates\Monsters</code>. Configuration of how
+monsters are loaded can be found in <code>appsettings.json</code> at <code>Options:MonsterTemplateCacheOptions</code>.</p>
+<p>Monster templates are initially serialized
+into <a class="xref" href="../api/Chaos.Schemas.Templates.MonsterTemplateSchema.html">MonsterTemplateSchema</a> before being mapped to
+a <a class="xref" href="../api/Chaos.Models.Templates.MonsterTemplate.html">MonsterTemplate</a>. The schema object is mapped via
+the <a class="xref" href="../api/Chaos.Services.MapperProfiles.MonsterMapperProfile.html">MonsterMapperProfile</a>.</p>
+<p>See <a class="xref" href="../api/Chaos.Schemas.Templates.MonsterTemplateSchema.html">MonsterTemplateSchema</a> for a list of all configurable
+properties with descriptions.</p>
+<h2 id="how-do-i-use-them">How do I use them?</h2>
+<p>Monsters can be created by using the <a class="xref" href="../api/Chaos.Services.Factories.MonsterFactory.html">MonsterFactory</a>, which is an
+implementation of <a class="xref" href="../api/Chaos.Services.Factories.Abstractions.IMonsterFactory.html">IMonsterFactory</a>.</p>
+<p><a href="Maps.html">MapInstances</a> have a section for adding monster spawns to a map by their template key, but you can also create
+them using the example below.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Each monster is a fresh instance of a monster created from a template. Any changes made to the template will apply
+to all instances of that monster.</p>
+</div>
+<pre><code class="lang-cs">private readonly IMonsterFactory MonsterFactory;
+
+public Foo(IMonsterFactory monsterFactory) =&gt; MonsterFactory = monsterFactory;
+
+public void Bar()
+{
+    //create a new instance of the monster &quot;myMonsterTemplateKey&quot;
+    //mapInstance is the map instance that the monster will be added to
+    //point is the point on the map that the monster will be added to
+    //extraScriptKeys is optional, and can be used to pass in extra script keys that are not part of the templated monster
+    var monster = MonsterFactory.Create(&quot;myMonsterTemplateKey&quot;, mapInstance, point, extraScriptKeys);
+    
+    //the monster is not automatically added to the map when created, so you must do so yourself
+    mapInstance.AddObject(monster, point);
+}
+</code></pre>
+<h2 id="scripting">Scripting</h2>
+<p>Monsters are scripted via <a class="xref" href="../api/Chaos.Scripting.MonsterScripts.Abstractions.IMonsterScript.html">IMonsterScript</a>.</p>
+<ul>
+<li>Inherit from <a class="xref" href="../api/Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.html">MonsterScriptBase</a> for a basic
+script that requires no external configuration</li>
+<li>Inherit
+from <a class="xref" href="../api/Chaos.Scripting.MonsterScripts.Abstractions.ConfigurableMonsterScriptBase.html">ConfigurableMonsterScriptBase</a>
+for a script that requires external configuration via ScriptVars</li>
+</ul>
+<p>Specify any number of script keys in the <code>MonsterTemplate.ScriptKeys</code> property, and those scripts will automatically be
+attached to the <code>Monster</code> when it is created.</p>
+<p>If the script is configurable, you must also have an entry for that script in the <code>MonsterTemplate.ScriptVars</code> property.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The key of a script is the name of the class without 'Script' at the end</p>
+</div>
+<p>Here are the events overridable in monster scripts:</p>
+<table>
+<thead>
+<tr>
+<th>Event Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CanMove</td>
+<td>Called when the monster is about to move. Return false to prevent the monster from moving. This can be used to check for status effects and other things</td>
+</tr>
+<tr>
+<td>CanSee</td>
+<td>Called to check if the monster is able to see a <code>VisibleEntity</code>.</td>
+</tr>
+<tr>
+<td>CanTalk</td>
+<td>Called when the monster is about to talk. Return false to prevent the monster from talking. This can be used to check for status effects and other things</td>
+</tr>
+<tr>
+<td>CanTurn</td>
+<td>Called when the monster is about to turn. Return false to prevent the monster from turning. This can be used to check for status effects and other things</td>
+</tr>
+<tr>
+<td>CanUseSkill</td>
+<td>Called when the monster is about to use a skill. Return false to prevent the monster from using the skill. This can be used to check for status effects and other things</td>
+</tr>
+<tr>
+<td>CanUseSpell</td>
+<td>Called when the monster is about to use a spell. Return false to prevent the monster from using the spell. This can be used to check for status effects and other things</td>
+</tr>
+<tr>
+<td>OnApproached</td>
+<td>Called when any observable creature enters the monster's awareness (15 tiles), or becomes observable within that area</td>
+</tr>
+<tr>
+<td>OnAttacked</td>
+<td>Called after the monster is attacked. This is called before OnDeath</td>
+</tr>
+<tr>
+<td>OnClicked</td>
+<td>Called when the monster is clicked</td>
+</tr>
+<tr>
+<td>OnDeath</td>
+<td>Called when the monster dies. This is called after OnAttacked</td>
+</tr>
+<tr>
+<td>OnDeparture</td>
+<td>Called when any observable creature exits the monster's awareness (15 tiles), or becomes unobservable within that area</td>
+</tr>
+<tr>
+<td>OnGoldDroppedOn</td>
+<td>Called after gold is dropped on the monster</td>
+</tr>
+<tr>
+<td>OnHealed</td>
+<td>Called after the monster is healed</td>
+</tr>
+<tr>
+<td>OnItemDroppedOn</td>
+<td>Called after an item is dropped on the monster</td>
+</tr>
+<tr>
+<td>OnPublicMessage</td>
+<td>Called after any creature sends a public message within the monster's awareness (15 tiles)</td>
+</tr>
+<tr>
+<td>OnSpawn</td>
+<td>Called after a monster has spawned. This is called after OnEntered and OnApproach</td>
+</tr>
+<tr>
+<td>Update</td>
+<td>Called every time the map updates</td>
+</tr>
+</tbody>
+</table>
+<h2 id="example">Example</h2>
+<p>Here is an example of a rat. It's a very standard creature, uses Assail every 1.5s, wanders every 2s, moves towards
+targets every 1.5s, and has an aggro range of 6 tiles. It drops 10-30 gold and rewards 50 exp on kill.</p>
+<pre><code class="lang-json">{
+    &quot;aggroRange&quot;: 6,
+    &quot;assailIntervalMs&quot;: 1500,
+    &quot;expReward&quot;: 50,
+    &quot;lootTableKeys&quot;: [&quot;testAreaRats&quot;],
+    &quot;maxGoldDrop&quot;: 30,
+    &quot;minGoldDrop&quot;: 10,
+    &quot;moveIntervalMs&quot;: 1500,
+    &quot;name&quot;: &quot;Common Rat&quot;,
+    &quot;scriptKeys&quot;: [&quot;default&quot;],
+    &quot;scriptVars&quot;: {},
+    &quot;skillIntervalMs&quot;: 1500,
+    &quot;skillTemplateKeys&quot;: [&quot;Assail&quot;],
+    &quot;spellIntervalMs&quot;: 10000,
+    &quot;spellTemplateKeys&quot;: [],
+    &quot;sprite&quot;: 959,
+    &quot;statSheet&quot;: {
+        &quot;level&quot;: 1,
+        &quot;ac&quot;: 50,
+        &quot;maximumHp&quot;: 100,
+        &quot;maximumMp&quot;: 100,
+        &quot;con&quot;: 2,
+        &quot;dex&quot;: 1,
+        &quot;int&quot;: 1,
+        &quot;str&quot;: 1,
+        &quot;wis&quot;: 1
+    },
+    &quot;templateKey&quot;: &quot;common_rat&quot;,
+    &quot;type&quot;: &quot;Normal&quot;,
+    &quot;wanderIntervalMs&quot;: 2000
+}
+</code></pre>
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Monsters.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

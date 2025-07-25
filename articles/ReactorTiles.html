@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Reactor Tiles | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Reactor Tiles | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/ReactorTiles.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="reactor-tiles">Reactor Tiles</h1>
+
+<p>ReactorTiles in Chaos are both templated and scripted objects, however they do have 2 different use patterns. When you
+define a reactor tile in a map, you are directly defining a reactor tile, but you can also define reactor tile templates
+to be used by abilities. More details about these use cases below.</p>
+<h2 id="reactortile-templates">ReactorTile Templates</h2>
+<p>A reactor tile template is used to create new instances of reactor tiles as required. It contains all the information
+required to create an instance of a new reactor tile. Reactor tile templates are not used directly in maps, but are
+instead used by abilities or other scripts that create reactor tiles on the fly, such as traps. The trap would be
+defined in a template, and a fresh reactor would be created from that template every time the ability is used.</p>
+<h2 id="how-do-i-create-them">How do I create them?</h2>
+<p>By default, reactor tile templates should be created in <code>Data\Configuration\Templates\ReactorTiles</code>. Configuration of
+how reactor tiles are loaded can be found in <code>appsettings.json</code> at <code>Options:ReactorTileTemplateCacheOptions</code>.</p>
+<p>Reactor tile templates are initially serialized
+into <a class="xref" href="../api/Chaos.Schemas.Templates.ReactorTileTemplateSchema.html">ReactorTileTemplateSchema</a> before being mapped to
+a <a class="xref" href="../api/Chaos.Models.Templates.ReactorTileTemplate.html">ReactorTileTemplate</a>. The schema object is mapped via
+the <a class="xref" href="../api/Chaos.Services.MapperProfiles.ReactorTileMapperProfile.html">ReactorTileMapperProfile</a>.</p>
+<p>See <a class="xref" href="../api/Chaos.Schemas.Templates.ReactorTileTemplateSchema.html">ReactorTileTemplateSchema</a> for a list of all configurable
+properties with descriptions.</p>
+<h2 id="how-do-i-use-them">How do I use them?</h2>
+<h3 id="in-other-scripts">In other scripts</h3>
+<p>Reactor tiles can be created by using the <a class="xref" href="../api/Chaos.Services.Factories.ReactorTileFactory.html">ReactorTileFactory</a>,
+which is an implementation of <a class="xref" href="../api/Chaos.Services.Factories.Abstractions.IReactorTileFactory.html">IReactorTileFactory</a>.</p>
+<pre><code class="lang-cs">private readonly IReactorTileFactory ReactorTileFactory;
+
+public Foo(IReactorTileFactory reactorTileFactory) =&gt; ReactorTileFactory = reactorTileFactory;
+
+public void Bar()
+{
+    //create a new instance of the reactor tile &quot;myReactorTileTemplateKey&quot;
+    //mapInstance is the map instance that the reactor tile will be added to
+    //point is the point on the map that the reactor tile will be added to
+    //extraScriptKeys is optional, and can be used to pass in extra script keys that are not part of the templated reactor tile
+    //owner is optional, but is required if the reactor tile deals damage
+    var reactorTile = ReactorTileFactory.Create(&quot;myReactorTileTemplateKey&quot;, mapInstance, point, extraScriptKeys, creatureOwner);
+    
+    //the reactor tile is not automatically added to the map when created, so you must do so yourself
+    mapInstance.AddObject(reactorTile, point);
+}
+</code></pre>
+<h3 id="in-map-instances">In map instances</h3>
+<p>Reactor tiles in map instances are defines in the <code>reactors.json</code> file. These reactors are not templates, and are not
+references to templates. All details about each reactor defined this way is required. This file is where you will define
+things like warp tiles, world map tiles, traps in a trap room, etc.</p>
+<p>See the article on <a href="Maps.html">MapInstances</a> for more details.</p>
+<h2 id="scripting">Scripting</h2>
+<p>Reactor tiles are scripted
+via <a class="xref" href="../api/Chaos.Scripting.ReactorTileScripts.Abstractions.IReactorTileScript.html">IReactorTileScript</a>.</p>
+<ul>
+<li>Inherit from <a class="xref" href="../api/Chaos.Scripting.ReactorTileScripts.Abstractions.ReactorTileScriptBase.html">ReactorTileScriptBase</a> for
+a
+basic script that requires no external configuration</li>
+<li>Inherit
+from <a class="xref" href="../api/Chaos.Scripting.ReactorTileScripts.Abstractions.ConfigurableReactorTileScriptBase.html">ConfigurableReactorTileScriptBase</a>
+for a script that requires external configuration via ScriptVars</li>
+</ul>
+<p>Specify any number of script keys in the <code>ReactorTileTemplate.ScriptKeys</code> property, and those scripts will automatically
+be
+attached to the <code>ReactorTile</code> when it is created.</p>
+<p>If the script is configurable, you must also have an entry for that script in the <code>ReactorTileTemplate.ScriptVars</code>
+property.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The key of a script is the name of the class without 'Script' at the end</p>
+</div>
+<p>Here are the events overridable in reactor tile scripts:</p>
+<table>
+<thead>
+<tr>
+<th>Event Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OnClicked</td>
+<td>Called when the reactor tile is clicked</td>
+</tr>
+<tr>
+<td>OnGoldDroppedOn</td>
+<td>Called after gold is dropped on the reactor tile</td>
+</tr>
+<tr>
+<td>OnGoldPickedUpFrom</td>
+<td>Called after gold is picked up from the reactor tile</td>
+</tr>
+<tr>
+<td>OnItemDroppedOn</td>
+<td>Called after an item is dropped on the reactor tile</td>
+</tr>
+<tr>
+<td>OnItemPickedUpFrom</td>
+<td>Called after an item is picked up from the reactor tile</td>
+</tr>
+<tr>
+<td>OnWalkedOn</td>
+<td>Called when a creature walks on the reactor tile</td>
+</tr>
+<tr>
+<td>Update</td>
+<td>Called every time the map updates</td>
+</tr>
+</tbody>
+</table>
+<h2 id="example">Example</h2>
+<p>Here is an example of a needle trap reactor tile template. Most of the configuration is done through the &quot;trap&quot; script.
+The trap will last for 300 seconds, and deal 500 damage to any hostile creature that steps on it. It will trigger up to
+1 time before removing itself. The trap will also not block pathfinding, which is a property not shown here because
+false is the default value of a boolean.</p>
+<pre><code class="lang-json">{
+  &quot;scriptKeys&quot;: [
+    &quot;trap&quot;
+  ],
+  &quot;scriptVars&quot;: {
+    &quot;trap&quot;: {
+      &quot;maxTriggers&quot;: 1,
+      &quot;animatePoints&quot;: true,
+      &quot;sound&quot;: 1,
+      &quot;animation&quot;: {
+        &quot;animationSpeed&quot;: 25,
+        &quot;targetAnimation&quot;: 42
+      },
+      &quot;filter&quot;: &quot;hostileOnly, aliveOnly, othersOnly&quot;,
+      &quot;durationSecs&quot;: 300,
+      &quot;baseDamage&quot;: 500
+    }
+  },
+  &quot;templateKey&quot;: &quot;needle_trap&quot;
+}
+</code></pre>
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/ReactorTiles.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

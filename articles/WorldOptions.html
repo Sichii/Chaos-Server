@@ -1,0 +1,370 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>World Options | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="World Options | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/WorldOptions.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="world-options">World Options</h1>
+
+<p>World options are changed in &quot;appsettings.json&quot; via section &quot;Options:WorldOptions&quot;.<br>
+This section is serialized into <a class="xref" href="../api/Chaos.Services.Servers.Options.WorldOptions.html">WorldOptions</a></p>
+<h2 id="world-server-settings">World-Server Settings</h2>
+<hr>
+<h3 id="port">Port</h3>
+<p>The port the server will listen on. Default is 4202</p>
+<h3 id="loginredirect">LoginRedirect</h3>
+<p>This is a redirect object that will be used to redirect players to the login server for this world when they log out.
+This object consists of a hostname and port. These values should usually match up to the hostname and port specified for
+the LoginOptions
+section.</p>
+<h2 id="general-settings">General Settings</h2>
+<hr>
+<h3 id="maxgroupsize">MaxGroupSize</h3>
+<p>The maximum number of players that can be in a group together. If a group reaches this size, invites and invite accepts
+will fail.</p>
+<h3 id="saveintervalmins">SaveIntervalMins</h3>
+<p>This is the amount of time in minutes between global character saves. This is on top of players automatically saving
+when they log out.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>Do not set this value too low or it will become a burden on the server.</p>
+</div>
+<div class="TIP">
+<h5>Tip</h5>
+<p>A good range of values would be anywhere from 0.5 - 10</p>
+</div>
+<h3 id="updatespersecond">UpdatesPerSecond</h3>
+<p>This is the number of times per second that the server will update the game state. .NET isn't great for this kind of
+workload due garbage
+collection and JIT recompilation/OSR.</p>
+<div class="CAUTION">
+<h5>Caution</h5>
+<p>I strong suggest not going above 30, which is the default value</p>
+</div>
+<div class="TIP">
+<h5>Tip</h5>
+<p>If desired you can set this to 3 to emulate the original game</p>
+</div>
+<h3 id="f1merchanttemplatekey">F1MerchantTemplateKey</h3>
+<p>This is the template key of the merchant to display when a player presses F1. This is generally some kind of help npc</p>
+<h3 id="lootdropslocktorewardtargetsecs">LootDropsLockToRewardTargetSecs</h3>
+<p>This is the amount of time in seconds that loot drops will be locked to the reward target(s) of those loot drops. If
+this value is not specified, loot drops will not lock at all.</p>
+<h3 id="grounditemdespawntimemins">GroundItemDespawnTimeMins</h3>
+<p>This is the amount of time in minutes that ground items will remain on the ground before despawning. This applies to all
+ground items, including items dropped by players.</p>
+<h2 id="channel-settings">Channel Settings</h2>
+<hr>
+<p>A channel is a membership of players that can send messages to each other. Think global and trade chat in other games,
+but
+also group and guild chat in Dark Ages. These settings represent the parts of those systems that are configurable.</p>
+<h3 id="defaultchannels">DefaultChannels</h3>
+<p>This is a collection of channel names that new characters will join by default. These channels are also registered with
+the channel service during startup.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Name</td>
+<td>string</td>
+<td>The name of the channel</td>
+</tr>
+<tr>
+<td>MessageColor</td>
+<td><a class="xref" href="../api/Chaos.DarkAges.Definitions.MessageColor.html">MessageColor</a></td>
+<td>The color of messages sent from this channel</td>
+</tr>
+</tbody>
+</table>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Default channel names should also be added to <code>ChannelServiceOptions:ReservedChannelNames</code></p>
+</div>
+<h3 id="groupchatname">GroupChatName</h3>
+<p>An alternative string that can be typed into the client to speak to the group chat. In Dark Ages this was &quot;!!&quot;</p>
+<h3 id="groupmessagecolor">GroupMessageColor</h3>
+<p>The color the message will be for the group chat. In Dark Ages this chat was sent over a specific channel, and that
+channel had it's own color. To keep that color, specify &quot;Default&quot; as the color, so as not to use any color.</p>
+<h3 id="guildchatname">GuildChatName</h3>
+<p>An alternative string that can be typed into the client to speak to the guild chat. In Dark Ages this was &quot;!&quot;</p>
+<h3 id="guildmessagecolor">GuildMessageColor</h3>
+<p>The color the message will be for the guild chat. In Dark Ages this chat was sent over a specific channel, and that
+channel had it's own color. To keep that color, specify &quot;Default&quot; as the color, so as not to use any color.</p>
+<h2 id="aisling-settings">Aisling Settings</h2>
+<hr>
+<h3 id="aislingassailintervalms">AislingAssailIntervalMs</h3>
+<p>All creatures have an AssailInterval. AssailInterval is essentially the cooldown in milliseconds for skills marked as
+assails. This value is modified by the AtkSpeedPct attribute and can be modified to be up to 5x faster or slower than
+the base value. AtkSpeedPct will also scale the animation speed of the assail. This property sets the base interval for
+all aislings.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>A good starting value is 1000-1500</p>
+</div>
+<h3 id="droprange">DropRange</h3>
+<p>This is the maximum distance from a player that they can drop items or gold on the ground.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>A value of -1 would effectively disable dropping items<br>
+A value of 0 would only allow players to drop items directly beneath them<br>
+A value of 13 would allow players to drop items anywhere in their viewport</p>
+</div>
+<h3 id="maxheldgold">MaxHeldGold</h3>
+<p>This is the maximum amount of gold a player can hold in their inventory.</p>
+<h3 id="maximumaislingac">MaximumAislingAc</h3>
+<p>This is the maximum amount of AC a player can have. damage formulas can be changed, but with the default damage formula,
+higher AC = more damage taken.</p>
+<h3 id="maxlevel">MaxLevel</h3>
+<p>This is the level cap for players. Level formulas can be changed, but with the default level formula, if you reach this
+level you will stop gaining experience.</p>
+<h3 id="clearorangebartimersecs">ClearOrangeBarTimerSecs</h3>
+<p>This is the amount of time in seconds after the last orange bar message was sent to an aisling where the server will
+clear the orange bar.</p>
+<h3 id="sleepanimationtimermins">SleepAnimationTimerMins</h3>
+<p>This is the amount of time in minutes after an aisling's last action where the server will play the sleep animation.</p>
+<h3 id="minimumaislingac">MinimumAislingAc</h3>
+<p>This is the minimum amount of AC a player can have. damage formulas can be changed, but with the default damage formula,
+lower AC = less
+damage taken.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>With the default damage formula, AC is a percentile, so -100 AC would make you invulnerable.</p>
+</div>
+<h3 id="pickuprange">PickupRange</h3>
+<p>This is the maximum distance from a player that they pick up items or money from the ground.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>A value of -1 would effectively disable picking up items<br>
+A value of 0 would only allow players to pick up items from directly beneath them<br>
+A value of 13 would allow players to pick up items from anywhere in their viewport</p>
+</div>
+<h3 id="traderange">TradeRange</h3>
+<p>This is the maximum distance from a player that they can initiate a trade with another player</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>A value of -1 would effectively disable trading<br>
+A value of 0 would only allow players to only trade with players on the same tile, which is generally impossible<br>
+A value of 13 would allow players to trade with anyone in their viewport</p>
+</div>
+<h2 id="monster-settings">Monster Settings</h2>
+<hr>
+<h3 id="maximummonsterac">MaximumMonsterAc</h3>
+<p>This is the maximum amount of AC a monster can have. damage formulas can be changed, but with the default damage
+formula, higher AC = more damage taken.</p>
+<h3 id="minimummonsterac">MinimumMonsterAc</h3>
+<p>This is the minimum amount of AC a monster can have. damage formulas can be changed, but with the default damage
+formula, lower AC = less damage taken.</p>
+<div class="WARNING">
+<h5>Warning</h5>
+<p>With the default damage formula, AC is a percentile, so -100 AC would make them invulnerable.</p>
+</div>
+<h2 id="anti-cheat-settings">Anti-Cheat Settings</h2>
+<hr>
+<h3 id="maxactionspersecond">MaxActionsPerSecond</h3>
+<p>It would be bad to allow players to perform an infinite number of actions per second. Anything without a cooldown could
+become a huge burden on the server. This value is used to control the maximum number of actions a player can take in a
+second. An action is defined as using any spell, skill, or item. This includes equipping items.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>A good range of values for this would be 5 - 15</p>
+</div>
+<h3 id="maxskillspersecond">MaxSkillsPerSecond</h3>
+<p>The maximum number of skills a player can use in a second. Assails do not count towards this value. This can be used to
+disallow combos.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>Use a low value like 3 if you want to disallow combos, otherwise use a higher value like 30</p>
+</div>
+<h3 id="maxspellspersecond">MaxSpellsPerSecond</h3>
+<p>The maximum number of spells a player can cast in a second.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>This can be used to somewhat emulate the original game with a setting of 3, but keep in mind this server responds
+immediately, not in a 3updates per 1 second loop</p>
+</div>
+<h3 id="maxitemspersecond">MaxItemsPerSecond</h3>
+<p>The maximum number of items a player can use in a second. Includes equipping items, consumables, trinkets, etc...</p>
+<h3 id="maxchanttimeburdenms">MaxChantTimeBurdenMs</h3>
+<p>When players cast spells, each spell line takes approximately 1000ms to chant. The amount of time a spell will take to
+cast can be predicted to be 1000ms * (NumSpellLines).</p>
+<p>Due to latency and jitter, players will often cast spells for slightly more or less than the expected amount of time.
+With big latency spikes, the observed amount of time could be far off from the expected value. To be able to tolerate
+this while also prohibiting &quot;speed casting&quot;, the server will allow spell casts that occur too quickly and add up a time
+burden.</p>
+<p>Each time a player casts a spell that completes faster than expected, the difference in time will be added to the time
+burden. This burden will accumulate with every consecutive spell that occurs too quickly, and be subtracted from if a
+spell completes too slowly. The time burden will also decrease while not casting spells.</p>
+<p>If the time burden exceeds MaxChantTimeBurdenMs, the spell cast will be ignored.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>A good range of values for this setting would be 500 - 1500, with lower values being more strict.</p>
+</div>
+<h3 id="prohibitf5walk">ProhibitF5Walk</h3>
+<p>When this is enabled it will prevent players from utilizing refreshing(F5) to walk faster.</p>
+<h3 id="prohibititemswitchwalk">ProhibitItemSwitchWalk</h3>
+<p>When this is enabled it will prevent players from utilizing item switching to walk faster.</p>
+<h3 id="prohibitspeedwalk">ProhibitSpeedWalk</h3>
+<p>When this is enabled it will prevent players from utilizing more nefarious methods to walk faster.</p>
+<h3 id="refreshintervalms">RefreshIntervalMs</h3>
+<p>This is the quickest interval in milliseconds that players will be allowed to refresh their client. This will not
+include refreshes utilized by the server, such as for refreshing a player's position if they walk into a wall.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>A good value here would be 1000</p>
+</div>
+<h2 id="example-worldoptions">Example WorldOptions</h2>
+<pre><code class="lang-json">&quot;WorldOptions&quot;: {
+  &quot;Port&quot;: 4202,
+  &quot;LoginRedirect&quot;: {
+    &quot;HostName&quot;: &quot;localhost&quot;,
+    &quot;Port&quot;: 4201
+  },
+  &quot;RefreshIntervalMs&quot;: 1000,
+  &quot;TradeRange&quot;: 4,
+  &quot;DropRange&quot;: 4,
+  &quot;PickupRange&quot;: 4,
+  &quot;UpdatesPerSecond&quot;: 30,
+  &quot;SaveIntervalMins&quot;: 1,
+  &quot;MaxGroupSize&quot;: 6,
+  &quot;MaxGoldHeld&quot;: 500000000,
+  &quot;MinimumMonsterAc&quot;: -99,
+  &quot;MaximumMonsterAc&quot;: 100,
+  &quot;MinimumAislingAc&quot;: -90,
+  &quot;MaximumAislingAc&quot;: 100,
+  &quot;MaxLevel&quot;: 30,
+  &quot;MaxActionsPerSecond&quot;: 10,
+  &quot;MaxSkillsPerSecond&quot;: 5,
+  &quot;MaxSpellsPerSecond&quot;: 3,
+  &quot;AislingAssailIntervalMs&quot;: 1500,
+  &quot;ProhibitF5Walk&quot;: true,
+  &quot;ProhibitItemSwitchWalk&quot;: true,
+  &quot;ProhibitSpeedWalk&quot;: true,
+  &quot;MaxChantTimeBurdenMs&quot;: 1500,
+  &quot;F1MerchantTemplateKey&quot;: &quot;ackshually&quot;,
+  &quot;GroupChatName&quot;: &quot;!!&quot;,
+  &quot;GroupMessageColor&quot;: &quot;default&quot;,
+  &quot;DefaultChannels&quot;: [
+    {
+      &quot;channelName&quot;: &quot;!global&quot;,
+      &quot;messageColor&quot;: &quot;yellow&quot;,
+    },
+    {
+      &quot;channelName&quot;: &quot;!trade&quot;,
+      &quot;messageColor&quot;: &quot;gainsboro&quot;,
+    }
+  ],
+}
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/WorldOptions.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

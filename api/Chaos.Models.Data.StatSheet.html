@@ -1,0 +1,657 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class StatSheet
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class StatSheet
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Models_Data_StatSheet.md&amp;value=---%0Auid%3A%20Chaos.Models.Data.StatSheet%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Models.Data.StatSheet">
+
+
+
+  <h1 id="Chaos_Models_Data_StatSheet" data-uid="Chaos.Models.Data.StatSheet" class="text-break">
+    Class StatSheet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Models/Data/StatSheet.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Models.html">Models</a>.<a class="xref" href="Chaos.Models.Data.html">Data</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public record StatSheet : Attributes, IEquatable&lt;Stats&gt;, IEquatable&lt;Attributes&gt;, IEquatable&lt;StatSheet&gt;</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><a class="xref" href="Chaos.Models.Data.Stats.html">Stats</a></div>
+      <div><a class="xref" href="Chaos.Models.Data.Attributes.html">Attributes</a></div>
+      <div><span class="xref">StatSheet</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><span class="xref">IEquatable</span>&lt;<a class="xref" href="Chaos.Models.Data.Stats.html">Stats</a>&gt;</div>
+      <div><span class="xref">IEquatable</span>&lt;<a class="xref" href="Chaos.Models.Data.Attributes.html">Attributes</a>&gt;</div>
+      <div><span class="xref">IEquatable</span>&lt;<a class="xref" href="Chaos.Models.Data.StatSheet.html">StatSheet</a>&gt;</div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Models.Data.UserStatSheet.html">UserStatSheet</a></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._ac.html">Attributes._ac</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._atkSpeedPct.html">Attributes._atkSpeedPct</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._dmg.html">Attributes._dmg</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._flatSkillDamage.html">Attributes._flatSkillDamage</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._flatSpellDamage.html">Attributes._flatSpellDamage</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._hit.html">Attributes._hit</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._magicResistance.html">Attributes._magicResistance</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._maximumHp.html">Attributes._maximumHp</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._maximumMp.html">Attributes._maximumMp</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._skillDamagePct.html">Attributes._skillDamagePct</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes._spellDamagePct.html">Attributes._spellDamagePct</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.Ac.html#Chaos_Models_Data_Attributes_Ac">Attributes.Ac</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.AtkSpeedPct.html#Chaos_Models_Data_Attributes_AtkSpeedPct">Attributes.AtkSpeedPct</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.Dmg.html#Chaos_Models_Data_Attributes_Dmg">Attributes.Dmg</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.FlatSkillDamage.html#Chaos_Models_Data_Attributes_FlatSkillDamage">Attributes.FlatSkillDamage</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.FlatSpellDamage.html#Chaos_Models_Data_Attributes_FlatSpellDamage">Attributes.FlatSpellDamage</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.Hit.html#Chaos_Models_Data_Attributes_Hit">Attributes.Hit</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.MagicResistance.html#Chaos_Models_Data_Attributes_MagicResistance">Attributes.MagicResistance</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.MaximumHp.html#Chaos_Models_Data_Attributes_MaximumHp">Attributes.MaximumHp</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.MaximumMp.html#Chaos_Models_Data_Attributes_MaximumMp">Attributes.MaximumMp</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.SkillDamagePct.html#Chaos_Models_Data_Attributes_SkillDamagePct">Attributes.SkillDamagePct</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.SpellDamagePct.html#Chaos_Models_Data_Attributes_SpellDamagePct">Attributes.SpellDamagePct</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.Add.html#Chaos_Models_Data_Attributes_Add_Chaos_Models_Data_Attributes_">Attributes.Add(Attributes)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Attributes.Subtract.html#Chaos_Models_Data_Attributes_Subtract_Chaos_Models_Data_Attributes_">Attributes.Subtract(Attributes)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Stats._con.html">Stats._con</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Stats._dex.html">Stats._dex</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Stats._int.html">Stats._int</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Stats._str.html">Stats._str</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Stats._wis.html">Stats._wis</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Stats.Con.html#Chaos_Models_Data_Stats_Con">Stats.Con</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Stats.Dex.html#Chaos_Models_Data_Stats_Dex">Stats.Dex</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Stats.Int.html#Chaos_Models_Data_Stats_Int">Stats.Int</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Stats.Str.html#Chaos_Models_Data_Stats_Str">Stats.Str</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Models.Data.Stats.Wis.html#Chaos_Models_Data_Stats_Wis">Stats.Wis</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._abilityLevel.html">_abilityLevel</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._acMod.html">_acMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._atkSpeedPctMod.html">_atkSpeedPctMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._conMod.html">_conMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._currentHp.html">_currentHp</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._currentMp.html">_currentMp</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._defenseElement.html">_defenseElement</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._dexMod.html">_dexMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._dmgMod.html">_dmgMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._flatSkillDamageMod.html">_flatSkillDamageMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._flatSpellDamageMod.html">_flatSpellDamageMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._hitMod.html">_hitMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._intMod.html">_intMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._level.html">_level</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._magicResistanceMod.html">_magicResistanceMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._maximumHpMod.html">_maximumHpMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._maximumMpMod.html">_maximumMpMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._offenseElement.html">_offenseElement</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._skillDamagePctMod.html">_skillDamagePctMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._spellDamagePctMod.html">_spellDamagePctMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._strMod.html">_strMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet._wisMod.html">_wisMod</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.AbilityLevel.html#Chaos_Models_Data_StatSheet_AbilityLevel">AbilityLevel</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.AcMod.html#Chaos_Models_Data_StatSheet_AcMod">AcMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.AtkSpeedPctMod.html#Chaos_Models_Data_StatSheet_AtkSpeedPctMod">AtkSpeedPctMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.ConMod.html#Chaos_Models_Data_StatSheet_ConMod">ConMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.CurrentHp.html#Chaos_Models_Data_StatSheet_CurrentHp">CurrentHp</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.CurrentMp.html#Chaos_Models_Data_StatSheet_CurrentMp">CurrentMp</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.DefenseElement.html#Chaos_Models_Data_StatSheet_DefenseElement">DefenseElement</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.DexMod.html#Chaos_Models_Data_StatSheet_DexMod">DexMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.DmgMod.html#Chaos_Models_Data_StatSheet_DmgMod">DmgMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveAc.html#Chaos_Models_Data_StatSheet_EffectiveAc">EffectiveAc</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveAttackSpeedPct.html#Chaos_Models_Data_StatSheet_EffectiveAttackSpeedPct">EffectiveAttackSpeedPct</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveCon.html#Chaos_Models_Data_StatSheet_EffectiveCon">EffectiveCon</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveDex.html#Chaos_Models_Data_StatSheet_EffectiveDex">EffectiveDex</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveDmg.html#Chaos_Models_Data_StatSheet_EffectiveDmg">EffectiveDmg</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveFlatSkillDamage.html#Chaos_Models_Data_StatSheet_EffectiveFlatSkillDamage">EffectiveFlatSkillDamage</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveFlatSpellDamage.html#Chaos_Models_Data_StatSheet_EffectiveFlatSpellDamage">EffectiveFlatSpellDamage</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveHit.html#Chaos_Models_Data_StatSheet_EffectiveHit">EffectiveHit</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveInt.html#Chaos_Models_Data_StatSheet_EffectiveInt">EffectiveInt</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveMagicResistance.html#Chaos_Models_Data_StatSheet_EffectiveMagicResistance">EffectiveMagicResistance</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveMaximumHp.html#Chaos_Models_Data_StatSheet_EffectiveMaximumHp">EffectiveMaximumHp</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveMaximumMp.html#Chaos_Models_Data_StatSheet_EffectiveMaximumMp">EffectiveMaximumMp</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveSkillDamagePct.html#Chaos_Models_Data_StatSheet_EffectiveSkillDamagePct">EffectiveSkillDamagePct</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveSpellDamagePct.html#Chaos_Models_Data_StatSheet_EffectiveSpellDamagePct">EffectiveSpellDamagePct</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveStr.html#Chaos_Models_Data_StatSheet_EffectiveStr">EffectiveStr</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.EffectiveWis.html#Chaos_Models_Data_StatSheet_EffectiveWis">EffectiveWis</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.FlatSkillDamageMod.html#Chaos_Models_Data_StatSheet_FlatSkillDamageMod">FlatSkillDamageMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.FlatSpellDamageMod.html#Chaos_Models_Data_StatSheet_FlatSpellDamageMod">FlatSpellDamageMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.HealthPercent.html#Chaos_Models_Data_StatSheet_HealthPercent">HealthPercent</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.HitMod.html#Chaos_Models_Data_StatSheet_HitMod">HitMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.IntMod.html#Chaos_Models_Data_StatSheet_IntMod">IntMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.Level.html#Chaos_Models_Data_StatSheet_Level">Level</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.MagicResistanceMod.html#Chaos_Models_Data_StatSheet_MagicResistanceMod">MagicResistanceMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.ManaPercent.html#Chaos_Models_Data_StatSheet_ManaPercent">ManaPercent</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.Maxed.html#Chaos_Models_Data_StatSheet_Maxed">Maxed</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.MaximumHpMod.html#Chaos_Models_Data_StatSheet_MaximumHpMod">MaximumHpMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.MaximumMpMod.html#Chaos_Models_Data_StatSheet_MaximumMpMod">MaximumMpMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.OffenseElement.html#Chaos_Models_Data_StatSheet_OffenseElement">OffenseElement</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SkillDamagePctMod.html#Chaos_Models_Data_StatSheet_SkillDamagePctMod">SkillDamagePctMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SpellDamagePctMod.html#Chaos_Models_Data_StatSheet_SpellDamagePctMod">SpellDamagePctMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.StrMod.html#Chaos_Models_Data_StatSheet_StrMod">StrMod</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.WisMod.html#Chaos_Models_Data_StatSheet_WisMod">WisMod</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.AddAbilityLevel.html#Chaos_Models_Data_StatSheet_AddAbilityLevel_System_Int32_">AddAbilityLevel(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.AddBonus.html#Chaos_Models_Data_StatSheet_AddBonus_Chaos_Models_Data_Attributes_">AddBonus(Attributes)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.AddHealthPct.html#Chaos_Models_Data_StatSheet_AddHealthPct_System_Int32_">AddHealthPct(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.AddHp.html#Chaos_Models_Data_StatSheet_AddHp_System_Int32_">AddHp(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.AddLevel.html#Chaos_Models_Data_StatSheet_AddLevel_System_Int32_">AddLevel(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.AddManaPct.html#Chaos_Models_Data_StatSheet_AddManaPct_System_Int32_">AddManaPct(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.AddMp.html#Chaos_Models_Data_StatSheet_AddMp_System_Int32_">AddMp(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.CalculateEffectiveAssailInterval.html#Chaos_Models_Data_StatSheet_CalculateEffectiveAssailInterval_System_Int32_">CalculateEffectiveAssailInterval(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.GetBaseStat.html#Chaos_Models_Data_StatSheet_GetBaseStat_Stat_">GetBaseStat(Stat)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.GetEffectiveStat.html#Chaos_Models_Data_StatSheet_GetEffectiveStat_Stat_">GetEffectiveStat(Stat)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SetDefenseElement.html#Chaos_Models_Data_StatSheet_SetDefenseElement_Element_">SetDefenseElement(Element)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SetHealthPct.html#Chaos_Models_Data_StatSheet_SetHealthPct_System_Decimal_">SetHealthPct(decimal)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SetHp.html#Chaos_Models_Data_StatSheet_SetHp_System_Int32_">SetHp(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SetLevel.html#Chaos_Models_Data_StatSheet_SetLevel_System_Int32_">SetLevel(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SetManaPct.html#Chaos_Models_Data_StatSheet_SetManaPct_System_Decimal_">SetManaPct(decimal)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SetMp.html#Chaos_Models_Data_StatSheet_SetMp_System_Int32_">SetMp(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SetOffenseElement.html#Chaos_Models_Data_StatSheet_SetOffenseElement_Element_">SetOffenseElement(Element)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SubtractBonus.html#Chaos_Models_Data_StatSheet_SubtractBonus_Chaos_Models_Data_Attributes_">SubtractBonus(Attributes)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SubtractHealthPct.html#Chaos_Models_Data_StatSheet_SubtractHealthPct_System_Decimal_">SubtractHealthPct(decimal)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SubtractHp.html#Chaos_Models_Data_StatSheet_SubtractHp_System_Int32_">SubtractHp(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SubtractLevel.html#Chaos_Models_Data_StatSheet_SubtractLevel_System_Int32_">SubtractLevel(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SubtractManaPct.html#Chaos_Models_Data_StatSheet_SubtractManaPct_System_Decimal_">SubtractManaPct(decimal)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.SubtractMp.html#Chaos_Models_Data_StatSheet_SubtractMp_System_Int32_">SubtractMp(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.TrySubtractHealthPct.html#Chaos_Models_Data_StatSheet_TrySubtractHealthPct_System_Decimal_">TrySubtractHealthPct(decimal)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.TrySubtractHp.html#Chaos_Models_Data_StatSheet_TrySubtractHp_System_Int32_">TrySubtractHp(int)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.TrySubtractManaPct.html#Chaos_Models_Data_StatSheet_TrySubtractManaPct_System_Decimal_">TrySubtractManaPct(decimal)</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Models.Data.StatSheet.TrySubtractMp.html#Chaos_Models_Data_StatSheet_TrySubtractMp_System_Int32_">TrySubtractMp(int)</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Models/Data/StatSheet.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

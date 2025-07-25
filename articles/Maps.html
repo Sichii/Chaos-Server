@@ -1,0 +1,412 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Maps | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Maps | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Maps.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="maps">Maps</h1>
+
+<p>Maps in Chaos are both templated and scripted objects. There are multiple pieces of information to define to create a
+map, the map templates, and the map instances</p>
+<p>Chaos uses a map instancing system. What map an object is on is determined by that map's MapInstanceId, instead of it's
+numerical map file number. This allow multiple maps with the same MapId/Name to coexist at the same time. Chaos also has
+an automatic map sharding system that will be explained later.</p>
+<h2 id="map-templates">Map Templates</h2>
+<p>A map template contains a bare minimum of information about a map. Contained within this project are a large amount of
+auto-generated map templates that should match up to the maps in original Dark Ages.</p>
+<h2 id="how-do-i-create-them">How do I create them?</h2>
+<p>There are 2 things you will need to create.</p>
+<ol>
+<li>A map template, which will define details about the map data to use</li>
+<li>A map instance, which will be an instance of a map using the data defined in the map template</li>
+</ol>
+<h3 id="creating-a-maptemplate">Creating a MapTemplate</h3>
+<p>By default, map templates should be created at <code>Data\Configuration\Templates\Maps</code>. Configuration of how map templates
+are loaded can be found in <code>appsettings.json</code> at <code>Options:MapTemplateCacheOptions</code>.</p>
+<p>Map templates are initially serialized into <a class="xref" href="../api/Chaos.Schemas.Templates.MapTemplateSchema.html">MapTemplateSchema</a> before
+being mapped to a <a class="xref" href="../api/Chaos.Models.Templates.MapTemplate.html">MapTemplate</a>. The schema object is mapped via the
+the <a class="xref" href="../api/Chaos.Services.MapperProfiles.MapInstanceMapperProfile.html">MapInstanceMapperProfile</a>.</p>
+<p>See <a class="xref" href="../api/Chaos.Schemas.Templates.MapTemplateSchema.html">MapTemplateSchema</a> for a list of all configurable properties with
+descriptions.</p>
+<h3 id="creating-a-mapinstance">Creating a MapInstance</h3>
+<p>By default, map instances should be created at <code>Data\Configuration\MapInstances</code>. Configuration of how map instances are
+loaded can be found in <code>appsettings.json</code> at <code>Options:MapInstanceCacheOptions</code>.</p>
+<p>Map instances are initially serialized into <a class="xref" href="../api/Chaos.Schemas.Content.MapInstanceSchema.html">MapInstanceSchema</a> before
+being mapped to a <a class="xref" href="../api/Chaos.Collections.MapInstance.html">MapInstance</a>. The schema object is mapped via the
+the <a class="xref" href="../api/Chaos.Services.MapperProfiles.MapInstanceMapperProfile.html">MapInstanceMapperProfile</a>.</p>
+<p>Map instances are serialized from multiple files, so each map instance should be in it's own directory. Here is the
+folder structure for a map instance:</p>
+<pre>
+📂Configuration
+ ┗📂MapInstances
+   ┗📂mileth
+     ┣📄instance.json
+     ┣📄merchants.json
+     ┣📄monsters.json
+     ┗📄reactors.json
+</pre>
+<p>For a list of all configurable properties with descriptions, see:</p>
+<ul>
+<li><code>instance.json</code> will be serialized from <a class="xref" href="../api/Chaos.Schemas.Content.MapInstanceSchema.html">MapInstanceSchema</a></li>
+<li><code>merchants.json</code> will be a jArray of <a class="xref" href="../api/Chaos.Schemas.Content.MerchantSpawnSchema.html">MerchantSpawnSchema</a></li>
+<li><code>monsters.json</code> will be a jArray of <a class="xref" href="../api/Chaos.Schemas.Content.MonsterSpawnSchema.html">MonsterSpawnSchema</a></li>
+<li><code>reactors.json</code> will be a jArray of <a class="xref" href="../api/Chaos.Schemas.Content.ReactorTileSchema.html">ReactorTileSchema</a></li>
+</ul>
+<h2 id="how-do-i-use-them">How do I use them?</h2>
+<p>Map instances are loaded via the <a class="xref" href="../api/Chaos.Services.Storage.ExpiringMapInstanceCache.html">ExpiringMapInstanceCache</a>,
+which is an implementation of <a class="xref" href="../api/Chaos.Storage.Abstractions.ISimpleCache-1.html">ISimpleCache&lt;T&gt;</a>.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Map instances are loaded on-demand, and can expire if not accessed for a period of time</p>
+</div>
+<p>You can fetch the map instance directly like this:</p>
+<pre><code class="lang-cs">private readonly ISimpleCache SimpleCache;
+
+public Foo(ISimpleCache simpleCache) =&gt; SimpleCache = simpleCache;
+
+public void Bar()
+{
+    var mapInstance = SimpleCache.Get&lt;MapInstance&gt;(&quot;mileth&quot;);
+}
+</code></pre>
+<p>You can also fetch the cache itself like this:</p>
+<pre><code class="lang-cs">private readonly ISimpleCacheProvider SimpleCacheProvider;
+
+public Foo(ISimpleCacheProvider simpleCacheProvider) =&gt; SimpleCacheProvider = simpleCacheProvider;
+
+public void Bar()
+{
+    //fetch the ISimpleCache&lt;T&gt; implementation
+    var mapInstanceCache = SimpleCacheProvider.GetCache&lt;MapInstance&gt;();
+    
+    //fetch map instance from that cache
+    var mapInstance = mapInstanceCache.Get(&quot;mileth&quot;);
+}
+</code></pre>
+<h2 id="map-sharding">Map Sharding</h2>
+<p>When creating your map instance, you might notice that there are sharding options. Under the conditions that you set in
+those options, a new map instance will be spun up with a new map instance id. The map instance id will be the same as
+the instance id of the map that it was sharded from, but with a guid attached. You can view all the shards of a map
+instance from any of the shards, or the base map instance by accessing the <code>MapInstance.Shards</code> property.</p>
+<p>It's important to note here that these shards are not the same type of &quot;instances&quot; that you might find in AAA MMO's.
+These
+instances are not owned or associated to any aisling, and there are no persistent zone timers or anything.</p>
+<h3 id="absoluteplayerlimit">AbsolutePlayerLimit</h3>
+<ul>
+<li>Once the map instance has reached <code>ShardingOptions.Limit</code> number of players, any new players that get added will
+instead be added to any existing shards that arent yet full</li>
+<li>If no shards exist, or all shards are full, a new shard will be created</li>
+<li>If the limit is 1, no checks will be made on existing shards, and a new map instance will always be created (shards
+will not be reused)</li>
+<li>If a player logs out of one of these instances, if the instance still exists, they will be added back to it, otherwise
+they will be added moved to <code>ShardingOptions.ExitLocation</code></li>
+<li>If a shard is over-filled due to a player logging into an already-full shard, that player will be moved to
+<code>ShardingOptions.ExitLocation</code> after a short delay</li>
+</ul>
+<h3 id="playerlimit">PlayerLimit</h3>
+<p>The same as AbsolutePlayerLimit except for the following</p>
+<ul>
+<li>When joining a shard, an attempt will be made to place group members together, even if the shard is full</li>
+<li>Players will not be removed from a shard if it is over-filled</li>
+</ul>
+<h3 id="absolutegrouplimit">AbsoluteGroupLimit</h3>
+<ul>
+<li>Once the map instance has reached <code>ShardingOptions.Limit</code> number of groups, any aisling not in an existing group that
+get added will instead be added to any existing shards that arent yet full</li>
+<li>If no shards exist, or all shards are full, a new shard will be created</li>
+<li>If the limit is 1, if no group member is in an existing shard, a new shard will always be created. (shards will not be
+reused)</li>
+<li>If a player logs out of one of these instances, if the instance still exists, they will be added back to it, otherwise
+they will be added moved to <code>ShardingOptions.ExitLocation</code></li>
+<li>If a shard is over-filled due to a player logging into an already-full shard, that player will be moved to
+<code>ShardingOptions.ExitLocation</code> after a short delay. If the player is grouped by someone, they will not be moved.</li>
+</ul>
+<h3 id="absoluteguildlimit">AbsoluteGuildLimit</h3>
+<ul>
+<li>Once the map instance has reached <code>ShardingOptions.Limit</code> number of guilds, any aisling not in an existing guild that
+get added will instead be added to any existing shards that arent yet full</li>
+<li>If no shards exist, or all shards are full, a new shard will be created</li>
+<li>If the limit is 1, if no group member is in an existing shard, a new shard will always be created. (shards will not be
+reused)</li>
+<li>If a player logs out of one of these instances, if the instance still exists, they will be added back to it, otherwise
+they will be added moved to <code>ShardingOptions.ExitLocation</code></li>
+<li>If a shard is over-filled due to a player logging into an already-full shard, that player will be moved to
+<code>ShardingOptions.ExitLocation</code> after a short delay. If the player is in one of the guilds that are already in the
+shard, they will not be moved.</li>
+</ul>
+<h2 id="morphing">Morphing</h2>
+<p>MapInstances can be morphed via <a href="xref:Chaos.Collections.MapInstance.Morph">MapInstance.Morph</a>. This will change the
+underlying map template to the one specified. All aisling on the map will be automatically refreshed.</p>
+<p><a href="#scripting">OnMorphing</a> should be used to handle any special cases that need to be addressed when a map is morphed. For
+example, if you morph into a smaller dimension map, aislings will need to be moved so that they are not outside of map
+bounds.</p>
+<h2 id="scripting">Scripting</h2>
+<p>Maps are scripted via <a class="xref" href="../api/Chaos.Scripting.MapScripts.Abstractions.IMapScript.html">IMapScript</a>.</p>
+<ul>
+<li>Inherit from <a class="xref" href="../api/Chaos.Scripting.MapScripts.Abstractions.MapScriptBase.html">MapScriptBase</a> for a basic script that
+requires no external configuration</li>
+<li>I could not think of a reason to have configurable map scripts, but you are free to create the base for yourself</li>
+</ul>
+<p>Specify any number of script keys in the <code>MapInstance.ScriptKeys</code> property, and those scripts will automatically be
+attached to the <code>MapInstance</code> when it is created.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>The key of a script is the name of the class without 'Script' at the end</p>
+</div>
+<p>Here are the events overridable in map scripts:</p>
+<table>
+<thead>
+<tr>
+<th>Event Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OnEntered</td>
+<td>Called after a creature has entered the map for any reason (including spawns). This includes monsters, merchants, and aislings<br>This is called after OnSpawn, but before OnApproached</td>
+</tr>
+<tr>
+<td>OnExited</td>
+<td>Called after a creature has exited the map for any reason (including death). This includes monsters, merchants, and aislings<br>This is called after OnDeath, but before OnDeparture</td>
+</tr>
+<tr>
+<td>OnMorphing</td>
+<td>Called before a map is morphed</td>
+</tr>
+<tr>
+<td>OnMorphed</td>
+<td>Called after a map has been morphed</td>
+</tr>
+<tr>
+<td>Update</td>
+<td>Called every time the map updates. Ever map has it's own update loop. Time between updates is configurable via <a href="WorldOptions.html#updatespersecond">WorldOptions</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="example">Example</h2>
+<p>Here is an example of a map template json for the map used for TestTown. This map uses <code>lod3043.map</code>, has a number of
+test merchants on it, no monsters, 2 boards, a world map, and a warp reactor.</p>
+<h3 id="maptemplate-3043json">MapTemplate <code>3043.json</code></h3>
+<pre><code class="lang-json">{
+  &quot;height&quot;: 50,
+  &quot;lightType&quot;: &quot;bloodmoon&quot;,
+  &quot;scriptKeys&quot;: [],
+  &quot;templateKey&quot;: &quot;3043&quot;,
+  &quot;width&quot;: 50
+}
+</code></pre><h3 id="mapinstance-instancejson">MapInstance <code>instance.json</code></h3>
+<pre><code class="lang-json">{
+    &quot;autoDayNightCycle&quot;: true,
+    &quot;flags&quot;: &quot;Rain&quot;,
+    &quot;instanceId&quot;: &quot;testTown&quot;,
+    &quot;music&quot;: 1,
+    &quot;name&quot;: &quot;Test Town&quot;,
+    &quot;scriptKeys&quot;: [],
+    &quot;templateKey&quot;: &quot;6907&quot;
+}
+</code></pre><h3 id="mapinstance-merchantsjson">MapInstance <code>merchants.json</code></h3>
+<pre><code class="lang-json">[
+  {
+    &quot;blackList&quot;: [],
+    &quot;direction&quot;: &quot;Right&quot;,
+    &quot;extraScriptKeys&quot;: [],
+    &quot;merchantTemplateKey&quot;: &quot;shop_tester&quot;,
+    &quot;spawnPoint&quot;: &quot;(25, 25)&quot;
+  },
+  {
+    &quot;blackList&quot;: [],
+    &quot;direction&quot;: &quot;Right&quot;,
+    &quot;extraScriptKeys&quot;: [],
+    &quot;merchantTemplateKey&quot;: &quot;bank_tester&quot;,
+    &quot;spawnPoint&quot;: &quot;(25, 24)&quot;
+  },
+  {
+    &quot;blackList&quot;: [],
+    &quot;direction&quot;: &quot;Right&quot;,
+    &quot;extraScriptKeys&quot;: [],
+    &quot;merchantTemplateKey&quot;: &quot;trainer_tester&quot;,
+    &quot;spawnPoint&quot;: &quot;(25, 23)&quot;
+  },
+  {
+    &quot;blackList&quot;: [],
+    &quot;direction&quot;: &quot;Right&quot;,
+    &quot;extraScriptKeys&quot;: [],
+    &quot;merchantTemplateKey&quot;: &quot;guild_tester&quot;,
+    &quot;spawnPoint&quot;: &quot;(25, 22)&quot;
+  },
+  {
+    &quot;blackList&quot;: [],
+    &quot;direction&quot;: &quot;Right&quot;,
+    &quot;extraScriptKeys&quot;: [],
+    &quot;merchantTemplateKey&quot;: &quot;misc_tester_1&quot;,
+    &quot;spawnPoint&quot;: &quot;(25, 21)&quot;
+  }
+]
+</code></pre><h3 id="mapinstance-monstersjson">MapInstance <code>monsters.json</code></h3>
+<pre><code class="lang-json">[]
+</code></pre><h3 id="mapinstance-reactorsjson">MapInstance <code>reactors.json</code></h3>
+<pre><code class="lang-json">[
+    {
+        &quot;scriptKeys&quot;: [&quot;warp&quot;],
+        &quot;scriptVars&quot;: {
+            &quot;warp&quot;: {
+                &quot;destination&quot;: &quot;testTown:(17, 12)&quot;
+            }
+        },
+        &quot;shouldBlockPathfinding&quot;: true,
+        &quot;source&quot;: &quot;(3, 13)&quot;
+    },
+    {
+        &quot;scriptKeys&quot;: [&quot;warp&quot;],
+        &quot;scriptVars&quot;: {
+            &quot;warp&quot;: {
+                &quot;destination&quot;: &quot;testTown:(18, 12)&quot;
+            }
+        },
+        &quot;shouldBlockPathfinding&quot;: true,
+        &quot;source&quot;: &quot;(4, 13)&quot;
+    },
+    {
+        &quot;scriptKeys&quot;: [&quot;showWorldMap&quot;],
+        &quot;scriptVars&quot;: {
+            &quot;showWorldMap&quot;: {
+                &quot;worldMapKey&quot;: &quot;field001&quot;
+            }
+        },
+        &quot;shouldBlockPathfinding&quot;: true,
+        &quot;source&quot;: &quot;(0, 13)&quot;
+    },
+    {
+        &quot;scriptKeys&quot;: [&quot;bulletinBoard&quot;],
+        &quot;scriptVars&quot;: {
+            &quot;bulletinBoard&quot;: {
+                &quot;boardKey&quot;: &quot;public_test_board&quot;
+            }
+        },
+        &quot;shouldBlockPathfinding&quot;: true,
+        &quot;source&quot;: &quot;(23, 28)&quot;
+    },
+    {
+        &quot;scriptKeys&quot;: [&quot;bulletinBoardList&quot;],
+        &quot;scriptVars&quot;: {
+            &quot;bulletinBoardList&quot;: {
+                &quot;boardKeys&quot;: [&quot;public_test_board&quot;, &quot;public_test_board_2&quot;]
+            }
+        },
+        &quot;shouldBlockPathfinding&quot;: true,
+        &quot;source&quot;: &quot;(23, 26)&quot;
+    },
+    {
+        &quot;scriptKeys&quot;: [&quot;leaderboard&quot;],
+        &quot;shouldBlockPathfindiner&quot;: true,
+        &quot;source&quot;: &quot;(23, 32)&quot;
+    }
+]
+</code></pre>
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/Maps.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

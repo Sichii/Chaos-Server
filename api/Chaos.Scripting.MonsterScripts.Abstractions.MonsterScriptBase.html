@@ -1,0 +1,352 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class MonsterScriptBase
+ | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MonsterScriptBase
+ | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/release/v1.9/apiSpec/new?filename=Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase.md&amp;value=---%0Auid%3A%20Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase">
+
+
+
+  <h1 id="Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase" data-uid="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase" class="text-break">
+    Class MonsterScriptBase
+  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Scripting/MonsterScripts/Abstractions/MonsterScriptBase.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Scripting.html">Scripting</a>.<a class="xref" href="Chaos.Scripting.MonsterScripts.html">MonsterScripts</a>.<a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.html">Abstractions</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class MonsterScriptBase : SubjectiveScriptBase&lt;Monster&gt;, IMonsterScript, ICreatureScript, IScript, IDeltaUpdatable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><span class="xref">object</span></div>
+      <div><span class="xref">MonsterScriptBase</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.IMonsterScript.html">IMonsterScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.CreatureScripts.Abstractions.ICreatureScript.html">ICreatureScript</a></div>
+      <div><span class="xref">IScript</span></div>
+      <div><span class="xref">IDeltaUpdatable</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist derived">
+    <dt>Derived</dt>
+    <dd>
+      <div><a class="xref" href="Chaos.Scripting.MonsterScripts.AggroTargetingScript.html">AggroTargetingScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.MonsterScripts.AttackingScript.html">AttackingScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.MonsterScripts.CastingScript.html">CastingScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.MonsterScripts.ContributionScript.html">ContributionScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.MonsterScripts.DeathScript.html">DeathScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.MonsterScripts.DefaultBehaviorsScript.html">DefaultBehaviorsScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.MonsterScripts.MoveToTargetScript.html">MoveToTargetScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.MonsterScripts.WanderingScript.html">WanderingScript</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__1___0_Action_Action_Exception__">ObjectExtensions.TryCatch&lt;T&gt;(T, Action, Action&lt;Exception&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.ObjectExtensions.TryCatch.html#Chaos_Extensions_Common_ObjectExtensions_TryCatch__2___0_Func___0___1__Func_Exception___1__">ObjectExtensions.TryCatch&lt;T, TReturn&gt;(T, Func&lt;T, TReturn?&gt;, Func&lt;Exception, TReturn?&gt;)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.-ctor.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase__ctor_Chaos_Models_World_Monster_">MonsterScriptBase(Monster)</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.AggroList.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_AggroList">AggroList</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.AggroRange.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_AggroRange">AggroRange</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.Map.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_Map">Map</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.ShouldMove.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_ShouldMove">ShouldMove</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.ShouldUseSkill.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_ShouldUseSkill">ShouldUseSkill</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.ShouldUseSpell.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_ShouldUseSpell">ShouldUseSpell</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.ShouldWander.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_ShouldWander">ShouldWander</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.Skills.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_Skills">Skills</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.Spells.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_Spells">Spells</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.Target.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_Target">Target</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.CanDropItemOn.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_CanDropItemOn_Chaos_Models_World_Aisling_Chaos_Models_Panel_Item_">CanDropItemOn(Aisling, Item)</a></dt>
+    <dd><p>Determines if the specified item can be dropped on the creature subject by the source aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.CanDropMoneyOn.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_CanDropMoneyOn_Chaos_Models_World_Aisling_System_Int32_">CanDropMoneyOn(Aisling, int)</a></dt>
+    <dd><p>Determines if the specified amount of money can be dropped on the creature subject by the source aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.CanMove.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_CanMove">CanMove()</a></dt>
+    <dd><p>Determines if the creature subject is allowed to move (check for paralysis, sleep, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.CanSee.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_CanSee_Chaos_Models_World_Abstractions_VisibleEntity_">CanSee(VisibleEntity)</a></dt>
+    <dd><p>Determines if the creature subject can see the specified entity</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.CanTalk.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_CanTalk">CanTalk()</a></dt>
+    <dd><p>Determines if the creature subject is allowed to talk. (check for silence, mute, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.CanTurn.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_CanTurn">CanTurn()</a></dt>
+    <dd><p>Determines if the creature subject is allowed to turn (check for paralysis, sleep, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.CanUseSkill.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_CanUseSkill_Chaos_Models_Panel_Skill_">CanUseSkill(Skill)</a></dt>
+    <dd><p>Determines if the creature subject is allowed to use the specified skill (check for paralysis, sleep, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.CanUseSpell.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_CanUseSpell_Chaos_Models_Panel_Spell_">CanUseSpell(Spell)</a></dt>
+    <dd><p>Determines if the creature subject is allowed to use the specified spell (check for paralysis, sleep, etc)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.IsFriendlyTo.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_IsFriendlyTo_Chaos_Models_World_Abstractions_Creature_">IsFriendlyTo(Creature)</a></dt>
+    <dd><p>Determines if the creature subject is friently to the specified creature (often for the purposes of acquiring
+targets of beneficial abilities)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.IsHostileTo.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_IsHostileTo_Chaos_Models_World_Abstractions_Creature_">IsHostileTo(Creature)</a></dt>
+    <dd><p>Determines if the creature subject is hostile to the specified creature (often for the purposes of acquiring
+targets of hostile abilities)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnApproached.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnApproached_Chaos_Models_World_Abstractions_Creature_">OnApproached(Creature)</a></dt>
+    <dd><p>Triggers when the specified creature becomes observable to the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnAttacked.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnAttacked_Chaos_Models_World_Abstractions_Creature_System_Int32_">OnAttacked(Creature, int)</a></dt>
+    <dd><p>Triggers when the specified creature attacks the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnAttacked.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnAttacked_Chaos_Models_World_Abstractions_Creature_System_Int32_System_Nullable_System_Int32__">OnAttacked(Creature, int, int?)</a></dt>
+    <dd><p>Triggers when the monster is attacked by a creature. Monsters can have &quot;aggro&quot;, so an aggro override is provided</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnClicked.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnClicked_Chaos_Models_World_Aisling_">OnClicked(Aisling)</a></dt>
+    <dd><p>Triggers when the creature subject is clicked by the specified aisling</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnDeath.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnDeath">OnDeath()</a></dt>
+    <dd><p>Triggers when the creature subject dies. (Triggered by ApplyDamageScripts)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnDeparture.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnDeparture_Chaos_Models_World_Abstractions_Creature_">OnDeparture(Creature)</a></dt>
+    <dd><p>Triggers when the specified creature is no longer observable to the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnGoldDroppedOn.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnGoldDroppedOn_Chaos_Models_World_Aisling_System_Int32_">OnGoldDroppedOn(Aisling, int)</a></dt>
+    <dd><p>Triggers when the specified aisling drops gold on the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnHealed.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnHealed_Chaos_Models_World_Abstractions_Creature_System_Int32_">OnHealed(Creature, int)</a></dt>
+    <dd><p>Triggers when the specified creature heals the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnItemDroppedOn.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnItemDroppedOn_Chaos_Models_World_Aisling_Chaos_Models_Panel_Item_">OnItemDroppedOn(Aisling, Item)</a></dt>
+    <dd><p>Triggers when the specified aisling drops an item on the creature subject</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnPublicMessage.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnPublicMessage_Chaos_Models_World_Abstractions_Creature_System_String_">OnPublicMessage(Creature, string)</a></dt>
+    <dd><p>Triggers when the specified creature sends a public message</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.OnSpawn.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_OnSpawn">OnSpawn()</a></dt>
+    <dd><p>Triggers when the monster first spawns (the monster is on the map)</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.MonsterScripts.Abstractions.MonsterScriptBase.Update.html#Chaos_Scripting_MonsterScripts_Abstractions_MonsterScriptBase_Update_TimeSpan_">Update(TimeSpan)</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/Chaos/Scripting/MonsterScripts/Abstractions/MonsterScriptBase.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

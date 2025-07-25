@@ -1,0 +1,184 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Initial Setup | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Initial Setup | Chaos Server Docs ">
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/InitialSetup.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+  </head>
+
+  <script type="module" src="./../public/docfx.min.js"></script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled="" placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="initial-setup">Initial Setup</h1>
+
+<h2 id="fork-the-chaos-server-repository">Fork the Chaos-Server repository</h2>
+<ul>
+<li>Follow the instructions on <a href="https://help.github.com/articles/fork-a-repo/">GitHub</a> to fork
+the <a href="https://github.com/Sichii/Chaos-Server">Chaos-Server repository</a></li>
+<li>Following along with the guide, clone your forked repository, and configure the upstream repository as the master or
+develop branch on the Chaos-Server repository. (develop is stable and updated more often)</li>
+</ul>
+<h2 id="configure-the-staging-directory">Configure the staging directory</h2>
+<p>By default, the staging directory is inside the git repo, at the root directory, in the &quot;Data&quot; folder. This staging
+directory can be changed if desired via <code>appsettings.json</code> at <code>Options:ChaosOptions:StagingDirectory</code>.</p>
+<h2 id="default-folder-structure">Default Folder Structure</h2>
+<pre>
+📂Data
+┣📂Backups
+┣📂Configuration
+┃ ┣📂Access
+┃ ┣📂LootTables
+┃ ┣📂MapData
+┃ ┣📂MapInstances
+┃ ┣📂MetaData
+┃ ┣📂Templates
+┃ ┃ ┣📂BulletinBoards
+┃ ┃ ┣📂Dialogs
+┃ ┃ ┣📂Items
+┃ ┃ ┣📂Maps
+┃ ┃ ┣📂Merchants
+┃ ┃ ┣📂Monsters
+┃ ┃ ┣📂ReactorTiles
+┃ ┃ ┣📂Skills
+┃ ┃ ┗📂Spells
+┃ ┗📂WorldMaps
+┗📂Saved
+</pre>
+<h2 id="connecting">Connecting</h2>
+<p>If you have the necessary skills, you can edit a Dark Ages client to connect to 127.0.0.1 (localhost) and use it for
+testing purposes. Otherwise, you can download and use <a href="https://github.com/ewrogers/Spark">Spark</a>.</p>
+<p>For anyone else trying to connect to your server, they can also use Spark. However, I encourage you to create your own
+launcher. With a launcher you can push updates to dat files, and change the ip connected to at any time by changing what
+ip the hostname points to.</p>
+<p>Make sure to forward the ports you configure in
+the <a href="LobbyOptions.html">LobbyOptions</a>, <a href="LoginOptions.html">LoginOptions</a>, and <a href="WorldOptions.html">WorldOptions</a>.</p>
+<h2 id="configure-the-servers">Configure the servers</h2>
+<ul>
+<li>Configure <a href="Logging.html">Logging</a></li>
+<li>Configure <a href="AccessManager.html">Access</a></li>
+<li>Configure <a href="LobbyOptions.html">LobbyOptions</a></li>
+<li>Configure <a href="LoginOptions.html">LoginOptions</a></li>
+<li>Configure <a href="WorldOptions.html">WorldOptions</a></li>
+</ul>
+<h2 id="add-content">Add content</h2>
+<div class="TIP">
+<h5>Tip</h5>
+<p>There's a tool to help create content, look for the <a href="ChaosTool.html">ChaosTool</a></p>
+</div>
+<ul>
+<li>Add <a href="Items.html">Items</a></li>
+<li>Add <a href="Spells.html">Spells</a></li>
+<li>Add <a href="Skills.html">Skills</a></li>
+<li>Add <a href="Merchants.html">Merchants</a></li>
+<li>Add <a href="Monsters.html">Monsters</a></li>
+<li>Add <a href="Dialogs.html">Dialogs</a></li>
+<li>Add <a href="LootTables.html">Loot Tables</a></li>
+<li>Add <a href="Maps.html">Maps</a></li>
+<li>Write custom <a href="Components.html">Components</a></li>
+<li>Write custom <a href="Scripting.html">Scripts</a></li>
+<li>Write custom <a href="Formulae.html">Formulae</a></li>
+<li>Write custom <a href="FunctionalScripts.html">Functional Scripts</a></li>
+<li>Add additional <a href="MetaData.html">Meta Data</a></li>
+</ul>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/release/v1.9/docs/articles/InitialSetup.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
