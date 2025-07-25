@@ -58,6 +58,7 @@
         <PackageReference Include="AutoMapper.Collection"/>
         <PackageReference Include="Humanizer"/>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"/>
+        <PackageReference Include="NLog.Targets.Network"/>
         <PackageReference Include="NLog.Web.AspNetCore"/>
         <PackageReference Include="System.Configuration.ConfigurationManager"/>
     </ItemGroup>

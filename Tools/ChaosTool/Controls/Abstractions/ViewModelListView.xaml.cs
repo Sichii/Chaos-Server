@@ -1,3 +1,4 @@
+#region
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -5,6 +6,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using ChaosTool.ViewModel.Abstractions;
 using MaterialDesignThemes.Wpf;
+#endregion
 
 namespace ChaosTool.Controls.Abstractions;
 
@@ -19,14 +21,20 @@ public abstract partial class ViewModelListView : UserControl
 
     private async void UserControl_Initialized(object sender, EventArgs e)
     {
-        AddBtn.IsEnabled = false;
+        try
+        {
+            AddBtn.IsEnabled = false;
 
-        await WaitForJsonContextAsync(Snackbar);
+            await WaitForJsonContextAsync(Snackbar);
 
-        PopulateListView();
-        AddFindBindings(FindTbox);
+            PopulateListView();
+            AddFindBindings(FindTbox);
 
-        AddBtn.IsEnabled = true;
+            AddBtn.IsEnabled = true;
+        } catch
+        {
+            //ignored
+        }
     }
 
     protected virtual async Task WaitForJsonContextAsync(Snackbar snackbar)

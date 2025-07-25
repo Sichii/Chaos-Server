@@ -216,7 +216,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
                         if (TrySetSource(aisling, effect))
                             continue;
-                    } catch (Exception e)
+                    } catch
                     {
                         //ignored
                     }

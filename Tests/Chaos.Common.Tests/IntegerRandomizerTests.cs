@@ -97,7 +97,7 @@ public sealed class IntegerRandomizerTests
             result.Should()
                   .BeGreaterThan(0)
                   .And
-                  .BeLessOrEqualTo(maxPer * 2);
+                  .BeLessThanOrEqualTo(maxPer * 2);
         }
     }
 
@@ -113,9 +113,9 @@ public sealed class IntegerRandomizerTests
             var result = IntegerRandomizer.RollRange(baseValue, variancePct, RandomizationType.Negative);
 
             result.Should()
-                  .BeGreaterOrEqualTo(expectedMin)
+                  .BeGreaterThanOrEqualTo(expectedMin)
                   .And
-                  .BeLessOrEqualTo(baseValue);
+                  .BeLessThanOrEqualTo(baseValue);
         }
     }
 
@@ -131,9 +131,9 @@ public sealed class IntegerRandomizerTests
             var result = IntegerRandomizer.RollRange(baseValue, variancePct, RandomizationType.Positive);
 
             result.Should()
-                  .BeGreaterOrEqualTo(baseValue)
+                  .BeGreaterThanOrEqualTo(baseValue)
                   .And
-                  .BeLessOrEqualTo(expectedMax);
+                  .BeLessThanOrEqualTo(expectedMax);
         }
     }
 
@@ -149,9 +149,9 @@ public sealed class IntegerRandomizerTests
             var result = IntegerRandomizer.RollRange(baseValue, variancePct, RandomizationType.Negative);
 
             result.Should()
-                  .BeGreaterOrEqualTo(expectedMin)
+                  .BeGreaterThanOrEqualTo(expectedMin)
                   .And
-                  .BeLessOrEqualTo(baseValue);
+                  .BeLessThanOrEqualTo(baseValue);
         }
     }
 
@@ -167,9 +167,9 @@ public sealed class IntegerRandomizerTests
             var result = IntegerRandomizer.RollRange(baseValue, variancePct, RandomizationType.Positive);
 
             result.Should()
-                  .BeGreaterOrEqualTo(baseValue)
+                  .BeGreaterThanOrEqualTo(baseValue)
                   .And
-                  .BeLessOrEqualTo(expectedMax);
+                  .BeLessThanOrEqualTo(expectedMax);
         }
     }
 
@@ -186,7 +186,7 @@ public sealed class IntegerRandomizerTests
             result.Should()
                   .BeGreaterThan(0)
                   .And
-                  .BeLessOrEqualTo(max);
+                  .BeLessThanOrEqualTo(max);
         }
     }
 }

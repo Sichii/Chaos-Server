@@ -423,7 +423,7 @@ public sealed class CircleExtensionsTests
             var distanceFromCenter = circle.Center.EuclideanDistanceFrom(randomPoint);
 
             distanceFromCenter.Should()
-                              .BeLessOrEqualTo(circle.Radius);
+                              .BeLessThanOrEqualTo(circle.Radius);
         }
     }
 
