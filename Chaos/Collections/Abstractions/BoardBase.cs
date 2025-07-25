@@ -4,6 +4,7 @@ using Chaos.Common.Identity;
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Board;
 using Chaos.Models.World;
+using Chaos.NLog.Logging.Abstractions;
 #endregion
 
 namespace Chaos.Collections.Abstractions;
@@ -11,7 +12,7 @@ namespace Chaos.Collections.Abstractions;
 /// <summary>
 ///     Represents an in game message board that can be posted to
 /// </summary>
-public abstract class BoardBase : IEnumerable<Post>
+public abstract class BoardBase : IEnumerable<Post>, ITransformableCollection
 {
     /// <summary>
     ///     Defines the minimum time interval to wait before showing the same content to a client again

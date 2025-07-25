@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Models.Menu;
@@ -5,6 +6,7 @@ using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
 using Chaos.Scripting.DialogScripts.GuildScripts.Abstractions;
 using Chaos.Storage.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.DialogScripts.GuildScripts;
 
@@ -30,7 +32,7 @@ public class GuildManagementScript : GuildScriptBase
         //ensure the player is still in a guild
         if (!IsInGuild(source, out _, out var sourceRank))
             Subject.AddOption("Create", "generic_guild_create_initial");
-        else if (IsLeader(sourceRank))
+        else if (sourceRank.IsLeaderRank)
             Subject.AddOptions(
                 ("Ranks", "generic_guild_ranks_initial"),
                 ("Members", "generic_guild_members_initial"),

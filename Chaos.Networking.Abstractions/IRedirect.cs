@@ -1,5 +1,7 @@
+#region
 using System.Net;
 using Chaos.DarkAges.Definitions;
+#endregion
 
 namespace Chaos.Networking.Abstractions;
 
@@ -27,6 +29,16 @@ public interface IRedirect
     ///     The cryptographic key used by the client
     /// </summary>
     string Key { get; }
+
+    /// <summary>
+    ///     The client side id of the client
+    /// </summary>
+    uint? LoginId1 { get; }
+
+    /// <summary>
+    ///     The client side id of the client (2)
+    /// </summary>
+    ushort? LoginId2 { get; }
 
     /// <summary>
     ///     The name of the client

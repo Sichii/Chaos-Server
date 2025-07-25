@@ -1,4 +1,6 @@
+#region
 using System.Text.Json.Serialization;
+#endregion
 
 namespace Chaos.Schemas.Aisling.Abstractions;
 
@@ -16,7 +18,7 @@ public abstract record PanelEntitySchema
     ///     A collection of names of scripts to attach to this object by default
     /// </summary>
     /// ]
-    public ICollection<string>? ScriptKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string>? ScriptKeys { get; set; } = [];
 
     /// <summary>
     ///     The slot this object is in

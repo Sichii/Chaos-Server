@@ -1,3 +1,4 @@
+#region
 using System.Runtime.Serialization;
 using System.Text.Json;
 using Chaos.Common.Utilities;
@@ -7,6 +8,7 @@ using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace Chaos.Storage;
 
@@ -43,10 +45,15 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Load)
               .LogTrace("Loading new unmapped {@TypeName} object from path {@Path}", typeof(TSchema).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Load)
+                                  .WithMetrics();
+
         var schema = JsonSerializerEx.Deserialize<TSchema>(path, JsonSerializerOptions);
 
         if (schema is null)
             throw new SerializationException($"Failed to serialize unmapped {typeof(TSchema).Name} from path \"{path}\"");
+
+        metricsLogger.LogTrace("Loaded new unmapped {@TypeName} object from path {@Path}", typeof(TSchema).Name, path);
 
         return schema;
     }
@@ -59,6 +66,9 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Load)
               .LogTrace("Loading new {@TypeName} object from path {@Path}", typeof(T).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Load)
+                                  .WithMetrics();
+
         var schema = JsonSerializerEx.Deserialize<TSchema>(path, JsonSerializerOptions);
 
         if (schema is null)
@@ -66,7 +76,11 @@ public sealed class EntityRepository : IEntityRepository
 
         preMapAction?.Invoke(schema);
 
-        return Mapper.Map<T>(schema);
+        var ret = Mapper.Map<T>(schema);
+
+        metricsLogger.LogTrace("Loaded new {@TypeName} object from path {@Path}", typeof(T).Name, path);
+
+        return ret;
     }
 
     /// <inheritdoc />
@@ -77,6 +91,9 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Load)
               .LogTrace("Loading new {@TypeName} object from path {@Path}", typeof(T).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Load)
+                                  .WithMetrics();
+
         var schema = await JsonSerializerEx.DeserializeAsync<TSchema>(path, JsonSerializerOptions);
 
         if (schema is null)
@@ -85,7 +102,11 @@ public sealed class EntityRepository : IEntityRepository
         if (preMapAction is not null)
             await preMapAction(schema);
 
-        return Mapper.Map<T>(schema);
+        var ret = Mapper.Map<T>(schema);
+
+        metricsLogger.LogTrace("Loaded new {@TypeName} object from path {@Path}", typeof(T).Name, path);
+
+        return ret;
     }
 
     /// <inheritdoc />
@@ -96,6 +117,9 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Load)
               .LogTrace("Loading collection of {@TypeName} objects from path {@Path}", typeof(T).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Load)
+                                  .WithMetrics();
+
         var schemas = JsonSerializerEx.Deserialize<ICollection<TSchema>>(path, JsonSerializerOptions)!;
 
         if (schemas is null)
@@ -104,7 +128,10 @@ public sealed class EntityRepository : IEntityRepository
         foreach (var schema in schemas)
             preMapAction?.Invoke(schema);
 
-        return Mapper.MapMany<TSchema, T>(schemas);
+        foreach (var mapped in Mapper.MapMany<TSchema, T>(schemas))
+            yield return mapped;
+
+        metricsLogger.LogTrace("Loaded collection of {@TypeName} objects from path {@Path}", typeof(T).Name, path);
     }
 
     /// <inheritdoc />
@@ -114,6 +141,9 @@ public sealed class EntityRepository : IEntityRepository
 
         Logger.WithTopics(Topics.Actions.Load)
               .LogTrace("Loading collection of {@TypeName} objects from path {@Path}", typeof(T).Name, path);
+
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Load)
+                                  .WithMetrics();
 
         var schemas = await JsonSerializerEx.DeserializeAsync<ICollection<TSchema>>(path, JsonSerializerOptions);
 
@@ -130,6 +160,8 @@ public sealed class EntityRepository : IEntityRepository
         else
             foreach (var obj in Mapper.MapMany<TSchema, T>(schemas))
                 yield return obj;
+
+        metricsLogger.LogTrace("Loaded collection of {@TypeName} objects from path {@Path}", typeof(T).Name, path);
     }
 
     /// <inheritdoc />
@@ -140,10 +172,15 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Load)
               .LogTrace("Loading new unmapped {@TypeName} object from path {@Path}", typeof(TSchema).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Load)
+                                  .WithMetrics();
+
         var schema = await JsonSerializerEx.DeserializeAsync<TSchema>(path, JsonSerializerOptions);
 
         if (schema is null)
             throw new SerializationException($"Failed to serialize unmapped {typeof(TSchema).Name} from path \"{path}\"");
+
+        metricsLogger.LogTrace("Loaded new unmapped {@TypeName} object from path {@Path}", typeof(TSchema).Name, path);
 
         return schema;
     }
@@ -156,10 +193,15 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Load)
               .LogTrace("Loading collection of unmapped {@TypeName} objects from path {@Path}", typeof(TSchema).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Load)
+                                  .WithMetrics();
+
         var schemas = JsonSerializerEx.Deserialize<IEnumerable<TSchema>>(path, JsonSerializerOptions);
 
         if (schemas is null)
             throw new SerializationException($"Failed to serialize collection of unmapped {typeof(TSchema).Name} from path \"{path}\"");
+
+        metricsLogger.LogTrace("Loaded collection of unmapped {@TypeName} objects from path {@Path}", typeof(TSchema).Name, path);
 
         return schemas;
     }
@@ -172,6 +214,9 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Load)
               .LogTrace("Loading collection of unmapped {@TypeName} objects from path {@Path}", typeof(TSchema).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Load)
+                                  .WithMetrics();
+
         var schemas = await JsonSerializerEx.DeserializeAsync<IEnumerable<TSchema>>(path, JsonSerializerOptions);
 
         if (schemas is null)
@@ -179,6 +224,8 @@ public sealed class EntityRepository : IEntityRepository
 
         foreach (var schema in schemas)
             yield return schema;
+
+        metricsLogger.LogTrace("Loaded collection of unmapped {@TypeName} objects from path {@Path}", typeof(TSchema).Name, path);
     }
 
     /// <inheritdoc />
@@ -190,11 +237,16 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Save)
+                                  .WithMetrics();
+
         JsonSerializerEx.Serialize(
             path,
             obj,
             JsonSerializerOptions,
             Options.SafeSaves);
+
+        metricsLogger.LogTrace("Saved {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
     }
 
     /// <inheritdoc />
@@ -206,6 +258,9 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving {@TypeName} to path {@Path}", typeof(T).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Save)
+                                  .WithMetrics();
+
         var schema = Mapper.Map<TSchema>(obj)!;
 
         JsonSerializerEx.Serialize(
@@ -213,10 +268,12 @@ public sealed class EntityRepository : IEntityRepository
             schema,
             JsonSerializerOptions,
             Options.SafeSaves);
+
+        metricsLogger.LogTrace("Saved {@TypeName} to path {@Path}", typeof(T).Name, path);
     }
 
     /// <inheritdoc />
-    public Task SaveAndMapAsync<T, TSchema>(T obj, string path)
+    public async Task SaveAndMapAsync<T, TSchema>(T obj, string path)
     {
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -224,13 +281,18 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving {@TypeName} to path {@Path}", typeof(T).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Save)
+                                  .WithMetrics();
+
         var schema = Mapper.Map<TSchema>(obj)!;
 
-        return JsonSerializerEx.SerializeAsync(
+        await JsonSerializerEx.SerializeAsync(
             path,
             schema,
             JsonSerializerOptions,
             Options.SafeSaves);
+
+        metricsLogger.LogTrace("Saved {@TypeName} to path {@Path}", typeof(T).Name, path);
     }
 
     /// <inheritdoc />
@@ -242,6 +304,9 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving many {@TypeName} to path {@Path}", typeof(T).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Save)
+                                  .WithMetrics();
+
         var schema = Mapper.MapMany<T, TSchema>(obj);
 
         JsonSerializerEx.Serialize(
@@ -249,10 +314,12 @@ public sealed class EntityRepository : IEntityRepository
             schema,
             JsonSerializerOptions,
             Options.SafeSaves);
+
+        metricsLogger.LogTrace("Saved many {@TypeName} to path {@Path}", typeof(T).Name, path);
     }
 
     /// <inheritdoc />
-    public Task SaveAndMapManyAsync<T, TSchema>(IEnumerable<T> obj, string path)
+    public async Task SaveAndMapManyAsync<T, TSchema>(IEnumerable<T> obj, string path)
     {
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -260,17 +327,22 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving many {@TypeName} to path {@Path}", typeof(T).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Save)
+                                  .WithMetrics();
+
         var schema = Mapper.MapMany<T, TSchema>(obj);
 
-        return JsonSerializerEx.SerializeAsync(
+        await JsonSerializerEx.SerializeAsync(
             path,
             schema,
             JsonSerializerOptions,
             Options.SafeSaves);
+
+        metricsLogger.LogTrace("Saved many {@TypeName} to path {@Path}", typeof(T).Name, path);
     }
 
     /// <inheritdoc />
-    public Task SaveAsync<TSchema>(TSchema obj, string path)
+    public async Task SaveAsync<TSchema>(TSchema obj, string path)
     {
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -278,11 +350,16 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
-        return JsonSerializerEx.SerializeAsync(
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Save)
+                                  .WithMetrics();
+
+        await JsonSerializerEx.SerializeAsync(
             path,
             obj,
             JsonSerializerOptions,
             Options.SafeSaves);
+
+        metricsLogger.LogTrace("Saved {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
     }
 
     /// <inheritdoc />
@@ -294,15 +371,20 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Save)
+                                  .WithMetrics();
+
         JsonSerializerEx.Serialize(
             path,
             obj,
             JsonSerializerOptions,
             Options.SafeSaves);
+
+        metricsLogger.LogTrace("Saved many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
     }
 
     /// <inheritdoc />
-    public Task SaveManyAsync<TSchema>(IEnumerable<TSchema> obj, string path)
+    public async Task SaveManyAsync<TSchema>(IEnumerable<TSchema> obj, string path)
     {
         ArgumentNullException.ThrowIfNull(obj);
         ArgumentException.ThrowIfNullOrEmpty(path);
@@ -310,10 +392,15 @@ public sealed class EntityRepository : IEntityRepository
         Logger.WithTopics(Topics.Actions.Save)
               .LogTrace("Saving many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
 
-        return JsonSerializerEx.SerializeAsync(
+        var metricsLogger = Logger.WithTopics(Topics.Actions.Save)
+                                  .WithMetrics();
+
+        await JsonSerializerEx.SerializeAsync(
             path,
             obj,
             JsonSerializerOptions,
             Options.SafeSaves);
+
+        metricsLogger.LogTrace("Saved many {@TypeName} to path {@Path}", typeof(TSchema).Name, path);
     }
 }

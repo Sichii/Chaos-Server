@@ -2,9 +2,13 @@
 using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
+using Chaos.Extensions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
+using Chaos.Models.Templates;
 using Chaos.Services.Factories.Abstractions;
+using Chaos.Storage.Abstractions;
+using Chaos.TypeMapper.Abstractions;
 #endregion
 
 namespace Chaos.Collections;
@@ -15,8 +19,10 @@ namespace Chaos.Collections;
 /// <param name="itemFactory">
 ///     A service used to create items
 /// </param>
-public sealed class LootTable(IItemFactory itemFactory) : ILootTable
+public sealed class LootTable(IItemFactory itemFactory, ISimpleCache cache, ICloningService<Item> itemCloner) : ILootTable
 {
+    private readonly ISimpleCache Cache = cache;
+    private readonly ICloningService<Item> ItemCloner = itemCloner;
     private readonly IItemFactory ItemFactory = itemFactory;
 
     /// <summary>
@@ -27,7 +33,7 @@ public sealed class LootTable(IItemFactory itemFactory) : ILootTable
     /// <summary>
     ///     The loot drops that can be generated from the table
     /// </summary>
-    public required ICollection<LootDrop> LootDrops { get; init; } = Array.Empty<LootDrop>();
+    public required ICollection<LootDrop> LootDrops { get; init; } = [];
 
     /// <summary>
     ///     The mode in which the loot table operates
@@ -41,11 +47,9 @@ public sealed class LootTable(IItemFactory itemFactory) : ILootTable
         {
             case LootTableMode.ChancePerItem:
             {
-                foreach (var drop in LootDrops)
-                    if (DecimalRandomizer.RollChance(drop.DropChance))
-                        yield return ItemFactory.Create(drop.ItemTemplateKey, drop.ExtraScriptKeys);
-
-                break;
+                return LootDrops.Where(drop => DecimalRandomizer.RollChance(drop.DropChance))
+                                .SelectMany(InnerGenerateLoot)
+                                .FixStacks(ItemCloner);
             }
             case LootTableMode.PickSingleOrDefault:
             {
@@ -53,12 +57,30 @@ public sealed class LootTable(IItemFactory itemFactory) : ILootTable
                                     .PickRandomWeightedSingleOrDefault();
 
                 if (drop is not null)
-                    yield return ItemFactory.Create(drop.ItemTemplateKey, drop.ExtraScriptKeys);
+                    return InnerGenerateLoot(drop);
 
                 break;
             }
             default:
                 throw new ArgumentOutOfRangeException();
+        }
+
+        return [];
+
+        IEnumerable<Item> InnerGenerateLoot(LootDrop localDrop)
+        {
+            var amount = Random.Shared.Next(localDrop.MinAmount, localDrop.MaxAmount + 1);
+            var template = Cache.Get<ItemTemplate>(localDrop.ItemTemplateKey);
+
+            if (template.Stackable)
+            {
+                var item = ItemFactory.Create(localDrop.ItemTemplateKey, localDrop.ExtraScriptKeys);
+                item.Count = amount;
+
+                return item.FixStacks(ItemCloner);
+            }
+
+            return Enumerable.Repeat(ItemFactory.Create(localDrop.ItemTemplateKey, localDrop.ExtraScriptKeys), amount);
         }
     }
 }

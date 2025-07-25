@@ -62,9 +62,16 @@ public static class Helpers
         var aisling = (Aisling)subscriber;
 
         aisling.Client.SendDisplayPublicMessage(uint.MaxValue, PublicMessageType.Shout, message);
-        var orangeBarChunk = ChunkMessage(message)[0];
-        orangeBarChunk = orangeBarChunk[..^3] + "...";
-        aisling.SendServerMessage(ServerMessageType.OrangeBar1, orangeBarChunk);
+
+        var chunks = ChunkMessage(message);
+
+        if (chunks.Count > 1)
+        {
+            var orangeBarChunk = ChunkMessage(message)[0];
+            orangeBarChunk = orangeBarChunk[..^3] + "...";
+            aisling.SendServerMessage(ServerMessageType.OrangeBar1, orangeBarChunk);
+        } else
+            aisling.SendServerMessage(ServerMessageType.OrangeBar1, message);
     }
 
     public static bool TryGetMessageColor(ArgumentCollection args, [NotNullWhen(true)] out MessageColor? messageColor)

@@ -13,5 +13,5 @@ public sealed record BankSchema
     /// <summary>
     ///     A collection of items in the bank
     /// </summary>
-    public ICollection<ItemSchema> Items { get; set; } = Array.Empty<ItemSchema>();
+    public ICollection<ItemSchema> Items { get; set; } = [];
 }

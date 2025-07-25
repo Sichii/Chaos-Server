@@ -1,9 +1,11 @@
+#region
 using System.Runtime.InteropServices;
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.Common.Definitions;
 using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
@@ -19,18 +21,20 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MonsterScripts.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Models.World;
 
 public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSourceEntity
 {
+    public int AbilityExperience { get; set; }
     public int AggroRange { get; set; }
     public ICollection<IPoint> BlackList { get; set; }
     public int Experience { get; set; }
     public ILootTable LootTable { get; set; }
     public Creature? Target { get; set; }
-    public ConcurrentDictionary<uint, int> AggroList { get; }
-    public ConcurrentDictionary<uint, int> Contribution { get; }
+    public AggroList AggroList { get; }
+    public ContributionList Contribution { get; }
     public List<Item> Items { get; }
     public override ILogger<Monster> Logger { get; }
     public IIntervalTimer MoveTimer { get; }
@@ -72,22 +76,23 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
             mapInstance,
             point)
     {
-        extraScriptKeys ??= Array.Empty<string>();
+        extraScriptKeys ??= [];
 
         AggroRange = template.AggroRange;
         Experience = template.ExpReward;
+        AbilityExperience = template.AbilityReward;
         Gold = Random.Shared.Next(template.MinGoldDrop, template.MaxGoldDrop + 1);
-        Items = new List<Item>();
-        Skills = new List<Skill>();
-        Spells = new List<Spell>();
+        Items = [];
+        Skills = [];
+        Spells = [];
         Template = template;
         Logger = logger;
         StatSheet = ShallowCopy<StatSheet>.Create(template.StatSheet);
-        Items = new List<Item>();
+        Items = [];
         Type = template.Type;
         Direction = (Direction)Random.Shared.Next(4);
-        AggroList = new ConcurrentDictionary<uint, int>();
-        Contribution = new ConcurrentDictionary<uint, int>();
+        AggroList = new AggroList();
+        Contribution = new ContributionList();
         LootTable = new CompositeLootTable(template.LootTables);
         WanderTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.WanderIntervalMs), 10, RandomizationType.Positive);
         MoveTimer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(template.MoveIntervalMs), 10, RandomizationType.Positive);
@@ -116,7 +121,7 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         if (Target?.Equals(creature) ?? false)
             Target = null;
 
-        AggroList.Remove(creature.Id, out _);
+        AggroList.Clear(creature);
 
         if (ApproachTime.TryGetValue(creature, out _))
             ApproachTime[creature] = DateTime.UtcNow;
@@ -140,15 +145,14 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     }
 
     /// <inheritdoc />
-    public override void Wander(IPathOptions? pathOptions = null)
+    public override void Wander(IPathOptions? pathOptions = null, bool ignoreCollision = false)
     {
-        pathOptions ??= PathOptions.Default;
-        pathOptions.IgnoreWalls |= Type == CreatureType.WalkThrough;
+        pathOptions ??= PathOptions.Default.ForCreatureType(Type);
 
         pathOptions.BlockedPoints = pathOptions.BlockedPoints
                                                .Concat(BlackList)
-                                               .ToHashSet();
+                                               .ToHashSet(PointEqualityComparer.Instance);
 
-        base.Wander(pathOptions);
+        base.Wander(pathOptions, ignoreCollision);
     }
 }

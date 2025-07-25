@@ -39,7 +39,11 @@ public class ThrowScript : SkillScriptBase
         foreach (var aisling in thrownAislings)
         {
             foreach (var point in potentialTargetPoints)
-                if (context.SourceMap.IsWalkable(point, CreatureType.Aisling, false) && !context.SourceMap.IsWall(point))
+                if (context.SourceMap.IsWalkable(
+                        point,
+                        false,
+                        false,
+                        collisionType: CreatureType.Aisling))
                 {
                     var aislingPoint = Point.From(aisling);
                     aisling.WarpTo(point);

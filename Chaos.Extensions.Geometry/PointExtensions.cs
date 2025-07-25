@@ -38,6 +38,37 @@ public static class PointExtensions
     }
 
     /// <summary>
+    ///     Finds the input point closest to the centroid of all points.
+    /// </summary>
+    public static Point FindCenterMost(this ICollection<Point> points)
+    {
+        if ((points == null) || (points.Count == 0))
+            throw new ArgumentException("Points list cannot be null or empty.");
+
+        double sumX = 0,
+               sumY = 0;
+
+        foreach (var p in points)
+        {
+            sumX += p.X;
+            sumY += p.Y;
+        }
+
+        var centroidX = sumX / points.Count;
+        var centroidY = sumY / points.Count;
+
+        return points.MinBy(point => DistanceSquaredTo(point, centroidX, centroidY));
+
+        static double DistanceSquaredTo(Point p, double x, double y)
+        {
+            var dx = p.X - x;
+            var dy = p.Y - y;
+
+            return dx * dx + dy * dy;
+        }
+    }
+
+    /// <summary>
     ///     Lazily generates an enumeration of points in a line from the user, with an option for distance and direction.
     ///     Direction.All is optional. Direction.Invalid direction returns empty list.
     /// </summary>

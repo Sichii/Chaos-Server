@@ -1,3 +1,4 @@
+#region
 using System.IO;
 using System.Text.Json;
 using Chaos.Extensions.Common;
@@ -6,6 +7,7 @@ using Chaos.Services.Storage.Options;
 using Chaos.Storage.Abstractions;
 using ChaosTool.Model.Abstractions;
 using Microsoft.Extensions.Options;
+#endregion
 
 namespace ChaosTool.Model.Tables;
 
@@ -42,10 +44,10 @@ public sealed class MapInstanceRepository : RepositoryBase<MapInstanceRepository
 
             return new MapInstanceComposite
             {
-                Instance = instanceTask.Result,
-                Merchants = merchantsTask.Result,
-                Monsters = monstersTask.Result,
-                Reactors = reactorsTask.Result
+                Instance = await instanceTask,
+                Merchants = await merchantsTask,
+                Monsters = await monstersTask,
+                Reactors = await reactorsTask
             };
         } catch (Exception e) //must be "Exception" because this will throw an AggregateException, not a JsonException
         {

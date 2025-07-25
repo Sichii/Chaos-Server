@@ -1,5 +1,6 @@
 #region
 using Chaos.Collections;
+using Chaos.Common.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
@@ -11,13 +12,19 @@ using Chaos.Services.Servers.Options;
 
 namespace Chaos.Services.Other;
 
-public sealed class GroupService(ILogger<GroupService> logger, IChannelService channelService) : IGroupService
+public sealed class GroupService : IGroupService
 {
-    private readonly IChannelService ChannelService = channelService;
-    private readonly ILogger<GroupService> Logger = logger;
+    private readonly IFactory<Group> GroupFactory;
+    private readonly ILogger<GroupService> Logger;
     private readonly HashSet<TimedRequest> PendingInvites = [];
     private readonly HashSet<TimedRequest> PendingRequests = [];
     private readonly Lock Sync = new();
+
+    public GroupService(ILogger<GroupService> logger, IFactory<Group> groupFactory)
+    {
+        Logger = logger;
+        GroupFactory = groupFactory;
+    }
 
     /// <inheritdoc />
     public void AcceptInvite(Aisling sender, Aisling receiver)
@@ -36,8 +43,24 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
 
             receiver.SendActiveMessage("Failed to join group, invite was expired");
 
+            Logger.WithTopics(Topics.Entities.Group, Topics.Actions.Invite, Topics.Qualifiers.Expired)
+                  .WithProperty(sender)
+                  .WithProperty(receiver)
+                  .LogWarning(
+                      "Aisling {@FromAislingName} tried to accept a group invite from aisling {@TargetAislingName}, but the invite was expired",
+                      sender.Name,
+                      receiver.Name);
+
             return;
         }
+
+        Logger.WithTopics(Topics.Entities.Group, Topics.Actions.Invite, Topics.Qualifiers.Accepted)
+              .WithProperty(sender)
+              .WithProperty(receiver)
+              .LogInformation(
+                  "Aisling {@TargetAislingName} accepted a group invite from aisling {@FromAislingName}",
+                  receiver.Name,
+                  sender.Name);
 
         PendingInvites.Remove(invite);
 
@@ -46,7 +69,7 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
             if (receiver.Group == null)
             {
                 //sender is leader (receiver is joining sender)
-                var group = new Group(sender, receiver, ChannelService);
+                var group = GroupFactory.Create(sender, receiver);
                 sender.Group = group;
                 receiver.Group = group;
 
@@ -98,8 +121,24 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
 
             receiver.SendActiveMessage("Failed to accept request because it was expired");
 
+            Logger.WithTopics(Topics.Entities.Group, Topics.Actions.Invite, Topics.Qualifiers.Expired)
+                  .WithProperty(sender)
+                  .WithProperty(receiver)
+                  .LogWarning(
+                      "Aisling {@FromAislingName} tried to accept a group request from aisling {@TargetAislingName}, but the request was expired",
+                      sender.Name,
+                      receiver.Name);
+
             return;
         }
+
+        Logger.WithTopics(Topics.Entities.Group, Topics.Actions.Invite, Topics.Qualifiers.Accepted)
+              .WithProperty(sender)
+              .WithProperty(receiver)
+              .LogInformation(
+                  "Aisling {@TargetAislingName} accepted a group request from aisling {@FromAislingName}",
+                  receiver.Name,
+                  sender.Name);
 
         PendingRequests.Remove(request);
 
@@ -108,7 +147,7 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
             if (receiver.Group == null)
             {
                 //receiver is leader (sender is joining receiver)
-                var group = new Group(receiver, sender, ChannelService);
+                var group = GroupFactory.Create(receiver, sender);
                 sender.Group = group;
                 receiver.Group = group;
             } else
@@ -191,6 +230,14 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
                   .WithProperty(receiver)
                   .LogWarning(
                       "Aisling {@FromAislingName} attempted to send a group invite to aisling {@TargetAislingName}, but that player is ignoring them. (potential harassment)",
+                      sender.Name,
+                      receiver.Name);
+        else
+            Logger.WithTopics(Topics.Entities.Group, Topics.Actions.Invite)
+                  .WithProperty(sender)
+                  .WithProperty(receiver)
+                  .LogInformation(
+                      "Aisling {@FromAislingName} sent a group invite to aisling {@TargetAislingName}",
                       sender.Name,
                       receiver.Name);
 
@@ -335,6 +382,14 @@ public sealed class GroupService(ILogger<GroupService> logger, IChannelService c
                   .WithProperty(receiver)
                   .LogWarning(
                       "Aisling {@FromAislingName} attempted to request a group invite from aisling {@TargetAislingName}, but that player is ignoring them. (potential harassment)",
+                      sender.Name,
+                      receiver.Name);
+        else
+            Logger.WithTopics(Topics.Entities.Group, Topics.Actions.Invite)
+                  .WithProperty(sender)
+                  .WithProperty(receiver)
+                  .LogInformation(
+                      "Aisling {@FromAislingName} sent a group request to aisling {@TargetAislingName}",
                       sender.Name,
                       receiver.Name);
 

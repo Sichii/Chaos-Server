@@ -53,6 +53,7 @@ public static class Topics
 
     public static class Entities
     {
+        public static string AbilityExp => nameof(AbilityExp);
         public static string Aisling => nameof(Aisling);
         public static string Backup => nameof(Backup);
         public static string BulletinBoard => nameof(BulletinBoard);
@@ -78,6 +79,7 @@ public static class Topics
         public static string Message => nameof(Message);
         public static string MetaData => nameof(MetaData);
         public static string Monster => nameof(Monster);
+        public static string NetworkMonitor => nameof(NetworkMonitor);
         public static string Options => nameof(Options);
         public static string Packet => nameof(Packet);
         public static string Post => nameof(Post);
@@ -90,10 +92,14 @@ public static class Topics
 
     public static class Qualifiers
     {
+        public static string Accepted => nameof(Accepted);
         public static string Cheating => nameof(Cheating);
+        public static string Expired => nameof(Expired);
+        public static string Facade => nameof(Facade);
         public static string Forced => nameof(Forced);
         public static string Harassment => nameof(Harassment);
         public static string Raw => nameof(Raw);
+        public static string Rejected => nameof(Rejected);
     }
 
     public static class Servers

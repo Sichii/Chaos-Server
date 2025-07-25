@@ -62,12 +62,31 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
         if (obj.Color.HasValue)
             item.Color = obj.Color.Value;
 
-        if (obj is { PanelSprite: not null, DisplaySprite: not null })
-            item.ItemSprite = new ItemSprite(obj.PanelSprite.Value, obj.DisplaySprite.Value);
+        if (obj.PanelSprite.HasValue)
+            item.ItemSprite.PanelSprite = obj.PanelSprite.Value;
+
+        if (obj.DisplaySprite.HasValue)
+            item.ItemSprite.DisplaySprite = obj.DisplaySprite.Value;
+
+        if (obj.AccountBound.HasValue)
+            item.AccountBound = obj.AccountBound.Value;
+
+        if (obj.NoTrade.HasValue)
+            item.NoTrade = obj.NoTrade.Value;
+
+        if (obj.PreventBanking.HasValue)
+            item.PreventBanking = obj.PreventBanking.Value;
+
+        if (obj.ArmorUsesOvercoatSprites.HasValue)
+            item.ArmorUsesOvercoatSprites = obj.ArmorUsesOvercoatSprites.Value;
+
+        if (obj.OvercoatUsesArmorSprites.HasValue)
+            item.OvercoatUsesArmorSprites = obj.OvercoatUsesArmorSprites.Value;
 
         item.CustomNameOverride = obj.CustomNameOverride;
         item.Prefix = obj.Prefix;
         item.Suffix = obj.Suffix;
+        item.NotepadText = obj.NotepadText;
 
         return item;
     }
@@ -93,7 +112,8 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
             CustomNameOverride = obj.CustomNameOverride,
             Weight = obj.Weight == obj.Template.Weight ? null : obj.Weight,
             PanelSprite = obj.ItemSprite.PanelSprite == obj.Template.ItemSprite.PanelSprite ? null : obj.ItemSprite.PanelSprite,
-            DisplaySprite = obj.ItemSprite.DisplaySprite == obj.Template.ItemSprite.DisplaySprite ? null : obj.ItemSprite.DisplaySprite
+            DisplaySprite = obj.ItemSprite.DisplaySprite == obj.Template.ItemSprite.DisplaySprite ? null : obj.ItemSprite.DisplaySprite,
+            NotepadText = obj.NotepadText
         };
 
         return ret;
@@ -142,6 +162,7 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
             ScriptKeys = new HashSet<string>(obj.ScriptKeys, StringComparer.OrdinalIgnoreCase),
             AccountBound = obj.AccountBound,
             NoTrade = obj.NoTrade,
+            PreventBanking = obj.PreventBanking,
             Color = obj.Color,
             ItemSprite = new ItemSprite(obj.PanelSprite, obj.DisplaySprite ?? 0),
             MaxDurability = obj.MaxDurability,
@@ -168,7 +189,9 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
             EquipmentType = obj.EquipmentType,
             Gender = obj.Gender,
             OverridesHeadSprite = obj.OverridesHeadSprite,
-            OverridesBootsSprite = obj.OverridesBootsSprite
+            OverridesBootsSprite = obj.OverridesBootsSprite,
+            ArmorUsesOvercoatSprites = obj.ArmorUsesOvercoatSprites,
+            OvercoatUsesArmorSprites = obj.OvercoatUsesArmorSprites
         };
 
     public ItemTemplateSchema Map(ItemTemplate obj) => throw new NotImplementedException();

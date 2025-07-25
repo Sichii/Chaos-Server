@@ -140,14 +140,14 @@ public sealed class Exchange
         if (!IsActive || !aisling.Inventory.TryGetObject(slot, out var item) || userAccepted)
             return;
 
-        if (item.Template.AccountBound)
+        if (item.AccountBound)
         {
             aisling.SendActiveMessage($"{item.DisplayName} is account bound");
 
             return;
         }
 
-        if (item.Template.NoTrade)
+        if (item.NoTrade)
         {
             aisling.SendActiveMessage($"{item.DisplayName} is no-trade");
 
@@ -212,14 +212,14 @@ public sealed class Exchange
         if (!IsActive || (amount <= 0) || !aisling.Inventory.TryGetObject(slot, out var item) || userAccepted)
             return;
 
-        if (item.Template.AccountBound)
+        if (item.AccountBound)
         {
             aisling.SendActiveMessage($"{item.DisplayName} is account bound");
 
             return;
         }
 
-        if (item.Template.NoTrade)
+        if (item.NoTrade)
         {
             aisling.SendActiveMessage($"{item.DisplayName} is no-trade");
 

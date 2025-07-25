@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Geometry.Abstractions;
@@ -7,6 +8,7 @@ using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Storage.Abstractions;
+#endregion
 
 namespace Chaos.Services.Factories;
 
@@ -43,7 +45,7 @@ public sealed class ReactorTileFactory(IScriptProvider scriptProvider, ISimpleCa
         Creature? owner = null,
         IScript? sourceScript = null)
     {
-        extraScriptKeys ??= Array.Empty<string>();
+        extraScriptKeys ??= [];
         var template = Cache.Get<ReactorTileTemplate>(templateKey);
 
         return new TemplatedReactorTile(

@@ -1,3 +1,4 @@
+#region
 using Chaos.Extensions;
 using Chaos.Extensions.Geometry;
 using Chaos.Models.World;
@@ -5,6 +6,7 @@ using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.MonsterScripts.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.MonsterScripts;
 
@@ -30,7 +32,7 @@ public class AggroTargetingScript : MonsterScriptBase
         if (aggro == 0)
             return;
 
-        AggroList.AddOrUpdate(source.Id, _ => aggro, (_, currentAggro) => currentAggro + aggro);
+        AggroList.AddAggro(source, aggro);
     }
 
     /// <inheritdoc />
@@ -42,7 +44,7 @@ public class AggroTargetingScript : MonsterScriptBase
 
         if ((Target != null) && (!Target.IsAlive || !Target.OnSameMapAs(Subject)))
         {
-            AggroList.Remove(Target.Id, out _);
+            AggroList.Clear(Target);
             Target = null;
         }
 
@@ -85,15 +87,14 @@ public class AggroTargetingScript : MonsterScriptBase
         //if we failed to get a target via aggroList, grab the closest aisling within aggro range
         Target ??= Map.GetEntitiesWithinRange<Aisling>(Subject, range)
                       .ThatAreVisibleTo(Subject)
-                      .Where(
-                          obj => !obj.Equals(Subject)
-                                 && obj.IsAlive
-                                 && Subject.ApproachTime.TryGetValue(obj, out var time)
-                                 && ((DateTime.UtcNow - time).TotalSeconds >= 1.5))
+                      .Where(obj => !obj.Equals(Subject)
+                                    && obj.IsAlive
+                                    && Subject.ApproachTime.TryGetValue(obj, out var time)
+                                    && ((DateTime.UtcNow - time).TotalSeconds >= 1.5))
                       .ClosestOrDefault(Subject);
 
         //since we grabbed a new target, give them some initial aggro so we stick to them
         if (Target != null)
-            AggroList[Target.Id] = InitialAggro++;
+            AggroList.AddAggro(Target, InitialAggro++);
     }
 }

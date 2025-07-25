@@ -96,7 +96,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
                     = "Delta Monitor [{Name}] - Average: {Average:N1}ms, Median: {Median:N1}ms, 95th%: {UpperPercentile:N1}ms, Max: {Max:N1}ms, Samples: {SampleCount}";
 
                 //depending on how the loop is performing, log the output at different levels
-                if ((average > MaxDelta) || (max > 250))
+                if ((average > MaxDelta) || (max > (MaxDelta * 2)))
                     Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
                           .LogError(
                               FORMAT,
@@ -106,7 +106,7 @@ public sealed class DeltaMonitor : IDeltaUpdatable
                               upperPct,
                               max,
                               count);
-                else if ((upperPct > (MaxDelta / 2)) || (max > 100))
+                else if ((upperPct > (MaxDelta / 2)) || (max > MaxDelta))
                     Logger.WithTopics(Topics.Entities.DeltaMonitor, Topics.Actions.Update)
                           .LogWarning(
                               FORMAT,

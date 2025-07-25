@@ -1,9 +1,11 @@
+#region
 using Chaos.Formulae.Abstractions;
 using Chaos.Formulae.LevelRange;
+#endregion
 
 namespace Chaos.Formulae;
 
 public static class LevelRangeFormulae
 {
-    public static ILevelRangeFormula Default => new DefaultLevelRangeFormula();
+    public static DefaultLevelRangeFormula Default => new();
 }

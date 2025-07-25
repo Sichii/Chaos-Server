@@ -1,6 +1,8 @@
+#region
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.MonsterScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.MonsterScripts;
 
@@ -13,10 +15,5 @@ public class ContributionScript : MonsterScriptBase
 
     /// <inheritdoc />
     public override void OnAttacked(Creature source, int damage, int? aggroOverride)
-    {
-        if (!Subject.Contribution.TryGetValue(source.Id, out var currentValue))
-            currentValue = 0;
-
-        Subject.Contribution[source.Id] = currentValue + damage;
-    }
+        => Subject.Contribution.AddContribution(source, damage);
 }

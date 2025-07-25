@@ -1,6 +1,7 @@
 #region
 using Chaos.Extensions;
 using Chaos.Models.World;
+using Chaos.Scripting.FunctionalScripts.AbilityDistribution;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 using Chaos.Scripting.MonsterScripts.Abstractions;
@@ -12,12 +13,16 @@ namespace Chaos.Scripting.MonsterScripts;
 // ReSharper disable once ClassCanBeSealed.Global
 public class DeathScript : MonsterScriptBase
 {
+    protected IAbilityDistributionScript AbilityDistributionScript { get; set; }
     protected IExperienceDistributionScript ExperienceDistributionScript { get; set; }
 
     /// <inheritdoc />
     public DeathScript(Monster subject)
         : base(subject)
-        => ExperienceDistributionScript = DefaultExperienceDistributionScript.Create();
+    {
+        ExperienceDistributionScript = DefaultExperienceDistributionScript.Create();
+        AbilityDistributionScript = DefaultAbilityDistributionScript.Create();
+    }
 
     /// <inheritdoc />
     public override void OnDeath()
@@ -64,6 +69,7 @@ public class DeathScript : MonsterScriptBase
             }
 
             ExperienceDistributionScript.DistributeExperience(Subject, rewardTargets);
+            AbilityDistributionScript.DistributeAbility(Subject, rewardTargets);
         }
     }
 }

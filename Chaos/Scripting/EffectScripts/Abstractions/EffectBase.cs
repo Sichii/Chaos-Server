@@ -1,8 +1,12 @@
+#region
+using Chaos.Collections.Common;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.Scripting.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.EffectScripts.Abstractions;
 
@@ -18,6 +22,14 @@ public abstract class EffectBase : IEffect
         set => Elapsed = Duration - value;
     }
 
+    /// <inheritdoc />
+    public StaticVars SnapshotVars { get; set; } = new();
+
+    public Creature Source { get; set; } = null!;
+
+    /// <inheritdoc />
+    public IScript? SourceScript { get; set; }
+
     public Creature Subject { get; set; } = null!;
     public abstract byte Icon { get; }
     public abstract string Name { get; }
@@ -25,9 +37,14 @@ public abstract class EffectBase : IEffect
     /// <inheritdoc />
     public string ScriptKey { get; }
 
+    public Aisling? AislingSource => Source as Aisling;
+
     public Aisling? AislingSubject => Subject as Aisling;
 
     protected EffectBase() => ScriptKey = GetEffectKey(GetType());
+
+    /// <inheritdoc />
+    public T GetVar<T>(string key) where T: notnull => SnapshotVars.GetRequired<T>(key);
 
     /// <inheritdoc />
     public virtual void OnApplied() { }
@@ -40,7 +57,13 @@ public abstract class EffectBase : IEffect
     public virtual void OnTerminated() { }
 
     /// <inheritdoc />
+    public virtual void PrepareSnapshot(Creature source) { }
+
+    /// <inheritdoc />
     public void SetDuration(TimeSpan duration) => Duration = duration;
+
+    /// <inheritdoc />
+    public void SetVar<T>(string key, T value) where T: notnull => SnapshotVars.Set(key, value);
 
     /// <inheritdoc />
     public virtual bool ShouldApply(Creature source, Creature target)

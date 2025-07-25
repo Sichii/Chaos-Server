@@ -1,6 +1,8 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
 using Chaos.Schemas.Data;
+#endregion
 
 namespace Chaos.Schemas.Templates;
 
@@ -13,12 +15,12 @@ public sealed record MerchantTemplateSchema
     ///     A collection of items that this merchant will sell. If stock is set to -1, the merchant will have infinite stock of
     ///     it.
     /// </summary>
-    public ICollection<ItemDetailsSchema> ItemsForSale { get; set; } = Array.Empty<ItemDetailsSchema>();
+    public ICollection<ItemDetailsSchema> ItemsForSale { get; set; } = [];
 
     /// <summary>
     ///     A collection of items(Item Template Keys) that this merchant will buy
     /// </summary>
-    public ICollection<string> ItemsToBuy { get; set; } = Array.Empty<string>();
+    public ICollection<string> ItemsToBuy { get; set; } = [];
 
     /// <summary>
     ///     The name of this merchant as displayed to aislings
@@ -39,7 +41,7 @@ public sealed record MerchantTemplateSchema
     /// <summary>
     ///     A collection of names of scripts to attach to this object by default
     /// </summary>
-    public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> ScriptKeys { get; set; } = [];
 
     /// <summary>
     ///     A collection of key-value pairs of key-value pairs
@@ -47,18 +49,19 @@ public sealed record MerchantTemplateSchema
     ///     Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of
     ///     propertyName-Value pairs
     /// </summary>
+    [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
     public IDictionary<string, DynamicVars> ScriptVars { get; set; }
         = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     ///     A collection of skills (Skill Template Keys) that this merchant will teach
     /// </summary>
-    public ICollection<string> SkillsToTeach { get; set; } = Array.Empty<string>();
+    public ICollection<string> SkillsToTeach { get; set; } = [];
 
     /// <summary>
     ///     A collection of spells (Spell Template Keys) that this merchant will teach
     /// </summary>
-    public ICollection<string> SpellsToTeach { get; set; } = Array.Empty<string>();
+    public ICollection<string> SpellsToTeach { get; set; } = [];
 
     /// <summary>
     ///     The sprite id of the merchant minus the offset

@@ -1,8 +1,10 @@
+#region
 using Chaos.Collections;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.MerchantScripts.Abstractions;
 
@@ -15,7 +17,10 @@ public abstract class MerchantScriptBase : SubjectiveScriptBase<Merchant>, IMerc
         : base(subject) { }
 
     /// <inheritdoc />
-    public virtual bool CanDropItemOn(Aisling source, Item item) => !(item.Template.AccountBound || item.Template.NoTrade);
+    public virtual bool CanDropItemOn(Aisling source, Item item) => source.IsAlive;
+
+    /// <inheritdoc />
+    public virtual bool CanDropMoneyOn(Aisling source, int amount) => true;
 
     /// <inheritdoc />
     public virtual bool CanMove() => true;

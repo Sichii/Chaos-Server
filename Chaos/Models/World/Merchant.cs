@@ -1,6 +1,8 @@
+#region
 using Chaos.Collections;
 using Chaos.Common.Definitions;
 using Chaos.DarkAges.Definitions;
+using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.EqualityComparers;
@@ -15,8 +17,10 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MerchantScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Other.Abstractions;
+using Chaos.Services.Servers.Options;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Models.World;
 
@@ -84,7 +88,7 @@ public sealed class Merchant : Creature,
             mapInstance,
             point)
     {
-        extraScriptKeys ??= Array.Empty<string>();
+        extraScriptKeys ??= [];
 
         Template = template;
         Logger = logger;
@@ -97,13 +101,12 @@ public sealed class Merchant : Creature,
         BlackList = new HashSet<IPoint>(PointEqualityComparer.Instance);
 
         ItemsForSale = template.ItemsForSale
-                               .Select(
-                                   kvp =>
-                                   {
-                                       var item = itemFactory.CreateFaux(kvp.Key);
+                               .Select(kvp =>
+                               {
+                                   var item = itemFactory.CreateFaux(kvp.Key);
 
-                                       return item;
-                                   })
+                                   return item;
+                               })
                                .ToList();
 
         ItemsToBuy = template.ItemsToBuy
@@ -158,9 +161,21 @@ public sealed class Merchant : Creature,
 
     public override void OnClicked(Aisling source) => Script.OnClicked(source);
 
-    public override void OnGoldDroppedOn(Aisling source, int amount) => Script.OnGoldDroppedOn(source, amount);
+    public override void OnGoldDroppedOn(Aisling source, int amount)
+    {
+        if (!this.WithinRange(source, WorldOptions.Instance.TradeRange))
+            return;
 
-    /// <inheritdoc />
+        if (!Script.CanDropMoneyOn(source, amount))
+        {
+            source.SendActiveMessage("You can't do that right now");
+
+            return;
+        }
+
+        Script.OnGoldDroppedOn(source, amount);
+    }
+
     public bool TryGetSkill(string skillName, [MaybeNullWhen(false)] out Skill skill)
     {
         skill = SkillsToTeach.FirstOrDefault(skill => skill.Template.Name.EqualsI(skillName));
@@ -168,7 +183,6 @@ public sealed class Merchant : Creature,
         return skill != null;
     }
 
-    /// <inheritdoc />
     public bool TryGetSpell(string spellName, [MaybeNullWhen(false)] out Spell spell)
     {
         spell = SpellsToTeach.FirstOrDefault(spell => spell.Template.Name.EqualsI(spellName));
@@ -184,14 +198,14 @@ public sealed class Merchant : Creature,
     }
 
     /// <inheritdoc />
-    public override void Wander(IPathOptions? pathOptions = null)
+    public override void Wander(IPathOptions? pathOptions = null, bool ignoreCollision = false)
     {
-        pathOptions ??= PathOptions.Default;
+        pathOptions ??= PathOptions.Default.ForCreatureType(Type);
 
         pathOptions.BlockedPoints = pathOptions.BlockedPoints
                                                .Concat(BlackList)
                                                .ToHashSet();
 
-        base.Wander(pathOptions);
+        base.Wander(pathOptions, ignoreCollision);
     }
 }

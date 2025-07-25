@@ -1,3 +1,4 @@
+#region
 using System.Runtime.InteropServices;
 using Chaos.Collections;
 using Chaos.Models.Panel;
@@ -5,6 +6,7 @@ using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.ItemScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.ItemScripts;
 
@@ -13,6 +15,42 @@ namespace Chaos.Scripting.ItemScripts;
 /// </summary>
 public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
 {
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanBeDropped(Aisling source, Point targetPoint)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanBeDropped(source, targetPoint))
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanBeDroppedOn(Aisling source, Creature creature)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanBeDroppedOn(source, creature))
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanBePickedUp(Aisling source, Point sourcePoint)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanBePickedUp(source, sourcePoint))
+                return false;
+
+        return true;
+    }
+
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
@@ -46,6 +84,15 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
     /// <summary>
     ///     DO NOT EDIT THIS SCRIPT
     /// </summary>
+    public virtual void OnNotepadTextUpdated(Aisling source, string? oldText)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            script.OnNotepadTextUpdated(source, oldText);
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void OnPickup(Aisling aisling, Item originalItem, int originalCount)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
@@ -70,7 +117,9 @@ public class CompositeItemScript : CompositeScriptBase<IItemScript>, IItemScript
             script.OnUse(source);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual void Update(TimeSpan delta)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))

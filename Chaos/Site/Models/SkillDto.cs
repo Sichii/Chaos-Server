@@ -1,4 +1,6 @@
+#region
 using Chaos.DarkAges.Definitions;
+#endregion
 
 namespace Chaos.Site.Models;
 
@@ -23,6 +25,6 @@ public sealed class SkillDto
     public string? SpellRequirements { get; set; }
     public int? Sprite { get; set; }
     public int? Str { get; set; }
-    internal string TemplateKey { get; set; } = null!;
+    public string TemplateKey { get; set; } = null!;
     public int? Wis { get; set; }
 }

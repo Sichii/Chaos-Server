@@ -20,6 +20,27 @@ namespace Chaos.Networking.Abstractions;
 public interface IChaosWorldClient : IConnectedClient
 {
     Aisling Aisling { get; set; }
+
+    /// <summary>
+    ///     The first byte of the heartbeat
+    /// </summary>
+    byte? Heartbeat1 { get; set; }
+
+    /// <summary>
+    ///     The second byte of the heartbeat
+    /// </summary>
+    byte? Heartbeat2 { get; set; }
+
+    /// <summary>
+    ///     Client side id of the client
+    /// </summary>
+    uint LoginId1 { get; set; }
+
+    /// <summary>
+    ///     Client side id of the client (2)
+    /// </summary>
+    ushort LoginId2 { get; set; }
+
     void SendAddItemToPane(Item item);
     void SendAddSkillToPane(Skill skill);
     void SendAddSpellToPane(Spell spell);
@@ -43,6 +64,28 @@ public interface IChaosWorldClient : IConnectedClient
     void SendDisplayBoard(BoardBase boardBase, short? startPostId = null);
     void SendDisplayDialog(Dialog dialog);
     void SendDisplayGroupInvite(ServerGroupSwitch serverGroupSwitch, string fromName, DisplayGroupBoxInfo? groupBoxInfo = null);
+
+    /// <summary>
+    ///     Displays a notepad to the client
+    /// </summary>
+    /// <param name="type">
+    ///     The type of notepad
+    /// </param>
+    /// <param name="item">
+    ///     The item the notepad is attached to
+    /// </param>
+    /// <param name="width">
+    ///     In game, the notepad will display with a character width close to (2.5 * thisValue) with midpoint rounding
+    /// </param>
+    /// <param name="height">
+    ///     In game, the notepad will display with a line height close to (1.4 * thisValue) with midpoint rouding
+    /// </param>
+    void SendDisplayNotepad(
+        NotepadType type,
+        Item item,
+        byte width,
+        byte height);
+
     void SendDisplayPublicMessage(uint id, PublicMessageType publicMessageType, string message);
     void SendDisplayUnequip(EquipmentSlot equipmentSlot);
     void SendDoors(params IEnumerable<Door> doors);

@@ -1,5 +1,7 @@
+#region
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Entities.Server;
+#endregion
 
 namespace Chaos.Networking.Abstractions;
 
@@ -135,6 +137,14 @@ public interface IWorldClient : IConnectedClient
     ///     Opcode: <see cref="ServerOpCode.DisplayGroupInvite" />
     /// </remarks>
     void SendDisplayGroupInvite(DisplayGroupInviteArgs args);
+
+    /// <summary>
+    ///     Sends a packet to display a notepad
+    /// </summary>
+    /// <remarks>
+    ///     Opcode: <see cref="ServerOpCode.DisplayNotepad" />
+    /// </remarks>
+    void SendDisplayNotepad(DisplayNotepadArgs args);
 
     /// <summary>
     ///     Sends a packet to display a public message. (Normal, Shout, Chant)
@@ -284,9 +294,9 @@ public interface IWorldClient : IConnectedClient
     ///     Sends a packet to display an editable notepad
     /// </summary>
     /// <remarks>
-    ///     Opcode: <see cref="ServerOpCode.Notepad" />
+    ///     Opcode: <see cref="ServerOpCode.DisplayNotepad" />
     /// </remarks>
-    void SendNotepad(NotepadArgs args);
+    void SendNotepad(DisplayNotepadArgs args);
 
     /// <summary>
     ///     Sends a packet to display another player's profile

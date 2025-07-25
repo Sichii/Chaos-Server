@@ -399,11 +399,11 @@ public sealed class RectangleExtensionsTests
         {
             point.X
                  .Should()
-                 .BeGreaterOrEqualTo(rect.Left);
+                 .BeGreaterThanOrEqualTo(rect.Left);
 
             point.X
                  .Should()
-                 .BeLessOrEqualTo(rect.Right);
+                 .BeLessThanOrEqualTo(rect.Right);
 
             point.X
                  .Should()
@@ -411,11 +411,11 @@ public sealed class RectangleExtensionsTests
 
             point.Y
                  .Should()
-                 .BeGreaterOrEqualTo(rect.Top);
+                 .BeGreaterThanOrEqualTo(rect.Top);
 
             point.Y
                  .Should()
-                 .BeLessOrEqualTo(rect.Bottom);
+                 .BeLessThanOrEqualTo(rect.Bottom);
 
             point.Y
                  .Should()

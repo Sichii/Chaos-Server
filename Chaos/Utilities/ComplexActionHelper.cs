@@ -168,6 +168,9 @@ public static class ComplexActionHelper
         if (slotItem == null)
             return DepositItemResult.BadInput;
 
+        if (slotItem.PreventBanking)
+            return DepositItemResult.BadInput;
+
         if (!source.Inventory.HasCount(slotItem.DisplayName, amount))
             return DepositItemResult.DontHaveThatMany;
 
@@ -212,6 +215,9 @@ public static class ComplexActionHelper
         var slotItem = source.Inventory[itemName];
 
         if (slotItem == null)
+            return DepositItemResult.BadInput;
+
+        if (slotItem.PreventBanking)
             return DepositItemResult.BadInput;
 
         if (!source.Inventory.HasCount(slotItem.DisplayName, amount))

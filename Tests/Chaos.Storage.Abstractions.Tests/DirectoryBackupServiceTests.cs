@@ -45,7 +45,7 @@ public sealed class DirectoryBackupServiceTests : IDisposable
     public async Task HandleBackupRetention_Should_Delete_Old_Backups()
     {
         // Arrange
-        var token = new CancellationToken();
+        var token = CancellationToken.None;
         var oldBackup = Path.Combine(Options.Value.BackupDirectory, "oldBackup.zip");
         await File.WriteAllTextAsync(oldBackup, "dummy content", token);
         File.SetCreationTimeUtc(oldBackup, DateTime.UtcNow.AddDays(-Options.Value.BackupRetentionDays - 2)); // Set the file to be old
@@ -63,7 +63,7 @@ public sealed class DirectoryBackupServiceTests : IDisposable
     public async Task HandleBackupRetention_Should_Not_Delete_Backups_Within_Retention_Period()
     {
         // Arrange
-        var token = new CancellationToken();
+        var token = CancellationToken.None;
         var backupDirectory = Options.Value.BackupDirectory;
 
         var backupFilePath = Path.Combine(backupDirectory, "backup.zip");

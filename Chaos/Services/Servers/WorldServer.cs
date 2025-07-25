@@ -16,6 +16,8 @@ using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.Data;
+using Chaos.Models.Panel;
+using Chaos.Models.Panel.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Networking.Abstractions;
@@ -27,14 +29,20 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
+using Chaos.Scripting.Abstractions;
+using Chaos.Scripting.EffectScripts.Abstractions;
+using Chaos.Scripting.SpellScripts.Abstractions;
+using Chaos.Services.Factories;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Other;
 using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
+using Chaos.Services.Storage;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Utilities;
 using Microsoft.Extensions.Options;
+using HeartBeatResponseArgs = Chaos.Networking.Entities.Client.HeartBeatResponseArgs;
 #endregion
 
 namespace Chaos.Services.Servers;
@@ -47,10 +55,15 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     private readonly IChannelService ChannelService;
     private readonly IFactory<IChaosWorldClient> ClientFactory;
     private readonly ICommandInterceptor<Aisling> CommandInterceptor;
+    private readonly AislingFacadeCache FacadeCache;
     private readonly IGroupService GroupService;
+    private readonly IItemFactory ItemFactory;
     private readonly IStore<MailBox> MailStore;
     private readonly IMerchantFactory MerchantFactory;
     private readonly IMetaDataStore MetaDataStore;
+    private readonly IMonsterFactory MonsterFactory;
+    private readonly ISkillFactory SkillFactory;
+    private readonly ISpellFactory SpellFactory;
     private new WorldOptions Options { get; }
 
     public IEnumerable<Aisling> Aislings
@@ -72,7 +85,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         IChannelService channelService,
         IStore<MailBox> mailStore,
         BulletinBoardKeyMapper bulletinBoardKeyMapper,
-        IStore<BulletinBoard> bulletinBoardStore)
+        IStore<BulletinBoard> bulletinBoardStore,
+        AislingFacadeCache facadeCache,
+        IMonsterFactory monsterFactory,
+        ISkillFactory skillFactory,
+        ISpellFactory spellFactory,
+        IItemFactory itemFactory)
         : base(
             redirectManager,
             packetSerializer,
@@ -91,6 +109,11 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         MailStore = mailStore;
         BulletinBoardKeyMapper = bulletinBoardKeyMapper;
         BulletinBoardStore = bulletinBoardStore;
+        FacadeCache = facadeCache;
+        MonsterFactory = monsterFactory;
+        SkillFactory = skillFactory;
+        SpellFactory = spellFactory;
+        ItemFactory = itemFactory;
 
         IndexHandlers();
     }
@@ -100,6 +123,76 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     #endregion
 
     #region Utility
+    private bool TrySetSource(Aisling aisling, IEffect effect)
+    {
+        var sourceType = effect.SnapshotVars.Get<CreatureType>("sourceType");
+        var sourceIdentifier = effect.SnapshotVars.Get<string>("sourceIdentifier")!;
+        var activatorType = effect.SnapshotVars.Get<string>("activatorType");
+        var activatorKey = effect.SnapshotVars.Get<string>("activatorKey");
+        var scriptKey = effect.SnapshotVars.Get<string>("scriptKey");
+
+        //if there's no source script info, return false
+        if (string.IsNullOrEmpty(activatorType) || string.IsNullOrEmpty(activatorKey) || string.IsNullOrEmpty(scriptKey))
+            return false;
+
+        //if there's source script info, but the data is unknown
+        //then dont set the source script
+        if (!activatorType.EqualsI("unknown") && !activatorKey.EqualsI("unknown") && !scriptKey.EqualsI("unknown"))
+        {
+            var sourceActivator = (IScripted<IScript>)(activatorType.ToLower() switch
+            {
+                "spell" => SpellFactory.CreateFaux(activatorKey),
+                "skill" => SkillFactory.CreateFaux(activatorKey),
+                "item"  => ItemFactory.CreateFaux(activatorKey),
+                _       => throw new ArgumentOutOfRangeException()
+            });
+
+            effect.SourceScript = sourceActivator.Script
+                                                 .GetScripts<IScript>()
+                                                 .Single(script => script.ScriptKey.EqualsI(scriptKey));
+        }
+
+        if (string.IsNullOrEmpty(sourceIdentifier))
+            return false;
+
+        switch (sourceType)
+        {
+            case CreatureType.Normal:
+            case CreatureType.WalkThrough:
+            {
+                var monster = MonsterFactory.Create(sourceIdentifier, aisling.MapInstance, Point.From(aisling));
+                effect.Source = monster;
+
+                break;
+            }
+            case CreatureType.Merchant:
+            {
+                var merchant = MerchantFactory.Create(sourceIdentifier, aisling.MapInstance, Point.From(aisling));
+                effect.Source = merchant;
+
+                break;
+            }
+            case CreatureType.WhiteSquare:
+                break;
+            case CreatureType.Aisling:
+            {
+                var aislingFacade = FacadeCache.Get(sourceIdentifier);
+
+                if (aislingFacade is null)
+                    return false;
+
+                effect.Source = aislingFacade!;
+
+                break;
+            }
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        return effect.Source is not null;
+    }
+
     private async ValueTask LoadAislingAsync(IChaosWorldClient client, IRedirect redirect)
     {
         try
@@ -115,6 +208,28 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
             try
             {
+                foreach (var effect in aisling.Effects.ToList())
+                {
+                    try
+                    {
+                        effect.Subject = aisling;
+
+                        if (TrySetSource(aisling, effect))
+                            continue;
+                    } catch
+                    {
+                        //ignored
+                    }
+
+                    try
+                    {
+                        aisling.Effects.Dispel(effect.Name);
+                    } catch
+                    {
+                        //ignored
+                    }
+                }
+
                 aisling.Guild?.Associate(aisling);
                 aisling.MailBox = MailStore.Load(aisling.Name);
                 aisling.BeginObserving();
@@ -200,31 +315,47 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     {
         boardBase = null;
 
-        switch (args.BoardId)
+        try
         {
-            case null:
-                break;
-            case MailBox.BOARD_ID:
+            switch (args.BoardId)
             {
-                //if the "To" property is populated, we are sending mail to someone
-                //we want to return their mailbox
-                //otherwise, return our mailbox
-                boardBase = !string.IsNullOrEmpty(args.To) ? MailStore.Load(args.To) : client.Aisling.MailBox;
+                case null:
+                    break;
+                case MailBox.BOARD_ID:
+                {
+                    //if the "To" property is populated, we are sending mail to someone
+                    //we want to return their mailbox
+                    //otherwise, return our mailbox
+                    boardBase = !string.IsNullOrEmpty(args.To) ? MailStore.Load(args.To) : client.Aisling.MailBox;
 
-                break;
+                    break;
+                }
+                default:
+                {
+                    var key = BulletinBoardKeyMapper.GetKey(args.BoardId.Value);
+
+                    if (!string.IsNullOrEmpty(key))
+                        boardBase = BulletinBoardStore.Load(key);
+
+                    break;
+                }
             }
-            default:
+
+            if (boardBase is null)
             {
-                var key = BulletinBoardKeyMapper.GetKey(args.BoardId.Value);
+                Logger.WithTopics(
+                          Topics.Entities.Aisling,
+                          Topics.Entities.BulletinBoard,
+                          Topics.Entities.MailBox,
+                          Topics.Actions.Read)
+                      .WithProperty(client)
+                      .LogError("{@AislingName} requested an invalid board id: {@BoardId}", client.Aisling.Name, args.BoardId);
 
-                if (!string.IsNullOrEmpty(key))
-                    boardBase = BulletinBoardStore.Load(key);
-
-                break;
+                return false;
             }
-        }
 
-        if (boardBase is null)
+            return true;
+        } catch (Exception e)
         {
             Logger.WithTopics(
                       Topics.Entities.Aisling,
@@ -232,12 +363,14 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                       Topics.Entities.MailBox,
                       Topics.Actions.Read)
                   .WithProperty(client)
-                  .LogError("{@AislingName} requested an invalid board id: {@BoardId}", client.Aisling.Name, args.BoardId);
+                  .LogError(
+                      e,
+                      "{@AislingName} requested an invalid board id: {@BoardId}",
+                      client.Aisling.Name,
+                      args.BoardId);
 
             return false;
         }
-
-        return true;
     }
     #endregion
 
@@ -283,7 +416,24 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case BoardRequestType.ViewBoard:
                 {
                     if (!TryGetBoard(localClient, localArgs, out var board))
+                    {
+                        localClient.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "That board does not exist.", false);
+
+                        Logger.WithTopics(
+                                  Topics.Entities.Aisling,
+                                  Topics.Entities.BulletinBoard,
+                                  Topics.Entities.MailBox,
+                                  Topics.Actions.Read,
+                                  Topics.Qualifiers.Cheating)
+                              .WithProperty(client)
+                              .LogError(
+                                  "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
+                                  client.Aisling.Name,
+                                  localArgs.BoardRequestType,
+                                  args.BoardId);
+
                         return default;
+                    }
 
                     board.Show(localClient.Aisling, localArgs.StartPostId!.Value);
 
@@ -292,7 +442,24 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case BoardRequestType.ViewPost:
                 {
                     if (!TryGetBoard(localClient, localArgs, out var board))
+                    {
+                        localClient.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "That board does not exist.", false);
+
+                        Logger.WithTopics(
+                                  Topics.Entities.Aisling,
+                                  Topics.Entities.BulletinBoard,
+                                  Topics.Entities.MailBox,
+                                  Topics.Actions.Read,
+                                  Topics.Qualifiers.Cheating)
+                              .WithProperty(client)
+                              .LogError(
+                                  "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
+                                  client.Aisling.Name,
+                                  localArgs.BoardRequestType,
+                                  args.BoardId);
+
                         return default;
+                    }
 
                     board.ShowPost(localClient.Aisling, localArgs.PostId!.Value, localArgs.Controls!.Value);
 
@@ -301,7 +468,23 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case BoardRequestType.NewPost:
                 {
                     if (!TryGetBoard(localClient, localArgs, out var board))
+                    {
+                        localClient.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "That board does not exist", false);
+
+                        Logger.WithTopics(
+                                  Topics.Entities.Aisling,
+                                  Topics.Entities.BulletinBoard,
+                                  Topics.Actions.Read,
+                                  Topics.Qualifiers.Cheating)
+                              .WithProperty(client)
+                              .LogError(
+                                  "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
+                                  client.Aisling.Name,
+                                  localArgs.BoardRequestType,
+                                  args.BoardId);
+
                         return default;
+                    }
 
                     //mailboxes use a different boardRequestType for sending mail
                     if (board is MailBox)
@@ -310,7 +493,8 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                                   Topics.Entities.Aisling,
                                   Topics.Entities.BulletinBoard,
                                   Topics.Entities.MailBox,
-                                  Topics.Actions.Read)
+                                  Topics.Actions.Read,
+                                  Topics.Qualifiers.Cheating)
                               .WithProperty(client)
                               .LogError(
                                   "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
@@ -332,7 +516,24 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case BoardRequestType.Delete:
                 {
                     if (!TryGetBoard(localClient, localArgs, out var board))
+                    {
+                        localClient.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, "That board does not exist.", false);
+
+                        Logger.WithTopics(
+                                  Topics.Entities.Aisling,
+                                  Topics.Entities.BulletinBoard,
+                                  Topics.Entities.MailBox,
+                                  Topics.Actions.Read,
+                                  Topics.Qualifiers.Cheating)
+                              .WithProperty(client)
+                              .LogError(
+                                  "{@AislingName} requested an invalid board id for request type {@BoardRequestType}: {@BoardId}",
+                                  client.Aisling.Name,
+                                  localArgs.BoardRequestType,
+                                  args.BoardId);
+
                         return default;
+                    }
 
                     board.Delete(localClient.Aisling, localArgs.PostId!.Value);
 
@@ -341,7 +542,11 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 case BoardRequestType.SendMail:
                 {
                     if (!TryGetBoard(localClient, localArgs, out var board))
+                    {
+                        localClient.SendBoardResponse(BoardOrResponseType.SubmitPostResponse, $"{localArgs.To} does not exist.", false);
+
                         return default;
+                    }
 
                     board.Post(
                         localClient.Aisling,
@@ -391,8 +596,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         static ValueTask InnerOnChant(IChaosWorldClient localClient, ChantArgs localArgs)
         {
-            if (localClient.Aisling.IsOnWorldMap)
+            if (localClient.Aisling.IsOnWorldMap || localClient.Aisling.Muted)
+            {
+                localClient.SendServerMessage(ServerMessageType.OrangeBar1, "Your voice is swept away by a strange wind...");
+
                 return default;
+            }
 
             var message = localArgs.ChantMessage;
 
@@ -505,6 +714,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
                 return default;
             }
+
+            if (!redirect.LoginId1.HasValue || !redirect.LoginId2.HasValue)
+                return default;
+
+            localClient.LoginId1 = redirect.LoginId1!.Value;
+            localClient.LoginId2 = redirect.LoginId2!.Value;
 
             return LoadAislingAsync(localClient, redirect);
         }
@@ -739,14 +954,6 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (localClient.Aisling.IsOnWorldMap)
                 return default;
 
-            var map = localClient.Aisling.MapInstance;
-
-            if (!localClient.Aisling.WithinRange(localArgs.DestinationPoint, Options.DropRange))
-                return default;
-
-            if (map.IsWall(localArgs.DestinationPoint))
-                return default;
-
             localClient.Aisling.TryDropGold(localArgs.DestinationPoint, localArgs.Amount, out _);
 
             return default;
@@ -759,7 +966,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         return ExecuteHandler(client, args, InnerOnGoldDroppedOnCreature);
 
-        ValueTask InnerOnGoldDroppedOnCreature(IChaosWorldClient localClient, GoldDroppedOnCreatureArgs localArgs)
+        static ValueTask InnerOnGoldDroppedOnCreature(IChaosWorldClient localClient, GoldDroppedOnCreatureArgs localArgs)
         {
             if (localClient.Aisling.IsOnWorldMap)
                 return default;
@@ -770,9 +977,6 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 return default;
 
             if (!map.TryGetEntity<Creature>(localArgs.TargetId, out var target))
-                return default;
-
-            if (!localClient.Aisling.WithinRange(target, Options.TradeRange))
                 return default;
 
             target.OnGoldDroppedOn(localClient.Aisling, localArgs.Amount);
@@ -873,10 +1077,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                     if (target.GroupBox is null)
                     {
                         Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Group, Topics.Qualifiers.Cheating)
+                              .WithProperty(localClient.Aisling)
+                              .WithProperty(target)
                               .LogWarning(
-                                  "{@Aisling} attempted to view {@Target}'s group box, but they do not have one",
-                                  localClient.Aisling,
-                                  target);
+                                  "{@AislingName} attempted to view {@TargetName}'s group box, but they do not have one",
+                                  localClient.Aisling.Name,
+                                  target.Name);
 
                         return default;
                     }
@@ -1002,7 +1208,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         return ExecuteHandler(client, args, InnerOnItemDroppedOnCreature);
 
-        ValueTask InnerOnItemDroppedOnCreature(IChaosWorldClient localClient, ItemDroppedOnCreatureArgs localArgs)
+        static ValueTask InnerOnItemDroppedOnCreature(IChaosWorldClient localClient, ItemDroppedOnCreatureArgs localArgs)
         {
             if (localClient.Aisling.IsOnWorldMap)
                 return default;
@@ -1010,15 +1216,6 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             var map = localClient.Aisling.MapInstance;
 
             if (!map.TryGetEntity<Creature>(localArgs.TargetId, out var target))
-                return default;
-
-            if (!localClient.Aisling.WithinRange(target, Options.TradeRange))
-                return default;
-
-            if (!localClient.Aisling.Inventory.TryGetObject(localArgs.SourceSlot, out var item))
-                return default;
-
-            if (item.Count < localArgs.Count)
                 return default;
 
             target.OnItemDroppedOn(localClient.Aisling, localArgs.SourceSlot, localArgs.Count);
@@ -1059,6 +1256,82 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+
+            return default;
+        }
+    }
+
+    /// <inheritdoc />
+    public override ValueTask OnHeartBeatAsync(IChaosWorldClient client, in Packet packet)
+    {
+        var args = PacketSerializer.Deserialize<HeartBeatResponseArgs>(in packet);
+
+        if ((args.First != client.Heartbeat2) || (args.Second != client.Heartbeat1))
+        {
+            Logger.WithTopics(Topics.Servers.WorldServer, Topics.Entities.Client, Topics.Actions.Processing)
+                  .WithProperty(client)
+                  .LogWarning(
+                      "Client {@ClientIp} sent an invalid heartbeat. Expected: {@Expected}, Received: {@Received}",
+                      client.RemoteIp,
+                      (client.Heartbeat2, client.Heartbeat1),
+                      (args.First, args.Second));
+
+            client.Disconnect();
+        }
+
+        client.Heartbeat1 = null;
+        client.Heartbeat2 = null;
+
+        return default;
+    }
+
+    /// <inheritdoc />
+    public override ValueTask OnSynchronizeTicksAsync(IChaosWorldClient client, in Packet packet)
+    {
+        _ = PacketSerializer.Deserialize<SynchronizeTicksResponseArgs>(in packet);
+
+        //var diff = Math.Abs((long)args.ClientTicks - args.ServerTicks);
+        //var deltaPct = (double)diff / args.ServerTicks * 100;
+
+        //if(deltaPct > 1)
+        //log something?
+
+        return default;
+    }
+
+    /// <inheritdoc />
+    public ValueTask OnSetNotepad(IChaosWorldClient client, in Packet packet)
+    {
+        var args = PacketSerializer.Deserialize<SetNotepadArgs>(in packet);
+
+        if (args.Message.Length > CHAOS_CONSTANTS.MAX_NOTEPAD_MESSAGE_LENGTH)
+        {
+            Logger.WithTopics(Topics.Entities.Packet, Topics.Actions.Processing, Topics.Qualifiers.Cheating)
+                  .WithProperty(client)
+                  .LogWarning(
+                      "Aisling {@AislingName} attempted to set a notepad message that was too long. Length: {@MessageLength}",
+                      client.Aisling.Name,
+                      args.Message.Length);
+
+            return default;
+        }
+
+        return ExecuteHandler(client, args, InnerOnSetNotepad);
+
+        static ValueTask InnerOnSetNotepad(IChaosWorldClient localClient, SetNotepadArgs localArgs)
+        {
+            if (localClient.Aisling.IsOnWorldMap)
+                return default;
+
+            var item = localClient.Aisling.Inventory[localArgs.Slot];
+
+            if (item is not null)
+            {
+                var oldText = item.NotepadText;
+                item.NotepadText = localArgs.Message;
+
+                item.Script.OnNotepadTextUpdated(localClient.Aisling, oldText);
             }
 
             return default;
@@ -1147,8 +1420,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         async ValueTask InnerOnPublicMessage(IChaosWorldClient localClient, PublicMessageArgs localArgs)
         {
-            if (localClient.Aisling.IsOnWorldMap)
+            if (localClient.Aisling.IsOnWorldMap || localClient.Aisling.Muted)
+            {
+                localClient.SendServerMessage(ServerMessageType.OrangeBar1, "Your voice is swept away by a strange wind...");
+
                 return;
+            }
 
             if (CommandInterceptor.IsCommand(localArgs.Message))
             {
@@ -1354,7 +1631,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (localClient.Aisling.IsOnWorldMap)
                 return default;
 
-            localClient.Aisling.Turn(localArgs.Direction);
+            localClient.Aisling.Turn(localArgs.Direction, isResponse: true);
 
             return default;
         }
@@ -1526,8 +1803,12 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnWhisper(IChaosWorldClient localClient, WhisperArgs localArgs)
         {
-            if (localClient.Aisling.IsOnWorldMap)
+            if (localClient.Aisling.IsOnWorldMap || localClient.Aisling.Muted)
+            {
+                localClient.SendServerMessage(ServerMessageType.OrangeBar1, "Your voice is swept away by a strange wind...");
+
                 return default;
+            }
 
             var fromAisling = localClient.Aisling;
 
@@ -1776,11 +2057,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var trackers = client.Aisling?.Trackers;
 
-        if (handler is not null)
-            Logger.WithTopics(Topics.Servers.WorldServer, Topics.Entities.Packet, Topics.Actions.Processing)
-                  .WithProperty(client)
-                  .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
-        else
+        if (handler is null)
             Logger.WithTopics(
                       Topics.Servers.WorldServer,
                       Topics.Entities.Packet,
@@ -1788,7 +2065,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                       Topics.Qualifiers.Cheating)
                   .WithProperty(client)
                   .WithProperty(packet.ToString(), "HexData")
-                  .LogWarning("Unknown message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
+                  .LogWarning("Received packet with unknown code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
 
         if ((trackers != null) && IsManualAction((ClientOpCode)packet.OpCode))
             trackers.LastManualAction = DateTime.UtcNow;
@@ -1821,6 +2098,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         ClientHandlers[(byte)ClientOpCode.OptionToggle] = OnOptionToggle;
         ClientHandlers[(byte)ClientOpCode.ItemUse] = OnItemUse;
         ClientHandlers[(byte)ClientOpCode.Emote] = OnEmote;
+        ClientHandlers[(byte)ClientOpCode.SetNotepad] = OnSetNotepad;
         ClientHandlers[(byte)ClientOpCode.GoldDrop] = OnGoldDrop;
         ClientHandlers[(byte)ClientOpCode.ItemDroppedOnCreature] = OnItemDroppedOnCreature;
         ClientHandlers[(byte)ClientOpCode.GoldDroppedOnCreature] = OnGoldDroppedOnCreature;
@@ -1872,6 +2150,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         }
 
         client.BeginReceive();
+        client.SendSynchronizeTicks();
     }
 
     private async void OnDisconnect(object? sender, EventArgs e)
@@ -1892,10 +2171,20 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             try
             {
                 if (aisling is not null)
-                {
-                    aisling.Trackers.LastLogout = DateTime.UtcNow;
-                    aisling.Script.OnLogout();
-                }
+                    try
+                    {
+                        aisling.Trackers.LastLogout = DateTime.UtcNow;
+                        aisling.Script.OnLogout();
+                    } catch (Exception ex)
+                    {
+                        Logger.WithTopics(
+                                  Topics.Servers.WorldServer,
+                                  Topics.Entities.Client,
+                                  Topics.Entities.Aisling,
+                                  Topics.Actions.Disconnect)
+                              .WithProperty(client)
+                              .LogError(ex, "{@AislingName} encountered an exception while running logout events", aisling.Name);
+                    }
 
                 Logger.WithTopics(
                           Topics.Servers.WorldServer,

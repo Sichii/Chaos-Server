@@ -26,6 +26,10 @@
         <Version>1.0.0</Version>
     </PropertyGroup>
 
+    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+        <NBGV_GitEngine>Disabled</NBGV_GitEngine>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
             <PrivateAssets>all</PrivateAssets>

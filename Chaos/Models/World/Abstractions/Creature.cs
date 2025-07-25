@@ -11,6 +11,7 @@ using Chaos.Extensions.Geometry;
 using Chaos.Formulae;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+using Chaos.Geometry.EqualityComparers;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.NLog.Logging.Definitions;
@@ -21,6 +22,7 @@ using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.CreatureScripts.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.NaturalRegeneration;
+using Chaos.Services.Servers.Options;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
 #endregion
@@ -185,10 +187,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
 
-    public Stack<IPoint> FindPath(IPoint target, IPathOptions? pathOptions = null)
+    public Stack<IPoint> FindPath(IPoint target, IPathOptions? pathOptions = null, bool ignoreCollision = false)
     {
-        pathOptions ??= PathOptions.Default;
-        pathOptions.IgnoreWalls |= Type == CreatureType.WalkThrough;
+        pathOptions ??= PathOptions.Default.ForCreatureType(Type);
 
         var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this)
                                      .Where(door => door.Closed);
@@ -196,48 +197,21 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var nearbyCreatures = MapInstance.GetEntitiesWithinRange<Creature>(this)
                                          .ThatThisCollidesWith(this);
 
-        var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
-                                                .Concat(pathOptions.BlockedPoints)
-                                                .ToHashSet();
+        var blockedPoints = new HashSet<IPoint>(pathOptions.BlockedPoints, PointEqualityComparer.Instance);
 
-        pathOptions.BlockedPoints = nearbyUnwalkablePoints;
+        if (!pathOptions.IgnoreWalls)
+            blockedPoints.AddRange(nearbyDoors);
+
+        if (!ignoreCollision)
+            blockedPoints.AddRange(nearbyCreatures);
+
+        pathOptions.BlockedPoints = blockedPoints;
 
         return MapInstance.Pathfinder.FindPath(
             MapInstance.InstanceId,
             this,
             target,
             pathOptions);
-    }
-
-    private void HandleAdminVerbalCommand(Aisling source, string message)
-    {
-        if (message.EqualsI("show ids"))
-        {
-            foreach (var creature in MapInstance.GetEntitiesWithinRange<Creature>(this))
-                if (!creature.Equals(this))
-                    source.Client.SendDisplayPublicMessage(creature.Id, PublicMessageType.Normal, creature.Name);
-
-            foreach (var groundItem in MapInstance.GetEntitiesWithinRange<GroundItem>(this))
-                source.Client.SendDisplayPublicMessage(groundItem.Id, PublicMessageType.Normal, groundItem.Name);
-        } else if (message.EqualsI("show keys"))
-        {
-            foreach (var creature in MapInstance.GetEntitiesWithinRange<Creature>(this))
-                if (!creature.Equals(this))
-                    switch (creature)
-                    {
-                        case Merchant merchant:
-                            source.Client.SendDisplayPublicMessage(creature.Id, PublicMessageType.Normal, merchant.Template.TemplateKey);
-
-                            break;
-                        case Monster monster:
-                            source.Client.SendDisplayPublicMessage(creature.Id, PublicMessageType.Normal, monster.Template.TemplateKey);
-
-                            break;
-                    }
-
-            foreach (var groundItem in MapInstance.GetEntitiesWithinRange<GroundItem>(this))
-                source.Client.SendDisplayPublicMessage(groundItem.Id, PublicMessageType.Normal, groundItem.Item.Template.TemplateKey);
-        }
     }
 
     public virtual void HandleMapDeparture()
@@ -283,6 +257,16 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual void OnGoldDroppedOn(Aisling source, int amount)
     {
+        if (!this.WithinRange(source, WorldOptions.Instance.TradeRange))
+            return;
+
+        if (!Script.CanDropMoneyOn(source, amount))
+        {
+            source.SendActiveMessage("You can't do that right now");
+
+            return;
+        }
+
         if (source.TryTakeGold(amount))
         {
             Gold += amount;
@@ -304,13 +288,18 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (count == 0)
             count = 1;
 
-        if (source.Inventory.TryGetObject(slot, out var inventoryItem))
-            if (!Script.CanDropItemOn(source, inventoryItem))
-            {
-                source.SendActiveMessage("You can't trade that item");
+        if (!this.WithinRange(source, WorldOptions.Instance.TradeRange))
+            return;
 
-                return;
-            }
+        if (!source.Inventory.TryGetObject(slot, out var inventoryItem) || (inventoryItem.Count < count))
+            return;
+
+        if (!Script.CanDropItemOn(source, inventoryItem) || !inventoryItem.Script.CanBeDroppedOn(source, this))
+        {
+            source.SendActiveMessage("You can't trade that item");
+
+            return;
+        }
 
         if (source.Inventory.RemoveQuantity(slot, count, out var items))
             foreach (var item in items)
@@ -332,10 +321,13 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             }
     }
 
-    public void Pathfind(IPoint target, int distance = 1, IPathOptions? pathOptions = null)
+    public void Pathfind(
+        IPoint target,
+        int distance = 1,
+        IPathOptions? pathOptions = null,
+        bool ignoreCollision = false)
     {
-        pathOptions ??= PathOptions.Default;
-        pathOptions.IgnoreWalls |= Type == CreatureType.WalkThrough;
+        pathOptions ??= PathOptions.Default.ForCreatureType(Type);
 
         //if we're within distance, no need to pathfind
         if (this.ManhattanDistanceFrom(target) <= distance)
@@ -346,7 +338,11 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var nextPoint = path.Pop();
         var direction = nextPoint.DirectionalRelationTo(this);
 
-        Walk(direction, pathOptions.IgnoreBlockingReactors);
+        Walk(
+            direction,
+            pathOptions.IgnoreBlockingReactors,
+            pathOptions.IgnoreWalls,
+            ignoreCollision);
     }
 
     public virtual void Say(string message) => ShowPublicMessage(PublicMessageType.Normal, message);
@@ -659,9 +655,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         return true;
     }
 
-    public virtual void Turn(Direction direction)
+    public virtual void Turn(Direction direction, bool forced = false)
     {
-        if (!Script.CanTurn())
+        if (!forced && !Script.CanTurn())
             return;
 
         Direction = direction;
@@ -705,10 +701,12 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             OnApproached(entity, refresh);*/
     }
 
-    public virtual void Walk(Direction direction, bool? ignoreBlockingReactors = null)
+    public virtual void Walk(
+        Direction direction,
+        bool? ignoreBlockingReactors = null,
+        bool? ignoreWalls = null,
+        bool? ignoreCollision = null)
     {
-        ignoreBlockingReactors ??= Type == CreatureType.Aisling;
-
         if (!Script.CanMove())
             return;
 
@@ -717,7 +715,12 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var startPoint = Point.From(this);
         var endPoint = this.DirectionalOffset(direction);
 
-        if (!MapInstance.IsWalkable(endPoint, Type, ignoreBlockingReactors))
+        if (!MapInstance.IsWalkable(
+                endPoint,
+                ignoreBlockingReactors,
+                ignoreWalls,
+                ignoreCollision,
+                Type))
             return;
 
         SetLocation(endPoint);
@@ -750,10 +753,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
             reactor.OnWalkedOn(this);
     }
 
-    public virtual void Wander(IPathOptions? pathOptions = null)
+    public virtual void Wander(IPathOptions? pathOptions = null, bool ignoreCollision = false)
     {
-        pathOptions ??= PathOptions.Default;
-        pathOptions.IgnoreWalls |= Type == CreatureType.WalkThrough;
+        pathOptions ??= PathOptions.Default.ForCreatureType(Type);
 
         var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this, 1)
                                      .Where(door => door.Closed);
@@ -761,18 +763,26 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         var nearbyCreatures = MapInstance.GetEntitiesWithinRange<Creature>(this, 1)
                                          .ThatThisCollidesWith(this);
 
-        var nearbyUnwalkablePoints = nearbyDoors.Concat<IPoint>(nearbyCreatures)
-                                                .Concat(pathOptions.BlockedPoints)
-                                                .ToHashSet();
+        var blockedPoints = new HashSet<IPoint>(pathOptions.BlockedPoints, PointEqualityComparer.Instance);
 
-        pathOptions.BlockedPoints = nearbyUnwalkablePoints;
+        if (!pathOptions.IgnoreWalls)
+            blockedPoints.AddRange(nearbyDoors);
+
+        if (!ignoreCollision)
+            blockedPoints.AddRange(nearbyCreatures);
+
+        pathOptions.BlockedPoints = blockedPoints;
 
         var direction = MapInstance.Pathfinder.FindRandomDirection(MapInstance.InstanceId, this, pathOptions);
 
         if (direction == Direction.Invalid)
             return;
 
-        Walk(direction);
+        Walk(
+            direction,
+            pathOptions.IgnoreBlockingReactors,
+            pathOptions.IgnoreWalls,
+            ignoreCollision);
     }
 
     /// <inheritdoc />

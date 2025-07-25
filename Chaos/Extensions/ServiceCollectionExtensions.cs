@@ -181,6 +181,8 @@ public static class ServiceCollectionExtensions
 
         services.AddTransient<IScriptProvider, ScriptProvider>();
         services.AddTransient<ICloningService<Item>, ItemCloningService>();
+
+        services.AddSingleton<IHostedService, WorldScriptingService>();
     }
 
     public static void AddServerAuthentication(this IServiceCollection services)
@@ -236,6 +238,8 @@ public static class ServiceCollectionExtensions
         //add aisling store with backup service
         services.AddOptionsFromConfig<AislingStoreOptions>(ConfigKeys.Options.Key);
         services.AddSingleton<IAsyncStore<Aisling>, IStore<Aisling>, AislingStore>();
+        services.AddSingleton<IFacadeStore<Aisling>>(provider => (IFacadeStore<Aisling>)provider.GetService<IAsyncStore<Aisling>>()!);
+        services.AddSingleton<AislingFacadeCache>();
         services.AddHostedService<DirectoryBackupService<AislingStoreOptions>>();
         services.ConfigureOptions<DirectoryBoundOptionsConfigurer<AislingStoreOptions>>();
 
@@ -297,6 +301,7 @@ public static class ServiceCollectionExtensions
         services.AddSimpleFactory<IChaosLobbyClient, ChaosLobbyClient>(typeof(Socket));
         services.AddSimpleFactory<IChaosLoginClient, ChaosLoginClient>(typeof(Socket));
         services.AddSimpleFactory<IChaosWorldClient, ChaosWorldClient>(typeof(Socket));
+        services.AddSimpleFactory<Group>(typeof(Aisling), typeof(Aisling));
         services.AddSimpleFactory<Exchange>(typeof(Aisling), typeof(Aisling));
         services.AddSimpleFactory<MailBox>(typeof(string));
     }

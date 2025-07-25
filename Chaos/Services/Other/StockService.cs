@@ -97,7 +97,8 @@ public sealed class StockService(ILogger<StockService> logger) : BackgroundServi
         while (!stoppingToken.IsCancellationRequested)
             try
             {
-                await timer.WaitForNextTickAsync(stoppingToken);
+                await timer.WaitForNextTickAsync(stoppingToken)
+                           .ConfigureAwait(false);
 
                 var delta = DeltaTime.GetDelta;
 

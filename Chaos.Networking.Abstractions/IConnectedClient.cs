@@ -12,7 +12,7 @@ public interface IConnectedClient : ISocketClient
     void SendAcceptConnection(string message);
 
     /// <summary>
-    ///     Used to respond to a client heart beat
+    ///     Used to ping the client and check if it is still connected.
     /// </summary>
     void SendHeartBeat(byte first, byte second);
 
@@ -20,4 +20,9 @@ public interface IConnectedClient : ISocketClient
     ///     Used to redirect the client to another server
     /// </summary>
     void SendRedirect(IRedirect redirect);
+
+    /// <summary>
+    ///     Used to check synchronization ticks between server and client.
+    /// </summary>
+    void SendSynchronizeTicks();
 }

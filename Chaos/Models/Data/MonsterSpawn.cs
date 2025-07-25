@@ -18,8 +18,8 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 {
     public required ICollection<IPoint> BlackList { get; init; }
     public required Direction? Direction { get; init; }
-    public required ICollection<LootTable> ExtraLootTables { get; set; } = Array.Empty<LootTable>();
-    public required ICollection<string> ExtraScriptKeys { get; init; } = Array.Empty<string>();
+    public required ICollection<LootTable> ExtraLootTables { get; set; } = [];
+    public required ICollection<string> ExtraScriptKeys { get; init; } = [];
     public ILootTable? FinalLootTable { get; set; }
     public MapInstance MapInstance { get; set; } = null!;
     public required int MaxAmount { get; init; }
@@ -54,7 +54,7 @@ public sealed class MonsterSpawn : IDeltaUpdatable
 
     private bool PointValidator(Point point)
         => (SpawnArea is null || SpawnArea.Contains(point))
-           && MapInstance.IsWalkable(point, MonsterTemplate.Type)
+           && MapInstance.IsWalkable(point, collisionType: MonsterTemplate.Type)
            && !BlackList.Contains(point, PointEqualityComparer.Instance);
 
     private void SpawnMonsters()

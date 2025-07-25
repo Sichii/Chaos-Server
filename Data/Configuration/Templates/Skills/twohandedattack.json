@@ -1,0 +1,41 @@
+{
+    "isAssail": true,
+    "learningRequirements": {
+        "itemRequirements": [
+            {
+                "amountRequired": 20,
+                "itemTemplateKey": "apple"
+            }
+        ],
+        "prerequisiteSkills": [],
+        "prerequisiteSpells": [],
+        "requiredGold": 5000,
+        "requiredStats": {
+            "con": 1,
+            "dex": 1,
+            "int": 1,
+            "str": 2,
+            "wis": 1
+        }
+    },
+    "description": "A basic attack that deals a small amount of damage to an enemy immediately in front of you.",
+    "level": 1,
+    "name": "Two-Handed Attack",
+    "panelSprite": 1,
+    "scriptKeys": ["damage"],
+    "scriptVars": {
+        "damage": {
+            "damageStat": "str",
+            "shape": "front",
+            "range": 1,
+            "sound": 1,
+            "exclusionRange": 0,
+            "bodyAnimation": "TwoHandAtk",
+            "filter": "hostileOnly, aliveOnly, othersOnly",
+            "damageStatMultiplier": 2,
+            "baseDamage": 3,
+            "scaleBodyAnimationSpeedByAttackSpeed": true
+        }
+    },
+    "templateKey": "twohandedattack"
+}

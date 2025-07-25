@@ -492,9 +492,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         var distinctTemplateKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         //returns all static reactor tiles, and only unique templated reactor tiles
-        return reactors.Where(
-            reactor => reactor is not TemplatedReactorTile templatedReactorTile
-                       || distinctTemplateKeys.Add(templatedReactorTile.Template.TemplateKey));
+        return reactors.Where(reactor
+            => reactor is not TemplatedReactorTile templatedReactorTile
+               || distinctTemplateKeys.Add(templatedReactorTile.Template.TemplateKey));
     }
 
     /// <summary>
@@ -549,6 +549,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         switch (ShardingOptions!.ShardingType)
         {
             case ShardingType.None:
+            //the shard is generated on create, so just add the entity to whatever instance it is already being added to
+            case ShardingType.AlwaysShardOnCreate:
                 InnerAddEntity(aisling, point);
 
                 break;
@@ -564,9 +566,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                         var shard = aisling.Group
                                            ?.Where(a => !a.Equals(aisling))
                                            .Select(m => m.MapInstance)
-                                           .FirstOrDefault(
-                                               m => m.InstanceId.EqualsI(InstanceId)
-                                                    || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
+                                           .FirstOrDefault(m
+                                               => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
 
                         if (shard != null)
                         {
@@ -606,8 +607,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 var shard = aisling.Group
                                    ?.Where(a => !a.Equals(aisling))
                                    .Select(m => m.MapInstance)
-                                   .FirstOrDefault(
-                                       m => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
+                                   .FirstOrDefault(m
+                                       => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
 
                 if (shard != null)
                 {
@@ -649,8 +650,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                                    ?.GetOnlineMembers()
                                    .Where(a => !a.Equals(aisling))
                                    .Select(m => m.MapInstance)
-                                   .FirstOrDefault(
-                                       m => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
+                                   .FirstOrDefault(m
+                                       => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
 
                 if (shard != null)
                 {
@@ -706,6 +707,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         {
             case ShardingType.None:
             case ShardingType.PlayerLimit:
+            case ShardingType.AlwaysShardOnCreate:
                 break;
             case ShardingType.AbsolutePlayerLimit:
             {
@@ -720,14 +722,13 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     return;
 
                 var aislingsToRemove = aislings.OrderByDescending(a => a.Id)
-                                               .ThenBy(
-                                                   a =>
-                                                   {
-                                                       if (a.Group == null)
-                                                           return 0;
+                                               .ThenBy(a =>
+                                               {
+                                                   if (a.Group == null)
+                                                       return 0;
 
-                                                       return a.Group.Count(m => m.MapInstance == this);
-                                                   })
+                                                   return a.Group.Count(m => m.MapInstance == this);
+                                               })
                                                .Take(amountOverLimit)
                                                .ToHashSet();
 
@@ -775,22 +776,20 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                 //number of unique groups in the zone
                 var groups = aislings.GroupBy(a => a.Group)
-                                     .SelectMany(
-                                         grp =>
-                                         {
-                                             if (grp.Key == null)
-                                                 return grp.Select(
-                                                     m => new List<Aisling>
-                                                     {
-                                                         m
-                                                     });
+                                     .SelectMany(grp =>
+                                     {
+                                         if (grp.Key == null)
+                                             return grp.Select(m => new List<Aisling>
+                                             {
+                                                 m
+                                             });
 
-                                             return
-                                             [
-                                                 grp.Where(m => m.MapInstance == this)
-                                                    .ToList()
-                                             ];
-                                         })
+                                         return
+                                         [
+                                             grp.Where(m => m.MapInstance == this)
+                                                .ToList()
+                                         ];
+                                     })
                                      .ToList();
 
                 var groupCount = groups.Count;
@@ -853,22 +852,20 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                 //number of unique groups in the zone
                 var guilds = aislings.GroupBy(a => a.Guild)
-                                     .SelectMany(
-                                         gld =>
-                                         {
-                                             if (gld.Key == null)
-                                                 return gld.Select(
-                                                     m => new List<Aisling>
-                                                     {
-                                                         m
-                                                     });
+                                     .SelectMany(gld =>
+                                     {
+                                         if (gld.Key == null)
+                                             return gld.Select(m => new List<Aisling>
+                                             {
+                                                 m
+                                             });
 
-                                             return
-                                             [
-                                                 gld.Where(m => m.MapInstance == this)
-                                                    .ToList()
-                                             ];
-                                         })
+                                         return
+                                         [
+                                             gld.Where(m => m.MapInstance == this)
+                                                .ToList()
+                                         ];
+                                     })
                                      .ToList();
 
                 var guildCount = guilds.Count;
@@ -957,7 +954,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                     if (Music != lastMap.Music)
                         aisling.Client.SendSound(Music, true);
-                }
+                } else
+                    aisling.Client.SendSound(Music, true);
 
                 aisling.Client.SendMapLoadComplete();
                 aisling.Client.SendDisplayAisling(aisling);
@@ -1079,7 +1077,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         => GetEntitiesAtPoints<ReactorTile>(point)
             .Any();
 
-    /// <summary>
+    /*/// <summary>
     ///     Determines if a point is walkable
     /// </summary>
     /// <param name="point">
@@ -1108,9 +1106,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     ///     walking
     /// </remarks>
     public bool IsWalkable(IPoint point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
-        => IsWalkable(Point.From(point), creatureType, ignoreBlockingReactors);
+        => IsWalkable(Point.From(point), creatureType, ignoreBlockingReactors);*/
 
-    /// <summary>
+    /*/// <summary>
     ///     Determines if a point is walkable
     /// </summary>
     /// <param name="point">
@@ -1157,6 +1155,171 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             CreatureType.Aisling     => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
             _                        => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
         };
+    }*/
+
+    /// <summary>
+    ///     Determines if a point is walkable
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <param name="creatureType">
+    ///     The type of the creature
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, and walkable to the specified creature type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     Thrown when the creature type is not recognized
+    /// </exception>
+    /// <remarks>
+    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
+    ///     walking
+    /// </remarks>
+    public bool IsWalkable(Point point, CreatureType creatureType) => IsWalkable(point, collisionType: creatureType);
+
+    /// <summary>
+    ///     Determines if a point is walkable
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <param name="creatureType">
+    ///     The type of the creature
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, and walkable to the specified creature type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     Thrown when the creature type is not recognized
+    /// </exception>
+    /// <remarks>
+    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
+    ///     walking
+    /// </remarks>
+    public bool IsWalkable(IPoint point, CreatureType creatureType) => IsWalkable(Point.From(point), collisionType: creatureType);
+
+    /// <summary>
+    ///     Determines if a point is walkable
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <param name="ignoreBlockingReactors">
+    ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
+    /// </param>
+    /// <param name="collisionType">
+    ///     The type of the creature
+    /// </param>
+    /// <param name="ignoreWalls">
+    ///     Whether to ignore walls. Default behavior ignores walls only for WalkThrough creatures
+    /// </param>
+    /// <param name="ignoreCollision">
+    ///     Whether to ignore creature type collision. Default behavior does not ignore collision
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, and walkable to the specified creature type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     Thrown when the creature type is not recognized
+    /// </exception>
+    /// <remarks>
+    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
+    ///     walking
+    /// </remarks>
+    public bool IsWalkable(
+        IPoint point,
+        bool? ignoreBlockingReactors = null,
+        bool? ignoreWalls = null,
+        bool? ignoreCollision = null,
+        CreatureType? collisionType = null)
+        => IsWalkable(
+            Point.From(point),
+            ignoreBlockingReactors,
+            ignoreWalls,
+            ignoreCollision,
+            collisionType);
+
+    /// <summary>
+    ///     Determines if a point is walkable
+    /// </summary>
+    /// <param name="point">
+    ///     The point to check
+    /// </param>
+    /// <param name="ignoreBlockingReactors">
+    ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
+    /// </param>
+    /// <param name="collisionType">
+    ///     The type of the creature
+    /// </param>
+    /// <param name="ignoreWalls">
+    ///     Whether to ignore walls. Default behavior ignores walls only for WalkThrough creatures
+    /// </param>
+    /// <param name="ignoreCollision">
+    ///     Whether to ignore creature type collision. Default behavior does not ignore collision
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the point is within the map, and walkable to the specified creature type, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     Thrown when the creature type is not recognized
+    /// </exception>
+    /// <remarks>
+    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
+    ///     walking
+    /// </remarks>
+    public bool IsWalkable(
+        Point point,
+        bool? ignoreBlockingReactors = null,
+        bool? ignoreWalls = null,
+        bool? ignoreCollision = null,
+        CreatureType? collisionType = null)
+    {
+        collisionType ??= CreatureType.Normal;
+        ignoreBlockingReactors ??= collisionType == CreatureType.Aisling;
+        ignoreWalls ??= collisionType == CreatureType.WalkThrough;
+        ignoreCollision ??= false;
+
+        var creatures = GetEntitiesAtPoints<Creature>(point)
+            .ToList();
+
+        if (!ignoreBlockingReactors.Value && IsBlockingReactor(point))
+            return false;
+
+        if (!IsWithinMap(point))
+            return false;
+
+        if (!ignoreWalls.Value && IsWall(point))
+            return false;
+
+        if (ignoreCollision.Value)
+            return true;
+
+        return !creatures.Any(c => collisionType.Value.WillCollideWith(c));
     }
 
     /// <summary>
@@ -1419,34 +1582,34 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     ///     Begins execution of the map's update loop
     /// </summary>
     public void StartAsync()
-        => Task.Run(
-            async () =>
+        => Task.Run(async () =>
+        {
+            var linkedCancellationToken = MapInstanceCtx.Token;
+
+            while (true)
             {
-                var linkedCancellationToken = MapInstanceCtx.Token;
+                if (linkedCancellationToken.IsCancellationRequested)
+                    return;
 
-                while (true)
+                try
                 {
-                    if (linkedCancellationToken.IsCancellationRequested)
-                        return;
-
-                    try
-                    {
-                        await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken);
-                    } catch (OperationCanceledException)
-                    {
-                        return;
-                    }
-
-                    try
-                    {
-                        await UpdateMapAsync(DeltaTime.GetDelta);
-                    } catch (Exception e)
-                    {
-                        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
-                              .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
-                    }
+                    await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken)
+                                    .ConfigureAwait(false);
+                } catch (OperationCanceledException)
+                {
+                    return;
                 }
-            });
+
+                try
+                {
+                    await UpdateMapAsync(DeltaTime.GetDelta);
+                } catch (Exception e)
+                {
+                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+                          .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
+                }
+            }
+        });
 
     /// <summary>
     ///     Stops execution of the map's update loop
@@ -1496,7 +1659,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// </returns>
     public bool TryGetRandomWalkablePoint([NotNullWhen(true)] out Point? point, CreatureType creatureType = CreatureType.Normal)
     {
-        if (!Template.Bounds.TryGetRandomPoint(pt => IsWalkable(pt, creatureType), out point))
+        if (!Template.Bounds.TryGetRandomPoint(pt => IsWalkable(pt, collisionType: creatureType), out point))
             return false;
 
         return true;

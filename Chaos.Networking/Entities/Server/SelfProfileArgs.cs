@@ -1,6 +1,8 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Entities.Server;
 
@@ -76,7 +78,7 @@ public sealed record SelfProfileArgs : IPacketSerializable
     /// <summary>
     ///     The character's legend marks
     /// </summary>
-    public ICollection<LegendMarkInfo> LegendMarks { get; set; } = Array.Empty<LegendMarkInfo>();
+    public ICollection<LegendMarkInfo> LegendMarks { get; set; } = [];
 
     /// <summary>
     ///     The character's name

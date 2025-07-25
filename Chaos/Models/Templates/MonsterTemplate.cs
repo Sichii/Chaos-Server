@@ -1,14 +1,21 @@
+#region
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Data;
 using Chaos.Models.Templates.Abstractions;
 using Chaos.Scripting.Abstractions;
+#endregion
 
 namespace Chaos.Models.Templates;
 
 public sealed record MonsterTemplate : ITemplate, IScripted
 {
+    /// <summary>
+    ///     The amount of ability this monster will reward when killed
+    /// </summary>
+    public int AbilityReward { get; set; }
+
     /// <summary>
     ///     Defaults to 0
     ///     <br />
@@ -29,7 +36,7 @@ public sealed record MonsterTemplate : ITemplate, IScripted
     /// <summary>
     ///     A collection of loot table keys that this monster can drop from
     /// </summary>
-    public required ICollection<LootTable> LootTables { get; set; } = Array.Empty<LootTable>();
+    public required ICollection<LootTable> LootTables { get; set; } = [];
 
     /// <summary>
     ///     Maximum amount of gold for this monster to drop

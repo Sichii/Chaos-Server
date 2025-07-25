@@ -82,12 +82,13 @@ public sealed class PersistentIdGenerator<T> : IIdGenerator<T> where T: INumber<
         while (true)
             try
             {
-                await timer.WaitForNextTickAsync();
+                await timer.WaitForNextTickAsync()
+                           .ConfigureAwait(false);
 
                 if (ShouldSave)
                 {
-                    await FilePath.SafeExecuteAsync(
-                        innerPath => JsonSerializerEx.SerializeAsync(innerPath, IdGenerator.NextId, JsonSerializerOptions.Default));
+                    await FilePath.SafeExecuteAsync(innerPath
+                        => JsonSerializerEx.SerializeAsync(innerPath, IdGenerator.NextId, JsonSerializerOptions.Default));
 
                     ShouldSave = false;
                 }

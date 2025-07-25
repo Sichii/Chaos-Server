@@ -28,7 +28,7 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     /// </param>
     public TimedEventCollection(IEnumerable<Event>? events = null)
     {
-        events ??= Array.Empty<Event>();
+        events ??= [];
         Events = new Dictionary<string, Event>(StringComparer.OrdinalIgnoreCase);
         Sync = new Lock();
         Interval = new IntervalTimer(TimeSpan.FromSeconds(1));

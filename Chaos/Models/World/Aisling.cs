@@ -58,6 +58,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public LanternSize LanternSize { get; private set; }
     public Collections.Legend Legend { get; private set; }
     public MailBox MailBox { get; set; } = null!;
+    public bool Muted { get; set; }
     public Nation Nation { get; set; }
     public UserOptions Options { get; init; }
     public byte[] Portrait { get; set; }
@@ -550,6 +551,16 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     public override void OnGoldDroppedOn(Aisling source, int amount)
     {
+        if (!this.WithinRange(source, WorldOptions.Instance.TradeRange))
+            return;
+
+        if (!Script.CanDropMoneyOn(source, amount))
+        {
+            source.SendActiveMessage("You can't do that right now");
+
+            return;
+        }
+
         if (!TryStartExchange(source, out var exchange))
             return;
 
@@ -558,13 +569,18 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     public override void OnItemDroppedOn(Aisling source, byte slot, byte count)
     {
-        if (source.Inventory.TryGetObject(slot, out var inventoryItem))
-            if (!Script.CanDropItemOn(source, inventoryItem))
-            {
-                source.SendActiveMessage("You can't trade that item");
+        if (!this.WithinRange(source, WorldOptions.Instance.TradeRange))
+            return;
 
-                return;
-            }
+        if (!source.Inventory.TryGetObject(slot, out var inventoryItem) || (inventoryItem.Count < count))
+            return;
+
+        if (!Script.CanDropItemOn(source, inventoryItem) || !inventoryItem.Script.CanBeDroppedOn(source, this))
+        {
+            source.SendActiveMessage("You can't trade that item");
+
+            return;
+        }
 
         if (!TryStartExchange(source, out var exchange))
             return;
@@ -678,8 +694,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
         var item = Inventory[slot];
 
-        if ((item == null) || item.Template.AccountBound)
+        if ((item == null) || item.AccountBound || !Script.CanDropItem(item) || !item.Script.CanBeDropped(this, Point.From(point)))
+        {
+            SendActiveMessage("You can't drop that item");
+
             return false;
+        }
 
         if (amount.HasValue)
         {
@@ -689,7 +709,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             if (Inventory.RemoveQuantity(item.Slot, amount.Value, out var items))
                 if (TryDrop(point, items.FixStacks(ItemCloner), out groundItems))
                 {
-                    if (item.Template.NoTrade)
+                    if (item.NoTrade)
                         foreach (var groundItem in groundItems)
                             groundItem.LockToAislings(int.MaxValue, this);
 
@@ -700,7 +720,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             if (Inventory.TryGetRemove(slot, out var droppedItem))
                 if (TryDrop(point, out groundItems, droppedItem))
                 {
-                    if (item.Template.NoTrade)
+                    if (item.NoTrade)
                         foreach (var groundItem in groundItems)
                             groundItem.LockToAislings(int.MaxValue, this);
 
@@ -715,6 +735,16 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     public override bool TryDropGold(IPoint point, int amount, [MaybeNullWhen(false)] out Money money)
     {
         money = null;
+
+        if (!this.WithinRange(point, WorldOptions.Instance.DropRange) || MapInstance.IsWall(point))
+            return false;
+
+        if (!Script.CanDropMoney(amount))
+        {
+            SendActiveMessage("You can't drop that right now");
+
+            return false;
+        }
 
         if (!TryTakeGold(amount))
             return false;
@@ -809,7 +839,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     public bool TryPickupItem(GroundItem groundItem, byte destinationSlot)
     {
-        if (!groundItem.CanPickUp(this))
+        if (!groundItem.CanBePickedUp(this) || !Script.CanPickupItem(groundItem))
         {
             SendActiveMessage("You can't pick that up right now");
 
@@ -846,7 +876,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
     public bool TryPickupMoney(Money money)
     {
-        if (!money.CanPickUp(this))
+        if (!money.CanBePickedUp(this) || !Script.CanPickupMoney(money))
         {
             SendActiveMessage("You can't pick that up right now");
 
@@ -1053,10 +1083,34 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         return TryUseSpell(spell, targetId, promptResponse);
     }
 
-    /// <inheritdoc />
-    public override void Turn(Direction direction)
+    // ReSharper disable once MethodOverloadWithOptionalParameter
+    public void Turn(Direction direction, bool forced = false, bool isResponse = false)
     {
-        if (!Script.CanTurn() || !TurnThrottle.TryIncrement())
+        if (!forced && (!Script.CanTurn() || !TurnThrottle.TryIncrement()))
+            return;
+
+        Direction = direction;
+
+        foreach (var aisling in MapInstance.GetEntitiesWithinRange<Aisling>(this)
+                                           .ThatCanObserve(this))
+        {
+            //if turn is not forced
+            //and aisling is this asiling
+            //and this is a turn response to a client turn
+            //dont send them the turn (this prevents double tap macros)
+            if (!forced && aisling.Equals(this) && isResponse)
+                continue;
+
+            aisling.Client.SendCreatureTurn(Id, direction);
+        }
+
+        Trackers.LastTurn = DateTime.UtcNow;
+    }
+
+    /// <inheritdoc />
+    public override void Turn(Direction direction, bool forced = false)
+    {
+        if (!forced && (!Script.CanTurn() || !TurnThrottle.TryIncrement()))
             return;
 
         Direction = direction;
@@ -1171,10 +1225,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                     ApproachTime[kvp.Key] = kvp.Value;
     }
 
-    public override void Walk(Direction direction, bool? ignoreBlockingReactors = null)
+    public override void Walk(
+        Direction direction,
+        bool? ignoreBlockingReactors = null,
+        bool? ignoreWalls = null,
+        bool? ignoreCollision = null)
     {
-        ignoreBlockingReactors ??= true;
-
         if (!Script.CanMove() || ((direction != Direction) && !Script.CanTurn()) || !ShouldWalk)
         {
             Refresh(true);
@@ -1199,7 +1255,12 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         }
 
         //otherwise, check if the point is walkable
-        else if (!MapInstance.IsWalkable(endPoint, Type, ignoreBlockingReactors))
+        else if (!MapInstance.IsWalkable(
+                     endPoint,
+                     ignoreBlockingReactors,
+                     ignoreWalls,
+                     ignoreCollision,
+                     Type))
         {
             Refresh(true);
 

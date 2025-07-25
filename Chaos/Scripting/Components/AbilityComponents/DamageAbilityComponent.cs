@@ -21,7 +21,7 @@ public struct DamageAbilityComponent : IComponent
 
         foreach (var target in targets)
         {
-            var damage = CalculateDamage(
+            var baseDamage = CalculateDamage(
                 context.Source,
                 target,
                 options.BaseDamage,
@@ -29,15 +29,19 @@ public struct DamageAbilityComponent : IComponent
                 options.DamageStat,
                 options.DamageStatMultiplier);
 
-            if (damage <= 0)
+            vars.SetBaseDamage(target, baseDamage);
+
+            if (baseDamage <= 0)
                 continue;
 
-            options.ApplyDamageScript.ApplyDamage(
+            var finalDamage = options.ApplyDamageScript.ApplyDamage(
                 context.Source,
                 target,
                 sourceScript,
-                damage,
+                baseDamage,
                 options.Element);
+
+            vars.SetFinalDamage(target, finalDamage);
         }
     }
 

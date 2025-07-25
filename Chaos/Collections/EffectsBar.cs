@@ -3,9 +3,15 @@ using Chaos.Collections.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.Models.Menu;
+using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
+using Chaos.Scripting.ReactorTileScripts.Abstractions;
+using Chaos.Scripting.SkillScripts.Abstractions;
+using Chaos.Scripting.SpellScripts.Abstractions;
 #endregion
 
 namespace Chaos.Collections;
@@ -42,16 +48,8 @@ public sealed class EffectsBar : IEffectsBar
             Effects[effect.Name] = effect;
     }
 
-    /// <summary>
-    ///     Applies an effect to the creature this bar is for
-    /// </summary>
-    /// <param name="source">
-    ///     The creature that applied the effect
-    /// </param>
-    /// <param name="effect">
-    ///     The effect to apply
-    /// </param>
-    public void Apply(Creature source, IEffect effect)
+    /// <inheritdoc />
+    public void Apply(Creature source, IEffect effect, IScript? sourceScript = null)
     {
         using var @lock = Sync.EnterScope();
 
@@ -62,8 +60,11 @@ public sealed class EffectsBar : IEffectsBar
             //set color here because the bar will be fully reset anyway
             effect.Color = effect.GetColor();
             Effects[effect.Name] = effect;
+
+            SetSource(effect, source, sourceScript);
+            effect.PrepareSnapshot(source);
             effect.OnApplied();
-            ResetDisplay();
+            ResetDisplay(effect, false);
         }
     }
 
@@ -84,7 +85,7 @@ public sealed class EffectsBar : IEffectsBar
         {
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
             effect.OnDispelled();
-            ResetDisplay();
+            ResetDisplay(effect, true);
         }
     }
 
@@ -105,12 +106,17 @@ public sealed class EffectsBar : IEffectsBar
     /// <inheritdoc />
     public void ResetDisplay()
     {
-        //clear all effects
-        foreach (var effect in Effects.Values)
+        //clear all effects that might be visible
+        foreach (var effect in Effects.Values
+                                      .OrderBy(e => e.Remaining)
+                                      .DistinctBy(effect => effect.Icon)
+                                      .Take(10))
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
 
         var orderedEffects = Effects.Values
                                     .OrderBy(e => e.Remaining)
+                                    .DistinctBy(e => e.Icon)
+                                    .Take(9)
                                     .ToList();
 
         //re-apply all effects sorted by ascending remaining duration
@@ -127,7 +133,7 @@ public sealed class EffectsBar : IEffectsBar
         {
             AffectedAisling?.Client.SendEffect(EffectColor.None, effect.Icon);
             effect.OnTerminated();
-            ResetDisplay();
+            ResetDisplay(effect, true);
         }
     }
 
@@ -158,14 +164,151 @@ public sealed class EffectsBar : IEffectsBar
             effect.Update(delta);
 
             if (effect.Remaining <= TimeSpan.Zero)
-            {
-                Effects.Remove(effect.Name);
-                effect.OnTerminated();
-                shouldResetDisplay = true;
-            }
+                if (Effects.Remove(effect.Name))
+                {
+                    effect.OnTerminated();
+                    shouldResetDisplay = true;
+                }
         }
 
         if (shouldResetDisplay)
             ResetDisplay();
+    }
+
+    public void ResetDisplay(IEffect effect, bool removed)
+    {
+        if (AffectedAisling is null)
+            return;
+
+        //if removed... effect has already been removed from the collection
+        //and has already been removed from the bar
+        if (removed)
+        {
+            //these are the effect that need to be displayed now
+            var currentlyDisplayed = Effects.Values
+                                            .OrderBy(e => e.Remaining)
+                                            .DistinctBy(e => e.Icon)
+                                            .Take(9)
+                                            .ToList();
+
+            var wasBeingDisplayed = true;
+
+            //first determine if that effect was being displayed
+            //if any of the effects that should currently be displayed has a longer remaining duration
+            //then it's safe to conclude this effect was being displayed
+            if (currentlyDisplayed.Count > 0)
+                wasBeingDisplayed = currentlyDisplayed.Max(e => e.Remaining) > effect.Remaining;
+
+            //no action needed, effect wasnt on display
+            if (!wasBeingDisplayed)
+                return;
+
+            //if it was being displayed, re-display all effect below where the removed effects was
+            for (var i = 0; i < currentlyDisplayed.Count; i++)
+            {
+                var currentEffect = currentlyDisplayed[i];
+
+                //if the effect has a longer remaining duration than the effect being removed
+                //remove the effect from the bar and re add it (this will move it up the list)
+                if (currentEffect.Remaining > effect.Remaining)
+                {
+                    //if i == 9, this effect was not previously being displayed
+                    //so we dont need to remove it from the bar
+                    if (i != 9)
+                        AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
+
+                    AffectedAisling?.Client.SendEffect(currentEffect.Color, currentEffect.Icon);
+                }
+            }
+        } else
+        {
+            //effect is being added
+            //effect has already been added to the collection, but not to the effectbar
+
+            //grab the top 10 effects
+            //we want 10 incase we need to remove the 10th from the display
+            var currentlyDisplayed = Effects.Values
+                                            .OrderBy(e => e.Remaining)
+                                            .DistinctBy(e => e.Icon)
+                                            .Take(10)
+                                            .ToList();
+
+            //if the effect is not in the top 9, no action needed
+            var isBeingDisplayed = currentlyDisplayed.Take(9)
+                                                     .Any(e => e == effect);
+
+            //no action needed, new effect isnt on display
+            if (!isBeingDisplayed)
+                return;
+
+            //new effect is on display
+            //first we must remove the 10th effect to make room for the new one
+            if (currentlyDisplayed.Count == 10)
+            {
+                var effectToRemove = currentlyDisplayed[9];
+                currentlyDisplayed.Remove(effectToRemove);
+                AffectedAisling?.Client.SendEffect(EffectColor.None, effectToRemove.Icon);
+            }
+
+            var currentIndex = currentlyDisplayed.IndexOf(effect);
+
+            //who knows
+            if (currentIndex == -1)
+                return;
+
+            //remove all effects starting at the effect that is currently in the spot the new effect will be
+            for (var i = currentIndex + 1; i < currentlyDisplayed.Count; i++)
+            {
+                var currentEffect = currentlyDisplayed[i];
+
+                AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
+            }
+
+            //add effects back starting with the new effect
+            for (var i = currentIndex; i < currentlyDisplayed.Count; i++)
+            {
+                var currentEffect = currentlyDisplayed[i];
+
+                AffectedAisling?.Client.SendEffect(currentEffect.Color, currentEffect.Icon);
+            }
+        }
+    }
+
+    private void SetSource(IEffect effect, Creature source, IScript? sourceScript = null)
+    {
+        effect.Source = source;
+        effect.SourceScript = sourceScript;
+
+        if (sourceScript is SubjectiveScriptBase<ReactorTile> reactorScript)
+            sourceScript = reactorScript.Subject.SourceScript;
+
+        (var activatorType, var activatorKey, var scriptKey) = sourceScript switch
+        {
+            SubjectiveScriptBase<Spell> spellScript => ("spell", spellScript.Subject.Template.TemplateKey, spellScript.ScriptKey),
+            SubjectiveScriptBase<Skill> skillScript => ("skill", skillScript.Subject.Template.TemplateKey, skillScript.ScriptKey),
+            SubjectiveScriptBase<Item> itemScript   => ("item", itemScript.Subject.Template.TemplateKey, itemScript.ScriptKey),
+            _                                       => ("unknown", "unknown", "unknown")
+        };
+
+        effect.SetVar("activatorType", activatorType);
+        effect.SetVar("activatorKey", activatorKey);
+        effect.SetVar("scriptKey", scriptKey);
+        effect.SetVar("sourceType", source.Type);
+
+        switch (source)
+        {
+            case Aisling aisling:
+                effect.SetVar("sourceIdentifier", aisling.Name);
+
+                break;
+            case Monster monster:
+                effect.SetVar("sourceIdentifier", monster.Template.TemplateKey);
+
+                break;
+            case Merchant merchant:
+                effect.SetVar("sourceIdentifier", merchant.Template.TemplateKey);
+
+                break;
+        }
     }
 }

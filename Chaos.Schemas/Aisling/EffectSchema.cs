@@ -1,4 +1,7 @@
+#region
 using System.Text.Json.Serialization;
+using Chaos.Collections.Common;
+#endregion
 
 namespace Chaos.Schemas.Aisling;
 
@@ -17,4 +20,10 @@ public sealed record EffectSchema
     ///     The amount of time in seconds that has elapsed towards the duration of this effect
     /// </summary>
     public int RemainingSecs { get; set; }
+
+    /// <summary>
+    ///     A snapshot of various variables needed for the effect
+    /// </summary>
+    [JsonRequired]
+    public StaticVars SnapshotVars { get; set; } = null!;
 }

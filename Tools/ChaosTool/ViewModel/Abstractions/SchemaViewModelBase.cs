@@ -1,4 +1,6 @@
+#region
 using Chaos.Extensions.Common;
+#endregion
 
 namespace ChaosTool.ViewModel.Abstractions;
 
@@ -7,26 +9,32 @@ public class SchemaViewModelBase<TSchema> : ViewModelBase where TSchema: class
     /// <inheritdoc />
     public override async void AcceptChanges()
     {
-        if (!IsChanged)
-            return;
+        try
+        {
+            if (!IsChanged)
+                return;
 
-        var repository = JsonContext.GetRepository<TSchema>();
+            var repository = JsonContext.GetRepository<TSchema>();
 
-        if (!IsInserted)
-            repository.Remove(OriginalPath);
+            if (!IsInserted)
+                repository.Remove(OriginalPath);
 
-        if (IsDeleted)
-            return;
+            if (IsDeleted)
+                return;
 
-        var schema = this.MapTo<TSchema>();
-        var wrapped = repository.Add(Path, schema);
+            var schema = this.MapTo<TSchema>();
+            var wrapped = repository.Add(Path, schema);
 
-        await repository.SaveItemAsync(wrapped);
-        OriginalPath = Path;
+            await repository.SaveItemAsync(wrapped);
+            OriginalPath = Path;
 
-        IsDeleted = false;
-        IsInserted = false;
-        IsChanged = false;
+            IsDeleted = false;
+            IsInserted = false;
+            IsChanged = false;
+        } catch
+        {
+            //ignored
+        }
     }
 
     /// <inheritdoc />

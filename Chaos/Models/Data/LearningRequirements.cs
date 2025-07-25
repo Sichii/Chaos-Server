@@ -1,6 +1,8 @@
+#region
 using System.Text;
 using Chaos.Extensions.Common;
 using Chaos.Services.Factories.Abstractions;
+#endregion
 
 namespace Chaos.Models.Data;
 
@@ -9,17 +11,17 @@ public sealed record LearningRequirements
     /// <summary>
     ///     The items and their amounts required to learn this ability
     /// </summary>
-    public required ICollection<ItemRequirement> ItemRequirements { get; init; } = Array.Empty<ItemRequirement>();
+    public required ICollection<ItemRequirement> ItemRequirements { get; init; } = [];
 
     /// <summary>
     ///     The skills that must be learned before this ability can be learned
     /// </summary>
-    public required ICollection<AbilityRequirement> PrerequisiteSkills { get; init; } = Array.Empty<AbilityRequirement>();
+    public required ICollection<AbilityRequirement> PrerequisiteSkills { get; init; } = [];
 
     /// <summary>
     ///     The spells that must be learned before this ability can be learned
     /// </summary>
-    public required ICollection<AbilityRequirement> PrerequisiteSpells { get; init; } = Array.Empty<AbilityRequirement>();
+    public required ICollection<AbilityRequirement> PrerequisiteSpells { get; init; } = [];
 
     /// <summary>
     ///     The amount of gold required to learn this ability

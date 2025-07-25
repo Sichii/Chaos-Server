@@ -1,7 +1,9 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Formulae.Abstractions;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.FunctionalScripts.Abstractions;
 
@@ -9,7 +11,7 @@ public interface IApplyDamageScript : IFunctionalScript
 {
     IDamageFormula DamageFormula { get; set; }
 
-    void ApplyDamage(
+    int ApplyDamage(
         Creature source,
         Creature target,
         IScript script,

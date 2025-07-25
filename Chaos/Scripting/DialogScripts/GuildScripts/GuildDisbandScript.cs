@@ -62,7 +62,7 @@ public class GuildDisbandScript : GuildScriptBase
         }
 
         //ensure the player is the guild leader
-        if (!IsLeader(sourceRank))
+        if (!sourceRank.IsLeaderRank)
         {
             Subject.Reply(source, "You do not have the authority to disband the guild.", "generic_guild_members_initial");
 

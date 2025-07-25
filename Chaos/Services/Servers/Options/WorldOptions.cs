@@ -1,7 +1,9 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Data;
 using Chaos.Networking.Options;
 using ConnectionInfo = Chaos.Networking.Options.ConnectionInfo;
+#endregion
 
 namespace Chaos.Services.Servers.Options;
 
@@ -38,6 +40,9 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
     public required MessageColor GuildMessageColor { get; init; }
 
     /// <inheritdoc />
+    public int HeartbeatIntervalSecs { get; set; }
+
+    /// <inheritdoc />
     public override string HostName { get; set; } = string.Empty;
 
     public static IWorldOptions Instance { get; set; } = null!;
@@ -45,6 +50,9 @@ public sealed record WorldOptions : ServerOptions, IWorldOptions
 
     /// <inheritdoc />
     public int? LootDropsLockToRewardTargetSecs { get; init; }
+
+    /// <inheritdoc />
+    public int MaxAbilityLevel { get; init; }
 
     /// <inheritdoc />
     public required int MaxActionsPerSecond { get; init; }

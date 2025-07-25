@@ -52,18 +52,18 @@ public sealed record Dialog : IScripted<IDialogScript>
         DialogSource = dialogSource;
         ScriptKeys = null!;
         Script = null!;
-        Items = new List<ItemDetails>();
+        Items = [];
         NextDialogKey = template.NextDialogKey;
         Options = template.Options.ToList();
         PrevDialogKey = template.PrevDialogKey;
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
-        Skills = new List<Skill>();
-        Spells = new List<Spell>();
+        Skills = [];
+        Spells = [];
         Text = template.Text;
         TextBoxLength = template.TextBoxLength;
         TextBoxPrompt = template.TextBoxPrompt;
         Type = template.Type;
-        MenuArgs = new ArgumentCollection();
+        MenuArgs = [];
         Contextual = template.Contextual;
     }
 
@@ -75,7 +75,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         ICollection<string>? extraScriptKeys = null)
         : this(template, dialogSource)
     {
-        extraScriptKeys ??= Array.Empty<string>();
+        extraScriptKeys ??= [];
 
         DialogFactory = dialogFactory;
         ScriptKeys.AddRange(extraScriptKeys);
@@ -97,12 +97,12 @@ public sealed record Dialog : IScripted<IDialogScript>
         NextDialogKey = null;
         PrevDialogKey = null;
         Script = new CompositeDialogScript();
-        Options = new List<DialogOption>();
+        Options = [];
         ScriptKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        Skills = new List<Skill>();
-        Spells = new List<Spell>();
-        Items = new List<ItemDetails>();
-        MenuArgs = new ArgumentCollection();
+        Skills = [];
+        Spells = [];
+        Items = [];
+        MenuArgs = [];
     }
 
     public void Close(Aisling source)
@@ -314,11 +314,10 @@ public sealed record Dialog : IScripted<IDialogScript>
 
     public void AddOptions(params IEnumerable<(string OptionText, string DialogKey)> options)
         => Options.AddRange(
-            options.Select(
-                option => new DialogOption
-                {
-                    OptionText = option.OptionText,
-                    DialogKey = option.DialogKey
-                }));
+            options.Select(option => new DialogOption
+            {
+                OptionText = option.OptionText,
+                DialogKey = option.DialogKey
+            }));
     #endregion
 }

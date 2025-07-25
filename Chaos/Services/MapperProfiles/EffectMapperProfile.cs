@@ -1,7 +1,15 @@
+#region
+using Chaos.Collections.Common;
+using Chaos.Common.Utilities;
+using Chaos.Models.World;
+using Chaos.Networking.Abstractions;
 using Chaos.Schemas.Aisling;
 using Chaos.Scripting.EffectScripts.Abstractions;
 using Chaos.Services.Factories.Abstractions;
+using Chaos.Services.Storage;
+using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -14,6 +22,7 @@ public class EffectMapperProfile(IEffectFactory effectFactory) : IMapperProfile<
     {
         var effect = EffectFactory.Create(obj.EffectKey);
         effect.Remaining = TimeSpan.FromSeconds(obj.RemainingSecs);
+        effect.SnapshotVars = obj.SnapshotVars;
 
         return effect;
     }
@@ -23,6 +32,7 @@ public class EffectMapperProfile(IEffectFactory effectFactory) : IMapperProfile<
         => new()
         {
             EffectKey = EffectBase.GetEffectKey(obj.GetType()),
-            RemainingSecs = Convert.ToInt32(Math.Ceiling(obj.Remaining.TotalSeconds))
+            RemainingSecs = Convert.ToInt32(Math.Ceiling(obj.Remaining.TotalSeconds)),
+            SnapshotVars = new StaticVars(obj.SnapshotVars.ToDictionary(kvp => kvp.Key, kvp => kvp.Value))
         };
 }

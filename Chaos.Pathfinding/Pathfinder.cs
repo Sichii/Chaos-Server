@@ -142,7 +142,6 @@ public sealed class Pathfinder : IPathfinder
         var directionBias = end.DirectionalRelationTo(start);
 
         var points = start.GenerateCardinalPoints()
-                          .Shuffle()
                           .WithConsistentDirectionBias(directionBias);
 
         var optimalPoint = GetFirstWalkablePoint(points, pathOptions);

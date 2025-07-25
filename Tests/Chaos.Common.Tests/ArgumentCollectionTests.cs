@@ -91,7 +91,7 @@ public sealed class ArgumentCollectionTests
               .BeFalse();
 
         value.Should()
-             .Be(default);
+             .Be(0);
     }
 
     [Test]
@@ -174,7 +174,7 @@ public sealed class ArgumentCollectionTests
               .BeFalse();
 
         value.Should()
-             .Be(default);
+             .Be(0);
     }
 
     [Test]
@@ -244,7 +244,7 @@ public sealed class ArgumentCollectionTests
               .BeFalse();
 
         value.Should()
-             .Be(default);
+             .Be(0);
     }
 
     // properly handles arguments in double quotes
@@ -303,7 +303,7 @@ public sealed class ArgumentCollectionTests
               .BeFalse();
 
         value.Should()
-             .Be(default);
+             .Be(false);
     }
 
     // Returns false if index is out of range
@@ -326,7 +326,7 @@ public sealed class ArgumentCollectionTests
               .BeFalse();
 
         value.Should()
-             .Be(default);
+             .Be(0);
     }
 
     // Returns true if argument exists at given index and is convertible to specified type

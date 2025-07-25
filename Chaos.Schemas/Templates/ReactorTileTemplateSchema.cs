@@ -1,5 +1,7 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
+#endregion
 
 namespace Chaos.Schemas.Templates;
 
@@ -11,7 +13,7 @@ public sealed class ReactorTileTemplateSchema
     /// <summary>
     ///     A collection of names of scripts to attach to this object by default
     /// </summary>
-    public ICollection<string> ScriptKeys { get; set; } = Array.Empty<string>();
+    public ICollection<string> ScriptKeys { get; set; } = [];
 
     /// <summary>
     ///     A collection of key-value pairs of key-value pairs
@@ -19,6 +21,7 @@ public sealed class ReactorTileTemplateSchema
     ///     Each script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of
     ///     propertyName-Value pairs
     /// </summary>
+    [JsonObjectCreationHandling(JsonObjectCreationHandling.Populate)]
     public IDictionary<string, DynamicVars> ScriptVars { get; set; }
         = new Dictionary<string, DynamicVars>(StringComparer.OrdinalIgnoreCase);
 

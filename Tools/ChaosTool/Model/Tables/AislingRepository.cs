@@ -29,9 +29,8 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
     /// </remarks>
     protected override IEnumerable<string> GetPaths()
         => Directory.EnumerateDirectories(Options.Directory, "*", SearchOption.AllDirectories)
-                    .Where(
-                        src => Directory.EnumerateFiles(src)
-                                        .Any());
+                    .Where(src => Directory.EnumerateFiles(src)
+                                           .Any());
 
     /// <inheritdoc />
     protected override async Task<AislingComposite?> LoadFromFileAsync(string path)
@@ -80,15 +79,15 @@ public sealed class AislingRepository : RepositoryBase<AislingRepository.Aisling
 
             return new AislingComposite
             {
-                Aisling = aislingTask.Result,
-                Bank = bankTask.Result,
-                Effects = effectsTask.Result,
-                Equipment = equipmentTask.Result,
-                Inventory = inventoryTask.Result,
-                Legend = legendTask.Result,
-                Skills = skillsTask.Result,
-                Spells = spellsTask.Result,
-                Trackers = trackersTask.Result
+                Aisling = await aislingTask,
+                Bank = await bankTask,
+                Effects = await effectsTask,
+                Equipment = await equipmentTask,
+                Inventory = await inventoryTask,
+                Legend = await legendTask,
+                Skills = await skillsTask,
+                Spells = await spellsTask,
+                Trackers = await trackersTask
             };
         } catch (Exception e) //must be "Exception" because this will throw an AggregateException, not a JsonException
         {

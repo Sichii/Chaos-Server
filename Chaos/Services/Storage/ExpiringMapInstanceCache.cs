@@ -1,6 +1,7 @@
 #region
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
+using Chaos.DarkAges.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
@@ -66,7 +67,8 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
         while (true)
             try
             {
-                await PersistUsedMapsTimer.WaitForNextTickAsync();
+                await PersistUsedMapsTimer.WaitForNextTickAsync()
+                                          .ConfigureAwait(false);
 
                 //checks each map for aislings
                 //if the map has aislings on it, re-access the map to keep it in the cache
@@ -84,6 +86,23 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
             }
 
         // ReSharper disable once FunctionNeverReturns
+    }
+
+    /// <inheritdoc />
+    public override MapInstance Get(string key)
+    {
+        var mapInstance = base.Get(key);
+
+        if ((mapInstance.ShardingOptions?.ShardingType == ShardingType.AlwaysShardOnCreate) && !mapInstance.IsShard)
+        {
+            var shard = CreateShardOfInstance(mapInstance.InstanceId);
+            shard.Shards = mapInstance.Shards;
+            shard.Shards.TryAdd(shard.InstanceId, shard);
+
+            mapInstance = shard;
+        }
+
+        return mapInstance;
     }
 
     /// <inheritdoc />
@@ -186,7 +205,7 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                 merchantSpawn.SpawnPoint,
                 merchantSpawn.ExtraScriptKeys);
 
-            var pathingBoundsBlacklist = merchantSpawn.PathingBounds?.GetOutline() ?? Array.Empty<Point>();
+            var pathingBoundsBlacklist = merchantSpawn.PathingBounds?.GetOutline() ?? [];
 
             merchant.BlackList = merchantSpawn.BlackList
                                               .Concat(pathingBoundsBlacklist.OfType<IPoint>())

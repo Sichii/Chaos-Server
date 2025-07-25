@@ -147,21 +147,20 @@ public record StatSheet : Attributes
 
     public int EffectiveAttackSpeedPct => Math.Clamp(AtkSpeedPct + AtkSpeedPctMod, -500, 500);
 
-    public byte EffectiveCon => (byte)Math.Clamp(Con + ConMod, byte.MinValue, byte.MaxValue);
+    public int EffectiveCon => Math.Clamp(Con + ConMod, 0, int.MaxValue);
 
-    public byte EffectiveDex => (byte)Math.Clamp(Dex + DexMod, byte.MinValue, byte.MaxValue);
+    public int EffectiveDex => Math.Clamp(Dex + DexMod, 0, int.MaxValue);
 
-    public byte EffectiveDmg => (byte)Math.Clamp(Dmg + DmgMod, byte.MinValue, byte.MaxValue);
+    public int EffectiveDmg => Math.Clamp(Dmg + DmgMod, 0, int.MaxValue);
 
-    public int EffectiveFlatSkillDamage => FlatSkillDamage + FlatSkillDamageMod;
+    public int EffectiveFlatSkillDamage => Math.Clamp(FlatSkillDamage + FlatSkillDamageMod, 0, int.MaxValue);
 
-    public int EffectiveFlatSpellDamage => FlatSpellDamage + FlatSpellDamageMod;
+    public int EffectiveFlatSpellDamage => Math.Clamp(FlatSpellDamage + FlatSpellDamageMod, 0, int.MaxValue);
 
-    public byte EffectiveHit => (byte)Math.Clamp(Hit + HitMod, byte.MinValue, byte.MaxValue);
+    public int EffectiveHit => Math.Clamp(Hit + HitMod, 0, int.MaxValue);
 
-    public byte EffectiveInt => (byte)Math.Clamp(Int + IntMod, byte.MinValue, byte.MaxValue);
-
-    public byte EffectiveMagicResistance => (byte)Math.Clamp(MagicResistance + MagicResistanceMod, byte.MinValue, byte.MaxValue);
+    public int EffectiveInt => Math.Clamp(Int + IntMod, 0, int.MaxValue);
+    public int EffectiveMagicResistance => Math.Clamp(MagicResistance + MagicResistanceMod, 0, int.MaxValue);
 
     public uint EffectiveMaximumHp => (uint)Math.Max(MaximumHp + MaximumHpMod, 1);
 
@@ -171,9 +170,9 @@ public record StatSheet : Attributes
 
     public int EffectiveSpellDamagePct => SpellDamagePct + SpellDamagePctMod;
 
-    public byte EffectiveStr => (byte)Math.Clamp(Str + StrMod, byte.MinValue, byte.MaxValue);
+    public int EffectiveStr => Math.Clamp(Str + StrMod, 0, int.MaxValue);
 
-    public byte EffectiveWis => (byte)Math.Clamp(Wis + WisMod, byte.MinValue, byte.MaxValue);
+    public int EffectiveWis => Math.Clamp(Wis + WisMod, 0, int.MaxValue);
 
     public decimal HealthPercent => Math.Clamp(CurrentHp / (decimal)EffectiveMaximumHp * 100, 0, 100);
 
@@ -195,6 +194,8 @@ public record StatSheet : Attributes
             _ac = -100,
             _atkSpeedPct = 500
         };
+
+    public void AddAbilityLevel(int amount = 1) => Interlocked.Add(ref _abilityLevel, amount);
 
     public void AddBonus(Attributes other)
     {

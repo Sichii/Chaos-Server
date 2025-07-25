@@ -1,5 +1,7 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.DarkAges.Definitions;
+#endregion
 
 namespace Chaos.Schemas.MetaData;
 
@@ -47,7 +49,7 @@ public sealed record EventMetaSchema
     ///     <br />
     ///     If null, the event will be available to all classes
     /// </summary>
-    public ICollection<BaseClass>? QualifyingClasses { get; set; } = Array.Empty<BaseClass>();
+    public ICollection<BaseClass>? QualifyingClasses { get; set; } = [];
 
     /// <summary>
     ///     When the event is completed, the event will be marked green(completed) and show this text in place of it's summary.

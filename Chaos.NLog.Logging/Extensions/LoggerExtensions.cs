@@ -41,6 +41,11 @@ public static class LoggerExtensions
         if (logger is not LogEvent logEvent)
             logEvent = new LogEvent(logger);
 
+        var lastDotIndex = name.LastIndexOf('.');
+
+        if (lastDotIndex != -1)
+            name = name[(lastDotIndex + 1)..];
+
         return logEvent.WithProperty(name, value);
     }
 

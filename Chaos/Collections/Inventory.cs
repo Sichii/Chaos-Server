@@ -23,7 +23,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         : base(PanelType.Inventory, 60, [0])
     {
         ItemCloner = null!;
-        items ??= Array.Empty<Item>();
+        items ??= [];
 
         foreach (var item in items)
             Objects[item.Slot] = item;
@@ -410,7 +410,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
     /// <inheritdoc />
     public override bool TryGetRemove(string name, [MaybeNullWhen(false)] out Item obj)
     {
-        obj = default;
+        obj = null;
 
         using var @lock = Sync.EnterScope();
 
@@ -419,7 +419,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (obj == null)
             return false;
 
-        Objects[obj.Slot] = default;
+        Objects[obj.Slot] = null;
         BroadcastOnRemoved(obj.Slot, obj);
 
         return true;

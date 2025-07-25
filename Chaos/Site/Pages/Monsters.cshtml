@@ -1,7 +1,7 @@
 @page
 @using Chaos.Site.Pages
 @using Chaos.Site.Services
-@model Chaos.Site.Pages.Monsters
+@model Monsters
 @inject MonsterDtoRepository MonsterDtos
 
 @{
@@ -26,6 +26,8 @@
                 sortable: true,
                 filter: true,
                 resizable: true,
+                autoHeight: true,
+                cellStyle: {whiteSpace: "pre-wrap"},
                 flex: 1,
                 filterParams: {
                     buttons: ['reset', 'apply'],
@@ -36,10 +38,10 @@
                 }
             },
             // specify the columns
-            columnDefs: columnDefs,
+            columnDefs,
             datasource: {
                 rowCount: @MonsterDtos.Count(),
-                getRows: function (params) {
+                getRows(params) {
                     searchMonsters(params)
                         .then(result => {
                             params.successCallback(result);

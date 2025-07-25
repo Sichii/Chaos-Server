@@ -13,5 +13,5 @@ public sealed record MailBoxSchema
     /// <summary>
     ///     A collection of posts in the mailbox
     /// </summary>
-    public ICollection<PostSchema> Posts { get; set; } = Array.Empty<PostSchema>();
+    public ICollection<PostSchema> Posts { get; set; } = [];
 }

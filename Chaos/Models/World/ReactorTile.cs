@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.Geometry.Abstractions;
@@ -6,6 +7,7 @@ using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.ReactorTileScripts.Abstractions;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Models.World;
 
@@ -30,7 +32,7 @@ public sealed class TemplatedReactorTile : ReactorTile
 
             // ReSharper disable once RedundantAssignment
             template.ScriptKeys
-                    .Union(extraScriptKeys ??= Array.Empty<string>())
+                    .Union(extraScriptKeys ??= [])
                     .ToList(),
             template.ScriptVars,
             owner,

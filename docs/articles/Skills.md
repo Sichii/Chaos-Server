@@ -27,7 +27,7 @@ Skills can be created by using the [SkillFactory](<xref:Chaos.Services.Factories
 implementation of [ISkillFactory](<xref:Chaos.Services.Factories.Abstractions.ISkillFactory>).
 
 > [!NOTE]
-> Each skill is a fresh instance of an skill created from a template. Any changes made to the template will apply to all
+> Each skill is a fresh instance of a skill created from a template. Any changes made to the template will apply to all
 > instances of that skill.
 
 ```cs
@@ -66,11 +66,11 @@ If the script is configurable, you must also have an entry for the script in the
 
 Here are the events overridable in skill scripts:
 
-| Event Name | Description                                                                                   |
-|------------|-----------------------------------------------------------------------------------------------|
-| CanUse     | Called when a skill is about to be used. Return false to prevent the skill from being used    |
-| OnUse      | Called when a skill is used. Provide functionality to skills via this event                   |
-| Update     | Called every time the map updates. Skills will update only if they're in a player's skillbook |
+| Event Name | Description                                                                                     |
+|------------|-------------------------------------------------------------------------------------------------|
+| CanUse     | Called when a skill is about to be used. Return false to prevent the skill from being used      |
+| OnUse      | Called when a skill is used. Provide functionality to skills via this event                     |
+| Update     | Called every time the map updates. Skills will update only if they're in a creature's skillbook |
 
 ## Example
 

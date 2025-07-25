@@ -1,6 +1,8 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Definitions;
 using Chaos.Resources;
+#endregion
 
 namespace Chaos.Models.Map;
 
@@ -16,7 +18,7 @@ public readonly struct Tile(ushort background, ushort leftForeground, ushort rig
                && Sotp[RightForeground - 1]
                    .HasFlag(TileFlags.Wall));
 
-    public bool IsWater { get; } = CHAOS_CONSTANTS.WATER_TILE_IDS.Contains(background);
+    public bool IsWater { get; } = CHAOS_CONSTANTS.WATER_TILE_IDS.Contains((ushort)(background - 1));
 
     public ushort LeftForeground { get; } = leftForeground;
     public ushort RightForeground { get; } = rightForeground;

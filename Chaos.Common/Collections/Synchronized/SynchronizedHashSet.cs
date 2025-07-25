@@ -1,6 +1,7 @@
 #region
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 #endregion
 
 // ReSharper disable once CheckNamespace
@@ -34,13 +35,23 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <summary>
     ///     Creates a new <see cref="SynchronizedHashSet{T}" />.
     /// </summary>
-    public SynchronizedHashSet(IEnumerable<T>? items = null, IEqualityComparer<T>? comparer = null)
+    public SynchronizedHashSet(IEnumerable<T>? set = null, IEqualityComparer<T>? comparer = null)
     {
         Sync = new Lock();
-        items ??= [];
+        set ??= [];
         comparer ??= EqualityComparer<T>.Default;
 
-        Set = new HashSet<T>(items, comparer);
+        Set = new HashSet<T>(set, comparer);
+    }
+
+    /// <summary>
+    ///     Creates a new <see cref="SynchronizedHashSet{T}" />.
+    /// </summary>
+    [JsonConstructor]
+    public SynchronizedHashSet(IEnumerable<T> set)
+    {
+        Sync = new Lock();
+        Set = new HashSet<T>(set);
     }
 
     void ICollection<T>.Add(T item) => Add(item);

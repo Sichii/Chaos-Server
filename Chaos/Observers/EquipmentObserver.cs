@@ -1,6 +1,8 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
+#endregion
 
 namespace Chaos.Observers;
 
@@ -26,7 +28,7 @@ public sealed class EquipmentObserver(Aisling aisling) : Abstractions.IObserver<
         Aisling.Display();
         Aisling.UserStatSheet.AddWeight(obj.Weight);
 
-        if (!obj.Modifiers.Equals(default))
+        if (!obj.Modifiers.Equals(null))
             Aisling.UserStatSheet.AddBonus(obj.Modifiers);
 
         Aisling.Client.SendAttributes(StatUpdateType.Full);
@@ -41,7 +43,7 @@ public sealed class EquipmentObserver(Aisling aisling) : Abstractions.IObserver<
 
         Aisling.UserStatSheet.AddWeight(-obj.Weight);
 
-        if (!obj.Modifiers.Equals(default))
+        if (!obj.Modifiers.Equals(null))
             Aisling.UserStatSheet.SubtractBonus(obj.Modifiers);
 
         Aisling.Client.SendAttributes(StatUpdateType.Full);

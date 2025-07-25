@@ -565,18 +565,23 @@ public sealed class SpanWriterTests
                 unchecked((byte)SBYTE_VALUE)
             }.Concat(
                  BitConverter.GetBytes(USHORT_VALUE)
+                             .AsEnumerable()
                              .Reverse())
              .Concat(
                  BitConverter.GetBytes(SHORT_VALUE)
+                             .AsEnumerable()
                              .Reverse())
              .Concat(
                  BitConverter.GetBytes(UINT_VALUE)
+                             .AsEnumerable()
                              .Reverse())
              .Concat(
                  BitConverter.GetBytes(INT_VALUE)
+                             .AsEnumerable()
                              .Reverse())
              .Concat(
                  BitConverter.GetBytes(BOOL_VALUE)
+                             .AsEnumerable()
                              .Reverse())
              .Concat(
                  [
@@ -585,9 +590,11 @@ public sealed class SpanWriterTests
                  ])
              .Concat(
                  BitConverter.GetBytes(X16)
+                             .AsEnumerable()
                              .Reverse())
              .Concat(
                  BitConverter.GetBytes(Y16)
+                             .AsEnumerable()
                              .Reverse());
 
         result.Should()

@@ -60,7 +60,7 @@ public sealed class AutoReleasingMonitor
         if (Monitor.TryEnter(Root, timeoutMs))
             return new AutoReleasingSubscription(Root);
 
-        return default;
+        return null;
     }
 
     private sealed record AutoReleasingSubscription : IDisposable

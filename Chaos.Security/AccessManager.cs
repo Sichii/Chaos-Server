@@ -26,6 +26,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     private readonly AutoReleasingSemaphoreSlim AccessSync;
     private readonly string BlacklistPath;
     private readonly PeriodicTimer CleanupTimer;
+    private readonly string ClientIdBanPath;
     private readonly AutoReleasingSemaphoreSlim CredentialSync;
     private readonly ConcurrentDictionary<string, CredentialFailureDetails> FailureDetails;
     private readonly ILogger<AccessManager> Logger;
@@ -47,6 +48,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         Options = options.Value;
         BlacklistPath = Path.Combine(Options.Directory, "blacklist.txt");
         WhitelistPath = Path.Combine(Options.Directory, "whitelist.txt");
+        ClientIdBanPath = Path.Combine(Options.Directory, "clientIdBan.txt");
         FailureDetails = new ConcurrentDictionary<string, CredentialFailureDetails>(StringComparer.OrdinalIgnoreCase);
         CleanupTimer = new PeriodicTimer(TimeSpan.FromSeconds(5));
 
@@ -60,21 +62,10 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         if (!File.Exists(WhitelistPath))
             File.Create(WhitelistPath)
                 .Dispose();
-    }
 
-    /// <inheritdoc />
-    public async Task BanishAsync(IPAddress ipAddress)
-    {
-        await using var @lock = await AccessSync.WaitAsync();
-
-        var ipStr = ipAddress.ToString();
-
-        await File.AppendAllLinesAsync(BlacklistPath, [ipStr]);
-
-        var whiteList = (await File.ReadAllLinesAsync(WhitelistPath)).ToList();
-        whiteList.RemoveAll(str => str.EqualsI(ipStr));
-
-        await File.WriteAllLinesAsync(WhitelistPath, whiteList);
+        if (!File.Exists(ClientIdBanPath))
+            File.Create(ClientIdBanPath)
+                .Dispose();
     }
 
     /// <inheritdoc />
@@ -118,6 +109,36 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         await passwordPath.SafeExecuteAsync(dir => FileEx.SafeWriteAllTextAsync(dir, newHash));
 
         return result;
+    }
+
+    /// <inheritdoc />
+    public async Task IdBanishAsync(uint clientId1, ushort clientId2)
+    {
+        //don't banish the default values
+        if ((clientId1 == 4278255360U) && (clientId2 == 7695))
+            return;
+
+        await using var @lock = await AccessSync.WaitAsync();
+
+        var id1Str = clientId1.ToString();
+        var id2Str = clientId2.ToString();
+
+        await File.AppendAllLinesAsync(ClientIdBanPath, [$"{id1Str},{id2Str}]"]);
+    }
+
+    /// <inheritdoc />
+    public async Task IpBanishAsync(IPAddress ipAddress)
+    {
+        await using var @lock = await AccessSync.WaitAsync();
+
+        var ipStr = ipAddress.ToString();
+
+        await File.AppendAllLinesAsync(BlacklistPath, [ipStr]);
+
+        var whiteList = (await File.ReadAllLinesAsync(WhitelistPath)).ToList();
+        whiteList.RemoveAll(str => str.EqualsI(ipStr));
+
+        await File.WriteAllLinesAsync(WhitelistPath, whiteList);
     }
 
     /// <inheritdoc />
@@ -168,6 +189,14 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     }
 
     /// <inheritdoc />
+    public async Task<bool> ShouldAllowAsync(uint clientId)
+    {
+        await using var @lock = await AccessSync.WaitAsync();
+
+        return !await IsClientIdBanned(clientId);
+    }
+
+    /// <inheritdoc />
     public async Task<CredentialValidationResult> ValidateCredentialsAsync(IPAddress ipAddress, string name, string password)
     {
         await using var sync = await CredentialSync.WaitAsync();
@@ -208,7 +237,8 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         {
             try
             {
-                await CleanupTimer.WaitForNextTickAsync(stoppingToken);
+                await CleanupTimer.WaitForNextTickAsync(stoppingToken)
+                                  .ConfigureAwait(false);
             } catch (OperationCanceledException)
             {
                 return;
@@ -302,6 +332,14 @@ public sealed class AccessManager : BackgroundService, IAccessManager
                      .Select(line => IPAddress.TryParse(line, out var ip) ? ip : null)
                      .Where(obj => obj is not null)
                      .ContainsAsync(ipAddress);
+
+    private async Task<bool> IsClientIdBanned(uint clientId)
+    {
+        var clientIdStr = clientId.ToString();
+
+        return await File.ReadLinesAsync(ClientIdBanPath)
+                         .ContainsAsync(clientIdStr, StringComparer.OrdinalIgnoreCase);
+    }
 
     private async Task<bool> IsWhitelisted(IPAddress ipAddress)
         => await File.ReadLinesAsync(WhitelistPath)

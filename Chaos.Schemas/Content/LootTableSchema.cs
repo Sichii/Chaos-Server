@@ -1,6 +1,8 @@
+#region
 using System.Text.Json.Serialization;
 using Chaos.Common.Definitions;
 using Chaos.Schemas.Data;
+#endregion
 
 namespace Chaos.Schemas.Content;
 
@@ -18,7 +20,7 @@ public sealed record LootTableSchema
     /// <summary>
     ///     A collection of lootDrops. Every item in the list is calculated, allowing multiple drops
     /// </summary>
-    public ICollection<LootDropSchema> LootDrops { get; set; } = Array.Empty<LootDropSchema>();
+    public ICollection<LootDropSchema> LootDrops { get; set; } = [];
 
     /// <summary>
     ///     The mode in which the loot table is calculated

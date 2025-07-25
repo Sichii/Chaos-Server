@@ -46,8 +46,7 @@ public class AmbushScript : SkillScriptBase
                     var destinationPoint = entity.DirectionalOffset(direction);
 
                     //if that point is not walkable or is a reactor, continue
-                    if (!context.TargetMap.IsWalkable(destinationPoint, context.Source.Type)
-                        || context.TargetMap.IsBlockingReactor(destinationPoint))
+                    if (!context.TargetMap.IsWalkable(destinationPoint, false, collisionType: context.Source.Type))
                         continue;
 
                     //if it is walkable, warp to that point and turn to face the target

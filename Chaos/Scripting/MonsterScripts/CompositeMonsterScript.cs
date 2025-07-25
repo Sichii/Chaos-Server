@@ -1,9 +1,11 @@
+#region
 using System.Runtime.InteropServices;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MonsterScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.MonsterScripts;
 
@@ -12,11 +14,25 @@ namespace Chaos.Scripting.MonsterScripts;
 /// </summary>
 public class CompositeMonsterScript : CompositeScriptBase<IMonsterScript>, IMonsterScript
 {
-    /// <inheritdoc />
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
     public virtual bool CanDropItemOn(Aisling source, Item item)
     {
         foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
             if (!script.CanDropItemOn(source, item))
+                return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     DO NOT EDIT THIS SCRIPT
+    /// </summary>
+    public virtual bool CanDropMoneyOn(Aisling source, int amount)
+    {
+        foreach (ref var script in CollectionsMarshal.AsSpan(Scripts))
+            if (!script.CanDropMoneyOn(source, amount))
                 return false;
 
         return true;

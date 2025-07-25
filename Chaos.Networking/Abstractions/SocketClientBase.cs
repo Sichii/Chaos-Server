@@ -1,5 +1,6 @@
 #region
 using System.Buffers;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -24,6 +25,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     private readonly Memory<byte> Memory;
     private readonly ConcurrentQueue<SocketAsyncEventArgs> SocketArgsQueue;
     private int Count;
+
+    private NetworkMonitor? NetworkMonitor;
     private int Sequence;
 
     /// <inheritdoc />
@@ -36,6 +39,16 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     ///     Whether or not to log raw packet data to Trace
     /// </summary>
     public bool LogRawPackets { get; set; }
+
+    /// <summary>
+    ///     Whether or not to log the packet opcode when receiving packets
+    /// </summary>
+    public bool LogReceivePacketCode { get; set; }
+
+    /// <summary>
+    ///     Whether or not to log the packet opcode when sending packets
+    /// </summary>
+    public bool LogSendPacketCode { get; set; }
 
     /// <inheritdoc />
     public uint Id { get; }
@@ -139,6 +152,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
     #region Networking
     /// <inheritdoc />
+
+    // ReSharper disable once AsyncVoidMethod
     public virtual async void BeginReceive()
     {
         if (!Socket.Connected)
@@ -147,12 +162,15 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
         Connected = true;
         await Task.Yield();
 
+        NetworkMonitor = new NetworkMonitor(this, Logger);
+
         var args = new SocketAsyncEventArgs();
         args.SetBuffer(Memory);
         args.Completed += ReceiveEventHandler;
         Socket.ReceiveAndForget(args, ReceiveEventHandler);
     }
 
+    // ReSharper disable once AsyncVoidMethod
     private async void ReceiveEventHandler(object? sender, SocketAsyncEventArgs e)
     {
         await ReceiveSync.WaitAsync()
@@ -189,8 +207,14 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
                 try
                 {
+                    var start = Stopwatch.GetTimestamp();
+                    var opcode = Buffer[offset + 3];
+
                     await HandlePacketAsync(Buffer.Slice(offset, packetLength))
                         .ConfigureAwait(false);
+
+                    var elapsed = Stopwatch.GetElapsedTime(start);
+                    NetworkMonitor!.Digest(opcode, elapsed);
                 } catch (Exception ex)
                 {
                     //required so we can use Span<byte> in an async method
@@ -270,6 +294,14 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                       Topics.Actions.Send)
                   .WithProperty(this)
                   .LogTrace("[Snd] {Packet}", packet.ToString());
+        else if (LogSendPacketCode)
+            Logger.WithTopics(
+                      Topics.Qualifiers.Raw,
+                      Topics.Entities.Client,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Send)
+                  .WithProperty(this)
+                  .LogTrace("Sending packet with code {@OpCode} to {@ClientIp}", packet.OpCode, RemoteIp);
 
         packet.IsEncrypted = IsEncrypted(packet.OpCode);
 

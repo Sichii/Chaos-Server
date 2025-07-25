@@ -63,6 +63,7 @@ public class DepositItemScript : DialogScriptBase
 
     private void OnDisplayingInitial(Aisling source)
         => Subject.Slots = source.Inventory
+                                 .Where(obj => !obj.PreventBanking)
                                  .Select(obj => obj.Slot)
                                  .ToList();
 

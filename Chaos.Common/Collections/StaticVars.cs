@@ -1,14 +1,19 @@
+#region
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 using Chaos.Common.Abstractions;
 using Chaos.Common.Converters;
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Collections.Common;
 
 /// <summary>
 /// </summary>
-public class StaticVars : IScriptVars
+[JsonConverter(typeof(StaticVarsConverter))]
+public class StaticVars : IScriptVars, IEnumerable<KeyValuePair<string, object>>
 {
     /// <summary>
     ///     Gets or sets the value associated with the specified key.
@@ -59,6 +64,12 @@ public class StaticVars : IScriptVars
             _            => value
         };
     }
+
+    /// <inheritdoc />
+    public IEnumerator<KeyValuePair<string, object>> GetEnumerator() => Vars.GetEnumerator();
+
+    /// <inheritdoc />
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
     /// <inheritdoc />
     public T GetRequired<T>(string key)

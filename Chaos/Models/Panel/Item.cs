@@ -1,3 +1,4 @@
+#region
 using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
@@ -6,10 +7,12 @@ using Chaos.Models.Data;
 using Chaos.Models.Panel.Abstractions;
 using Chaos.Models.Templates;
 using Chaos.Models.World;
+using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.ItemScripts.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
+#endregion
 
 namespace Chaos.Models.Panel;
 
@@ -19,6 +22,8 @@ namespace Chaos.Models.Panel;
 public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourceEntity
 {
     private readonly NameComposer NameComposer;
+    public bool AccountBound { get; set; }
+    public bool? ArmorUsesOvercoatSprites { get; set; }
 
     public DisplayColor Color
     {
@@ -39,12 +44,17 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
     public ItemSprite ItemSprite { get; set; }
     public int Level { get; set; }
     public Attributes Modifiers { get; set; }
+    public string? NotepadText { get; set; }
+    public bool NoTrade { get; set; }
+    public bool? OvercoatUsesArmorSprites { get; set; }
 
     public string? Prefix
     {
         get => NameComposer.Prefix;
         set => NameComposer.SetPrefix(value);
     }
+
+    public bool PreventBanking { get; set; }
 
     public string? Suffix
     {
@@ -82,7 +92,12 @@ public sealed class Item : PanelEntityBase, IScripted<IItemScript>, IDialogSourc
         Modifiers = template.Modifiers is null ? new Attributes() : ShallowCopy<Attributes>.Create(template.Modifiers);
         Weight = template.Weight;
         Level = template.Level;
-        ItemSprite = template.ItemSprite;
+        PreventBanking = template.PreventBanking;
+        AccountBound = template.AccountBound;
+        NoTrade = template.NoTrade;
+        ArmorUsesOvercoatSprites = template.ArmorUsesOvercoatSprites;
+        OvercoatUsesArmorSprites = template.OvercoatUsesArmorSprites;
+        ItemSprite = new ItemSprite(template.ItemSprite.PanelSprite, template.ItemSprite.DisplaySprite);
 
         if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);

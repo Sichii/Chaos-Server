@@ -6,6 +6,7 @@ using Chaos.Cryptography.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.DarkAges.Extensions;
 using Chaos.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Networking;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Models.Board;
@@ -22,6 +23,7 @@ using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
+using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using Chaos.Utilities;
@@ -35,7 +37,16 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
     private readonly ITypeMapper Mapper;
     private readonly IWorldServer<IChaosWorldClient> Server;
     private Animation? CurrentAnimation;
+    private Task HeartbeatTask = null!;
     public Aisling Aisling { get; set; } = null!;
+    public byte? Heartbeat1 { get; set; }
+    public byte? Heartbeat2 { get; set; }
+
+    /// <inheritdoc />
+    public uint LoginId1 { get; set; }
+
+    /// <inheritdoc />
+    public ushort LoginId2 { get; set; }
 
     public ChaosWorldClient(
         Socket socket,
@@ -52,8 +63,17 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
             logger)
     {
         LogRawPackets = chaosOptions.Value.LogRawPackets;
+        LogSendPacketCode = chaosOptions.Value.LogSendPacketCode;
+        LogReceivePacketCode = chaosOptions.Value.LogReceivePacketCode;
         Mapper = mapper;
         Server = server;
+    }
+
+    /// <inheritdoc />
+    public override void BeginReceive()
+    {
+        base.BeginReceive();
+        HeartbeatTask = DoHeartbeatAsync();
     }
 
     public void SendAddItemToPane(Item item)
@@ -91,7 +111,7 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         //check if the current animation is null
         var currentAnimation = Interlocked.CompareExchange(ref CurrentAnimation, animation, null);
 
-        if (currentAnimation is null)
+        if (currentAnimation is null || animation.TargetPoint.HasValue || Aisling is { Options.PriorityAnimations: false })
         {
             InnerSendAnimation();
 
@@ -217,6 +237,9 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
 
         var remaining = panelEntityBase.Cooldown.Value.TotalSeconds - panelEntityBase.Elapsed.Value.TotalSeconds;
 
+        if (remaining < 0)
+            return;
+
         var args = new CooldownArgs
         {
             IsSkill = panelEntityBase is Skill,
@@ -321,6 +344,25 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
 
         if (serverGroupSwitch == ServerGroupSwitch.ShowGroupBox)
             args.GroupBoxInfo = groupBoxInfo;
+
+        Send(args);
+    }
+
+    /// <inheritdoc />
+    public void SendDisplayNotepad(
+        NotepadType type,
+        Item item,
+        byte width,
+        byte height)
+    {
+        var args = new DisplayNotepadArgs
+        {
+            Slot = item.Slot,
+            NotepadType = type,
+            Width = width,
+            Height = height,
+            Message = item.NotepadText ?? string.Empty
+        };
 
         Send(args);
     }
@@ -605,7 +647,7 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         byte width,
         string? message)
     {
-        var args = new NotepadArgs
+        var args = new DisplayNotepadArgs
         {
             Slot = identifier,
             NotepadType = type,
@@ -842,6 +884,36 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
         Send(args);
     }
 
+    private async Task DoHeartbeatAsync()
+    {
+        var timer = new PeriodicTimer(TimeSpan.FromSeconds(WorldOptions.Instance.HeartbeatIntervalSecs));
+
+        while (Connected)
+        {
+            try
+            {
+                await timer.WaitForNextTickAsync();
+
+                //if heartbeat is still populated, that means the client has not responded to the last heartbeat
+                //assume the client has disconnected
+                if (Heartbeat1.HasValue || Heartbeat2.HasValue)
+                {
+                    Disconnect();
+
+                    return;
+                }
+
+                Heartbeat1 = Random.Shared.Next<byte>();
+                Heartbeat2 = Random.Shared.Next<byte>();
+
+                SendHeartBeat(Heartbeat1.Value, Heartbeat2.Value);
+            } catch
+            {
+                //ignored
+            }
+        }
+    }
+
     /// <inheritdoc />
     protected override ValueTask HandlePacketAsync(Span<byte> span)
     {
@@ -860,6 +932,14 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
                       Topics.Actions.Receive)
                   .WithProperty(this)
                   .LogTrace("[Rcv] {@Packet}", packet.ToString());
+        else if (LogReceivePacketCode)
+            Logger.WithTopics(
+                      Topics.Qualifiers.Raw,
+                      Topics.Entities.Client,
+                      Topics.Entities.Packet,
+                      Topics.Actions.Receive)
+                  .WithProperty(this)
+                  .LogTrace("Received packet with code {@OpCode} from {@ClientIp}", opCode, RemoteIp);
 
         return Server.HandlePacketAsync(this, in packet);
     }

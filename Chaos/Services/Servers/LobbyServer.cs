@@ -15,6 +15,7 @@ using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Services.Servers.Options;
+using Chaos.Time;
 using Microsoft.Extensions.Options;
 #endregion
 
@@ -114,11 +115,7 @@ public sealed class LobbyServer : ServerBase<IChaosLobbyClient>, ILobbyServer<IC
         var opCode = packet.OpCode;
         var handler = ClientHandlers[opCode];
 
-        if (handler is not null)
-            Logger.WithTopics(Topics.Servers.LobbyServer, Topics.Entities.Packet, Topics.Actions.Processing)
-                  .WithProperty(client)
-                  .LogTrace("Processing message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
-        else
+        if (handler is null)
             Logger.WithTopics(
                       Topics.Servers.LobbyServer,
                       Topics.Entities.Packet,
@@ -126,7 +123,7 @@ public sealed class LobbyServer : ServerBase<IChaosLobbyClient>, ILobbyServer<IC
                       Topics.Qualifiers.Cheating)
                   .WithProperty(client)
                   .WithProperty(packet.ToString(), "HexData")
-                  .LogWarning("Unknown message with code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
+                  .LogWarning("Received packet with unknown code {@OpCode} from {@ClientIp}", opCode, client.RemoteIp);
 
         return handler?.Invoke(client, in packet) ?? default;
     }
