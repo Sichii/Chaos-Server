@@ -1,21 +1,20 @@
 #region
+using System;
 using System.Buffers;
 #endregion
 
 namespace Chaos.Common.Utilities;
 
 /// <summary>
-///     Encapsulates a rented span of memory that provides access to a contiguous block of elements of type
-///     <typeparamref name="T" /> where <typeparamref name="T" /> is unmanaged and implements <see cref="IDisposable" />.
+///     Represents a rented span of memory, backed by an array from the shared <see cref="ArrayPool{T}" />.
 /// </summary>
 /// <typeparam name="T">
-///     The type of elements in the memory span, restricted to unmanaged types that implement <see cref="IDisposable" />.
+///     The type of elements stored in the rented span.
 /// </typeparam>
 public readonly struct Rented<T> : IDisposable
 {
     /// <summary>
-    ///     Represents a span of rented memory that provides access to a contiguous region of memory storing elements of type
-    ///     <typeparamref name="T" /> where <typeparamref name="T" /> is unmanaged and implements <see cref="IDisposable" />.
+    ///     A span representing the underlying rented array
     /// </summary>
     public Span<T> Span => _array.AsSpan(0, Count);
 
@@ -33,7 +32,7 @@ public readonly struct Rented<T> : IDisposable
     public readonly ArraySegment<T> Array;
 
     /// <summary>
-    ///     Rents a span of memory of the specified size from the shared <see cref="ArrayPool{T}" />.
+    ///     Initializes a new instance of the <see cref="Rented{T}" /> struct.
     /// </summary>
     public Rented(int size)
     {
@@ -43,7 +42,7 @@ public readonly struct Rented<T> : IDisposable
     }
 
     /// <summary>
-    ///     Wraps a pre-rented array with the specified count of valid elements.
+    ///     Initializes a new instance of the <see cref="Rented{T}" /> struct.
     /// </summary>
     internal Rented(T[] array, int count)
     {
