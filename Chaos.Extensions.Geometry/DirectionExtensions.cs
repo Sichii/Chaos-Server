@@ -10,6 +10,14 @@ namespace Chaos.Extensions.Geometry;
 /// </summary>
 public static class DirectionExtensions
 {
+    extension(Direction)
+    {
+        /// <summary>
+        ///     Gets a random cardinal direction enum value
+        /// </summary>
+        public static Direction RandomDirection() => (Direction)Random.Shared.Next(4);
+    }
+
     /// <param name="direction">
     ///     The direction to start with
     /// </param>

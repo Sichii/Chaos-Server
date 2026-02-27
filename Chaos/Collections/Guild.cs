@@ -298,13 +298,10 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     /// </summary>
     public IEnumerable<string> GetMemberNames()
     {
-        List<string> names;
+        using var @lock = Sync.EnterScope();
 
-        using (Sync.EnterScope())
-            names = GuildHierarchy.SelectMany(x => x.GetMemberNames())
-                                  .ToList();
-
-        return names;
+        return GuildHierarchy.SelectMany(x => x.GetMemberNames())
+                             .ToArray();
     }
 
     /// <summary>
@@ -312,13 +309,10 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     /// </summary>
     public IEnumerable<Aisling> GetOnlineMembers()
     {
-        List<Aisling> onlineMembers;
+        using var @lock = Sync.EnterScope();
 
-        using (Sync.EnterScope())
-            onlineMembers = GuildHierarchy.SelectMany(x => x.GetOnlineMembers(ClientRegistry))
-                                          .ToList();
-
-        return onlineMembers;
+        return GuildHierarchy.SelectMany(x => x.GetOnlineMembers(ClientRegistry))
+                             .ToArray();
     }
 
     /// <summary>
@@ -327,12 +321,12 @@ public sealed class Guild : IDedicatedChannel, IEquatable<Guild>
     /// <remarks>
     ///     These ranks are deep cloned and will not affect actual ranks if modified
     /// </remarks>
-    public ICollection<GuildRank> GetRanks()
+    public IEnumerable<GuildRank> GetRanks()
     {
         using var @lock = Sync.EnterScope();
 
         return GuildHierarchy.Select(DeepClone.CreateRequired)
-                             .ToList();
+                             .ToArray();
     }
 
     /// <summary>

@@ -118,7 +118,7 @@ public static class DecimalRandomizer
         /// </returns>
         public T? PickRandomWeightedSingleOrDefault(decimal commonWeight)
             => choices.Select(x => new KeyValuePair<T, decimal>(x, commonWeight))
-                      .ToList()
+                      .ToArray()
                       .PickRandomWeightedSingleOrDefault();
 
         /// <summary>
@@ -136,7 +136,7 @@ public static class DecimalRandomizer
         /// </returns>
         public T? PickRandomWeightedSingleOrDefault(IEnumerable<decimal> weights)
             => choices.Zip(weights, (choice, weight) => new KeyValuePair<T, decimal>(choice, weight))
-                      .ToList()
+                      .ToArray()
                       .PickRandomWeightedSingleOrDefault();
     }
 }

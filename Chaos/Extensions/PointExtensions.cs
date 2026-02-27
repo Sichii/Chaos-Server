@@ -22,15 +22,13 @@ public static class PointExtensions
         ArgumentNullException.ThrowIfNull(mapInstance);
 
         if (!invertLos)
-            return points.Where(
-                point => !origin.RayTraceTo(point)
-                                .Any(mapInstance.IsWall));
+            return points.Where(point => !origin.RayTraceTo(point)
+                                                .Any(mapInstance.IsWall));
 
-        points = points.ToList();
+        points = points.ToArray();
 
         var occludedPoints = points.Where(mapInstance.IsWall)
-                                   .SelectMany(point => point.RayTraceTo(origin))
-                                   .ToHashSet();
+                                   .SelectMany(point => point.RayTraceTo(origin));
 
         return points.Except(occludedPoints);
     }
@@ -50,11 +48,8 @@ public static class PointExtensions
         var pointSet = points.OfType<IPoint>()
                              .ToHashSet(PointEqualityComparer.Instance);
 
-        foreach (var point in FilterByLineOfSight(
-                     pointSet.Select(Point.From),
-                     Point.From(origin),
-                     mapInstance,
-                     invertLos))
+        foreach (var point in pointSet.Select(Point.From)
+                                      .FilterByLineOfSight(Point.From(origin), mapInstance, invertLos))
             if (pointSet.TryGetValue(point, out var setPoint))
                 yield return (T)setPoint;
     }
@@ -69,6 +64,7 @@ public static class PointExtensions
 
         ArgumentNullException.ThrowIfNull(other);
 
-        return WithinRange(Point.From(point), Point.From(other), distance);
+        return Point.From(point)
+                    .WithinRange(Point.From(other), distance);
     }
 }

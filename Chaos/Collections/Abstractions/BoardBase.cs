@@ -2,6 +2,7 @@
 using Chaos.Common.Abstractions;
 using Chaos.Common.Identity;
 using Chaos.DarkAges.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Models.Board;
 using Chaos.Models.World;
 using Chaos.NLog.Logging.Abstractions;
@@ -105,9 +106,9 @@ public abstract class BoardBase : IEnumerable<Post>, ITransformableCollection
     {
         using var @lock = Sync.EnterScope();
 
-        var posts = Posts.Values.ToList();
+        var posts = Posts.Values.ToArray();
 
-        return posts.GetEnumerator();
+        return posts.GetGenericEnumerator();
     }
 
     /// <inheritdoc />

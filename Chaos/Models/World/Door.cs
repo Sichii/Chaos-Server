@@ -1,5 +1,6 @@
 #region
 using Chaos.Collections;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.Templates;
@@ -35,8 +36,10 @@ public sealed class Door(
         if (!ShouldRegisterClick(source.Id))
             return;
 
-        var doorCluster = GetCluster()
-            .ToList();
+        using var rented = GetCluster()
+            .ToRented();
+
+        var doorCluster = rented.Array;
 
         foreach (var door in doorCluster)
         {

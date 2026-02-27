@@ -135,8 +135,8 @@ public sealed class AccessManager : BackgroundService, IAccessManager
 
         await File.AppendAllLinesAsync(BlacklistPath, [ipStr]);
 
-        var whiteList = (await File.ReadAllLinesAsync(WhitelistPath)).ToList();
-        whiteList.RemoveAll(str => str.EqualsI(ipStr));
+        var whiteList = (await File.ReadAllLinesAsync(WhitelistPath)).Where(line => !line.EqualsI(ipStr))
+                                                                     .ToArray();
 
         await File.WriteAllLinesAsync(WhitelistPath, whiteList);
     }
@@ -246,7 +246,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
 
             var now = DateTime.UtcNow;
 
-            foreach ((var ip, var details) in FailureDetails.ToList())
+            foreach ((var ip, var details) in FailureDetails.ToArray())
                 if (now.Subtract(details.MostRecentFailureTime)
                        .TotalMinutes
                     > Options.LockoutMins)

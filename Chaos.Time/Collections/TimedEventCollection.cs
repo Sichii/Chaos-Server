@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using Chaos.Extensions.Common;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
 using Chaos.Time.Converters;
@@ -43,12 +44,11 @@ public sealed class TimedEventCollection : IEnumerable<KeyValuePair<string, Time
     /// <inheritdoc />
     public IEnumerator<KeyValuePair<string, Event>> GetEnumerator()
     {
-        List<KeyValuePair<string, Event>> snapShot;
+        using var @lock = Sync.EnterScope();
 
-        using (Sync.EnterScope())
-            snapShot = Events.ToList();
+        var snapshot = Events.ToArray();
 
-        return snapShot.GetEnumerator();
+        return snapshot.GetGenericEnumerator();
     }
 
     /// <inheritdoc />

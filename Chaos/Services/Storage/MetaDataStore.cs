@@ -132,7 +132,7 @@ public class MetaDataStore : IMetaDataStore
                     req3,
                     req4
                 }.Where(obj => obj is not null)
-                 .ToList();
+                 .ToArray();
 
             var node = new AbilityMetaNode(template.Name, template is SkillTemplate, template.Class ?? BaseClass.Peasant)
             {
@@ -231,22 +231,18 @@ public class MetaDataStore : IMetaDataStore
 
             var prefixAndSuffixMutations = Options.PrefixMutators
                                                   .SelectMany(mutator => mutator.Mutate(node, template))
-                                                  .SelectMany(
-                                                      mutated => Options.SuffixMutators.SelectMany(
-                                                          mutator => mutator.Mutate(mutated, template)))
-                                                  .ToList();
+                                                  .SelectMany(mutated
+                                                      => Options.SuffixMutators.SelectMany(mutator => mutator.Mutate(mutated, template)));
 
             var allMutations = prefixMutations.Concat(suffixMutations)
                                               .Concat(prefixAndSuffixMutations);
 
             if (template.IsDyeable)
-                allMutations = allMutations.SelectMany(
-                    mutated => Enum.GetNames<DisplayColor>()
-                                   .Select(
-                                       colorName => mutated with
-                                       {
-                                           Name = $"{colorName} {mutated.Name}"
-                                       }));
+                allMutations = allMutations.SelectMany(mutated => Enum.GetNames<DisplayColor>()
+                                                                      .Select(colorName => mutated with
+                                                                      {
+                                                                          Name = $"{colorName} {mutated.Name}"
+                                                                      }));
 
             foreach (var mutation in allMutations.DistinctBy(n => n.Name))
                 itemMetaNodes.AddNode(mutation);

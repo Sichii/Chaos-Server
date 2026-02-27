@@ -1,4 +1,5 @@
 #region
+using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Running;
 #endregion
 
@@ -10,7 +11,11 @@ public static class Program
         =>
 
             // Uncomment the benchmark you want to run:
-            BenchmarkRunner.Run<PointExtensionsBenchmarks>();
+            BenchmarkRunner.Run<EscapeAnalysisBenchmarks>(
+ #if DEBUG
+                new DebugInProcessConfig()
+                #endif
+            );
 
     //BenchmarkRunner.Run<QuadTreeBenchmarks>();
     //BenchmarkRunner.Run<GeometryBenchmarks>();

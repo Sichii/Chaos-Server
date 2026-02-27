@@ -186,7 +186,7 @@ public static class IntegerRandomizer
         [ExcludeFromCodeCoverage(Justification = "Tested by PickRandomWeightedSingleOrDefault<T>(ICollection<KeyValuePair<T, int>>)")]
         public T? PickRandomWeightedSingleOrDefault(int commonWeight)
             => choices.Select(x => new KeyValuePair<T, int>(x, commonWeight))
-                      .ToList()
+                      .ToArray()
                       .PickRandomWeightedSingleOrDefault();
 
         /// <summary>
@@ -205,7 +205,7 @@ public static class IntegerRandomizer
         [ExcludeFromCodeCoverage(Justification = "Tested by PickRandomWeightedSingleOrDefault<T>(ICollection<KeyValuePair<T, int>>)")]
         public T? PickRandomWeightedSingleOrDefault(IEnumerable<int> weights)
             => choices.Zip(weights, (choice, weight) => new KeyValuePair<T, int>(choice, weight))
-                      .ToList()
+                      .ToArray()
                       .PickRandomWeightedSingleOrDefault();
     }
 }

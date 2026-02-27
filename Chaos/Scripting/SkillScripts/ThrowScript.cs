@@ -1,4 +1,5 @@
 #region
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
@@ -29,11 +30,13 @@ public class ThrowScript : SkillScriptBase
         var targetPoint = thrownPoint.DirectionalOffset(throwDirection);
 
         //potential points are the throw point, and the 3 points around it
-        var potentialTargetPoints = targetPoint.GenerateCardinalPoints()
-                                               .WithConsistentDirectionBias(throwDirection)
-                                               .SkipLast(1)
-                                               .Prepend(targetPoint)
-                                               .ToList();
+        using var rented = targetPoint.GenerateCardinalPoints()
+                                      .WithConsistentDirectionBias(throwDirection)
+                                      .SkipLast(1)
+                                      .Prepend(targetPoint)
+                                      .ToRented();
+
+        var potentialTargetPoints = rented.Span;
 
         foreach (var aisling in thrownAislings)
         {

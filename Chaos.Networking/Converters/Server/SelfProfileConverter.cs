@@ -106,7 +106,8 @@ public sealed class SelfProfileConverter : PacketConverterBase<SelfProfileArgs>
         {
             legendMarkCount = byte.MaxValue;
 
-            legendMarks = legendMarks.TakeRandom(byte.MaxValue)
+            legendMarks = legendMarks.Shuffle()
+                                     .Take(byte.MaxValue)
                                      .ToList();
         }
 

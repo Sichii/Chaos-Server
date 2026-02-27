@@ -79,7 +79,7 @@ public abstract class BigFlags<TMarker> where TMarker: class
             var fields = type.GetFields(BindingFlags.Public | BindingFlags.Static)
                              .Where(f => f.FieldType == typeof(BigFlagsValue<TMarker>))
                              .OrderBy(f => f.MetadataToken) // Preserve declaration order
-                             .ToList();
+                             .ToArray();
 
             var nextBitIndex = 0;
 

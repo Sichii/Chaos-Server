@@ -37,8 +37,7 @@ public sealed class ArgumentCollection : IEnumerable<string>
         arguments ??= [];
 
         if (!string.IsNullOrEmpty(delimiter))
-            arguments = arguments.SelectMany(str => str.Split(delimiter))
-                                 .ToList();
+            arguments = arguments.SelectMany(str => str.Split(delimiter));
 
         Arguments = arguments.ToList();
     }

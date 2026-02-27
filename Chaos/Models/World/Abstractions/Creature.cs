@@ -186,6 +186,33 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
     public virtual void Chant(string message) => ShowPublicMessage(PublicMessageType.Chant, message);
 
+    public Direction FindOptimalDirection(IPoint target, IPathOptions? pathOptions = null, bool ignoreCollision = false)
+    {
+        pathOptions ??= PathOptions.Default.ForCreatureType(Type);
+
+        var nearbyDoors = MapInstance.GetEntitiesWithinRange<Door>(this)
+                                     .Where(door => door.Closed);
+
+        var nearbyCreatures = MapInstance.GetEntitiesWithinRange<Creature>(this)
+                                         .ThatThisCollidesWith(this);
+
+        var blockedPoints = new HashSet<IPoint>(pathOptions.BlockedPoints, PointEqualityComparer.Instance);
+
+        if (!pathOptions.IgnoreWalls)
+            blockedPoints.AddRange(nearbyDoors);
+
+        if (!ignoreCollision)
+            blockedPoints.AddRange(nearbyCreatures);
+
+        pathOptions.BlockedPoints = blockedPoints;
+
+        return MapInstance.Pathfinder.FindOptimalDirection(
+            MapInstance.InstanceId,
+            this,
+            target,
+            pathOptions);
+    }
+
     public Stack<IPoint> FindPath(IPoint target, IPathOptions? pathOptions = null, bool ignoreCollision = false)
     {
         pathOptions ??= PathOptions.Default.ForCreatureType(Type);
@@ -332,10 +359,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (this.ManhattanDistanceFrom(target) <= distance)
             return;
 
-        var path = FindPath(target, pathOptions);
-
-        var nextPoint = path.Pop();
-        var direction = nextPoint.DirectionalRelationTo(this);
+        var direction = FindOptimalDirection(target, pathOptions, ignoreCollision);
 
         Walk(
             direction,
@@ -356,7 +380,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         foreach (var creature in MapInstance.GetEntitiesWithinRange<Creature>(this))
             if (!creature.Equals(this))
-                creature.UpdateViewPort([this]);
+                creature.UpdateViewPort(this);
 
         Display();
     }
@@ -379,25 +403,25 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (!Script.CanTalk())
             return;
 
-        IEnumerable<Creature>? creaturesWithinRange;
+        IEnumerable<Creature>? query;
         var sendMessage = message;
 
         switch (publicMessageType)
         {
             case PublicMessageType.Normal:
-                creaturesWithinRange = MapInstance.GetEntitiesWithinRange<Creature>(this)
-                                                  .ThatCanObserve(this);
+                query = MapInstance.GetEntitiesWithinRange<Creature>(this)
+                                   .ThatCanObserve(this);
                 sendMessage = $"{Name}: {message}";
 
                 break;
             case PublicMessageType.Shout:
-                creaturesWithinRange = MapInstance.GetEntities<Creature>();
+                query = MapInstance.GetEntities<Creature>();
                 sendMessage = $"{Name}! {message}";
 
                 break;
             case PublicMessageType.Chant:
-                creaturesWithinRange = MapInstance.GetEntities<Creature>()
-                                                  .ThatCanObserve(this);
+                query = MapInstance.GetEntities<Creature>()
+                                   .ThatCanObserve(this);
 
                 break;
             default:
@@ -407,7 +431,8 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         if (this is Aisling && (sendMessage.Length > CONSTANTS.MAX_MESSAGE_LINE_LENGTH))
             sendMessage = sendMessage[..CONSTANTS.MAX_MESSAGE_LINE_LENGTH];
 
-        creaturesWithinRange = creaturesWithinRange.ToList();
+        using var rented = query.ToRented();
+        var creaturesWithinRange = rented.Array;
 
         //separated so merchant replies show up below the text theyre responding to
         foreach (var aisling in creaturesWithinRange.OfType<Aisling>())
@@ -506,8 +531,9 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
 
         MapInstance.AddEntities(groundItems);
 
-        var reactors = MapInstance.GetDistinctReactorsAtPoint(point)
-                                  .ToList();
+        using var rented = MapInstance.GetDistinctReactorsAtPoint(point)
+                                      .ToRented();
+        var reactors = rented.Span;
 
         foreach (var groundItem in groundItems)
         {
@@ -558,8 +584,11 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
                   money.Amount,
                   ILocation.ToString(money));
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(point)
-                                           .ToList())
+        using var rented = MapInstance.GetDistinctReactorsAtPoint(point)
+                                      .ToRented();
+        var reactors = rented.Span;
+
+        foreach (var reactor in reactors)
             reactor.OnGoldDroppedOn(this, money);
 
         return true;
@@ -618,7 +647,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Trackers.LastTurn = DateTime.UtcNow;
     }
 
-    public virtual void UpdateViewPort(HashSet<VisibleEntity>? partialUpdateEntities = null, bool refresh = false)
+    public virtual void UpdateViewPort(ICollection<VisibleEntity>? partialUpdateEntities = null, bool refresh = false)
     {
         //if entitiestoCheck is not null, only do a partial viewport update
         var previouslyObservable = partialUpdateEntities is null
@@ -642,12 +671,6 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         foreach (var entity in currentlyObservable)
             if (!previouslyObservable.Contains(entity))
                 OnApproached(entity, refresh);
-
-        /*foreach (var entity in previouslyObservable.Except(currentlyObservable))
-            OnDeparture(entity, refresh);
-
-        foreach (var entity in currentlyObservable.Except(previouslyObservable))
-            OnApproached(entity, refresh);*/
     }
 
     public virtual void UpdateViewPort(VisibleEntity singleEntity)
@@ -690,25 +713,25 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         Trackers.LastWalk = DateTime.UtcNow;
         Trackers.LastPosition = startPosition;
 
-        var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint, 16)
-                                           .ThatAreWithinRange(
-                                               points:
-                                               [
-                                                   startPoint,
-                                                   endPoint
-                                               ])
-                                           .ToList();
+        using var rentedCreaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint, 16)
+                                                       .ThatAreWithinRange(
+                                                           points:
+                                                           [
+                                                               startPoint,
+                                                               endPoint
+                                                           ])
+                                                       .OfType<VisibleEntity>()
+                                                       .ToRented();
+
+        var creaturesToUpdate = rentedCreaturesToUpdate.Array;
 
         //non-aislings only cause partial viewport updates because they do not have shared vision requirements (due to lanterns)
-        var nearbyVisibleEntities = creaturesToUpdate.OfType<VisibleEntity>()
-                                                     .ToHashSet();
-
-        foreach (var creature in creaturesToUpdate)
+        foreach (var creature in creaturesToUpdate.OfType<Creature>())
             if (!creature.Equals(this))
                 creature.UpdateViewPort(this);
 
         //update the walking creature's own viewport about nearby creatures
-        UpdateViewPort(nearbyVisibleEntities);
+        UpdateViewPort(creaturesToUpdate);
 
         var aislingsThatWatchedUsWalk = creaturesToUpdate.OfType<Aisling>()
                                                          .ThatCanObserve(this);
@@ -716,8 +739,10 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         foreach (var aisling in aislingsThatWatchedUsWalk)
             aisling.Client.SendCreatureWalk(Id, startPoint, Direction);
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
-                                           .ToList())
+        using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(this)
+                                              .ToRented();
+
+        foreach (var reactor in rentedReactors.Array)
             reactor.OnWalkedOn(this);
     }
 
@@ -726,7 +751,7 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         pathOptions ??= PathOptions.Default.ForCreatureType(Type);
 
         var surroundingPoints = this.GenerateCardinalPoints()
-                                    .ToList();
+                                    .ToArray();
 
         var nearbyDoors = MapInstance.GetEntitiesAtPoints<Door>(surroundingPoints)
                                      .Where(door => door.Closed);
@@ -764,8 +789,11 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         base.WarpTo(destinationPoint);
         Trackers.LastPosition = startPosition;
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
-                                           .ToList())
+        using var rented = MapInstance.GetDistinctReactorsAtPoint(this)
+                                      .ToRented();
+        var reactors = rented.Span;
+
+        foreach (var reactor in reactors)
             reactor.OnWalkedOn(this);
     }
 

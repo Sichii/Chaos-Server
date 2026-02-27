@@ -1,5 +1,7 @@
+#region
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+#endregion
 
 namespace Chaos.Pathfinding.Abstractions;
 
@@ -26,7 +28,29 @@ public interface IPathfindingService
     /// <returns>
     ///     The <see cref="Chaos.Geometry.Abstractions.Definitions.Direction" /> to walk to move to the next point in the path
     /// </returns>
+    Direction FindOptimalDirection(
+        string gridKey,
+        IPoint start,
+        IPoint end,
+        IPathOptions? pathOptions = null);
+
+    /// <summary>
+    ///     Finds a path from the start to the end with options to ignorewalls or path around certain creatures
+    /// </summary>
+    /// <param name="gridKey">
+    ///     The key of the grid to perform pathfinding on
+    /// </param>
+    /// <param name="start">
+    ///     The point to start pathfinding from
+    /// </param>
+    /// <param name="end">
+    ///     The point to pathfind to
+    /// </param>
+    /// <param name="pathOptions">
+    ///     Path generation options
+    /// </param>
     /// <returns>
+    ///     The path from the start to the end
     /// </returns>
     Stack<IPoint> FindPath(
         string gridKey,

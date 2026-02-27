@@ -172,18 +172,18 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
             };
 
         var mapInstance = default(MapInstance)!;
-        var monsterSpawns = default(List<MonsterSpawn>)!;
-        var merchantSpawnSchemas = default(List<MerchantSpawnSchema>)!;
-        var reactorsSchemas = default(List<ReactorTileSchema>)!;
+        var monsterSpawns = default(MonsterSpawn[])!;
+        var merchantSpawnSchemas = default(MerchantSpawnSchema[])!;
+        var reactorsSchemas = default(ReactorTileSchema[])!;
 
         Parallel.Invoke(
             () => mapInstance = EntityRepository.LoadAndMap<MapInstance, MapInstanceSchema>(mapInstancePath, mapInstanceAction),
             () => monsterSpawns = EntityRepository.LoadAndMapMany<MonsterSpawn, MonsterSpawnSchema>(monsterSpawnsPath)
-                                                  .ToList(),
+                                                  .ToArray(),
             () => merchantSpawnSchemas = EntityRepository.LoadMany<MerchantSpawnSchema>(merchantSpawnsPath)
-                                                         .ToList(),
+                                                         .ToArray(),
             () => reactorsSchemas = EntityRepository.LoadMany<ReactorTileSchema>(reactorsPath)
-                                                    .ToList());
+                                                    .ToArray());
 
         mapInstance.BaseInstanceId = baseInstanceId;
 
@@ -353,9 +353,9 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
     {
         var shards = LocalLookup.Values
                                 .Where(m => m.IsShard)
-                                .ToList();
+                                .GroupBy(s => s.BaseInstanceId);
 
-        foreach (var mapGroup in shards.GroupBy(s => s.BaseInstanceId))
+        foreach (var mapGroup in shards)
         {
             var shardLookup = new ConcurrentDictionary<string, MapInstance>(StringComparer.OrdinalIgnoreCase);
 

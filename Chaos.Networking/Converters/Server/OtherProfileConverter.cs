@@ -137,7 +137,8 @@ public sealed class OtherProfileConverter : PacketConverterBase<OtherProfileArgs
         {
             legendMarkCount = byte.MaxValue;
 
-            legendMarks = legendMarks.TakeRandom(byte.MaxValue)
+            legendMarks = legendMarks.Shuffle()
+                                     .Take(byte.MaxValue)
                                      .ToList();
         }
 

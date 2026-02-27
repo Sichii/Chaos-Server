@@ -2,6 +2,7 @@
 using Chaos.Collections;
 using Chaos.Definitions;
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
 #endregion
 
@@ -57,18 +58,22 @@ public abstract class VisibleEntity(ushort sprite, MapInstance mapInstance, IPoi
         var startPoint = Point.From(this);
         SetLocation(destinationPoint);
 
-        var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint)
-                                           .Union(MapInstance.GetEntitiesWithinRange<Creature>(destinationPoint))
-                                           .ToList();
+        using var rentedCreaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint)
+                                                       .Union(MapInstance.GetEntitiesWithinRange<Creature>(destinationPoint))
+                                                       .ToRented();
+        var creaturesToUpdate = rentedCreaturesToUpdate.Array;
 
         //non-aislings only cause partial viewport updates because they do not have shared vision requirements (due to lanterns)
         foreach (var creature in creaturesToUpdate)
             creature.UpdateViewPort(this);
 
-        var aislingsThatWatchedUsWarp = creaturesToUpdate.ThatAreWithinRange(startPoint)
-                                                         .ThatAreWithinRange(destinationPoint)
-                                                         .ThatCanObserve(this)
-                                                         .OfType<Aisling>();
+        using var rentedAislingsThatWatchedUsWarp = creaturesToUpdate.ThatAreWithinRange(startPoint)
+                                                                     .ThatAreWithinRange(destinationPoint)
+                                                                     .ThatCanObserve(this)
+                                                                     .OfType<Aisling>()
+                                                                     .ToRented();
+
+        var aislingsThatWatchedUsWarp = rentedAislingsThatWatchedUsWarp.Span;
 
         foreach (var aisling in aislingsThatWatchedUsWarp)
         {

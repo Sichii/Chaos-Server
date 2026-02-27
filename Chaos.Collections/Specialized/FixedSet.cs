@@ -1,9 +1,14 @@
+#region
+using Chaos.Extensions.Common;
+#endregion
+
 namespace Chaos.Collections.Specialized;
 
 #region
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Extensions.Common;
 #endregion
 
 /// <summary>
@@ -141,9 +146,9 @@ public sealed class FixedSet<T> : ICollection<T> where T: notnull
     {
         using var @lock = Sync.EnterScope();
 
-        var snapshot = Items.ToList();
+        var snapshot = Items.ToArray();
 
-        return snapshot.GetEnumerator();
+        return snapshot.GetGenericEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

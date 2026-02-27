@@ -1,5 +1,9 @@
 // ReSharper disable once CheckNamespace
 
+#region
+using JetBrains.Annotations;
+#endregion
+
 namespace Chaos.Extensions.Common;
 
 /// <summary>
@@ -83,6 +87,18 @@ public static class ArrayExtensions
                 (arr[i], arr[j]) = (arr[j], arr[i]);
             }
         }
+    }
+
+    extension<T>(T[] arr)
+    {
+        /// <summary>
+        ///     Returns an enumerator that iterates through the array.
+        /// </summary>
+        /// <returns>
+        ///     An enumerator that can be used to iterate through the collection.
+        /// </returns>
+        [MustDisposeResource]
+        public IEnumerator<T> GetGenericEnumerator() => ((IEnumerable<T>)arr).GetEnumerator();
     }
 
     internal sealed class ArrayTraverse

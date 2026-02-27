@@ -121,8 +121,11 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (quantity <= 0)
             return false;
 
-        var existingItems = this.Where(item => item.DisplayName.EqualsI(name))
-                                .ToList();
+        using var rented = UnsafeEnumerate()
+                           .Where(item => item.DisplayName.EqualsI(name))
+                           .ToRented();
+
+        var existingItems = rented.Array;
 
         if (existingItems.Count == 0)
             return false;
@@ -175,17 +178,19 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (!HasCount(existingItem.DisplayName, quantity))
             return false;
 
-        var existingItems = Objects
-                            .Where(item => (item != null) && item.DisplayName.EqualsI(existingItem.DisplayName) && (item.Slot != slot))
-                            .Prepend(existingItem)
-                            .ToList();
+        using var rented = UnsafeEnumerate()
+                           .Where(item => item.DisplayName.EqualsI(existingItem.DisplayName) && (item.Slot != slot))
+                           .Prepend(existingItem)
+                           .ToRented();
+
+        var existingItems = rented.Array;
 
         var ret = new List<Item>();
 
         foreach (var item in existingItems)
             if (quantity <= 0)
                 break;
-            else if (item!.Count <= quantity)
+            else if (item.Count <= quantity)
             {
                 Objects[item.Slot] = null;
                 BroadcastOnRemoved(item.Slot, item);
@@ -213,8 +218,11 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (quantity <= 0)
             return false;
 
-        var existingItems = this.Where(item => item.DisplayName.EqualsI(name))
-                                .ToList();
+        using var rented = UnsafeEnumerate()
+                           .Where(item => item.DisplayName.EqualsI(name))
+                           .ToRented();
+
+        var existingItems = rented.Array;
 
         if (existingItems.Count == 0)
             return false;
@@ -259,10 +267,12 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (!HasCount(existingItem.DisplayName, quantity))
             return false;
 
-        var existingItems = Objects
-                            .Where(item => (item != null) && item.DisplayName.EqualsI(existingItem.DisplayName) && (item.Slot != slot))
-                            .Prepend(existingItem)
-                            .ToList();
+        using var rented = UnsafeEnumerate()
+                           .Where(item => item.DisplayName.EqualsI(existingItem.DisplayName) && (item.Slot != slot))
+                           .Prepend(existingItem)
+                           .ToRented();
+
+        var existingItems = rented.Array;
 
         foreach (var item in existingItems)
             if (quantity <= 0)
@@ -293,8 +303,11 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (quantity <= 0)
             return false;
 
-        var existingItems = this.Where(item => item.Template.TemplateKey.EqualsI(templateKey))
-                                .ToList();
+        using var rented = UnsafeEnumerate()
+                           .Where(item => item.Template.TemplateKey.EqualsI(templateKey))
+                           .ToRented();
+
+        var existingItems = rented.Array;
 
         if (existingItems.Count == 0)
             return false;
@@ -337,8 +350,11 @@ public sealed class Inventory : PanelBase<Item>, IInventory
         if (quantity <= 0)
             return false;
 
-        var existingItems = this.Where(item => item.Template.TemplateKey.EqualsI(templateKey))
-                                .ToList();
+        using var rented = UnsafeEnumerate()
+                           .Where(item => item.Template.TemplateKey.EqualsI(templateKey))
+                           .ToRented();
+
+        var existingItems = rented.Array;
 
         if (existingItems.Count == 0)
             return false;
@@ -468,8 +484,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
 
         using var @lock = Sync.EnterScope();
 
-        var items = Objects.Where(i => i != null)
-                           .ToList();
+        var items = Objects.Where(i => i != null);
 
         //if there is a preferred slot, consider that slot first when adding
         if (preferredSlot.HasValue && (Objects[preferredSlot.Value] != null))
@@ -477,8 +492,7 @@ public sealed class Inventory : PanelBase<Item>, IInventory
             var preferredItem = Objects[preferredSlot.Value];
 
             items = items.Where(i => i!.Slot != preferredSlot.Value)
-                         .Prepend(preferredItem)
-                         .ToList();
+                         .Prepend(preferredItem);
         }
 
         foreach (var item in items)

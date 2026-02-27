@@ -197,7 +197,7 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                 writer.WriteString8(args.Board.Name);
 
                 //order posts newest to oldest
-                var orderedPosts = (IEnumerable<PostInfo>)args.Board.Posts.OrderByDescending(p => p.PostId);
+                IEnumerable<PostInfo> orderedPosts = args.Board.Posts.OrderByDescending(p => p.PostId);
 
                 //if there's a StartPostId, only send posts with an id greater than or equal to it
                 if (args.StartPostId.HasValue)
@@ -205,9 +205,9 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
 
                 //only send up to 127 posts (i have no fucking clue why its sbyte.MaxValue)
                 var posts = orderedPosts.Take(sbyte.MaxValue)
-                                        .ToList();
+                                        .ToArray();
 
-                writer.WriteSByte((sbyte)posts.Count);
+                writer.WriteSByte((sbyte)posts.Length);
 
                 foreach (var post in posts)
                 {
@@ -241,7 +241,7 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                 writer.WriteString8(args.Board.Name);
 
                 //order posts newest to oldest
-                var orderedPosts = (IEnumerable<PostInfo>)args.Board.Posts.OrderByDescending(p => p.PostId);
+                IEnumerable<PostInfo> orderedPosts = args.Board.Posts.OrderByDescending(p => p.PostId);
 
                 //if there's a StartPostId, only send posts with an id greater than or equal to it
                 if (args.StartPostId.HasValue)

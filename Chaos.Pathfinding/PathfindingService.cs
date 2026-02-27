@@ -1,8 +1,10 @@
+#region
 using System.Collections.Concurrent;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Pathfinding.Abstractions;
 using Microsoft.Extensions.Caching.Memory;
+#endregion
 
 namespace Chaos.Pathfinding;
 
@@ -25,6 +27,20 @@ public sealed class PathfindingService : IPathfindingService
     {
         GridDetails = new ConcurrentDictionary<string, IGridDetails>(StringComparer.OrdinalIgnoreCase);
         MemoryCache = memoryCache;
+    }
+
+    /// <inheritdoc />
+    public Direction FindOptimalDirection(
+        string gridKey,
+        IPoint start,
+        IPoint end,
+        IPathOptions? pathOptions = null)
+    {
+        var lookupKey = ConstructKey(gridKey);
+
+        var pathFinder = MemoryCache.GetOrCreate(lookupKey, CreatePathfinder);
+
+        return pathFinder!.FindOptimalDirection(start, end, pathOptions);
     }
 
     /// <inheritdoc />

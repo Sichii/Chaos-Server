@@ -358,9 +358,10 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
             //entities that were already on the map only need to be updated with the incoming entities
             //and only if there even are any incoming entities within their viewport
-            var withinRange = visibleObjects.ThatAreWithinRange(creature)
-                                            .OfType<VisibleEntity>()
-                                            .ToHashSet();
+            using var rentedWithinRange = visibleObjects.ThatAreWithinRange(creature)
+                                                        .OfType<VisibleEntity>()
+                                                        .ToRented();
+            var withinRange = rentedWithinRange.Array;
 
             //non-aislings only cause partial viewport updates because they do not have shared vision requirements (due to lanterns)
             //this method should never be called with aislings
@@ -724,9 +725,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 break;
             case ShardingType.AbsolutePlayerLimit:
             {
-                var aislings = Objects.Values<Aisling>()
-                                      .Where(aisling => !aisling.IsAdmin)
-                                      .ToList();
+                using var rentedAislings = Objects.Values<Aisling>()
+                                                  .Where(aisling => !aisling.IsAdmin)
+                                                  .ToRented();
+
+                var aislings = rentedAislings.Array;
 
                 var amountOverLimit = aislings.Count - limit;
 
@@ -734,16 +737,18 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 if (amountOverLimit <= 0)
                     return;
 
-                var aislingsToRemove = aislings.OrderByDescending(a => a.Id)
-                                               .ThenBy(a =>
-                                               {
-                                                   if (a.Group == null)
-                                                       return 0;
+                using var rentedAislingToRemove = aislings.OrderByDescending(a => a.Id)
+                                                          .ThenBy(a =>
+                                                          {
+                                                              if (a.Group == null)
+                                                                  return 0;
 
-                                                   return a.Group.Count(m => m.MapInstance == this);
-                                               })
-                                               .Take(amountOverLimit)
-                                               .ToHashSet();
+                                                              return a.Group.Count(m => m.MapInstance == this);
+                                                          })
+                                                          .Take(amountOverLimit)
+                                                          .ToRented();
+
+                var aislingsToRemove = rentedAislingToRemove.Array;
 
                 //for each timer that isnt for one of these aislings
                 //remove that timer
@@ -771,7 +776,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 //for each timer that has expired
                 //move the player to the exit and remove the timer
                 foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
-                                                      .ToList())
+                                                      .ToArray())
                     if (kvp.Value.IntervalElapsed)
                     {
                         var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
@@ -784,27 +789,27 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             case ShardingType.AbsoluteGroupLimit:
             {
                 var aislings = Objects.Values<Aisling>()
-                                      .Where(aisling => !aisling.IsAdmin)
-                                      .ToList();
+                                      .Where(aisling => !aisling.IsAdmin);
 
                 //number of unique groups in the zone
-                var groups = aislings.GroupBy(a => a.Group)
-                                     .SelectMany(grp =>
-                                     {
-                                         if (grp.Key == null)
-                                             return grp.Select(m => new List<Aisling>
-                                             {
-                                                 m
-                                             });
+                using var rentedGroups = aislings.GroupBy(a => a.Group)
+                                                 .SelectMany(grp =>
+                                                 {
+                                                     if (grp.Key == null)
+                                                         return grp.Select(m => new[]
+                                                         {
+                                                             m
+                                                         });
 
-                                         return
-                                         [
-                                             grp.Where(m => m.MapInstance == this)
-                                                .ToList()
-                                         ];
-                                     })
-                                     .ToList();
+                                                     return
+                                                     [
+                                                         grp.Where(m => m.MapInstance == this)
+                                                            .ToArray()
+                                                     ];
+                                                 })
+                                                 .ToRented();
 
+                var groups = rentedGroups.Array;
                 var groupCount = groups.Count;
 
                 var amountOverLimit = groupCount - limit;
@@ -813,13 +818,13 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 if (amountOverLimit <= 0)
                     return;
 
-                var groupsToRemove = groups.OrderByDescending(grp => grp.Max(a => a.Id))
-                                           .ThenBy(grp => grp.Count)
-                                           .Take(amountOverLimit)
-                                           .ToList();
+                using var rentedAislingsToRemove = groups.OrderByDescending(grp => grp.Max(a => a.Id))
+                                                         .ThenBy(grp => grp.Length)
+                                                         .Take(amountOverLimit)
+                                                         .SelectMany(a => a)
+                                                         .ToRented();
 
-                var aislingsToRemove = groupsToRemove.SelectMany(l => l)
-                                                     .ToList();
+                var aislingsToRemove = rentedAislingsToRemove.Array;
 
                 //for each timer that isnt for one of these aislings
                 //remove that timer
@@ -847,7 +852,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 //for each timer that has expired
                 //move the player to the exit and remove the timer
                 foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
-                                                      .ToList())
+                                                      .ToArray())
                     if (kvp.Value.IntervalElapsed)
                     {
                         var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
@@ -860,27 +865,27 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             case ShardingType.AbsoluteGuildLimit:
             {
                 var aislings = Objects.Values<Aisling>()
-                                      .Where(aisling => !aisling.IsAdmin)
-                                      .ToList();
+                                      .Where(aisling => !aisling.IsAdmin);
 
                 //number of unique groups in the zone
-                var guilds = aislings.GroupBy(a => a.Guild)
-                                     .SelectMany(gld =>
-                                     {
-                                         if (gld.Key == null)
-                                             return gld.Select(m => new List<Aisling>
-                                             {
-                                                 m
-                                             });
+                using var rentedGuilds = aislings.GroupBy(a => a.Guild)
+                                                 .SelectMany(gld =>
+                                                 {
+                                                     if (gld.Key == null)
+                                                         return gld.Select(m => new[]
+                                                         {
+                                                             m
+                                                         });
 
-                                         return
-                                         [
-                                             gld.Where(m => m.MapInstance == this)
-                                                .ToList()
-                                         ];
-                                     })
-                                     .ToList();
+                                                     return
+                                                     [
+                                                         gld.Where(m => m.MapInstance == this)
+                                                            .ToArray()
+                                                     ];
+                                                 })
+                                                 .ToRented();
 
+                var guilds = rentedGuilds.Array;
                 var guildCount = guilds.Count;
 
                 var amountOverLimit = guildCount - limit;
@@ -889,13 +894,13 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 if (amountOverLimit <= 0)
                     return;
 
-                var guildsToRemove = guilds.OrderByDescending(gld => gld.Max(a => a.Id))
-                                           .ThenBy(gld => gld.Count)
-                                           .Take(amountOverLimit)
-                                           .ToList();
+                using var rentedAislingsToRemove = guilds.OrderByDescending(gld => gld.Max(a => a.Id))
+                                                         .ThenBy(gld => gld.Length)
+                                                         .Take(amountOverLimit)
+                                                         .SelectMany(l => l)
+                                                         .ToRented();
 
-                var aislingsToRemove = guildsToRemove.SelectMany(l => l)
-                                                     .ToList();
+                var aislingsToRemove = rentedAislingsToRemove.Array;
 
                 //for each timer that isnt for one of these aislings
                 //remove that timer
@@ -923,7 +928,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 //for each timer that has expired
                 //move the player to the exit and remove the timer
                 foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
-                                                      .ToList())
+                                                      .ToArray())
                     if (kvp.Value.IntervalElapsed)
                     {
                         var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
@@ -1190,8 +1195,9 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         ignoreWalls ??= collisionType == CreatureType.WalkThrough;
         ignoreCollision ??= false;
 
-        var creatures = GetEntitiesAtPoints<Creature>(point)
-            .ToList();
+        using var rentedCreatures = GetEntitiesAtPoints<Creature>(point)
+            .ToRented();
+        var creatures = rentedCreatures.Array;
 
         if (!ignoreBlockingReactors.Value && IsBlockingReactor(point))
             return false;
@@ -1631,9 +1637,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         using (ActivitySources.StartUpdateActivity("Update.Map.Execute"))
             Update(delta);
 
-        var aislingsToSave = Objects.Values<Aisling>()
-                                    .Where(aisling => aisling.SaveTimer.IntervalElapsed)
-                                    .ToList();
+        using var rentedAislingsToSave = Objects.Values<Aisling>()
+                                                .Where(aisling => aisling.SaveTimer.IntervalElapsed)
+                                                .ToRented();
+
+        var aislingsToSave = rentedAislingsToSave.Array;
 
         if (aislingsToSave.Count > 0)
         {
@@ -1653,7 +1661,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <param name="partialUpdateEntities">
     ///     If the entities that changed are known, they are passed in to reduce computation cost of the update
     /// </param>
-    public void UpdateNearbyViewPorts(IPoint point, HashSet<VisibleEntity>? partialUpdateEntities = null)
+    public void UpdateNearbyViewPorts(IPoint point, ICollection<VisibleEntity>? partialUpdateEntities = null)
     {
         foreach (var creature in GetEntitiesWithinRange<Creature>(point))
             creature.UpdateViewPort(partialUpdateEntities);

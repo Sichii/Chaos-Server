@@ -1,5 +1,6 @@
 #region
 using Chaos.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
@@ -201,8 +202,9 @@ public static class AoeShapeExtensions
                 {
                     var circle = new Circle(sourcePoint, options.Range);
 
-                    var outline = circle.GetOutline()
-                                        .ToList();
+                    using var rentedOutline = circle.GetOutline()
+                                                    .ToRented();
+                    var outline = rentedOutline.Array;
 
                     return options.AllPossiblePoints.Where(pt => outline.Contains(pt));
                 }
@@ -210,8 +212,9 @@ public static class AoeShapeExtensions
                 {
                     var rectangle = new Rectangle(sourcePoint, options.Range * 2 + 1, options.Range * 2 + 1);
 
-                    var outline = rectangle.GetOutline()
-                                           .ToList();
+                    using var rentedOutline = rectangle.GetOutline()
+                                                       .ToRented();
+                    var outline = rentedOutline.Array;
 
                     return options.AllPossiblePoints.Where(pt => outline.Contains(pt));
                 }

@@ -285,7 +285,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     {
         panel.AddObserver(observer);
 
-        var objs = panel.ToList();
+        var objs = panel.ToArray();
         panel.Clear();
 
         foreach (var obj in objs)
@@ -319,7 +319,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                      set => set.Item.DisplayName,
                      (_, grp) =>
                      {
-                         var col = grp.ToList();
+                         var col = grp.ToArray();
 
                          return (col.First()
                                     .Item, Count: col.Sum(i => i.Count));
@@ -611,8 +611,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         Client.SendRefreshResponse();
         Client.SendLightLevel(MapInstance.CurrentLightLevel);
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
-                                           .ToList())
+        using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(this)
+                                              .ToRented();
+
+        foreach (var reactor in rentedReactors.Span)
             reactor.OnWalkedOn(this);
     }
 
@@ -762,8 +764,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                   money.Amount,
                   ILocation.ToString(money));
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(money)
-                                           .ToList())
+        using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(money)
+                                              .ToRented();
+
+        foreach (var reactor in rentedReactors.Span)
             reactor.OnGoldDroppedOn(this, money);
 
         return true;
@@ -865,8 +869,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             MapInstance.RemoveEntity(groundItem);
             item.Script.OnPickup(this, originalItem, originalCount);
 
-            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(groundItem)
-                                               .ToList())
+            using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(groundItem)
+                                                  .ToRented();
+
+            foreach (var reactor in rentedReactors.Span)
                 reactor.OnItemPickedUpFrom(this, groundItem, originalCount);
 
             return true;
@@ -893,8 +899,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
             MapInstance.RemoveEntity(money);
 
-            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(money)
-                                               .ToList())
+            using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(money)
+                                                  .ToRented();
+
+            foreach (var reactor in rentedReactors.Span)
                 reactor.OnGoldPickedUpFrom(this, money);
         }
 
@@ -1154,7 +1162,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     }
 
     /// <inheritdoc />
-    public override void UpdateViewPort(HashSet<VisibleEntity>? partialUpdateEntities = null, bool refresh = false)
+    public override void UpdateViewPort(ICollection<VisibleEntity>? partialUpdateEntities = null, bool refresh = false)
     {
         Dictionary<VisibleEntity, DateTime>? stashedApproachTime = null;
 
@@ -1328,14 +1336,16 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             Trackers.LastWalk = DateTime.UtcNow;
             Trackers.LastPosition = startPosition;
 
-            var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint, 16)
-                                               .ThatAreWithinRange(
-                                                   points:
-                                                   [
-                                                       startPoint,
-                                                       endPoint
-                                                   ])
-                                               .ToList();
+            using var rentedCreaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint, 16)
+                                                           .ThatAreWithinRange(
+                                                               points:
+                                                               [
+                                                                   startPoint,
+                                                                   endPoint
+                                                               ])
+                                                           .ToRented();
+
+            var creaturesToUpdate = rentedCreaturesToUpdate.Array;
 
             var isDarkMap = MapInstance.Flags.HasFlag(MapFlags.Darkness);
 
@@ -1361,8 +1371,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
         using (ActivitySources.StartInternalActivity("Aisling.Walk.PostMovement"))
         {
-            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
-                                               .ToList())
+            using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(this)
+                                                  .ToRented();
+
+            foreach (var reactor in rentedReactors.Span)
                 reactor.OnWalkedOn(this);
 
             var startOnWater = MapInstance.Template.Tiles[startPosition.X, startPosition.Y].IsWater;
@@ -1382,9 +1394,11 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SetLocation(destinationPoint);
         Trackers.LastPosition = startPoint;
 
-        var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint)
-                                           .Union(MapInstance.GetEntitiesWithinRange<Creature>(destinationPoint))
-                                           .ToList();
+        using var rentedCreaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint)
+                                                       .Union(MapInstance.GetEntitiesWithinRange<Creature>(destinationPoint))
+                                                       .ToRented();
+
+        var creaturesToUpdate = rentedCreaturesToUpdate.Array;
 
         var isDarkMap = MapInstance.Flags.HasFlag(MapFlags.Darkness);
 

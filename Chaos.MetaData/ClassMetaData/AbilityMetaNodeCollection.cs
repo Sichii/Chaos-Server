@@ -1,6 +1,8 @@
+#region
 using System.Collections.Frozen;
 using Chaos.DarkAges.Definitions;
 using Chaos.MetaData.Abstractions;
+#endregion
 
 namespace Chaos.MetaData.ClassMetaData;
 
@@ -16,21 +18,18 @@ public sealed class AbilityMetaNodeCollection : MetaNodeCollection<AbilityMetaNo
                                 .ThenBy(node => node.IsSkill)
                                 .ThenBy(node => node.Level)
                                 .GroupBy(node => node.Class)
-                                .ToFrozenDictionary(grp => grp.Key, grp => grp.ToList());
+                                .ToFrozenDictionary(grp => grp.Key, grp => grp.ToArray());
 
         foreach (var nodeGroup in nodesByClass)
         {
             var name = $"SClass{(byte)nodeGroup.Key}";
 
             var metadata = new AbilityMetaData(name);
-            var nodes = nodeGroup.Value;
+            IEnumerable<AbilityMetaNode> nodes = nodeGroup.Value;
 
             // anyone can learn peasant skills
             if (nodeGroup.Key is not BaseClass.Peasant)
-                nodes = nodesByClass.TryGetValue(BaseClass.Peasant, out var peasantNodes)
-                    ? nodes.Concat(peasantNodes)
-                           .ToList()
-                    : nodes;
+                nodes = nodesByClass.TryGetValue(BaseClass.Peasant, out var peasantNodes) ? nodes.Concat(peasantNodes) : nodes;
 
             foreach (var node in nodes)
                 metadata.AddNode(node);

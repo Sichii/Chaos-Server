@@ -1,6 +1,9 @@
 #region
+using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
+using System.Runtime.CompilerServices;
+using Chaos.Common.Utilities;
 #endregion
 
 // ReSharper disable once CheckNamespace
@@ -105,49 +108,55 @@ public static class EnumerableExtensions
         public IOrderedEnumerable<T> OrderByDescending(IComparer<T> comparer) => enumerable.OrderByDescending(e => e, comparer);
 
         /// <summary>
-        ///     Randomly selects a number of elements from the given enumerable
+        ///     Rents a span from the shared <see cref="ArrayPool{T}" /> and fills it with the elements of the enumerable. The
+        ///     caller is responsible for disposing the returned <see cref="Rented{T}" />.
         /// </summary>
         /// <param name="count">
-        ///     The amount of items to randomly select
+        ///     The expected count
         /// </param>
-        /// <returns>
-        ///     A randomly selected sequence of items from the source. Count items are returned, and order is preserved.
-        /// </returns>
-        public IEnumerable<T> TakeRandom(int count)
+        public Rented<T> ToRented(int count)
         {
-            ArgumentNullException.ThrowIfNull(enumerable);
+            var rentedSpan = new Rented<T>(count);
+            var span = rentedSpan.Span;
+            var index = 0;
 
-            ArgumentOutOfRangeException.ThrowIfLessThan(count, 0);
+            foreach (var item in enumerable)
+                span[index++] = item;
 
-            var collection = enumerable.ToList();
+            return rentedSpan;
+        }
 
-            if (count >= collection.Count)
-                return collection;
+        /// <summary>
+        ///     Rents a span from the shared <see cref="ArrayPool{T}" /> and fills it with the elements of the enumerable. If the
+        ///     count is not known, a doubling buffer strategy is used. The caller is responsible for disposing the returned
+        ///     <see cref="Rented{T}" />.
+        /// </summary>
+        public Rented<T> ToRented()
+        {
+            if (enumerable.TryGetNonEnumeratedCount(out var count))
+                return enumerable.ToRented(count);
 
-            return RandomlyIterate(collection, count);
+            var array = ArrayPool<T>.Shared.Rent(32);
+            var index = 0;
 
-            // variant of reservoir sampling
-            static IEnumerable<T> RandomlyIterate(List<T> localCollection, int localCount)
+            foreach (var item in enumerable)
             {
-                var remaining = localCollection.Count;
-
-                for (var i = 0; i < localCollection.Count; i++)
+                if (index == array.Length)
                 {
-                    var probability = (double)localCount / remaining;
+                    var newArray = ArrayPool<T>.Shared.Rent(array.Length * 2);
 
-                    if (Random.Shared.NextDouble() <= probability)
-                    {
-                        yield return localCollection[i];
+                    array.AsSpan(0, index)
+                         .CopyTo(newArray);
 
-                        localCount--;
+                    ArrayPool<T>.Shared.Return(array);
 
-                        if (localCount == 0)
-                            yield break;
-                    }
-
-                    remaining--;
+                    array = newArray;
                 }
+
+                array[index++] = item;
             }
+
+            return new Rented<T>(array, index);
         }
     }
 

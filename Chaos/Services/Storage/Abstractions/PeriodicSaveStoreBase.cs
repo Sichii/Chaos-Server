@@ -99,7 +99,7 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
                 var metricsLogger = Logger.WithTopics(Topics.Actions.Save)
                                           .WithMetrics();
 
-                var mailBoxes = Cache.Values.ToList();
+                var mailBoxes = Cache.Values.ToArray();
 
                 await Task.WhenAll(mailBoxes.Select(SaveAsync));
 
@@ -120,7 +120,7 @@ public abstract class PeriodicSaveStoreBase<T, TOptions> : BackgroundService, IS
         var metricsLoggerA = Logger.WithTopics(Topics.Actions.Save)
                                    .WithMetrics();
 
-        var guildsToSave = Cache.Values.ToList();
+        var guildsToSave = Cache.Values.ToArray();
         await Task.WhenAll(guildsToSave.Select(SaveAsync));
 
         metricsLoggerA.LogInformation("Final save completed");

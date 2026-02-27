@@ -34,21 +34,21 @@ public sealed class AbilityMetaData : MetaDataBase<AbilityMetaNode>
         writer.WriteUInt16((ushort)nodeCount);
 
         var skills = Nodes.Where(node => node.IsSkill)
-                          .ToList();
+                          .ToArray();
 
         var spells = Nodes.Where(node => !node.IsSkill)
-                          .ToList();
+                          .ToArray();
 
         SKILL_NODE.Serialize(ref writer);
 
-        foreach (var skill in CollectionsMarshal.AsSpan(skills))
+        foreach (var skill in skills.AsSpan())
             skill.Serialize(ref writer);
 
         SKILL_END_NODE.Serialize(ref writer);
 
         SPELL_NODE.Serialize(ref writer);
 
-        foreach (var spell in CollectionsMarshal.AsSpan(spells))
+        foreach (var spell in spells.AsSpan())
             spell.Serialize(ref writer);
 
         SPELL_END_NODE.Serialize(ref writer);

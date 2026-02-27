@@ -1,5 +1,7 @@
+#region
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Abstractions.Definitions;
+#endregion
 
 namespace Chaos.Pathfinding.Abstractions;
 
@@ -8,6 +10,23 @@ namespace Chaos.Pathfinding.Abstractions;
 /// </summary>
 public interface IPathfinder
 {
+    /// <summary>
+    ///     Finds a path from the start to the end with options to ignorewalls or path around certain creatures
+    /// </summary>
+    /// <param name="start">
+    ///     The point to start pathfinding from
+    /// </param>
+    /// <param name="end">
+    ///     The point to pathfind to
+    /// </param>
+    /// <param name="pathOptions">
+    ///     Path generation options
+    /// </param>
+    /// <returns>
+    ///     The next direction to walk for the found path
+    /// </returns>
+    Direction FindOptimalDirection(IPoint start, IPoint end, IPathOptions? pathOptions = null);
+
     /// <summary>
     ///     Finds a path from the start to the end with options to ignorewalls or path around certain creatures
     /// </summary>

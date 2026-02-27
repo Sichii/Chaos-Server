@@ -1,4 +1,5 @@
 #region
+using Chaos.Extensions.Common;
 using Chaos.Models.Panel;
 using Chaos.TypeMapper.Abstractions;
 #endregion
@@ -49,12 +50,11 @@ public sealed class Bank : IEnumerable<Item>
     /// <inheritdoc />
     public IEnumerator<Item> GetEnumerator()
     {
-        List<Item> snapshot;
+        using var @lock = Sync.EnterScope();
 
-        using (Sync.EnterScope())
-            snapshot = Items.Values.ToList();
+        var snapshot = Items.Values.ToArray();
 
-        return snapshot.GetEnumerator();
+        return snapshot.GetGenericEnumerator();
     }
 
     /// <summary>

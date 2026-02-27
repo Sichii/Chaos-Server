@@ -90,7 +90,7 @@ public abstract class CompositeScriptBase<TScript> : ScriptBase, ICompositeScrip
         if (Scripts.Remove(script))
             return;
 
-        foreach (var s in Scripts.ToList())
+        foreach (var s in Scripts.ToArray())
             if (s is ICompositeScript<TScript> composite)
                 composite.Remove(script);
     }

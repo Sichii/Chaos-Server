@@ -1,4 +1,5 @@
 #region
+using Chaos.Extensions.Common;
 using Chaos.Models.World.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
@@ -62,31 +63,38 @@ public class ScriptedSequence<T> : IDeltaUpdatable
         if (!ScriptTimer.IntervalElapsed)
             return;
 
-        foreach (var action in RepeatedConditionalActions.ToList())
+        foreach (var action in RepeatedConditionalActions)
             action.Update(Entity);
 
-        foreach (var action in RepeatedConditionalActionSequences.ToList())
+        foreach (var action in RepeatedConditionalActionSequences)
             action.Update(Entity, ScriptUpdateInterval);
 
-        foreach (var action in ConditionalActions.ToList())
+        using var rentedConditionalActions = ConditionalActions.ToRented();
+        using var rentedConditionalActionSequences = ConditionalActionSequences.ToRented();
+        using var rentedRepeatedTimedActions = RepeatedTimedActions.ToRented();
+        using var rentedRepeatedTimedActionSequences = RepeatedTimedActionSequences.ToRented();
+        using var rentedTimedActions = TimedActions.ToRented();
+        using var rentedTimedActionSequences = TimedActionSequences.ToRented();
+
+        foreach (var action in rentedConditionalActions.Span)
             if (action.Update(Entity))
                 ConditionalActions.Remove(action);
 
-        foreach (var action in ConditionalActionSequences.ToList())
+        foreach (var action in rentedConditionalActionSequences.Span)
             if (action.Update(Entity, ScriptUpdateInterval))
                 ConditionalActionSequences.Remove(action);
 
-        foreach (var action in RepeatedTimedActions.ToList())
+        foreach (var action in rentedRepeatedTimedActions.Span)
             action.Update(Entity, ScriptUpdateInterval);
 
-        foreach (var action in RepeatedTimedActionSequences.ToList())
+        foreach (var action in rentedRepeatedTimedActionSequences.Span)
             action.Update(Entity, ScriptUpdateInterval);
 
-        foreach (var action in TimedActions.ToList())
+        foreach (var action in rentedTimedActions.Span)
             if (action.Update(Entity, ScriptUpdateInterval))
                 TimedActions.Remove(action);
 
-        foreach (var action in TimedActionSequences.ToList())
+        foreach (var action in rentedTimedActionSequences.Span)
             if (action.Update(Entity, ScriptUpdateInterval))
                 TimedActionSequences.Remove(action);
     }
@@ -160,17 +168,22 @@ public sealed class CreatureScriptedSequence<T> : ScriptedSequence<T> where T: C
         if (!ScriptTimer.IntervalElapsed)
             return;
 
-        foreach (var action in RepeatedThresholdActions.ToList())
+        using var rentedRepeatedThresholdActions = RepeatedThresholdActions.ToRented();
+        using var rentedRepeatedThresholdActionSequences = RepeatedThresholdActionSequences.ToRented();
+        using var rentedThresholdActions = ThresholdActions.ToRented();
+        using var rentedThresholdActionSequences = ThresholdActionSequences.ToRented();
+
+        foreach (var action in rentedRepeatedThresholdActions.Span)
             action.Update(Entity, ScriptUpdateInterval);
 
-        foreach (var action in RepeatedThresholdActionSequences.ToList())
+        foreach (var action in rentedRepeatedThresholdActionSequences.Span)
             action.Update(Entity, ScriptUpdateInterval);
 
-        foreach (var action in ThresholdActions.ToList())
+        foreach (var action in rentedThresholdActions.Span)
             if (action.Update(Entity, ScriptUpdateInterval))
                 ThresholdActions.Remove(action);
 
-        foreach (var action in ThresholdActionSequences.ToList())
+        foreach (var action in rentedThresholdActionSequences.Span)
             if (action.Update(Entity, ScriptUpdateInterval))
                 ThresholdActionSequences.Remove(action);
     }

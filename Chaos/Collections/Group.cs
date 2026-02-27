@@ -126,12 +126,11 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel, ITransforma
     /// <inheritdoc />
     public IEnumerator<Aisling> GetEnumerator()
     {
-        List<Aisling> snapshot;
+        using var @lock = Sync.EnterScope();
 
-        using (Sync.EnterScope())
-            snapshot = Members.ToList();
+        var snapshot = Members.ToArray();
 
-        return snapshot.GetEnumerator();
+        return snapshot.GetGenericEnumerator();
     }
 
     /// <inheritdoc />

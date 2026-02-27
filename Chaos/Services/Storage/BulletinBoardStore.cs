@@ -52,7 +52,7 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
                                               .WithMetrics();
 
                     Logger.LogDebug("Performing save");
-                    var boards = Cache.Values.ToList();
+                    var boards = Cache.Values.ToArray();
 
                     await Task.WhenAll(boards.Select(SaveAsync));
 
@@ -74,7 +74,7 @@ public sealed class BulletinBoardStore : PeriodicSaveStoreBase<BulletinBoard, Bu
         var metricsLoggerA = Logger.WithTopics(Topics.Entities.BulletinBoard, Topics.Actions.Save)
                                    .WithMetrics();
 
-        var guildsToSave = Cache.Values.ToList();
+        var guildsToSave = Cache.Values.ToArray();
         await Task.WhenAll(guildsToSave.Select(SaveAsync));
 
         metricsLoggerA.LogInformation("Final save completed");

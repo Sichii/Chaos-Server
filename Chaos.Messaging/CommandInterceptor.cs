@@ -45,13 +45,11 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
 
         var descriptors = typeof(ICommand<T>).LoadImplementations()
                                              .Select(type => (Type: type, Attributes: type.GetCustomAttributes<CommandAttribute>()))
-                                             .SelectMany(
-                                                 attributeInfo => attributeInfo.Attributes.Select(
-                                                     attribute => new CommandDescriptor
-                                                     {
-                                                         Type = attributeInfo.Type,
-                                                         Details = attribute
-                                                     }));
+                                             .SelectMany(attributeInfo => attributeInfo.Attributes.Select(attribute => new CommandDescriptor
+                                             {
+                                                 Type = attributeInfo.Type,
+                                                 Details = attribute
+                                             }));
 
         Commands = descriptors.ToFrozenDictionary(descriptor => descriptor.Details.CommandName, StringComparer.OrdinalIgnoreCase);
     }
@@ -145,16 +143,15 @@ public sealed class CommandInterceptor<T, TOptions> : ICommandInterceptor<T> whe
     private string BuildHelpText(T source)
     {
         var commands = Commands.Values
-                               .Where(
-                                   cmd =>
-                                   {
-                                       if (cmd.Details.RequiresAdmin)
-                                           return source.IsAdmin;
+                               .Where(cmd =>
+                               {
+                                   if (cmd.Details.RequiresAdmin)
+                                       return source.IsAdmin;
 
-                                       return true;
-                                   })
+                                   return true;
+                               })
                                .OrderBy(cmd => cmd.Details.CommandName)
-                               .ToList();
+                               .ToArray();
 
         var builder = new StringBuilder();
 

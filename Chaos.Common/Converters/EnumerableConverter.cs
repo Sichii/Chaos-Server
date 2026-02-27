@@ -1,5 +1,7 @@
+#region
 using System.Text.Json;
 using System.Text.Json.Serialization;
+#endregion
 
 namespace Chaos.Common.Converters;
 
@@ -25,7 +27,7 @@ public sealed class EnumerableConverter<T, TObj> : JsonConverter<T> where T: IEn
     /// <inheritdoc />
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
-        var list = value.ToList();
+        var list = value.ToArray();
 
         JsonSerializer.Serialize(writer, list, options);
     }

@@ -214,7 +214,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             try
             {
                 using (ActivitySources.StartInternalActivity("LoadAisling.Effects"))
-                    foreach (var effect in aisling.Effects.ToList())
+                    foreach (var effect in aisling.Effects.ToArray())
                     {
                         try
                         {
@@ -251,7 +251,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 }
 
                 using (ActivitySources.StartInternalActivity("LoadAisling.JoinChannels"))
-                    foreach (var channel in aisling.ChannelSettings.ToList())
+                    foreach (var channel in aisling.ChannelSettings.ToArray())
                     {
                         //try to join channel
                         if (!ChannelService.JoinChannel(aisling, channel.ChannelName, true))
@@ -1356,11 +1356,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 return default;
 
             var possibleObjs = map.GetEntitiesAtPoints<GroundEntity>(localArgs.SourcePoint)
-                                  .OrderByDescending(obj => obj.Creation)
-                                  .ToList();
-
-            if (possibleObjs.Count == 0)
-                return default;
+                                  .OrderByDescending(obj => obj.Creation);
 
             //loop through the items on the ground, try to pick each one up
             //if we pick one up, return (only pick up 1 obj at a time)
@@ -1926,7 +1922,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (localClient.Aisling.IsOnWorldMap)
                 return default;
 
-            localClient.SendWorldList(Aislings.ToList());
+            localClient.SendWorldList(Aislings.ToArray());
 
             return default;
         }

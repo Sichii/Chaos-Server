@@ -421,8 +421,7 @@ public static class StringExtensions
             decimal maxDistancePct = 0.333m,
             int? maxDistance = null,
             bool caseSensitive = false)
-            => FuzzySearch(
-                strings,
+            => strings.FuzzySearch(
                 str,
                 minCoefficient,
                 maxDistancePct,
@@ -480,9 +479,9 @@ public static class StringExtensions
 
                                                  return x.Distance <= localMaxDistance;
                                              })
-                                             .ToList();
+                                             .ToArray();
 
-                return possibleMatches.Count switch
+                return possibleMatches.Length switch
                 {
                     //if no good match was found, return null
                     0 => null,
