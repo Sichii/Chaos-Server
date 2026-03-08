@@ -125,6 +125,41 @@ public sealed class ScriptFactoryAndProviderTests
             .NotBeNull();
     }
 
+    [Test]
+    public void ScriptFactory_WithEmptyKeys_ReturnsEmptyComposite()
+    {
+        var sp = BuildProvider();
+        var logger = sp.GetRequiredService<ILogger<ScriptFactory<IDemoScript, DemoSubject>>>();
+        var factory = new ScriptFactory<IDemoScript, DemoSubject>(logger, sp);
+
+        var composite = factory.CreateScript(Array.Empty<string>(), new DemoSubject());
+
+        composite.Should()
+                 .BeAssignableTo<ICompositeScript<IDemoScript>>();
+
+        ((ICompositeScript<IDemoScript>)composite).GetScripts<IDemoScript>()
+                                                  .Should()
+                                                  .BeEmpty();
+    }
+
+    [Test]
+    public void ScriptProvider_FactoryNotRegistered_ThrowsInvalidOperationException()
+    {
+        // Service provider has no factory registered
+        var sp = BuildProvider();
+        var provider = new ScriptProvider(sp);
+
+        Action act = () => provider.CreateScript<IDemoScript, DemoSubject>(
+            new[]
+            {
+                "LeafA"
+            },
+            new DemoSubject());
+
+        act.Should()
+           .Throw<InvalidOperationException>();
+    }
+
     // The composite type must exist for the factory
     private sealed class CompositeDemoScript : CompositeScriptBase<IDemoScript>, IDemoScript { }
 

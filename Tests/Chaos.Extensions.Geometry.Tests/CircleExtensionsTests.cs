@@ -7336,4 +7336,159 @@ public sealed class CircleExtensionsTests
               .Be(expectedDistance);
     }
     #endregion
+
+    #region GetOrderedOutline Tests
+    [Test]
+    public void GetOrderedOutline_ICircle_WithRadiusThree_ReturnsPointsInAscendingAngleOrder()
+    {
+        ICircle circle = new Circle(new Point(5, 5), 3);
+
+        var ordered = circle.GetOrderedOutline()
+                            .ToList();
+
+        ordered.Should()
+               .NotBeEmpty();
+
+        for (var i = 1; i < ordered.Count; i++)
+        {
+            var prevAngle = Math.Atan2(ordered[i - 1].Y - 5, ordered[i - 1].X - 5);
+            var currAngle = Math.Atan2(ordered[i].Y - 5, ordered[i].X - 5);
+
+            currAngle.Should()
+                     .BeGreaterThanOrEqualTo(prevAngle);
+        }
+    }
+
+    [Test]
+    public void GetOrderedOutline_ICircle_WithZeroRadius_ReturnsSinglePoint()
+    {
+        ICircle circle = new Circle(new Point(3, 7), 0);
+
+        var ordered = circle.GetOrderedOutline()
+                            .ToList();
+
+        ordered.Should()
+               .HaveCount(1);
+
+        ordered[0]
+            .Should()
+            .Be(new Point(3, 7));
+    }
+
+    [Test]
+    public void GetOrderedOutline_ICircle_WithNegativeCenter_ReturnsPointsInAngleOrder()
+    {
+        ICircle circle = new Circle(new Point(-4, -4), 2);
+
+        var ordered = circle.GetOrderedOutline()
+                            .ToList();
+
+        ordered.Should()
+               .NotBeEmpty();
+
+        for (var i = 1; i < ordered.Count; i++)
+        {
+            var prevAngle = Math.Atan2(ordered[i - 1].Y - -4, ordered[i - 1].X - -4);
+            var currAngle = Math.Atan2(ordered[i].Y - -4, ordered[i].X - -4);
+
+            currAngle.Should()
+                     .BeGreaterThanOrEqualTo(prevAngle);
+        }
+    }
+
+    [Test]
+    public void GetOrderedOutline_ICircle_ReturnsAllSamePointsAsGetOutline()
+    {
+        ICircle circle = new Circle(new Point(0, 0), 4);
+
+        var outline = circle.GetOutline()
+                            .ToList();
+
+        var ordered = circle.GetOrderedOutline()
+                            .ToList();
+
+        ordered.Should()
+               .HaveCount(outline.Count);
+
+        ordered.Should()
+               .BeEquivalentTo(outline);
+    }
+    #endregion
+
+    #region TryGetRandomPoint Tests
+    [Test]
+    public void TryGetRandomPoint_ICircle_WhenPredicateAlwaysTrue_ReturnsTrue()
+    {
+        ICircle circle = new Circle(new Point(5, 5), 3);
+
+        var found = circle.TryGetRandomPoint(_ => true, out var point);
+
+        found.Should()
+             .BeTrue();
+
+        point.Should()
+             .NotBeNull();
+    }
+
+    [Test]
+    public void TryGetRandomPoint_ICircle_WhenPredicateAlwaysFalse_ReturnsFalse()
+    {
+        ICircle circle = new Circle(new Point(5, 5), 3);
+
+        var found = circle.TryGetRandomPoint(_ => false, out var point);
+
+        found.Should()
+             .BeFalse();
+
+        point.Should()
+             .BeNull();
+    }
+
+    [Test]
+    public void TryGetRandomPoint_ValueCircle_WhenPredicateAlwaysTrue_ReturnsTrue()
+    {
+        var circle = new ValueCircle(new Point(5, 5), 3);
+
+        var found = circle.TryGetRandomPoint(_ => true, out var point);
+
+        found.Should()
+             .BeTrue();
+
+        point.Should()
+             .NotBeNull();
+    }
+
+    [Test]
+    public void TryGetRandomPoint_ValueCircle_WhenPredicateAlwaysFalse_ReturnsFalse()
+    {
+        var circle = new ValueCircle(new Point(0, 0), 5);
+
+        var found = circle.TryGetRandomPoint(_ => false, out var point);
+
+        found.Should()
+             .BeFalse();
+
+        point.Should()
+             .BeNull();
+    }
+
+    [Test]
+    public void TryGetRandomPoint_ForcesReservoirSampling_FindsRarePoint()
+    {
+        // radius=1 → totalPoints ≈ 3 → maxAttempts = max(1, 3/10) = 1
+        // After 1 random attempt, falls back to reservoir which exhaustively scans all points.
+        // The center (0,0) is guaranteed to be inside a radius-1 circle at (0,0).
+        ICircle circle = new Circle(new Point(0, 0), 1);
+
+        // Predicate accepts only the exact center; reservoir scan is deterministic
+        var found = circle.TryGetRandomPoint(p => (p.X == 0) && (p.Y == 0), out var point);
+
+        found.Should()
+             .BeTrue();
+
+        point!.Value
+              .Should()
+              .Be(new Point(0, 0));
+    }
+    #endregion
 }

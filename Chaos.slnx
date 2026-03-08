@@ -54,10 +54,6 @@
     <Folder Name="/Extensions/">
         <Project Path="Chaos.Extensions.Geometry/Chaos.Extensions.Geometry.csproj"/>
     </Folder>
-    <Folder Name="/Patches/">
-        <File Path="Patches/Directory.Build.props"/>
-        <Project Path="Patches/AbilityLevelPatch/AbilityLevelPatch.csproj"/>
-    </Folder>
     <Folder Name="/Tests/">
         <File Path="Tests/Directory.Build.props"/>
         <Project Path="Tests/Chaos.Collections.Tests/Chaos.Collections.Tests.csproj"/>
@@ -79,6 +75,7 @@
         <Project Path="Tests/Chaos.Storage.Tests/Chaos.Storage.Tests.csproj"/>
         <Project Path="Tests/Chaos.Testing.Infrastructure/Chaos.Testing.Infrastructure.csproj"/>
         <Project Path="Tests/Chaos.Time.Tests/Chaos.Time.Tests.csproj"/>
+        <Project Path="Tests/Chaos.TypeMapper.Tests/Chaos.TypeMapper.Tests.csproj"/>
     </Folder>
     <Folder Name="/Tools/">
         <File Path="Tools/Directory.Build.props"/>

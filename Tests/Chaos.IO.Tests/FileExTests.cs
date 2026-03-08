@@ -16,6 +16,48 @@ public sealed class FileExTests
             + ".txt");
 
     [Test]
+    public void SafeOpenRead_NonRetryableException_ThrowsAggregateWithSingleInner()
+    {
+        var path = CreateTempFilePath();
+        File.WriteAllText(path, "data");
+
+        // An exception that is neither FileNotFoundException nor RetryableException breaks the loop early
+        Action act = () => FileEx.SafeOpenRead<string>(path, _ => throw new InvalidOperationException("non-retryable"));
+
+        act.Should()
+           .Throw<AggregateException>()
+           .Which
+           .InnerExceptions
+           .Should()
+           .HaveCount(1)
+           .And
+           .AllBeAssignableTo<InvalidOperationException>();
+
+        File.Delete(path);
+    }
+
+    [Test]
+    public void SafeOpenRead_PrimaryFilePresent_ReturnsImmediately()
+    {
+        var path = CreateTempFilePath();
+        File.WriteAllText(path, "primary-content");
+
+        var result = FileEx.SafeOpenRead(
+            path,
+            stream =>
+            {
+                using var reader = new StreamReader(stream);
+
+                return reader.ReadToEnd();
+            });
+
+        result.Should()
+              .Be("primary-content");
+
+        File.Delete(path);
+    }
+
+    [Test]
     public void SafeOpenRead_WhenAllMissing_ShouldThrowAggregateWithInnerFileNotFound()
     {
         var basePath = CreateTempFilePath();
@@ -75,6 +117,27 @@ public sealed class FileExTests
 
         // Cleanup
         File.Delete(bakPath);
+    }
+
+    [Test]
+    public async Task SafeOpenReadAsync_PrimaryFilePresent_ReturnsImmediately()
+    {
+        var path = CreateTempFilePath();
+        await File.WriteAllTextAsync(path, "async-primary");
+
+        var result = await FileEx.SafeOpenReadAsync(
+            path,
+            async stream =>
+            {
+                using var reader = new StreamReader(stream);
+
+                return await reader.ReadToEndAsync();
+            });
+
+        result.Should()
+              .Be("async-primary");
+
+        File.Delete(path);
     }
 
     [Test]

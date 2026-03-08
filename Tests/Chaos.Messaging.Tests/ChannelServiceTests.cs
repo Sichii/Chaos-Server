@@ -69,6 +69,40 @@ public sealed class ChannelServiceTests
                          .BeTrue();
 
     [Test]
+    public void IsInChannel_ChannelExistsAndSubscriberPresent_ShouldReturnTrue()
+    {
+        ChannelService.RegisterChannel(
+            SubscriberMock.Object,
+            "!Test",
+            MessageColor.Default,
+            (_, _) => { });
+
+        ChannelService.IsInChannel(SubscriberMock.Object, "!Test")
+                      .Should()
+                      .BeTrue();
+    }
+
+    [Test]
+    public void IsInChannel_ChannelExistsButSubscriberAbsent_ShouldReturnFalse()
+    {
+        ChannelService.RegisterChannel(
+            null,
+            "!Test",
+            MessageColor.Default,
+            (_, _) => { });
+
+        ChannelService.IsInChannel(SubscriberMock.Object, "!Test")
+                      .Should()
+                      .BeFalse();
+    }
+
+    [Test]
+    public void IsInChannel_MissingChannel_ShouldReturnFalse()
+        => ChannelService.IsInChannel(SubscriberMock.Object, "!NonExistent")
+                         .Should()
+                         .BeFalse();
+
+    [Test]
     public void JoinChannel_ReservedChannelWithoutBypassValidation_ShouldFail()
     {
         ChannelService.JoinChannel(SubscriberMock.Object, "!Reserved");
@@ -194,6 +228,58 @@ public sealed class ChannelServiceTests
                       .BeFalse();
         SubscriberMock.Verify(s => s.SendMessage("You are not in channel !Test"), Times.Once);
     }
+
+    [Test]
+    public void MuteChannel_ExistingChannel_ShouldNotThrow()
+    {
+        ChannelService.RegisterChannel(
+            null,
+            "!Test",
+            MessageColor.Default,
+            (_, _) => { });
+
+        var act = () => ChannelService.MuteChannel("!Test");
+
+        act.Should()
+           .NotThrow();
+    }
+
+    [Test]
+    public void MuteChannel_MissingChannel_ShouldNotThrow()
+    {
+        var act = () => ChannelService.MuteChannel("!NonExistent");
+
+        act.Should()
+           .NotThrow();
+    }
+
+    [Test]
+    public void MuteChannel_WithoutPrefix_ShouldPrependPrefixBeforeLookup()
+    {
+        ChannelService.RegisterChannel(
+            null,
+            "!Test",
+            MessageColor.Default,
+            (_, _) => { });
+
+        // MuteChannel internally calls PrependPrefix, so "Test" becomes "!Test"
+        var act = () => ChannelService.MuteChannel("Test");
+
+        act.Should()
+           .NotThrow();
+    }
+
+    [Test]
+    public void PrependPrefix_AlreadyHasPrefix_ShouldReturnUnchanged()
+        => ChannelService.PrependPrefix("!Test")
+                         .Should()
+                         .Be("!Test");
+
+    [Test]
+    public void PrependPrefix_MissingPrefix_ShouldPrependPrefix()
+        => ChannelService.PrependPrefix("Test")
+                         .Should()
+                         .Be("!Test");
 
     [Test]
     public void RegisterChannel_ChannelNameTooLong_ShouldFail()
@@ -363,6 +449,32 @@ public sealed class ChannelServiceTests
     }
 
     [Test]
+    public void SendMessage_WhenSubscriberIsIgnoredBySelf_ShouldSkipDelivery()
+    {
+        var senderMock = MockChannelSubscriber.Create("Sender");
+
+        senderMock.Setup(s => s.IsIgnoring(It.IsAny<string>()))
+                  .Returns(false);
+
+        // SubscriberMock ignores messages from "Sender"
+        SubscriberMock.Setup(s => s.IsIgnoring("Sender"))
+                      .Returns(true);
+
+        ChannelService.RegisterChannel(
+            senderMock.Object,
+            "!Test",
+            MessageColor.Default,
+            (subscriber, s) => subscriber.SendMessage(s));
+
+        ChannelService.JoinChannel(SubscriberMock.Object, "!Test");
+
+        ChannelService.SendMessage(senderMock.Object, "!Test", "hello");
+
+        // SubscriberMock ignores the sender — message should not reach it
+        SubscriberMock.Verify(s => s.SendMessage(It.Is<string>(str => str.Contains("hello"))), Times.Never);
+    }
+
+    [Test]
     public void SendMessage_WithColorOverride_ShouldSendToSubscribersWithColorOverride()
     {
         ChannelService.RegisterChannel(
@@ -412,6 +524,32 @@ public sealed class ChannelServiceTests
         ChannelService.SetChannelColor(SubscriberMock.Object, "!Test", MessageColor.Default);
 
         SubscriberMock.Verify(s => s.SendMessage("You are not in channel !Test"), Times.Once);
+    }
+
+    [Test]
+    public void UnmuteChannel_ExistingChannel_ShouldNotThrow()
+    {
+        ChannelService.RegisterChannel(
+            null,
+            "!Test",
+            MessageColor.Default,
+            (_, _) => { });
+
+        ChannelService.MuteChannel("!Test");
+
+        var act = () => ChannelService.UnmuteChannel("!Test");
+
+        act.Should()
+           .NotThrow();
+    }
+
+    [Test]
+    public void UnmuteChannel_MissingChannel_ShouldNotThrow()
+    {
+        var act = () => ChannelService.UnmuteChannel("!NonExistent");
+
+        act.Should()
+           .NotThrow();
     }
 
     [Test]

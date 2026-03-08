@@ -90,6 +90,19 @@ public class EntityRepositoryTests : IDisposable
     }
 
     [Test]
+    public void Load_Should_Throw_SerializationException_When_Json_Is_Null()
+    {
+        // Deserializing the JSON literal "null" for a reference type returns null,
+        // which triggers the null-check branch in Load<TSchema>
+        File.WriteAllText(TestFilePath, "null");
+
+        var act = () => EntityRepository.Load<TestSchema>(TestFilePath);
+
+        act.Should()
+           .Throw<SerializationException>();
+    }
+
+    [Test]
     public void Load_Should_Throw_When_Deserialization_Fails()
     {
         // Arrange
@@ -186,6 +199,18 @@ public class EntityRepositoryTests : IDisposable
 
         result.Should()
               .NotBeNull();
+    }
+
+    [Test]
+    public void LoadAndMap_Should_Throw_SerializationException_When_Json_Is_Null()
+    {
+        // Deserializing "null" triggers the null schema branch in LoadAndMap<T, TSchema>
+        File.WriteAllText(TestFilePath, "null");
+
+        var act = () => EntityRepository.LoadAndMap<TestEntity, TestSchema>(TestFilePath);
+
+        act.Should()
+           .Throw<SerializationException>();
     }
 
     [Test]
@@ -404,6 +429,19 @@ public class EntityRepositoryTests : IDisposable
             .Id
             .Should()
             .Be(3);
+    }
+
+    [Test]
+    public void LoadMany_Should_Throw_SerializationException_When_Json_Is_Null()
+    {
+        // Deserializing "null" for a collection triggers the null schemas branch in LoadMany
+        File.WriteAllText(TestFilePath, "null");
+
+        var act = () => EntityRepository.LoadMany<TestSchema>(TestFilePath)
+                                        .ToList();
+
+        act.Should()
+           .Throw<SerializationException>();
     }
 
     [Test]

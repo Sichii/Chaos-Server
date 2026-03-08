@@ -26,6 +26,28 @@ public sealed class CompositeScriptTests
     }
 
     [Test]
+    public void Add_WrongType_ThrowsInvalidCastException()
+    {
+        var composite = MockCompositeScript.Create()
+                                           .Object;
+
+        var act = () => composite.Add("not a script");
+
+        act.Should()
+           .Throw<InvalidCastException>();
+    }
+
+    [Test]
+    public void GetEnumerator_EmptyScripts_YieldsNothing()
+    {
+        var composite = MockCompositeScript.Create()
+                                           .Object;
+
+        composite.Should()
+                 .BeEmpty();
+    }
+
+    [Test]
     public void GetEnumerator_ReturnsAllScripts()
     {
         // Arrange
@@ -85,6 +107,18 @@ public sealed class CompositeScriptTests
     }
 
     [Test]
+    public void GetScript_NoMatch_ReturnsNull()
+    {
+        var composite = MockCompositeScript.Create()
+                                           .Object;
+
+        // ICompositeScript itself is not added — no match expected
+        composite.GetScript<ICompositeScript>()
+                 .Should()
+                 .BeNull();
+    }
+
+    [Test]
     public void GetScript_ReturnsFirstInstanceOfType()
     {
         // Arrange
@@ -112,6 +146,17 @@ public sealed class CompositeScriptTests
     }
 
     [Test]
+    public void GetScripts_EmptyComposite_YieldsNothing()
+    {
+        var composite = MockCompositeScript.Create()
+                                           .Object;
+
+        composite.GetScripts<IScript>()
+                 .Should()
+                 .BeEmpty();
+    }
+
+    [Test]
     public void GetScripts_ReturnsAllInstancesOfType()
     {
         // Arrange
@@ -136,6 +181,22 @@ public sealed class CompositeScriptTests
         // Assert
         components.Should()
                   .Contain(s => s == nestedCompositeScript);
+    }
+
+    [Test]
+    public void Remove_NotPresent_IsNoOp()
+    {
+        var composite = MockCompositeScript.Create()
+                                           .Object;
+
+        var script = MockScript.Create()
+                               .Object;
+
+        // Never added — removing should not throw
+        var act = () => composite.Remove(script);
+
+        act.Should()
+           .NotThrow();
     }
 
     [Test]
@@ -180,5 +241,17 @@ public sealed class CompositeScriptTests
         compositeScript.GetScripts<IScript>()
                        .Should()
                        .NotContain(scriptMock);
+    }
+
+    [Test]
+    public void Remove_WrongType_ThrowsInvalidCastException()
+    {
+        var composite = MockCompositeScript.Create()
+                                           .Object;
+
+        var act = () => composite.Remove("not a script");
+
+        act.Should()
+           .Throw<InvalidCastException>();
     }
 }

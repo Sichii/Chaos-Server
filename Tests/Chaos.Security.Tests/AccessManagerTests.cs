@@ -663,3 +663,95 @@ public class AccessManagerTests : IDisposable
               .BeTrue();
     }
 }
+
+public sealed class AccessManagerWhitelistTests : IDisposable
+{
+      private readonly AccessManager AccessManager;
+      private readonly Mock<ILogger<AccessManager>> LoggerMock;
+      private readonly string TestDirectory;
+      private readonly IPAddress TestIpAddress = IPAddress.Parse("10.0.0.1");
+
+      public AccessManagerWhitelistTests()
+      {
+            LoggerMock = new Mock<ILogger<AccessManager>>();
+            TestDirectory = Path.Combine(Path.GetTempPath(), $"AccessManagerWhitelistTests_{Guid.NewGuid()}");
+
+            var options = new AccessManagerOptions
+            {
+                  Directory = TestDirectory,
+                  Mode = IpAccessMode.Whitelist,
+                  HashAlgorithmName = "SHA256",
+                  MaxCredentialAttempts = 3,
+                  LockoutMins = 5,
+                  MinPasswordLength = 4,
+                  MaxPasswordLength = 20,
+                  MinUsernameLength = 3,
+                  MaxUsernameLength = 15,
+                  ValidCharactersRegex = new Regex(@"^[a-zA-Z0-9]+$"),
+                  ValidFormatRegex = new Regex(@"^[a-zA-Z][a-zA-Z0-9]*$"),
+                  ReservedUsernames = [],
+                  PhraseFilter = []
+            };
+
+            var optionsMock = new Mock<IOptionsSnapshot<AccessManagerOptions>>();
+
+            optionsMock.Setup(x => x.Value)
+                       .Returns(options);
+
+            AccessManager = new AccessManager(optionsMock.Object, LoggerMock.Object);
+      }
+
+      public void Dispose()
+      {
+            AccessManager?.Dispose();
+
+            if (Directory.Exists(TestDirectory))
+                  Directory.Delete(TestDirectory, true);
+      }
+
+      [Test]
+      public async Task IpBanishAsync_RemovesIpFromWhitelist()
+      {
+            // Arrange: put IP on the whitelist
+            var whitelistPath = Path.Combine(TestDirectory, "whitelist.txt");
+            await File.AppendAllLinesAsync(whitelistPath, [TestIpAddress.ToString()]);
+
+            // Verify it is whitelisted before banning
+            var before = await AccessManager.ShouldAllowAsync(TestIpAddress);
+
+            before.Should()
+                  .BeTrue();
+
+            // Act: ban the IP (should remove it from whitelist)
+            await AccessManager.IpBanishAsync(TestIpAddress);
+
+            // Assert: IP no longer appears in whitelist file
+            var content = await File.ReadAllTextAsync(whitelistPath);
+
+            content.Should()
+                   .NotContain(TestIpAddress.ToString());
+      }
+
+      [Test]
+      public async Task ShouldAllowAsync_WithWhitelistMode_AllowsWhitelistedIp()
+      {
+            // Add IP to whitelist file directly
+            var whitelistPath = Path.Combine(TestDirectory, "whitelist.txt");
+            await File.AppendAllLinesAsync(whitelistPath, [TestIpAddress.ToString()]);
+
+            var result = await AccessManager.ShouldAllowAsync(TestIpAddress);
+
+            result.Should()
+                  .BeTrue();
+      }
+
+      [Test]
+      public async Task ShouldAllowAsync_WithWhitelistMode_DeniesNonWhitelistedIp()
+      {
+            // Whitelist is empty — IP should be denied
+            var result = await AccessManager.ShouldAllowAsync(TestIpAddress);
+
+            result.Should()
+                  .BeFalse();
+      }
+}

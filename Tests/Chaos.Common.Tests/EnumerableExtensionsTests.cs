@@ -1,5 +1,6 @@
 #region
 using System.Collections;
+using Chaos.Common.Utilities;
 using FluentAssertions;
 using Moq;
 #endregion
@@ -853,6 +854,101 @@ public sealed class EnumerableExtensionsTests
         // Assert
         result.Should()
               .Equal("single");
+    }
+    #endregion
+
+    #region ToRented Tests
+    [Test]
+    public void ToRented_WithKnownCount_ReturnsCorrectCountAndElements()
+    {
+        var src = new[]
+        {
+            10,
+            20,
+            30,
+            40,
+            50
+        };
+
+        using var rented = src.ToRented(src.Length);
+
+        rented.Count
+              .Should()
+              .Be(5);
+
+        rented.Span[0]
+              .Should()
+              .Be(10);
+
+        rented.Span[4]
+              .Should()
+              .Be(50);
+    }
+
+    [Test]
+    public void ToRented_WithoutCount_SmallEnumerable_ReturnsCorrectElements()
+    {
+        // A generator has no non-enumerated count, so it triggers the doubling-buffer path
+        static IEnumerable<string> Generator()
+        {
+            yield return "alpha";
+            yield return "beta";
+            yield return "gamma";
+        }
+
+        using var rented = Generator()
+            .ToRented();
+
+        rented.Count
+              .Should()
+              .Be(3);
+
+        rented.Span[0]
+              .Should()
+              .Be("alpha");
+
+        rented.Span[2]
+              .Should()
+              .Be("gamma");
+    }
+
+    [Test]
+    public void ToRented_WithoutCount_LargeEnumerable_TriggersDoublingBuffer()
+    {
+        // More than the initial 32-element internal array forces at least one doubling
+        static IEnumerable<int> Generator()
+        {
+            for (var i = 0; i < 40; i++)
+                yield return i * 2;
+        }
+
+        using var rented = Generator()
+            .ToRented();
+
+        rented.Count
+              .Should()
+              .Be(40);
+
+        rented.Span[0]
+              .Should()
+              .Be(0);
+
+        rented.Span[39]
+              .Should()
+              .Be(78);
+    }
+
+    [Test]
+    public void ToRented_WithoutCount_EmptyEnumerable_ReturnsZeroCount()
+    {
+        static IEnumerable<int> Empty() { yield break; }
+
+        using var rented = Empty()
+            .ToRented();
+
+        rented.Count
+              .Should()
+              .Be(0);
     }
     #endregion
 }

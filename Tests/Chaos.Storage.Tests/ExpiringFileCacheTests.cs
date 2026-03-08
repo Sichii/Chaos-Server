@@ -64,13 +64,11 @@ public sealed class ExpiringFileCacheTests : IDisposable
     [Test]
     public void ConstructKey_DeconstructKey_Should_RoundTrip()
     {
-        var cache
-            = new MockCache<Dummy,
-                DummySchema, ExpiringFileCacheOptions>(
-                MemoryCache,
-                Repo.Object,
-                Options,
-                Logger);
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
         var key = cache.ConstructKeyPublic("Test");
 
         key.Should()
@@ -104,8 +102,7 @@ public sealed class ExpiringFileCacheTests : IDisposable
                 SearchType = SearchType.Files
             });
 
-        _ = new MockCache<Dummy,
-            DummySchema, ExpiringFileCacheOptions>(
+        _ = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
             MemoryCache,
             Repo.Object,
             opts,
@@ -130,13 +127,11 @@ public sealed class ExpiringFileCacheTests : IDisposable
                     Id = 7
                 });
 
-        var cache
-            = new MockCache<Dummy,
-                DummySchema, ExpiringFileCacheOptions>(
-                MemoryCache,
-                Repo.Object,
-                Options,
-                Logger);
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
 
         _ = cache.Get("enum");
 
@@ -155,6 +150,46 @@ public sealed class ExpiringFileCacheTests : IDisposable
         enumerator.MoveNext()
                   .Should()
                   .BeTrue();
+    }
+
+    [Test]
+    public void Exists_KeyInCache_ShouldReturnTrue()
+    {
+        var filename = Path.Combine(TempDir, "exists.json");
+        File.WriteAllText(filename, "{}");
+
+        Repo.Setup(r => r.LoadAndMap<Dummy, DummySchema>(It.IsAny<string>(), It.IsAny<Action<DummySchema>>()))
+            .Returns(
+                new Dummy
+                {
+                    Id = 1
+                });
+
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
+
+        _ = cache.Get("exists"); // loads into cache
+
+        cache.Exists("exists")
+             .Should()
+             .BeTrue();
+    }
+
+    [Test]
+    public void Exists_KeyNotInCache_ShouldReturnFalse()
+    {
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
+
+        cache.Exists("nope")
+             .Should()
+             .BeFalse();
     }
 
     [Test]
@@ -178,13 +213,11 @@ public sealed class ExpiringFileCacheTests : IDisposable
                 };
             });
 
-        var cache
-            = new MockCache<Dummy,
-                DummySchema, ExpiringFileCacheOptions>(
-                MemoryCache,
-                Repo.Object,
-                Options,
-                Logger);
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
 
         cache.ForceLoadPublic();
 
@@ -195,6 +228,31 @@ public sealed class ExpiringFileCacheTests : IDisposable
         loadCount.Should()
                  .BeGreaterThanOrEqualTo(2);
         Repo.Verify(r => r.LoadAndMap<Dummy, DummySchema>(It.IsAny<string>(), It.IsAny<Action<DummySchema>>()), Times.AtLeast(2));
+    }
+
+    [Test]
+    public void Get_SearchTypeDirectories_MissingKey_ShouldThrowDirectoryNotFoundException()
+    {
+        var opts = Microsoft.Extensions.Options.Options.Create(
+            new ExpiringFileCacheOptions
+            {
+                Directory = TempDir,
+                Expires = false,
+                FilePattern = "*",
+                Recursive = false,
+                SearchType = SearchType.Directories
+            });
+
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            opts,
+            Logger);
+
+        Action act = () => cache.Get("nonexistent");
+
+        act.Should()
+           .Throw<DirectoryNotFoundException>();
     }
 
     [Test]
@@ -210,13 +268,11 @@ public sealed class ExpiringFileCacheTests : IDisposable
                 Id = 42
             });
 
-        var cache
-            = new MockCache<Dummy,
-                DummySchema, ExpiringFileCacheOptions>(
-                MemoryCache,
-                Repo.Object,
-                Options,
-                Logger);
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
 
         // ensure Paths loaded include our file (constructor already loads). No-op here.
 
@@ -238,17 +294,102 @@ public sealed class ExpiringFileCacheTests : IDisposable
     [Test]
     public void Get_Should_Throw_When_Key_Not_Found_By_SearchType_Files()
     {
-        var cache
-            = new MockCache<Dummy,
-                DummySchema, ExpiringFileCacheOptions>(
-                MemoryCache,
-                Repo.Object,
-                Options,
-                Logger);
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
         Action act = () => cache.Get("missing");
 
         act.Should()
            .Throw<FileNotFoundException>();
+    }
+
+    [Test]
+    public void GetPathForKey_SearchTypeDirectories_ShouldReturnDirectoryPath()
+    {
+        var subDir = Path.Combine(TempDir, "mykey");
+        Directory.CreateDirectory(subDir);
+        File.WriteAllText(Path.Combine(subDir, "file.json"), "{}");
+
+        var opts = Microsoft.Extensions.Options.Options.Create(
+            new ExpiringFileCacheOptions
+            {
+                Directory = TempDir,
+                Expires = false,
+                FilePattern = "*",
+                Recursive = false,
+                SearchType = SearchType.Directories
+            });
+
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            opts,
+            Logger);
+
+        var path = cache.GetPathForKeyPublic("mykey");
+
+        path.Should()
+            .EndWith("mykey");
+    }
+
+    [Test]
+    public void LoadPaths_Recursive_ShouldIncludeSubdirectoryFiles()
+    {
+        var subDir = Path.Combine(TempDir, "sub");
+        Directory.CreateDirectory(subDir);
+        File.WriteAllText(Path.Combine(subDir, "nested.json"), "{}");
+
+        var opts = Microsoft.Extensions.Options.Options.Create(
+            new ExpiringFileCacheOptions
+            {
+                Directory = TempDir,
+                Expires = false,
+                FilePattern = "*.json",
+                Recursive = true,
+                SearchType = SearchType.Files
+            });
+
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            opts,
+            Logger);
+
+        var paths = cache.LoadPathsPublic();
+
+        paths.Should()
+             .Contain(p => p.Contains("nested.json"));
+    }
+
+    [Test]
+    public void LoadPaths_SearchTypeDirectories_ShouldReturnDirectoriesWithFiles()
+    {
+        var subDir = Path.Combine(TempDir, "dirkey");
+        Directory.CreateDirectory(subDir);
+        File.WriteAllText(Path.Combine(subDir, "data.json"), "{}");
+
+        var opts = Microsoft.Extensions.Options.Options.Create(
+            new ExpiringFileCacheOptions
+            {
+                Directory = TempDir,
+                Expires = false,
+                FilePattern = "*",
+                Recursive = false,
+                SearchType = SearchType.Directories
+            });
+
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            opts,
+            Logger);
+
+        var paths = cache.LoadPathsPublic();
+
+        paths.Should()
+             .Contain(p => p.EndsWith("dirkey"));
     }
 
     [Test]
@@ -266,13 +407,11 @@ public sealed class ExpiringFileCacheTests : IDisposable
                 })
             .Throws(new InvalidOperationException("boom"));
 
-        var cache
-            = new MockCache<Dummy,
-                DummySchema, ExpiringFileCacheOptions>(
-                MemoryCache,
-                Repo.Object,
-                Options,
-                Logger);
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
         _ = cache.Get("err");
 
         // Now repository throws during reload; method should swallow and continue
@@ -299,13 +438,11 @@ public sealed class ExpiringFileCacheTests : IDisposable
                 })
             .Throws(new InvalidOperationException("boom"));
 
-        var cache
-            = new MockCache<Dummy,
-                DummySchema, ExpiringFileCacheOptions>(
-                MemoryCache,
-                Repo.Object,
-                Options,
-                Logger);
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
         _ = cache.Get("err2");
 
         Action act = () => cache.ReloadAsync("err2")
@@ -319,13 +456,11 @@ public sealed class ExpiringFileCacheTests : IDisposable
     [Test]
     public void ReloadAsync_SpecificKey_Should_Warn_When_Missing()
     {
-        var cache
-            = new MockCache<Dummy,
-                DummySchema, ExpiringFileCacheOptions>(
-                MemoryCache,
-                Repo.Object,
-                Options,
-                Logger);
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
 
         // No entry yet, should not throw
         cache.ReloadAsync("notcached")
@@ -340,13 +475,11 @@ public sealed class ExpiringFileCacheTests : IDisposable
         var filename = Path.Combine(TempDir, "z.json");
         File.WriteAllText(filename, "{}");
 
-        var cache
-            = new MockCache<Dummy,
-                DummySchema, ExpiringFileCacheOptions>(
-                MemoryCache,
-                Repo.Object,
-                Options,
-                Logger);
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
 
         // Seed cache by calling Get
 
@@ -380,13 +513,11 @@ public sealed class ExpiringFileCacheTests : IDisposable
         Repo.Setup(r => r.LoadAndMap<Dummy, DummySchema>(It.IsAny<string>(), It.IsAny<Action<DummySchema>>()))
             .Returns(value);
 
-        var cache
-            = new MockCache<Dummy,
-                DummySchema, ExpiringFileCacheOptions>(
-                MemoryCache,
-                Repo.Object,
-                Options,
-                Logger);
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
 
         _ = cache.Get("cb");
 
@@ -409,6 +540,55 @@ public sealed class ExpiringFileCacheTests : IDisposable
 
         ((IEnumerable<Dummy>)cache).Should()
                                    .NotContain(v => v.Id == 99);
+    }
+
+    [Test]
+    public void TryGetValue_KeyInCache_ShouldReturnTrueAndValue()
+    {
+        var filename = Path.Combine(TempDir, "tryget.json");
+        File.WriteAllText(filename, "{}");
+
+        var expected = new Dummy
+        {
+            Id = 77
+        };
+
+        Repo.Setup(r => r.LoadAndMap<Dummy, DummySchema>(It.IsAny<string>(), It.IsAny<Action<DummySchema>>()))
+            .Returns(expected);
+
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
+
+        _ = cache.Get("tryget");
+
+        var result = cache.TryGetValue("tryget", out var value);
+
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .BeSameAs(expected);
+    }
+
+    [Test]
+    public void TryGetValue_KeyNotInCache_ShouldReturnFalse()
+    {
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
+
+        var result = cache.TryGetValue("absent", out var value);
+
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .BeNull();
     }
 
     public sealed class Dummy

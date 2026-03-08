@@ -11,34 +11,34 @@ Chaos-Server is a .NET 10 monorepo for a Dark Ages game server. The server runs 
 ### Build and Run
 ```powershell
 # Build solution
-dotnet build Chaos.sln
+dotnet build Chaos.slnx
 
 # Run server
 dotnet run --project Chaos/Chaos.csproj
 
-# Run with specific configuration
-dotnet run --project Chaos/Chaos.csproj --launch-profile "Chaos - Prod"
+# Run with production configuration
+dotnet run --project Chaos/Chaos.csproj --environment Production
 ```
 
 ### Testing
 ```powershell
 # Run all tests
-dotnet test Chaos.sln --nologo
+dotnet test Chaos.slnx --nologo
 
 # Run single test project
 dotnet test Tests/Chaos.Common.Tests/Chaos.Common.Tests.csproj --nologo
 
 # Run specific test by name
-dotnet test Chaos.sln --filter "FullyQualifiedName~TestName" --nologo
+dotnet test Chaos.slnx --filter "FullyQualifiedName~TestName" --nologo
 
 # Run tests from specific class
-dotnet test Chaos.sln --filter "FullyQualifiedName~ClassName" --nologo
+dotnet test Chaos.slnx --filter "FullyQualifiedName~ClassName" --nologo
 ```
 
 ### Code Coverage
 ```powershell
 # Generate Cobertura XML coverage (output: **/TestResults/coverage.cobertura.xml)
-dotnet build Chaos.sln /p:CreateCoverageReport=true
+dotnet build Chaos.slnx /p:CreateCoverageReport=true
 
 # Generate HTML report (output: Tests/Reports/CoverageReport)
 Tests/Reports/generateCoverageReport-auto.bat
@@ -58,9 +58,10 @@ dotnet run --project Tools/ChaosTool/ChaosTool.csproj
 ### Solution Layout
 - **Chaos/** - Main server application (Program.cs entrypoint)
 - **Chaos.*** - Core libraries and abstractions
+- **Chaos.Extensions.Geometry/** - Geometry extension methods (separate from core)
 - **Tests/** - TUnit test projects with FluentAssertions
 - **Data/** - Game content and configuration (JSON templates, scripts)
-- **Tools/** - Utility applications (SeqConfigurator, ChaosTool)
+- **Tools/** - Utility applications (SeqConfigurator, ChaosTool, SchemaGenerator, Benchmarks)
 - **docs/** - DocFX documentation
 
 ### Key Architectural Components
@@ -108,17 +109,23 @@ Key configuration sections in `appsettings.json`:
 - `Options:AislingCommandInterceptorOptions` - In-game command settings
 
 #### In-Game Commands
-- Commands implement `ICommand<T>` with `[Command("name", isAdmin: bool)]` attribute
+- Commands implement `ICommand<T>` with `[Command("name", requiresAdmin: bool, helpText: string?)]` attribute
 - Command prefix configurable via `Options:AislingCommandInterceptorOptions:Prefix`
 - Admin access: Set `"IsAdmin": true` in aisling's save JSON file
 
 ## Testing Conventions
 
 - Framework: TUnit with FluentAssertions
-- Mock support: Moq with helpers in `Tests/Chaos.Testing.Infrastructure`
 - Use `[Arguments]` for parameterized tests
 - Wrap attribute stacks with `//formatter:off` and `//formatter:on`
 - Focus on testing one method at a time in large test files
+
+### Chaos.Testing.Infrastructure
+- All mocks live in `Tests/Chaos.Testing.Infrastructure/Mocks/` — both Moq-based factory classes and concrete test implementations
+- **Mock factories** follow a consistent pattern: static `Create()` methods returning `Mock<T>`, often with an optional `Action<Mock<T>>? setup` parameter (e.g., `MockLogger.Create<T>()`, `MockOptions.Create<T>(value)`, `MockChannelSubscriber.Create("name")`)
+- **Concrete mocks** expose protected members or provide simple implementations for direct instantiation (e.g., `MockConfigurableScript`, `MockScriptBase`, `MockScripted`, `MockScriptVars`, `MockCache`, `MockStagingDirectory`)
+- **MockLogger** has custom `VerifyLogEvent<T>()` and `VerifySimpleLog<T>()` extension methods that understand the project's structured `LogEvent` format — use these for log verification instead of raw Moq `Verify` calls
+- **Test enums and flags** belong in `Definitions/Enums.cs` — reuse existing ones (`SampleEnum1/2`, `ColorEnum`, `SizeEnum`, `TestFeatures`, `TestPermissions`, etc.) rather than defining new ones per test
 
 ## C# Coding Standards
 
@@ -137,6 +144,7 @@ Key configuration sections in `appsettings.json`:
 - **Debug Logging**: Enable packet logging with `LogRawPackets`, `LogReceivePacketCode`, `LogSendPacketCode` in `Options:ChaosOptions`
 - **Coverage Reports**: HTML reports generate in `Tests/Reports/CoverageReport/`, XML in `**/TestResults/`
 - **Script Development**: Script keys are class names without "Script" suffix, use `scriptVars` for configuration
+- **Documentation**: `docs/articles/` contains detailed articles on most systems (scripting, components, formulae, items, maps, etc.) — consult these for deeper understanding of a feature area
 
 ## Guardrails
 
