@@ -346,7 +346,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         var incomingEntities = visibleObjects.ToHashSet<VisibleEntity>();
 
         //update the viewport of any creature within range of the new objects
-        foreach (var creature in GetEntities<Creature>())
+        foreach (var creature in GetEntities<Creature>()
+                     .ToArray())
         {
             //incoming entities need full viewport updates so that they can see existing entities
             if (incomingEntities.Contains(creature))
@@ -1493,6 +1494,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
                     try
                     {
+                        await using var sync = await Sync.WaitAsync();
                         initializationAction?.Invoke();
                         InitializationTcs.SetResult();
                     } catch (Exception e)
