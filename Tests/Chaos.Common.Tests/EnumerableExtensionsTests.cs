@@ -1,8 +1,5 @@
 #region
-using System.Collections;
-using Chaos.Common.Utilities;
 using FluentAssertions;
-using Moq;
 #endregion
 
 namespace Chaos.Extensions.Common.Tests;

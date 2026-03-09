@@ -2130,7 +2130,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         ClientHandlers[(byte)ClientOpCode.MetaDataRequest] = OnMetaDataRequest;
     }
 
-    protected override void OnConnected(Socket clientSocket)
+    protected override async Task OnConnected(Socket clientSocket)
     {
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
 
@@ -2151,7 +2151,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                   .LogError("Somehow two clients got the same id");
 
             client.Disconnect();
-            clientSocket.Disconnect(false);
+            await clientSocket.DisconnectAsync(false);
 
             return;
         }

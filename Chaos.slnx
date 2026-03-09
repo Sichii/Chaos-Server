@@ -74,6 +74,7 @@
         <Project Path="Tests/Chaos.Storage.Abstractions.Tests/Chaos.Storage.Abstractions.Tests.csproj"/>
         <Project Path="Tests/Chaos.Storage.Tests/Chaos.Storage.Tests.csproj"/>
         <Project Path="Tests/Chaos.Testing.Infrastructure/Chaos.Testing.Infrastructure.csproj"/>
+        <Project Path="Tests/Chaos.Tests/Chaos.Tests.csproj"/>
         <Project Path="Tests/Chaos.Time.Tests/Chaos.Time.Tests.csproj"/>
         <Project Path="Tests/Chaos.TypeMapper.Tests/Chaos.TypeMapper.Tests.csproj"/>
     </Folder>

@@ -1,5 +1,4 @@
 #region
-using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Options;
 using Moq;
 #endregion

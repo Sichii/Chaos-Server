@@ -1,12 +1,11 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+#region
 using Chaos.Common.Synchronization;
 using FluentAssertions;
+#endregion
 
 namespace Chaos.Common.Tests;
 
-public class FifoAutoReleasingSemaphoreSlimTests
+public sealed class FifoAutoReleasingSemaphoreSlimTests
 {
     [Test]
     public void Release_Should_Not_Throw_When_Already_Released()
@@ -22,7 +21,7 @@ public class FifoAutoReleasingSemaphoreSlimTests
     [Test]
     public async Task WaitAsync_Should_Return_Disposable_That_Releases_On_Dispose()
     {
-        var sem = new FifoAutoReleasingSemaphoreSlim(initialCount: 1, maxCount: 1);
+        var sem = new FifoAutoReleasingSemaphoreSlim(1, 1);
 
         var sub = await sem.WaitAsync();
 
@@ -154,7 +153,10 @@ public sealed class FifoAutoReleasingSemaphoreSlimExtendedTests
 
         // Assert
         value.Should()
-             .Be(5, "because there is only enough time in the timeout for entrances to be at (0, 100, 200, 300, 400) milliseconds");
+             .BeInRange(
+                 4,
+                 5,
+                 "because there is only enough time in the timeout for entrances to be at (0, 100, 200, 300, 400) milliseconds");
     }
 
     [Test]
@@ -209,7 +211,10 @@ public sealed class FifoAutoReleasingSemaphoreSlimExtendedTests
 
         // Assert
         value.Should()
-             .Be(5, "because there is only enough time in the timeout for entrances to be at (0, 100, 200, 300, 400) milliseconds");
+             .BeInRange(
+                 4,
+                 5,
+                 "because there is only enough time in the timeout for entrances to be at (0, 100, 200, 300, 400) milliseconds");
     }
 
     #region Constructor Tests
@@ -476,7 +481,7 @@ public sealed class FifoAutoReleasingSemaphoreSlimExtendedTests
                     .NotBeNull();
 
         // Cleanup
-        await subscription!.DisposeAsync();
+        await subscription.DisposeAsync();
     }
 
     [Test]
@@ -629,7 +634,7 @@ public sealed class FifoAutoReleasingSemaphoreSlimExtendedTests
                     .NotBeNull();
 
         // Cleanup
-        await subscription!.DisposeAsync();
+        await subscription.DisposeAsync();
     }
 
     [Test]

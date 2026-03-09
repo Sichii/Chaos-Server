@@ -139,7 +139,8 @@ public sealed class LobbyServer : ServerBase<IChaosLobbyClient>, ILobbyServer<IC
         ClientHandlers[(byte)ClientOpCode.ServerTableRequest] = OnServerTableRequest;
     }
 
-    protected override void OnConnected(Socket clientSocket)
+    // ReSharper disable once AsyncMethodWithoutAwait
+    protected override async Task OnConnected(Socket clientSocket)
     {
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
 

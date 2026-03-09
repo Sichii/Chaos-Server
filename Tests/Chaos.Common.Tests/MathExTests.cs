@@ -1,5 +1,4 @@
 #region
-using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
 using FluentAssertions;
 #endregion

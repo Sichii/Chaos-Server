@@ -181,7 +181,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
     /// <param name="clientSocket">
     ///     The socket that connected to the server
     /// </param>
-    protected abstract void OnConnected(Socket clientSocket);
+    protected abstract Task OnConnected(Socket clientSocket);
 
     /// <summary>
     ///     Called when a new connection is accepted by the server.

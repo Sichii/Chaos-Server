@@ -1,7 +1,5 @@
 #region
 using Chaos.Storage.Abstractions;
-using Chaos.Storage.Abstractions.Definitions;
-using Chaos.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;

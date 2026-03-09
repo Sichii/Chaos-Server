@@ -159,13 +159,12 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// <inheritdoc />
 
     // ReSharper disable once AsyncVoidMethod
-    public virtual async void BeginReceive()
+    public virtual void BeginReceive()
     {
         if (!Socket.Connected)
             return;
 
         Connected = true;
-        await Task.Yield();
 
         var args = new SocketAsyncEventArgs();
         args.SetBuffer(Memory);
@@ -174,110 +173,111 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     }
 
     // ReSharper disable once AsyncVoidMethod
-    private async void ReceiveEventHandler(object? sender, SocketAsyncEventArgs e)
-    {
-        await ReceiveSync.WaitAsync()
-                         .ConfigureAwait(false);
-
-        try
+    private void ReceiveEventHandler(object? sender, SocketAsyncEventArgs e)
+        => Task.Run(async () =>
         {
-            var shouldReset = false;
-            var count = e.BytesTransferred;
+            await ReceiveSync.WaitAsync()
+                             .ConfigureAwait(false);
 
-            //if we received a length of 0, the client is forcing a disconnection
-            if (count == 0)
+            try
             {
-                Disconnect();
+                var shouldReset = false;
+                var count = e.BytesTransferred;
 
-                return;
-            }
-
-            Count += count;
-            var offset = 0;
-
-            //if there's less than 4 bytes in the buffer
-            //there isnt enough data to make a packet
-            while (Count > 3)
-            {
-                var packetLength = (Buffer[offset + 1] << 8) + Buffer[offset + 2] + 3;
-
-                //if we havent received the whole packet yet, break
-                if (Count < packetLength)
-                    break;
-
-                if (Count < 4)
-                    break;
-
-                try
+                //if we received a length of 0, the client is forcing a disconnection
+                if (count == 0)
                 {
-                    var opcode = Buffer[offset + 3];
+                    Disconnect();
 
-                    using var packetActivity = ActivitySources.StartPacketActivity("Packet.Handle");
-                    packetActivity?.SetTag("packet.opcode", opcode);
-                    packetActivity?.SetTag("packet.length", packetLength);
-
-                    packetActivity?.SetTag(
-                        "client.type",
-                        GetType()
-                            .Name);
-
-                    await HandlePacketAsync(Buffer.Slice(offset, packetLength));
-                } catch (Exception ex)
-                {
-                    //required so we can use Span<byte> in an async method
-                    void InnerCatch()
-                    {
-                        var buffer = Buffer[offset..(offset + Count)]
-                            .TrimEnd((byte)0);
-
-                        var hex = BitConverter.ToString(buffer.ToArray())
-                                              .Replace("-", " ");
-                        var ascii = Encoding.ASCII.GetString(buffer);
-
-                        Logger.WithTopics(Topics.Entities.Client, Topics.Entities.Packet, Topics.Actions.Processing)
-                              .WithProperty(this)
-                              .LogError(
-                                  ex,
-                                  "Exception while handling a packet for {@ClientType}. (Count: {Count}, Offset: {Offset}, BufferHex: {BufferHex}, BufferAscii: {BufferAscii})",
-                                  GetType()
-                                      .Name,
-                                  Count,
-                                  offset,
-                                  hex,
-                                  ascii);
-                    }
-
-                    InnerCatch();
-                    shouldReset = true;
+                    return;
                 }
 
-                Count -= packetLength;
-                offset += packetLength;
+                Count += count;
+                var offset = 0;
+
+                //if there's less than 4 bytes in the buffer
+                //there isnt enough data to make a packet
+                while (Count > 3)
+                {
+                    var packetLength = (Buffer[offset + 1] << 8) + Buffer[offset + 2] + 3;
+
+                    //if we havent received the whole packet yet, break
+                    if (Count < packetLength)
+                        break;
+
+                    if (Count < 4)
+                        break;
+
+                    try
+                    {
+                        var opcode = Buffer[offset + 3];
+
+                        using var packetActivity = ActivitySources.StartPacketActivity("Packet.Handle");
+                        packetActivity?.SetTag("packet.opcode", opcode);
+                        packetActivity?.SetTag("packet.length", packetLength);
+
+                        packetActivity?.SetTag(
+                            "client.type",
+                            GetType()
+                                .Name);
+
+                        await HandlePacketAsync(Buffer.Slice(offset, packetLength));
+                    } catch (Exception ex)
+                    {
+                        //required so we can use Span<byte> in an async method
+                        void InnerCatch()
+                        {
+                            var buffer = Buffer[offset..(offset + Count)]
+                                .TrimEnd((byte)0);
+
+                            var hex = BitConverter.ToString(buffer.ToArray())
+                                                  .Replace("-", " ");
+                            var ascii = Encoding.ASCII.GetString(buffer);
+
+                            Logger.WithTopics(Topics.Entities.Client, Topics.Entities.Packet, Topics.Actions.Processing)
+                                  .WithProperty(this)
+                                  .LogError(
+                                      ex,
+                                      "Exception while handling a packet for {@ClientType}. (Count: {Count}, Offset: {Offset}, BufferHex: {BufferHex}, BufferAscii: {BufferAscii})",
+                                      GetType()
+                                          .Name,
+                                      Count,
+                                      offset,
+                                      hex,
+                                      ascii);
+                        }
+
+                        InnerCatch();
+                        shouldReset = true;
+                    }
+
+                    Count -= packetLength;
+                    offset += packetLength;
+                }
+
+                //if an error occurs which causes shouldReset to be set to true
+                //set the Count to 0, effectively clearing the buffer
+                if (shouldReset)
+                    Count = 0;
+
+                //if we received the first few bytes of a new packet, they wont be at the beginning of the buffer
+                //copy those couple bytes to the beginning of the buffer
+                if (Count > 0)
+                    Buffer.Slice(offset, Count)
+                          .CopyTo(Buffer);
+
+                e.SetBuffer(Memory[Count..]);
+                Socket.ReceiveAndForget(e, ReceiveEventHandler);
+            } catch (Exception)
+            {
+                //ignored
+                Disconnect();
+            } finally
+            {
+                if (Connected)
+                    ReceiveSync.Release();
             }
-
-            //if an error occurs which causes shouldReset to be set to true
-            //set the Count to 0, effectively clearing the buffer
-            if (shouldReset)
-                Count = 0;
-
-            //if we received the first few bytes of a new packet, they wont be at the beginning of the buffer
-            //copy those couple bytes to the beginning of the buffer
-            if (Count > 0)
-                Buffer.Slice(offset, Count)
-                      .CopyTo(Buffer);
-
-            e.SetBuffer(Memory[Count..]);
-            Socket.ReceiveAndForget(e, ReceiveEventHandler);
-        } catch (Exception)
-        {
-            //ignored
-            Disconnect();
-        } finally
-        {
-            if (Connected)
-                ReceiveSync.Release();
-        }
-    }
+        });
 
     /// <inheritdoc />
     public virtual void Send<T>(T obj) where T: IPacketSerializable

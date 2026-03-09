@@ -393,7 +393,7 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
         ClientHandlers[(byte)ClientOpCode.PasswordChange] = OnPasswordChange;
     }
 
-    protected override async void OnConnected(Socket clientSocket)
+    protected override async Task OnConnected(Socket clientSocket)
     {
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
 

@@ -7,7 +7,7 @@ dotnet %userprofile%\.nuget\packages\reportgenerator\5.5.0\tools\net10.0\ReportG
   -targetdir:CoverageReport ^
   -reporttypes:Html_Dark ^
   -historydir:CoverageHistory ^
-  -assemblyfilters:-Chaos;-Chaos.Schemas;-Chaos.Networking
+  -assemblyfilters:-Chaos;-Chaos.Schemas
 
 start "" "CoverageReport\index.html"
 pause
