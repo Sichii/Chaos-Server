@@ -1,12 +1,10 @@
 #region
 using System.Collections.Concurrent;
-using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
-using Microsoft.Extensions.DependencyInjection;
 #endregion
 
 namespace Chaos.Storage.Tests;
@@ -82,7 +80,7 @@ public sealed class ReadOnlyAndStorageObjectTests : IDisposable
 
         // Just ensure methods are callable without exceptions
         st.Save();
-        Func<Task> act = async () => await st.SaveAsync();
+        var act = async () => await st.SaveAsync();
 
         // Assert
         ro.Should()

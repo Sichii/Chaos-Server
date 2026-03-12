@@ -119,6 +119,35 @@ public sealed class ShallowCopyTests
     }
 
     [Test]
+    public void Merge_InheritedType_ShouldCopyBaseClassProperties()
+    {
+        // Arrange - Test that inherited class copies both base and derived properties
+        var from = new DerivedClassWithProperties
+        {
+            BaseValue = 100,
+            DerivedValue = 200
+        };
+
+        var to = new DerivedClassWithProperties
+        {
+            BaseValue = 0,
+            DerivedValue = 0
+        };
+
+        // Act
+        ShallowCopy<DerivedClassWithProperties>.Merge(from, to);
+
+        // Assert
+        to.BaseValue
+          .Should()
+          .Be(100);
+
+        to.DerivedValue
+          .Should()
+          .Be(200);
+    }
+
+    [Test]
     public void Merge_InterfaceType_Copies_Properties()
     {
         var from = new InterfaceLike
@@ -136,6 +165,60 @@ public sealed class ShallowCopyTests
         to.Value
           .Should()
           .Be(10);
+    }
+
+    [Test]
+    public void Merge_InterfaceType_ShouldUseInterfaceBranch_ForPropertiesAndFields()
+    {
+        // Arrange - Use an actual interface type T to trigger the type.IsInterface branch
+        ITestInterface from = new MultiInterfaceImplementation
+        {
+            InterfaceProperty = 42,
+            InterfaceField = 99
+        };
+
+        ITestInterface to = new MultiInterfaceImplementation
+        {
+            InterfaceProperty = 0,
+            InterfaceField = 0
+        };
+
+        // Act - ShallowCopy<ITestInterface> triggers the interface path in GetRecursiveProperties/GetRecursiveFields
+        ShallowCopy<ITestInterface>.Merge(from, to);
+
+        // Assert
+        to.InterfaceProperty
+          .Should()
+          .Be(42);
+    }
+
+    [Test]
+    public void Merge_InterfaceType_WithMultipleInterfaces_ShouldCopyAllProperties()
+    {
+        // Arrange - Use ISecondInterface which has overlapping property name with ITestInterface
+        ISecondInterface from = new MultiInterfaceImplementation
+        {
+            InterfaceProperty = 77,
+            SecondProperty = "fromValue"
+        };
+
+        ISecondInterface to = new MultiInterfaceImplementation
+        {
+            InterfaceProperty = 0,
+            SecondProperty = "toValue"
+        };
+
+        // Act
+        ShallowCopy<ISecondInterface>.Merge(from, to);
+
+        // Assert
+        to.InterfaceProperty
+          .Should()
+          .Be(77);
+
+        to.SecondProperty
+          .Should()
+          .Be("fromValue");
     }
 
     [Test]
@@ -507,6 +590,11 @@ public sealed class ShallowCopyTests
             .Be(60); // Should copy internal properties
     }
 
+    internal class BaseClassWithProperties
+    {
+        public int BaseValue { get; set; }
+    }
+
     internal sealed class ClassWithConstructorArgs
     {
         public string Name { get; set; }
@@ -559,6 +647,11 @@ public sealed class ShallowCopyTests
 
         public int ReadOnlyProperty => 20;
         public int GetWriteOnlyValue() => _writeOnlyValue;
+    }
+
+    internal sealed class DerivedClassWithProperties : BaseClassWithProperties
+    {
+        public int DerivedValue { get; set; }
     }
 
     internal sealed class EmptyType

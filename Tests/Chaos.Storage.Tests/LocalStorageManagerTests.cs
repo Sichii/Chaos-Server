@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text.Json;
 using Chaos.Common.Utilities;
-using Chaos.Storage;
 using Chaos.Storage.Abstractions;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Memory;
@@ -88,9 +87,8 @@ public sealed class LocalStorageManagerTests : IDisposable
     public void GetOrAddEntry_Should_Create_In_Cache_When_Missing()
     {
         // Act
-        var method = typeof(LocalStorageManager).GetMethod(
-            "GetOrAddEntry",
-            BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(typeof(Sample));
+        var method = typeof(LocalStorageManager).GetMethod("GetOrAddEntry", BindingFlags.Instance | BindingFlags.NonPublic)!
+                                                .MakeGenericMethod(typeof(Sample));
         var dict = (ConcurrentDictionary<string, Sample>)method.Invoke(Manager, [])!;
 
         // Assert
@@ -105,9 +103,8 @@ public sealed class LocalStorageManagerTests : IDisposable
     public async Task GetOrAddEntryAsync_Should_Create_In_Cache_When_Missing()
     {
         // Act
-        var method = typeof(LocalStorageManager).GetMethod(
-            "GetOrAddEntryAsync",
-            BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(typeof(Sample));
+        var method = typeof(LocalStorageManager).GetMethod("GetOrAddEntryAsync", BindingFlags.Instance | BindingFlags.NonPublic)!
+                                                .MakeGenericMethod(typeof(Sample));
         var dict = await (Task<ConcurrentDictionary<string, Sample>>)method.Invoke(Manager, [])!;
 
         // Assert
@@ -126,7 +123,7 @@ public sealed class LocalStorageManagerTests : IDisposable
 
         var initial = new Dictionary<string, Sample>
         {
-            ["default"] = new Sample
+            ["default"] = new()
             {
                 Id = 1,
                 Name = "one"
@@ -160,7 +157,7 @@ public sealed class LocalStorageManagerTests : IDisposable
 
         var initial = new Dictionary<string, Sample>
         {
-            ["default"] = new Sample
+            ["default"] = new()
             {
                 Id = 2,
                 Name = "two"
@@ -194,7 +191,7 @@ public sealed class LocalStorageManagerTests : IDisposable
 
         var initial = new Dictionary<string, Sample>
         {
-            ["name"] = new Sample
+            ["name"] = new()
             {
                 Id = 5
             }
@@ -202,9 +199,8 @@ public sealed class LocalStorageManagerTests : IDisposable
         JsonSerializerEx.Serialize(filePath, initial, JsonOptions.Value);
 
         // Act
-        var method = typeof(LocalStorageManager).GetMethod(
-            "LoadOrCreateEntry",
-            BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(typeof(Sample));
+        var method = typeof(LocalStorageManager).GetMethod("LoadOrCreateEntry", BindingFlags.Instance | BindingFlags.NonPublic)!
+                                                .MakeGenericMethod(typeof(Sample));
         var dict = (ConcurrentDictionary<string, Sample>)method.Invoke(Manager, [])!;
 
         // Assert
@@ -220,7 +216,7 @@ public sealed class LocalStorageManagerTests : IDisposable
 
         var initial = new Dictionary<string, Sample>
         {
-            ["name2"] = new Sample
+            ["name2"] = new()
             {
                 Id = 6
             }
@@ -228,9 +224,8 @@ public sealed class LocalStorageManagerTests : IDisposable
         await JsonSerializerEx.SerializeAsync(filePath, initial, JsonOptions.Value);
 
         // Act
-        var method = typeof(LocalStorageManager).GetMethod(
-            "LoadOrCreateEntryAsync",
-            BindingFlags.Instance | BindingFlags.NonPublic)!.MakeGenericMethod(typeof(Sample));
+        var method = typeof(LocalStorageManager).GetMethod("LoadOrCreateEntryAsync", BindingFlags.Instance | BindingFlags.NonPublic)!
+                                                .MakeGenericMethod(typeof(Sample));
         var dict = await (Task<ConcurrentDictionary<string, Sample>>)method.Invoke(Manager, [])!;
 
         // Assert
@@ -249,7 +244,7 @@ public sealed class LocalStorageManagerTests : IDisposable
                .Id
                .Should()
                .Be(0); // default
-        ((IStorage<Sample>)storage).GetInstance("default");
+        storage.GetInstance("default");
         storage.Value.Id = 3;
         storage.Value.Name = "three";
 

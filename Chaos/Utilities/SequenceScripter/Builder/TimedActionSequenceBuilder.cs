@@ -1,7 +1,3 @@
-#region
-using Chaos.Utilities.SequenceScripter.Builder;
-#endregion
-
 namespace Chaos.Utilities.SequenceScripter.Builder;
 
 public sealed class TimedActionSequenceBuilder<T>

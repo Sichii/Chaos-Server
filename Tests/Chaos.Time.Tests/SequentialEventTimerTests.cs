@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-using Chaos.Time;
+#region
 using Chaos.Time.Abstractions;
 using FluentAssertions;
+#endregion
 
 namespace Chaos.Time.Tests;
 
@@ -13,12 +13,7 @@ public class SequentialEventTimerTests
         var t1 = new FakeIntervalTimer(1);
         var t2 = new FakeIntervalTimer(2);
 
-        var seq = new SequentialEventTimer(
-            new List<IIntervalTimer>
-            {
-                t1,
-                t2
-            });
+       var seq = new SequentialEventTimer(t1, t2);
         seq.Update(TimeSpan.FromMilliseconds(1)); // advance to t2
 
         seq.Reset();
@@ -37,11 +32,7 @@ public class SequentialEventTimerTests
     {
         var t1 = new FakeIntervalTimer(1);
 
-        var seq = new SequentialEventTimer(
-            new List<IIntervalTimer>
-            {
-                t1
-            });
+       var seq = new SequentialEventTimer(t1);
 
         var act = () => seq.SetOrigin(DateTime.UtcNow);
 
@@ -52,15 +43,10 @@ public class SequentialEventTimerTests
     [Test]
     public void Update_Should_Advance_To_Next_Timer_When_Current_Elapsed()
     {
-        var t1 = new FakeIntervalTimer(ticksToElapse: 1);
-        var t2 = new FakeIntervalTimer(ticksToElapse: 2);
+       var t1 = new FakeIntervalTimer(1);
+       var t2 = new FakeIntervalTimer(2);
 
-        var seq = new SequentialEventTimer(
-            new List<IIntervalTimer>
-            {
-                t1,
-                t2
-            });
+       var seq = new SequentialEventTimer(t1, t2);
 
         // first update should update t1; since t1 elapses immediately, next update moves to t2
         seq.Update(TimeSpan.FromMilliseconds(1));
@@ -93,12 +79,7 @@ public class SequentialEventTimerTests
         var t1 = new FakeIntervalTimer(1);
         var t2 = new FakeIntervalTimer(1);
 
-        var seq = new SequentialEventTimer(
-            new List<IIntervalTimer>
-            {
-                t1,
-                t2
-            });
+       var seq = new SequentialEventTimer(t1, t2);
 
         // First update still on t1, second update moves to t2 (since t1 elapses)
         seq.Update(TimeSpan.FromMilliseconds(1));
@@ -140,13 +121,13 @@ public class SequentialEventTimerTests
             _ticks = 0;
         }
 
-        public void Reset() { _ticks = 0; }
+       public void Reset() => _ticks = 0;
 
         public void SetOrigin(DateTime origin)
         {
             // not used by tests
         }
 
-        public void Update(TimeSpan delta) { _ticks++; }
+       public void Update(TimeSpan delta) => _ticks++;
     }
 }

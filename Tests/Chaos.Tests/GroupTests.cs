@@ -52,6 +52,21 @@ public sealed class GroupTests
     }
     #endregion
 
+    [Test]
+    public void Promote_Self_ShouldNotChangeLeader()
+    {
+        var group = CreateGroup();
+        var leader = group.Leader;
+
+        group.Promote(leader);
+
+        // Promoting self should be a no-op (the "dumbly point to yourself" branch)
+        group.Leader
+             .Name
+             .Should()
+             .Be("Leader");
+    }
+
     #region ToString
     [Test]
     public void ToString_ShouldMarkLeaderWithAsterisk()
@@ -212,6 +227,33 @@ public sealed class GroupTests
     #endregion
 
     #region Kick
+    [Test]
+    public void Kick_LeaderKicksSelf_ShouldLeaveGroup_WhenMoreThanTwoMembers()
+    {
+        var group = CreateGroup();
+        var map = group.Leader.MapInstance;
+        var member2 = MockAisling.Create(map, "Member2");
+        group.Add(member2);
+        member2.Group = group;
+
+        var leader = group.Leader;
+
+        // When leader kicks themselves, it delegates to Leave
+        group.Kick(leader);
+
+        group.Contains(leader)
+             .Should()
+             .BeFalse();
+
+        leader.Group
+              .Should()
+              .BeNull();
+
+        group.Count
+             .Should()
+             .Be(2);
+    }
+
     [Test]
     public void Kick_ShouldRemoveMember_WhenMoreThanTwoMembers()
     {

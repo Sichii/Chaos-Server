@@ -111,7 +111,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
         Logger = logger;
         ClientRegistry = clientRegistry;
         PacketSerializer = packetSerializer;
-        ClientHandlers = new ClientHandler?[byte.MaxValue];
+        ClientHandlers = new ClientHandler?[byte.MaxValue + 1];
         Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         Sync = new FifoAutoReleasingSemaphoreSlim(1, 1, $"{GetType().Name}");
         IndexHandlers();
@@ -171,8 +171,6 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
 
                 return default;
             });
-
-        Dispose();
     }
 
     /// <summary>
@@ -200,9 +198,14 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
         } catch
         {
             //ignored
-        } finally
+        }
+
+        try
         {
             serverSocket.BeginAccept(OnConnection, serverSocket);
+        } catch
+        {
+            //ignored, socket was disposed during shutdown
         }
 
         if (clientSocket is not null && clientSocket.Connected)
@@ -256,6 +259,15 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
         var syncActivity = ActivitySources.StartPacketActivity("Packet.Handle.Sync");
         await using var @lock = await Sync.WaitAsync(TimeSpan.FromSeconds(1));
         syncActivity?.Dispose();
+
+        if (@lock is null)
+        {
+            Logger.WithTopics(Topics.Entities.Packet, Topics.Actions.Processing)
+                  .WithProperty(client)
+                  .LogError("Sync semaphore timed out for {@ArgsType}, skipping handler", typeof(TArgs).Name);
+
+            return;
+        }
 
         using var executeActivity = ActivitySources.StartPacketActivity("Packet.Handle.Execute");
 

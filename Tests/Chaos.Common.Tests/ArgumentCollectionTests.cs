@@ -44,6 +44,25 @@ public sealed class ArgumentCollectionTests
     }
 
     [Test]
+    public void Add_WithEnumerable_And_NullDelimiter_ShouldNotSplit()
+    {
+        // Arrange
+        var ac = new ArgumentCollection();
+
+        // Act
+        ac.Add(
+            new[]
+            {
+                "x,y",
+                "z"
+            });
+
+        // Assert
+        ac.Should()
+          .Equal("x,y", "z");
+    }
+
+    [Test]
     public void Add_WithString_ShouldParseArgumentsFromSpaceDelimitedStringAndAddToCollection()
     {
         // Arrange
@@ -143,6 +162,55 @@ public sealed class ArgumentCollectionTests
         // Assert
         argumentCollection.Should()
                           .Equal("arg1", "arg2", "arg3");
+    }
+
+    [Test]
+    public void Constructor_WithEnumerable_And_Delimiter_ShouldSplit()
+    {
+        // Act
+        var ac = new ArgumentCollection(
+            new[]
+            {
+                "a,b",
+                "c,d"
+            },
+            ",");
+
+        // Assert - should split by comma
+        ac.Should()
+          .Equal(
+              "a",
+              "b",
+              "c",
+              "d");
+    }
+
+    [Test]
+    public void Constructor_WithEnumerable_And_NullDelimiter_ShouldNotSplit()
+    {
+        // Act
+        var ac = new ArgumentCollection(
+            new[]
+            {
+                "a,b",
+                "c"
+            });
+
+        // Assert - should not split since delimiter is null
+        ac.Should()
+          .Equal("a,b", "c");
+    }
+
+    [Test]
+    public void Constructor_WithNullEnumerable_ShouldCreateEmptyCollection()
+    {
+        // Act
+        var ac = new ArgumentCollection((IEnumerable<string>?)null);
+
+        // Assert
+        ac.Count
+          .Should()
+          .Be(0);
     }
 
     [Test]
@@ -459,5 +527,29 @@ public sealed class ArgumentCollectionTests
 
         v3.Should()
           .Be(0);
+    }
+
+    [Test]
+    public void TryGetNext_ShouldNotIncrementIndex_OnFailure()
+    {
+        // Arrange - collection with non-int values
+        var ac = new ArgumentCollection(
+            new[]
+            {
+                "abc"
+            });
+
+        // Act
+        ac.TryGetNext<int>(out _)
+          .Should()
+          .BeFalse();
+
+        // The index should not have been incremented, so trying with string should still get "abc"
+        ac.TryGetNext<string>(out var val)
+          .Should()
+          .BeTrue();
+
+        val.Should()
+           .Be("abc");
     }
 }

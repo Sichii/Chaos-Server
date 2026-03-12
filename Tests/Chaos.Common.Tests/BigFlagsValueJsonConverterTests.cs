@@ -78,6 +78,50 @@ public sealed class BigFlagsValueJsonConverterTests
     }
 
     [Test]
+    public void Deserialize_NoneString_ShouldReturnNone()
+    {
+        // Arrange
+        const string JSON = "\"None\"";
+
+        // Act
+        var value = JsonSerializer.Deserialize<BigFlagsValue<TestFeatures>>(JSON, Options);
+
+        // Assert
+        value.IsEmpty
+             .Should()
+             .BeTrue();
+    }
+
+    [Test]
+    public void Deserialize_NonStringToken_ShouldThrowJsonException()
+    {
+        // Arrange
+        const string JSON = "123";
+
+        // Act
+        var act = () => JsonSerializer.Deserialize<BigFlagsValue<TestFeatures>>(JSON, Options);
+
+        // Assert
+        act.Should()
+           .Throw<JsonException>()
+           .WithMessage("*Expected string token*");
+    }
+
+    [Test]
+    public void Deserialize_NullToken_ShouldReturnNone()
+    {
+        // Arrange
+        const string JSON = "null";
+
+        // Act
+        var value = JsonSerializer.Deserialize<BigFlagsValue<TestFeatures>>(JSON, Options);
+
+        // Assert
+        value.Should()
+             .Be(TestFeatures.None);
+    }
+
+    [Test]
     public void Deserialize_ShouldHandleWhitespace_InCommaSeparatedNames()
     {
         // Arrange

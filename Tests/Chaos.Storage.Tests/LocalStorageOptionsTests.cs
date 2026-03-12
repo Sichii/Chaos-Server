@@ -1,5 +1,4 @@
 #region
-using Chaos.Storage;
 using FluentAssertions;
 #endregion
 

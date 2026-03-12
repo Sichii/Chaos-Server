@@ -1,8 +1,5 @@
 #region
 using System.Collections;
-using System.Collections.Concurrent;
-using System.Text.Json;
-using Chaos.Storage;
 using Chaos.Testing.Infrastructure.Mocks;
 using Chaos.Storage.Abstractions;
 using Chaos.Storage.Abstractions.Definitions;
@@ -364,6 +361,44 @@ public sealed class ExpiringFileCacheTests : IDisposable
     }
 
     [Test]
+    public void LoadPaths_SearchTypeDirectories_ShouldExcludeEmptyDirectories()
+    {
+        // Arrange — create one empty dir and one dir with files
+        var emptyDir = Path.Combine(TempDir, "hollow");
+        Directory.CreateDirectory(emptyDir);
+
+        var nonEmptyDir = Path.Combine(TempDir, "populated");
+        Directory.CreateDirectory(nonEmptyDir);
+        File.WriteAllText(Path.Combine(nonEmptyDir, "data.json"), "{}");
+
+        var opts = Microsoft.Extensions.Options.Options.Create(
+            new ExpiringFileCacheOptions
+            {
+                Directory = TempDir,
+                Expires = false,
+                FilePattern = "*",
+                Recursive = false,
+                SearchType = SearchType.Directories
+            });
+
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            opts,
+            Logger);
+
+        // Act
+        var paths = cache.LoadPathsPublic();
+
+        // Assert
+        paths.Should()
+             .Contain(p => p.EndsWith("populated"));
+
+        paths.Should()
+             .NotContain(p => p.EndsWith("hollow"));
+    }
+
+    [Test]
     public void LoadPaths_SearchTypeDirectories_ShouldReturnDirectoriesWithFiles()
     {
         var subDir = Path.Combine(TempDir, "dirkey");
@@ -415,12 +450,59 @@ public sealed class ExpiringFileCacheTests : IDisposable
         _ = cache.Get("err");
 
         // Now repository throws during reload; method should swallow and continue
-        Action act = () => cache.ReloadAsync()
-                                .GetAwaiter()
-                                .GetResult();
+        var act = () => cache.ReloadAsync()
+                             .GetAwaiter()
+                             .GetResult();
 
         act.Should()
            .NotThrow();
+    }
+
+    [Test]
+    public void ReloadAsync_ShouldReloadSuccessfully_WhenEntryIsInCache()
+    {
+        // Arrange — create a file and load it into cache
+        var filename = Path.Combine(TempDir, "reload_success.json");
+        File.WriteAllText(filename, "{}");
+
+        var callCount = 0;
+
+        Repo.Setup(r => r.LoadAndMap<Dummy, DummySchema>(It.IsAny<string>(), It.IsAny<Action<DummySchema>>()))
+            .Returns(() => new Dummy
+            {
+                Id = ++callCount
+            });
+
+        var cache = new MockCache<Dummy, DummySchema, ExpiringFileCacheOptions>(
+            MemoryCache,
+            Repo.Object,
+            Options,
+            Logger);
+
+        // Initial load
+        var initial = cache.Get("reload_success");
+
+        initial.Should()
+               .NotBeNull();
+
+        initial!.Id
+                .Should()
+                .Be(1);
+
+        // Act — reload should succeed and replace the entry
+        cache.ReloadAsync()
+             .GetAwaiter()
+             .GetResult();
+
+        // Assert — value should be replaced with the new one
+        var reloaded = cache.Get("reload_success");
+
+        reloaded.Should()
+                .NotBeNull();
+
+        reloaded!.Id
+                 .Should()
+                 .Be(2);
     }
 
     [Test]
@@ -445,9 +527,9 @@ public sealed class ExpiringFileCacheTests : IDisposable
             Logger);
         _ = cache.Get("err2");
 
-        Action act = () => cache.ReloadAsync("err2")
-                                .GetAwaiter()
-                                .GetResult();
+        var act = () => cache.ReloadAsync("err2")
+                             .GetAwaiter()
+                             .GetResult();
 
         act.Should()
            .NotThrow();
@@ -528,8 +610,8 @@ public sealed class ExpiringFileCacheTests : IDisposable
             EvictionReason.Replaced,
             null);
 
-        ((IEnumerable<Dummy>)cache).Should()
-                                   .Contain(v => v.Id == 99);
+        cache.Should()
+             .Contain(v => v.Id == 99);
 
         // Should remove for other reasons (e.g., Expired)
         cache.RemoveValueCallbackPublic(
@@ -538,8 +620,8 @@ public sealed class ExpiringFileCacheTests : IDisposable
             EvictionReason.Expired,
             null);
 
-        ((IEnumerable<Dummy>)cache).Should()
-                                   .NotContain(v => v.Id == 99);
+        cache.Should()
+             .NotContain(v => v.Id == 99);
     }
 
     [Test]

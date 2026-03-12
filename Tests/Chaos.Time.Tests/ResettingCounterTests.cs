@@ -1,6 +1,7 @@
-using Chaos.Time;
+#region
 using Chaos.Time.Abstractions;
 using FluentAssertions;
+#endregion
 
 namespace Chaos.Time.Tests;
 
@@ -9,7 +10,7 @@ public class ResettingCounterTests
     [Test]
     public void Reset_Should_Clear_Counter()
     {
-        var counter = new ResettingCounter(maxPerSecond: 1);
+           var counter = new ResettingCounter(1);
 
         counter.TryIncrement()
                .Should()
@@ -28,7 +29,7 @@ public class ResettingCounterTests
     [Test]
     public void SetMaxCount_Should_Multiply_By_UpdateInterval()
     {
-        var counter = new ResettingCounter(maxPerSecond: 2, updateIntervalSecs: 3); // MaxCount = 6
+           var counter = new ResettingCounter(2, 3); // MaxCount = 6
 
         counter.TryIncrement()
                .Should()
@@ -53,7 +54,7 @@ public class ResettingCounterTests
     [Test]
     public void TryIncrement_Should_Return_False_When_At_Max()
     {
-        var counter = new ResettingCounter(maxPerSecond: 1, updateIntervalSecs: 1);
+           var counter = new ResettingCounter(1);
 
         counter.TryIncrement()
                .Should()
@@ -72,7 +73,7 @@ public class ResettingCounterTests
     public void Update_Should_Reset_Counter_When_Timer_Elapsed()
     {
         var timer = new ManualIntervalTimer();
-        var counter = new ResettingCounter(maxCount: 3, timer);
+           var counter = new ResettingCounter(3, timer);
 
         counter.TryIncrement()
                .Should()
@@ -96,16 +97,14 @@ public class ResettingCounterTests
 
     private sealed class ManualIntervalTimer : IIntervalTimer
     {
-        private bool _elapsed;
+           public bool IntervalElapsed { get; private set; }
 
-        public bool IntervalElapsed => _elapsed;
-
-        public void Reset() => _elapsed = false;
+           public void Reset() => IntervalElapsed = false;
 
         public void SetOrigin(DateTime origin) { }
 
         public void Update(TimeSpan delta) { }
 
-        public void ForceElapse() => _elapsed = true;
+           public void ForceElapse() => IntervalElapsed = true;
     }
 }

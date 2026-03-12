@@ -35,6 +35,21 @@ public sealed class PointEqualityComparerTests
     }
 
     [Test]
+    public void Equals_ReturnsFalse_WhenXMatchesButYDiffers()
+    {
+        // Arrange - same X, different Y to hit the Y-differs branch
+        var point1 = new Point(1, 2);
+        var point2 = new Point(1, 9);
+
+        // Act
+        var result = PointEqualityComparer.Instance.Equals(point1, point2);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+    }
+
+    [Test]
     public void Equals_ReturnsFalse_WhenYIsNull()
     {
         IPoint? x = new Point(1, 2);

@@ -33,7 +33,6 @@ using Chaos.Site.Utilities;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Options;
 using NLog;
-using NLog.Config;
 using NLog.Extensions.Logging;
 using Chaos.Definitions;
 using Chaos.Networking.Abstractions.Definitions;

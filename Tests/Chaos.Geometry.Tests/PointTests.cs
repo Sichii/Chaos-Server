@@ -1,5 +1,6 @@
 #region
 using Chaos.Geometry.Abstractions;
+using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
 #endregion
 
@@ -66,6 +67,38 @@ public sealed class PointTests
     }
 
     [Test]
+    public void Point_Equals_IPoint_Null_ReturnsFalse()
+    {
+        var point = new Point(1, 2);
+
+        point.Equals(null)
+             .Should()
+             .BeFalse();
+    }
+
+    [Test]
+    public void Point_Equals_IPoint_XDiffers_ReturnsFalse()
+    {
+        var point1 = new Point(1, 2);
+        IPoint point2 = new Point(9, 2);
+
+        point1.Equals(point2)
+              .Should()
+              .BeFalse();
+    }
+
+    [Test]
+    public void Point_Equals_IPoint_YDiffers_ReturnsFalse()
+    {
+        var point1 = new Point(1, 2);
+        IPoint point2 = new Point(1, 9);
+
+        point1.Equals(point2)
+              .Should()
+              .BeFalse();
+    }
+
+    [Test]
     public void Point_Equals_Object_IPoint_Path()
     {
         var p = new Point(7, 8);
@@ -80,6 +113,16 @@ public sealed class PointTests
         p.Equals(obj)
          .Should()
          .BeFalse();
+    }
+
+    [Test]
+    public void Point_Equals_Object_NonIPoint_ReturnsFalse()
+    {
+        var point = new Point(1, 2);
+
+        point.Equals("not a point")
+             .Should()
+             .BeFalse();
     }
 
     [Test]
@@ -133,8 +176,8 @@ public sealed class PointTests
     public void Point_From_ReturnsNewPointWithSameValuesWhenPassedPointOfDifferentType()
     {
         // Arrange
-        IPoint originalPoint = Chaos.Testing.Infrastructure.Mocks.MockPoint.Create(10, 20)
-                                    .Object;
+        var originalPoint = MockPoint.Create(10, 20)
+                                     .Object;
 
         // Act
         var newPoint = Point.From(originalPoint);
@@ -192,6 +235,32 @@ public sealed class PointTests
         var result = Point.TryParse(INPUT, out var point);
 
         // Assert
+        result.Should()
+              .BeFalse();
+
+        point.Should()
+             .Be(default(Point));
+    }
+
+    [Test]
+    public void Point_TryParse_ShouldReturnFalse_WhenXExceedsUshortRange()
+    {
+        // Regex matches digits, but 99999 > ushort.MaxValue (65535)
+        var result = Point.TryParse("(99999, 123)", out var point);
+
+        result.Should()
+              .BeFalse();
+
+        point.Should()
+             .Be(default(Point));
+    }
+
+    [Test]
+    public void Point_TryParse_ShouldReturnFalse_WhenYExceedsUshortRange()
+    {
+        // X is valid, but Y > ushort.MaxValue
+        var result = Point.TryParse("(123, 99999)", out var point);
+
         result.Should()
               .BeFalse();
 

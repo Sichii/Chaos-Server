@@ -1,6 +1,5 @@
 #region
 using Chaos.DarkAges.Definitions;
-using Chaos.Extensions.Common;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Definitions;

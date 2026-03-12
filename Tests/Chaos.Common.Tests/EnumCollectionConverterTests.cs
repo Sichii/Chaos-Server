@@ -51,6 +51,23 @@ public sealed class EnumCollectionConverterTests
     }
 
       [Test]
+      public void Read_ShouldThrowJsonException_ForUnresolvableEnumType()
+      {
+            // Arrange — use JsonSerializer.Deserialize which handles the reader internally
+            const string JSON = "{\"CompletelyFakeEnumType\": \"Value1\"}";
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new EnumCollectionConverter());
+
+            // Act
+            var act = () => JsonSerializer.Deserialize<EnumCollection>(JSON, options);
+
+            // Assert
+            act.Should()
+               .Throw<JsonException>()
+               .WithMessage("*Could not resolve enum type*");
+      }
+
+      [Test]
     public void Write_ShouldSerializeEnumCollectionAsDictionary()
     {
         // Arrange

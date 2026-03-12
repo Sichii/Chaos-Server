@@ -9,6 +9,28 @@ namespace Chaos.Geometry.Tests;
 public sealed class RectangleEqualityComparerTests
 {
     [Test]
+    public void Equals_ReturnsFalse_WhenBottomMatchesButLeftDiffers()
+    {
+        // Same height/top (same bottom) but different left to hit the Left-differs branch
+        var rectangle1 = new Rectangle(
+            0,
+            0,
+            3,
+            4);
+
+        var rectangle2 = new Rectangle(
+            1,
+            0,
+            3,
+            4);
+
+        var result = RectangleEqualityComparer.Instance.Equals(rectangle1, rectangle2);
+
+        result.Should()
+              .BeFalse();
+    }
+
+    [Test]
     public void Equals_ReturnsFalse_WhenRectanglesAreNotEqual()
     {
         // Arrange

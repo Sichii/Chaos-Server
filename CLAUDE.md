@@ -126,6 +126,7 @@ Key configuration sections in `appsettings.json`:
 - **Concrete mocks** expose protected members or provide simple implementations for direct instantiation (e.g., `MockConfigurableScript`, `MockScriptBase`, `MockScripted`, `MockScriptVars`, `MockCache`, `MockStagingDirectory`)
 - **MockLogger** has custom `VerifyLogEvent<T>()` and `VerifySimpleLog<T>()` extension methods that understand the project's structured `LogEvent` format — use these for log verification instead of raw Moq `Verify` calls
 - **Test enums and flags** belong in `Definitions/Enums.cs` — reuse existing ones (`SampleEnum1/2`, `ColorEnum`, `SizeEnum`, `TestFeatures`, `TestPermissions`, etc.) rather than defining new ones per test
+- **Mock `.Returns()` must use factory lambdas** when creating new objects — use `.Returns(() => new Mock<T>().Object)`, never `.Returns(new Mock<T>().Object)`. The non-lambda form evaluates once and returns the same singleton instance for every call, causing shared state pollution across tests
 
 ## C# Coding Standards
 

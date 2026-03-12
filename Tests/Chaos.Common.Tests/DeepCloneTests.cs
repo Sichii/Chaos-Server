@@ -209,6 +209,34 @@ public sealed class DeepCloneTests
     }
 
     [Test]
+    public void Create_DictionaryOfPrimitives_ShouldDeepClone()
+    {
+        // Arrange
+        var original = new Dictionary<string, int>
+        {
+            ["a"] = 1,
+            ["b"] = 2
+        };
+
+        // Act
+        var clone = DeepClone.Create(original)!;
+
+        // Assert
+        clone.Should()
+             .NotBeSameAs(original);
+
+        clone.Should()
+             .BeEquivalentTo(original);
+
+        // Modifying clone should not affect original
+        clone["a"] = 99;
+
+        original["a"]
+            .Should()
+            .Be(1);
+    }
+
+    [Test]
     public void Create_IntPrimitive_ReturnsEquivalentValue()
     {
         // int (ValueType + IsPrimitive) → returned as-is from InternalCopy
@@ -218,6 +246,38 @@ public sealed class DeepCloneTests
 
         clone.Should()
              .Be(original);
+    }
+
+    [Test]
+    public void Create_ObjectWithNullNestedProperty_ShouldHandleGracefully()
+    {
+        // Arrange
+        var original = new MockClonable
+        {
+            IntValue = 42,
+            StringValue = null!,
+            IntList = null!,
+            NestedClass = null!
+        };
+
+        // Act
+        var clone = DeepClone.Create(original)!;
+
+        // Assert
+        clone.Should()
+             .NotBeSameAs(original);
+
+        clone.IntValue
+             .Should()
+             .Be(42);
+
+        clone.StringValue
+             .Should()
+             .BeNull();
+
+        clone.NestedClass
+             .Should()
+             .BeNull();
     }
 
     [Test]
@@ -239,6 +299,20 @@ public sealed class DeepCloneTests
 
         var clone = DeepClone.Create(original);
 
+        clone.Should()
+             .Be(original);
+    }
+
+    [Test]
+    public void Create_StructValueType_ShouldReturnCopy()
+    {
+        // Arrange - struct (ValueType but not IsPrimitive)
+        var original = new DateTime(2025, 1, 1);
+
+        // Act
+        var clone = DeepClone.Create(original);
+
+        // Assert
         clone.Should()
              .Be(original);
     }

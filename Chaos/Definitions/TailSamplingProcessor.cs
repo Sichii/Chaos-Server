@@ -1,5 +1,4 @@
 #region
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using Chaos.Networking.Abstractions.Definitions;
 using OpenTelemetry;

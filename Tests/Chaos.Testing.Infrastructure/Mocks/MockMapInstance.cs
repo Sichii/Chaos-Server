@@ -1,6 +1,8 @@
 #region
 using Chaos.Collections;
+using Chaos.DarkAges.Definitions;
 using Chaos.Geometry;
+using Chaos.Geometry.Abstractions;
 using Chaos.Models.Map;
 using Chaos.Models.Templates;
 using Chaos.Models.World;
@@ -55,5 +57,18 @@ public static class MockMapInstance
         setup?.Invoke(mapInstance);
 
         return mapInstance;
+    }
+
+    /// <summary>
+    ///     Sets a tile on the map to be a wall using the first wall-flagged foreground in the Sotp table
+    /// </summary>
+    public static void SetWall(MapInstance map, IPoint point)
+    {
+        var wallIndex = Array.FindIndex(Tile.Sotp, f => f.HasFlag(TileFlags.Wall));
+
+        if (wallIndex < 0)
+            throw new InvalidOperationException("No wall tile found in Sotp resource");
+
+        map.Template.Tiles[point.X, point.Y] = new Tile(0, (ushort)(wallIndex + 1), 0);
     }
 }

@@ -1,5 +1,7 @@
+#region
 using System.Runtime.InteropServices;
 using BenchmarkDotNet.Attributes;
+#endregion
 
 // ReSharper disable ClassCanBeSealed.Global
 
@@ -18,7 +20,8 @@ public class SpanBenchmarks
         Memory = new Memory<byte>(buffer);
     }
 
-    [Benchmark, BenchmarkCategory("Int16", "Assignment")]
+    [Benchmark]
+    [BenchmarkCategory("Int16", "Assignment")]
     public void Int16Assignment()
     {
         var span = Memory.Span;
@@ -28,7 +31,8 @@ public class SpanBenchmarks
         span[index] = (byte)Int16;
     }
 
-    [Benchmark, BenchmarkCategory("Int16", "Assignment", "Fill")]
+    [Benchmark]
+    [BenchmarkCategory("Int16", "Assignment", "Fill")]
     public void Int16AssignmentFill()
     {
         var span = Memory.Span;
@@ -41,14 +45,16 @@ public class SpanBenchmarks
         }
     }
 
-    [Benchmark, BenchmarkCategory("Int16", "Marshal")]
+    [Benchmark]
+    [BenchmarkCategory("Int16", "Marshal")]
     public void Int16Marshal()
     {
         var span = Memory.Span;
         MemoryMarshal.Write(span, in Int16);
     }
 
-    [Benchmark, BenchmarkCategory("Int16", "Marshal", "Fill")]
+    [Benchmark]
+    [BenchmarkCategory("Int16", "Marshal", "Fill")]
     public void Int16MarshalFill()
     {
         var buffer = Memory.Span;
@@ -57,7 +63,8 @@ public class SpanBenchmarks
             MemoryMarshal.Write(buffer[index..], in Int16);
     }
 
-    [Benchmark, BenchmarkCategory("Int32", "Assignment")]
+    [Benchmark]
+    [BenchmarkCategory("Int32", "Assignment")]
     public void Int32Assignment()
     {
         var span = Memory.Span;
@@ -69,7 +76,8 @@ public class SpanBenchmarks
         span[index] = (byte)Int32;
     }
 
-    [Benchmark, BenchmarkCategory("Int32", "Assignment", "Fill")]
+    [Benchmark]
+    [BenchmarkCategory("Int32", "Assignment", "Fill")]
     public void Int32AssignmentFill()
     {
         var span = Memory.Span;
@@ -84,14 +92,16 @@ public class SpanBenchmarks
         }
     }
 
-    [Benchmark, BenchmarkCategory("Int32", "Marshal")]
+    [Benchmark]
+    [BenchmarkCategory("Int32", "Marshal")]
     public void Int32Marshal()
     {
         var span = Memory.Span;
         MemoryMarshal.Write(span, in Int32);
     }
 
-    [Benchmark, BenchmarkCategory("Int32", "Marshal", "Fill")]
+    [Benchmark]
+    [BenchmarkCategory("Int32", "Marshal", "Fill")]
     public void Int32MarshalFill()
     {
         var buffer = Memory.Span;

@@ -49,6 +49,8 @@ public sealed class StringExtensionsTests
     [Arguments("Saturday", "SUNDAY", false, 3)]
     [Arguments("", "", true, 0)]
     [Arguments("", "", false, 0)]
+    [Arguments("hello", "", false, 5)]
+    [Arguments("", "world", false, 5)]
     //@formatter:on
     public void CalculateLevenshteinDistanceTests(
         string str1,
@@ -311,6 +313,30 @@ public sealed class StringExtensionsTests
         // Assert
         result.Should()
               .Be(expected);
+    }
+
+    [Test]
+    public void FuzzySearchBy_ShouldReturnDefault_WhenItemsExistButNoMatchFound()
+    {
+        // Arrange - items exist but search term is completely different
+        var items = new[]
+        {
+            "apple",
+            "banana",
+            "cherry"
+        };
+
+        // Act - high minCoefficient ensures no match
+        var result = items.FuzzySearchBy(
+            s => s,
+            "zzzzz",
+            0.9m,
+            0.1m,
+            caseSensitive: false);
+
+        // Assert
+        result.Should()
+              .BeNull();
     }
 
     [Test]
@@ -667,6 +693,35 @@ public sealed class StringExtensionsTests
     }
 
     [Test]
+    public void Inject_ShouldPreserveLoneClosingBrace()
+    {
+        // Arrange - lone } without opening { falls through to default case which copies it
+        const string INPUT = "A}B";
+
+        // Act
+        var result = INPUT.Inject();
+
+        // Assert
+        result.Should()
+              .Be("A}B");
+    }
+
+    [Test]
+    public void Inject_ShouldTreatNullToStringAsEmpty()
+    {
+        // Arrange - object whose ToString() returns null
+        var nullToString = new NullToStringObject();
+        const string INPUT = "Value: {val}";
+
+        // Act
+        var result = INPUT.Inject(nullToString);
+
+        // Assert
+        result.Should()
+              .Be("Value: ");
+    }
+
+    [Test]
     public void Inject_Too_Many_Parameters_Ignores_Extras()
     {
         const string INPUT = "A {B}";
@@ -736,5 +791,10 @@ public sealed class StringExtensionsTests
         // Assert
         result.Should()
               .BeTrue(); // Expected result: true
+    }
+
+    private sealed class NullToStringObject
+    {
+        public override string? ToString() => null;
     }
 }

@@ -1,5 +1,4 @@
 #region
-using Chaos.Time;
 using FluentAssertions;
 #endregion
 
@@ -38,6 +37,53 @@ public sealed class ChantTimerTests
 
         // Elapsed == expectedChantTime → burden += 0
         var result = timer.Validate(2);
+
+        result.Should()
+              .BeTrue();
+    }
+
+    [Test]
+    public void Update_ShouldClampTimeBurden_WhenReductionGoesNegative()
+    {
+        var timer = new ChantTimer(5000);
+
+        // Start a 1-line chant (1000ms expected), validate immediately → burden = 1000ms
+        timer.Start(1);
+        timer.Validate(1);
+
+        // Start another 1-line chant (1000ms expected)
+        timer.Start(1);
+
+        // Elapsed 5000ms > 1000ms → reduction = 5000-1000 = 4000
+        // TimeBurden = ClampPositive(1000 - 4000) = ClampPositive(-3000) = 0
+        timer.Update(TimeSpan.FromMilliseconds(5000));
+
+        var result = timer.Validate(1);
+
+        result.Should()
+              .BeTrue();
+    }
+
+    [Test]
+    public void Update_ShouldReduceTimeBurden_WhenElapsedExceedsExpectedChantTime()
+    {
+        var timer = new ChantTimer(5000);
+
+        // Start a 1-line chant (1000ms expected)
+        timer.Start(1);
+
+        // Cast instantly → burden = ClampPositive(0 - (0 - 1000)) = ClampPositive(1000) = 1000ms
+        timer.Validate(1);
+
+        // Start a new 1-line chant (1000ms expected)
+        timer.Start(1);
+
+        // Elapsed 2000ms > 1000ms expected → should reduce time burden
+        // TimeBurden = ClampPositive(1000 - (2000 - 1000)) = ClampPositive(0) = 0
+        timer.Update(TimeSpan.FromMilliseconds(2000));
+
+        // Now burden is 0, should succeed
+        var result = timer.Validate(1);
 
         result.Should()
               .BeTrue();

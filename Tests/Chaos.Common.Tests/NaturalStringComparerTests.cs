@@ -10,6 +10,41 @@ public sealed class NaturalStringComparerTests
     private readonly NaturalStringComparer _comparer = new();
 
     [Test]
+    public void Compare_AllZerosInY_ShouldExhaustLeadingZeroLoop()
+    {
+        // Arrange & Act - y has all-zero numeric portion at end of string
+        // This tests the iy >= y.Length exit condition in the leading zeros loop (line 73)
+        var result = _comparer.Compare("file1", "file0");
+
+        // Assert
+        result.Should()
+              .BePositive(); // 1 > 0
+    }
+
+    [Test]
+    public void Compare_AllZerosNumericPortion_ShouldExhaustLeadingZeroLoop()
+    {
+        // Arrange & Act - "file0" has all-zero numeric portion at end of string
+        // This tests the ix >= x.Length exit condition in the leading zeros loop (line 69)
+        var result = _comparer.Compare("file0", "file1");
+
+        // Assert
+        result.Should()
+              .BeNegative(); // 0 < 1
+    }
+
+    [Test]
+    public void Compare_AllZerosVsAllZeros_ShouldReturnZero()
+    {
+        // Arrange & Act - both strings have all-zeros numeric portions
+        var result = _comparer.Compare("item000", "item00");
+
+        // Assert
+        result.Should()
+              .Be(0); // both are numerically 0
+    }
+
+    [Test]
     public void Compare_AlphabeticStrings_ShouldCompareAlphabetically()
     {
         // Arrange & Act
@@ -72,6 +107,17 @@ public sealed class NaturalStringComparerTests
     }
 
     [Test]
+    public void Compare_DifferentLeadingZeros_SameNumericValue_ShouldReturnZero()
+    {
+        // Arrange & Act - "007" and "7" should be equal since leading zeros are skipped
+        var result = _comparer.Compare("file007", "file7");
+
+        // Assert
+        result.Should()
+              .Be(0);
+    }
+
+    [Test]
     public void Compare_EmptyStrings_ShouldReturnZero()
     {
         // Arrange & Act
@@ -95,6 +141,17 @@ public sealed class NaturalStringComparerTests
 
         result2.Should()
                .BeNegative();
+    }
+
+    [Test]
+    public void Compare_EqualNumericStrings_ShouldReturnZero()
+    {
+        // Arrange & Act
+        var result = _comparer.Compare("100", "100");
+
+        // Assert
+        result.Should()
+              .Be(0);
     }
 
     [Test]
@@ -296,6 +353,20 @@ public sealed class NaturalStringComparerTests
     }
 
     [Test]
+    public void Compare_SameReferenceString_ShouldReturnZero()
+    {
+        // Arrange
+        var str = "same";
+
+        // Act - same reference object
+        var result = _comparer.Compare(str, str);
+
+        // Assert
+        result.Should()
+              .Be(0);
+    }
+
+    [Test]
     public void Compare_SecondStringNull_ShouldReturnPositiveOne()
     {
         // Arrange & Act
@@ -304,6 +375,17 @@ public sealed class NaturalStringComparerTests
         // Assert
         result.Should()
               .Be(1);
+    }
+
+    [Test]
+    public void Compare_ShorterStringIsPrefix_NumericDifference_ShouldCompareByLength()
+    {
+        // Arrange & Act - "test" is exhausted before "test1"
+        var result = _comparer.Compare("test", "test1");
+
+        // Assert
+        result.Should()
+              .BeNegative();
     }
 
     [Test]

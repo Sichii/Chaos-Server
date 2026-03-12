@@ -7,7 +7,11 @@ using Chaos.Extensions.Common;
 
 namespace Benchmarks;
 
-[MemoryDiagnoser, MaxIterationCount(50), MaxWarmupCount(50)]
+[MemoryDiagnoser]
+[MaxIterationCount(50)]
+[MaxWarmupCount(50)]
+
+// ReSharper disable once ClassCanBeSealed.Global
 public class EscapeAnalysisBenchmarks
 {
     private Consumer Consumer;

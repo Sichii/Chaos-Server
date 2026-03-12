@@ -1,5 +1,4 @@
 #region
-using Chaos.Time;
 using FluentAssertions;
 #endregion
 

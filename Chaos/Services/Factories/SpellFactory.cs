@@ -1,5 +1,4 @@
 #region
-using Chaos.Collections.Common;
 using Chaos.Common.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Panel;

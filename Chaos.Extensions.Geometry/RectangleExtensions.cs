@@ -35,7 +35,8 @@ public static class RectangleExtensions
         ///         false
         ///     </c>
         /// </returns>
-        [MethodImpl(MethodImplOptions.AggressiveInlining), OverloadResolutionPriority(1)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [OverloadResolutionPriority(1)]
         public bool ContainsPoint<TPoint>(TPoint point) where TPoint: IPoint, allows ref struct
             => (rect.Left <= point.X) && (rect.Right >= point.X) && (rect.Top <= point.Y) && (rect.Bottom >= point.Y);
 

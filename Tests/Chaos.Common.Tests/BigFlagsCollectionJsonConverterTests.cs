@@ -208,6 +208,36 @@ public sealed class BigFlagsCollectionJsonConverterTests
     }
 
     [Test]
+    public void Deserialize_ShouldThrowJsonException_WhenInputIsNotObject()
+    {
+        // Arrange — pass an array instead of object
+        const string JSON = "[\"not\",\"an\",\"object\"]";
+
+        // Act
+        var act = () => JsonSerializer.Deserialize<BigFlagsCollection>(JSON, Options);
+
+        // Assert
+        act.Should()
+           .Throw<JsonException>();
+    }
+
+    [Test]
+    public void Deserialize_ShouldThrowJsonException_WhenValueIsNotString()
+    {
+        // Arrange — value is a number instead of a string
+        var typeName = typeof(TestFeatures).Name;
+        var json = $"{{\"{typeName}\":123}}";
+
+        // Act
+        var act = () => JsonSerializer.Deserialize<BigFlagsCollection>(json, Options);
+
+        // Assert
+        act.Should()
+           .Throw<JsonException>()
+           .WithMessage("*Expected string value for flags*");
+    }
+
+    [Test]
     public void Deserialize_SingleType_ShouldRestoreFlags()
     {
         // Arrange - Create JSON manually with type name

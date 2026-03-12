@@ -1,9 +1,6 @@
 #region
 using System.Runtime.Serialization;
 using System.Text.Json;
-using Chaos.Common.Utilities;
-using Chaos.Storage;
-using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -538,6 +535,47 @@ public class EntityRepositoryTests : IDisposable
     }
 
     [Test]
+    public void Save_WithSafeSavesFalse_ShouldWriteDirectly()
+    {
+        // Arrange — use SafeSaves=false to hit the non-atomic write branch
+        var optionsMock = new Mock<IOptionsSnapshot<EntityRepositoryOptions>>();
+
+        optionsMock.Setup(x => x.Value)
+                   .Returns(
+                       new EntityRepositoryOptions
+                       {
+                           SafeSaves = false
+                       });
+
+        var repo = new EntityRepository(
+            MapperMock.Object,
+            JsonOptions,
+            optionsMock.Object,
+            LoggerMock.Object);
+
+        var testSchema = new TestSchema
+        {
+            Id = 99,
+            Name = "NonSafe"
+        };
+
+        // Act
+        repo.Save(testSchema, TestFilePath);
+
+        // Assert
+        File.Exists(TestFilePath)
+            .Should()
+            .BeTrue();
+
+        var content = File.ReadAllText(TestFilePath);
+
+        content.Should()
+               .Contain("\"Id\": 99");
+
+        // No .bak file should be created for non-safe saves (unless file already existed)
+    }
+
+    [Test]
     public void SaveAndMap_Should_Map_And_Serialize_Object()
     {
         // Arrange
@@ -709,6 +747,42 @@ public class EntityRepositoryTests : IDisposable
 
         content.Should()
                .Contain("\"Name\": \"AsyncSaveTest\"");
+    }
+
+    [Test]
+    public async Task SaveAsync_WithSafeSavesFalse_ShouldWriteDirectly()
+    {
+        var optionsMock = new Mock<IOptionsSnapshot<EntityRepositoryOptions>>();
+
+        optionsMock.Setup(x => x.Value)
+                   .Returns(
+                       new EntityRepositoryOptions
+                       {
+                           SafeSaves = false
+                       });
+
+        var repo = new EntityRepository(
+            MapperMock.Object,
+            JsonOptions,
+            optionsMock.Object,
+            LoggerMock.Object);
+
+        var testSchema = new TestSchema
+        {
+            Id = 100,
+            Name = "AsyncNonSafe"
+        };
+
+        await repo.SaveAsync(testSchema, TestFilePath);
+
+        File.Exists(TestFilePath)
+            .Should()
+            .BeTrue();
+
+        var content = await File.ReadAllTextAsync(TestFilePath);
+
+        content.Should()
+               .Contain("\"Id\": 100");
     }
 
     [Test]

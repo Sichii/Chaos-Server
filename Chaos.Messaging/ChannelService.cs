@@ -229,7 +229,9 @@ public sealed class ChannelService : IChannelService
 
         //$"[{finalChannelName}] {senderName}: {message}";
 
-        if (channelDetails.DefaultColor != MessageColor.Default)
+        var hasColorPrefix = channelDetails.DefaultColor != MessageColor.Default;
+
+        if (hasColorPrefix)
         {
             spanWriter.WriteString("{=");
             spanWriter.WriteByte((byte)channelDetails.DefaultColor);
@@ -249,6 +251,23 @@ public sealed class ChannelService : IChannelService
 
         var defaultMessage = Encoding.Default.GetString(buffer);
 
+        //build a second buffer that always has the color prefix for override mutations
+        //if the original already has the prefix, just copy it; otherwise prepend {=\0
+        Span<byte> colorPrefixedBuffer = stackalloc byte[buffer.Length + (hasColorPrefix ? 0 : 3)];
+
+        if (hasColorPrefix)
+            buffer.CopyTo(colorPrefixedBuffer);
+        else
+        {
+            colorPrefixedBuffer[0] = (byte)'{';
+            colorPrefixedBuffer[1] = (byte)'=';
+            colorPrefixedBuffer[2] = 0;
+            buffer.CopyTo(colorPrefixedBuffer[3..]);
+        }
+
+        if (colorPrefixedBuffer.Length > CONSTANTS.MAX_COMPLETE_MESSAGE_LENGTH)
+            colorPrefixedBuffer = colorPrefixedBuffer[..CONSTANTS.MAX_COMPLETE_MESSAGE_LENGTH];
+
         Logger.WithTopics(Topics.Entities.Channel, Topics.Entities.Message, Topics.Actions.Send)
               .WithProperty(subscriber)
               .LogInformation(
@@ -266,11 +285,10 @@ public sealed class ChannelService : IChannelService
             //if there's a message color override
             if (subDetails.MessageColorOverride.HasValue)
             {
-                //set the 3rd byte to the override color
-                buffer[2] = (byte)subDetails.MessageColorOverride;
+                //set the 3rd byte to the override color and create a string from the prefixed buffer
+                colorPrefixedBuffer[2] = (byte)subDetails.MessageColorOverride;
 
-                //create a new string from the buffer and send it
-                channelDetails.SendMessageAction(subDetails.Subscriber, Encoding.Default.GetString(buffer));
+                channelDetails.SendMessageAction(subDetails.Subscriber, Encoding.Default.GetString(colorPrefixedBuffer));
             } else
                 channelDetails.SendMessageAction(subDetails.Subscriber, defaultMessage);
         }

@@ -1,5 +1,7 @@
+#region
 using System.Runtime.CompilerServices;
 using Chaos.Common.Identity;
+#endregion
 
 namespace Chaos.Models.World.Abstractions;
 
@@ -31,7 +33,7 @@ public abstract class WorldEntity : IEquatable<WorldEntity>
         if (ReferenceEquals(this, obj))
             return true;
 
-        return Equals((WorldEntity)obj);
+        return obj is WorldEntity other && Equals(other);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

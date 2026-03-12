@@ -1,7 +1,6 @@
 #region
 using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
-using Chaos.DarkAges.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;

@@ -24,6 +24,21 @@ public sealed class CircleEqualityComparerTests
     }
 
     [Test]
+    public void Equals_ReturnsFalse_WhenSameCenterDifferentRadius()
+    {
+        // Arrange - same center, different radius to hit the radius-differs branch
+        var circle1 = new Circle(new Point(1, 2), 5);
+        var circle2 = new Circle(new Point(1, 2), 10);
+
+        // Act
+        var result = CircleEqualityComparer.Instance.Equals(circle1, circle2);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+    }
+
+    [Test]
     public void Equals_ReturnsFalse_WhenXIsNull()
     {
         ICircle? x = null;

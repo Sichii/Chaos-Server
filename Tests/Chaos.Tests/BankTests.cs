@@ -1,51 +1,21 @@
 #region
 using Chaos.Collections;
-using Chaos.Common.Abstractions;
-using Chaos.DarkAges.Definitions;
-using Chaos.Models.Data;
-using Chaos.Models.Panel;
-using Chaos.Models.Templates;
-using Chaos.Scripting.Abstractions;
-using Chaos.Scripting.ItemScripts.Abstractions;
-using Chaos.TypeMapper.Abstractions;
+using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
-using Moq;
 #endregion
 
 namespace Chaos.Tests;
 
 public sealed class BankTests
 {
-    private readonly Mock<ICloningService<Item>> ClonerMock;
-    private readonly Mock<IScriptProvider> ScriptProviderMock;
-
-    public BankTests()
-    {
-        ScriptProviderMock = new Mock<IScriptProvider>();
-
-        ScriptProviderMock.Setup(sp => sp.CreateScript<IItemScript, Item>(It.IsAny<ICollection<string>>(), It.IsAny<Item>()))
-                          .Returns(new Mock<IItemScript>().Object);
-
-        ClonerMock = new Mock<ICloningService<Item>>();
-
-        ClonerMock.Setup(c => c.Clone(It.IsAny<Item>()))
-                  .Returns<Item>(original =>
-                  {
-                      var clone = new Item(original.Template, ScriptProviderMock.Object);
-                      clone.Count = original.Count;
-
-                      return clone;
-                  });
-    }
-
     #region Construction with initial items
     [Test]
     public void Bank_ShouldAcceptInitialItems()
     {
         var items = new[]
         {
-            CreateItem("Sword"),
-            CreateItem("Shield")
+            MockItem.Create("Sword"),
+            MockItem.Create("Shield")
         };
 
         var bank = new Bank(items);
@@ -151,7 +121,7 @@ public sealed class BankTests
     public void Deposit_ShouldAddItemToBank()
     {
         var bank = CreateBank();
-        var item = CreateItem("Sword");
+        var item = MockItem.Create("Sword");
 
         bank.Deposit(item);
 
@@ -164,7 +134,7 @@ public sealed class BankTests
     public void Deposit_ShouldThrow_WhenItemCountIsZero()
     {
         var bank = CreateBank();
-        var item = CreateItem("Sword");
+        var item = MockItem.Create("Sword");
         item.Count = 0;
 
         var act = () => bank.Deposit(item);
@@ -177,8 +147,8 @@ public sealed class BankTests
     public void Deposit_ShouldConsolidateStacks_WhenSameItemDeposited()
     {
         var bank = CreateBank();
-        var item1 = CreateItem("Potion", 5);
-        var item2 = CreateItem("Potion", 3);
+        var item1 = MockItem.Create("Potion", 5);
+        var item2 = MockItem.Create("Potion", 3);
 
         bank.Deposit(item1);
         bank.Deposit(item2);
@@ -192,8 +162,8 @@ public sealed class BankTests
     public void Deposit_ShouldZeroOriginalItemCount_WhenConsolidated()
     {
         var bank = CreateBank();
-        var item1 = CreateItem("Potion", 5);
-        var item2 = CreateItem("Potion", 3);
+        var item1 = MockItem.Create("Potion", 5);
+        var item2 = MockItem.Create("Potion", 3);
 
         bank.Deposit(item1);
         bank.Deposit(item2);
@@ -218,7 +188,7 @@ public sealed class BankTests
     public void Contains_ShouldBeCaseInsensitive()
     {
         var bank = CreateBank();
-        bank.Deposit(CreateItem("Sword"));
+        bank.Deposit(MockItem.Create("Sword"));
 
         bank.Contains("sword")
             .Should()
@@ -243,7 +213,7 @@ public sealed class BankTests
     public void CountOf_ShouldReturnItemCount()
     {
         var bank = CreateBank();
-        bank.Deposit(CreateItem("Potion", 7));
+        bank.Deposit(MockItem.Create("Potion", 7));
 
         bank.CountOf("Potion")
             .Should()
@@ -254,7 +224,7 @@ public sealed class BankTests
     public void HasCount_ShouldReturnTrue_WhenSufficientCount()
     {
         var bank = CreateBank();
-        bank.Deposit(CreateItem("Potion", 10));
+        bank.Deposit(MockItem.Create("Potion", 10));
 
         bank.HasCount("Potion", 5)
             .Should()
@@ -265,7 +235,7 @@ public sealed class BankTests
     public void HasCount_ShouldReturnTrue_WhenExactCount()
     {
         var bank = CreateBank();
-        bank.Deposit(CreateItem("Potion", 5));
+        bank.Deposit(MockItem.Create("Potion", 5));
 
         bank.HasCount("Potion", 5)
             .Should()
@@ -276,7 +246,7 @@ public sealed class BankTests
     public void HasCount_ShouldReturnFalse_WhenInsufficientCount()
     {
         var bank = CreateBank();
-        bank.Deposit(CreateItem("Potion", 3));
+        bank.Deposit(MockItem.Create("Potion", 3));
 
         bank.HasCount("Potion", 5)
             .Should()
@@ -303,7 +273,7 @@ public sealed class BankTests
     public void TryWithdraw_ShouldReturnFalse_WhenInsufficientCount()
     {
         var bank = CreateBankWithCloner();
-        bank.Deposit(CreateItem("Potion", 3));
+        bank.Deposit(MockItem.Create("Potion", 3));
 
         var result = bank.TryWithdraw("Potion", 10, out var items);
 
@@ -318,7 +288,7 @@ public sealed class BankTests
     public void TryWithdraw_ShouldRemoveItemFromBank_WhenWithdrawingExactAmount()
     {
         var bank = CreateBankWithCloner();
-        bank.Deposit(CreateItem("Potion", 5));
+        bank.Deposit(MockItem.Create("Potion", 5));
 
         var result = bank.TryWithdraw("Potion", 5, out var items);
 
@@ -337,7 +307,7 @@ public sealed class BankTests
     public void TryWithdraw_ShouldReduceCount_WhenPartialWithdraw()
     {
         var bank = CreateBankWithCloner();
-        bank.Deposit(CreateItem("Potion", 10, true));
+        bank.Deposit(MockItem.Create("Potion", 10, true));
 
         var result = bank.TryWithdraw("Potion", 3, out var items);
 
@@ -357,7 +327,7 @@ public sealed class BankTests
     public void TryWithdraw_ShouldThrow_WhenAmountIsZero()
     {
         var bank = CreateBankWithCloner();
-        bank.Deposit(CreateItem("Potion", 5));
+        bank.Deposit(MockItem.Create("Potion", 5));
 
         var act = () => bank.TryWithdraw("Potion", 0, out _);
 
@@ -371,9 +341,9 @@ public sealed class BankTests
     public void GetEnumerator_ShouldReturnAllItems()
     {
         var bank = CreateBank();
-        bank.Deposit(CreateItem("Sword"));
-        bank.Deposit(CreateItem("Shield"));
-        bank.Deposit(CreateItem("Potion"));
+        bank.Deposit(MockItem.Create("Sword"));
+        bank.Deposit(MockItem.Create("Shield"));
+        bank.Deposit(MockItem.Create("Potion"));
 
         var items = bank.ToList();
 
@@ -396,47 +366,6 @@ public sealed class BankTests
     #region Helpers
     private Bank CreateBank() => new();
 
-    private Bank CreateBankWithCloner() => new(null, ClonerMock.Object);
-
-    private Item CreateItem(string name, int count = 1, bool stackable = false)
-    {
-        var template = new ItemTemplate
-        {
-            Name = name,
-            TemplateKey = name.ToLowerInvariant(),
-            ItemSprite = new ItemSprite(1, 1),
-            PanelSprite = 1,
-            Color = DisplayColor.Default,
-            PantsColor = DisplayColor.Default,
-            MaxStacks = stackable ? 100 : 1,
-            BuyCost = 0,
-            SellValue = 0,
-            Category = "test",
-            Description = null,
-            EquipmentType = null,
-            Gender = null,
-            Class = null,
-            AdvClass = null,
-            IsDyeable = false,
-            IsModifiable = false,
-            NoTrade = false,
-            AccountBound = false,
-            PreventBanking = false,
-            Level = 1,
-            AbilityLevel = 0,
-            MaxDurability = null,
-            Modifiers = null,
-            Weight = 1,
-            Cooldown = null,
-            RequiresMaster = false,
-            ScriptKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase),
-            ScriptVars = new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase)
-        };
-
-        var item = new Item(template, ScriptProviderMock.Object);
-        item.Count = count;
-
-        return item;
-    }
+    private Bank CreateBankWithCloner() => new(null, MockScriptProvider.ItemCloner.Object);
     #endregion
 }

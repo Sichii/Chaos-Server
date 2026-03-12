@@ -1,7 +1,8 @@
-using Chaos.Time;
+#region
 using FluentAssertions;
 using Moq;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Time.Tests;
 
@@ -19,12 +20,7 @@ public sealed class SequentialTimersTests
         t2.SetupGet(x => x.IntervalElapsed)
           .Returns(true);
 
-        var seq = new PeriodicSequentialEventTimer(
-            new[]
-            {
-                t1.Object,
-                t2.Object
-            });
+        var seq = new PeriodicSequentialEventTimer(t1.Object, t2.Object);
 
         seq.Update(TimeSpan.FromMilliseconds(1));
 
@@ -40,12 +36,7 @@ public sealed class SequentialTimersTests
         t1.SetupGet(x => x.IntervalElapsed)
           .Returns(true); // Immediately advance to t2
 
-        var seq = new PeriodicSequentialEventTimer(
-            new[]
-            {
-                t1.Object,
-                t2.Object
-            });
+        var seq = new PeriodicSequentialEventTimer(t1.Object, t2.Object);
 
         seq.Update(TimeSpan.FromMilliseconds(1));
 
@@ -57,7 +48,7 @@ public sealed class SequentialTimersTests
     public void RandomizedIntervalTimer_ShouldElapseAndRandomizeNextInterval()
     {
         // Use deterministic interval by setting randomization pct to 0
-        var timer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(100), maxRandomizationPct: 0, startAsElapsed: false);
+        var timer = new RandomizedIntervalTimer(TimeSpan.FromMilliseconds(100), 0, startAsElapsed: false);
 
         timer.Update(TimeSpan.FromMilliseconds(100));
 
@@ -82,12 +73,7 @@ public sealed class SequentialTimersTests
         t1.SetupGet(x => x.IntervalElapsed)
           .Returns(true);
 
-        var seq = new SequentialEventTimer(
-            new[]
-            {
-                t1.Object,
-                t2.Object
-            });
+        var seq = new SequentialEventTimer(t1.Object, t2.Object);
 
         seq.Update(TimeSpan.FromMilliseconds(1));
 

@@ -10,6 +10,48 @@ namespace Chaos.IO.Tests;
 public sealed class DirectorySynchronizerTests
 {
     [Test]
+    public async Task SafeExecute_ShouldBlockSubPaths()
+    {
+        // Arrange - Lock a parent path, then try to lock a subpath
+        const string PARENT_DIR = @"C:\TestLockParent";
+        const string CHILD_DIR = @"C:\TestLockParent\Child";
+
+        var parentStarted = new ManualResetEventSlim(false);
+        var parentCanFinish = new ManualResetEventSlim(false);
+        var childExecuted = false;
+
+        // Act - Lock parent path with a long operation
+        var parentTask = Task.Run(() => PARENT_DIR.SafeExecute(_ =>
+        {
+            parentStarted.Set();
+            parentCanFinish.Wait(TimeSpan.FromSeconds(5));
+        }));
+
+        parentStarted.Wait(TimeSpan.FromSeconds(5));
+
+        // Child path should be blocked because it's a subpath of the locked parent
+        var childTask = Task.Run(() => CHILD_DIR.SafeExecute(_ =>
+        {
+            childExecuted = true;
+        }));
+
+        // Give child a chance to try — it should be blocked
+        await Task.Delay(100);
+
+        childExecuted.Should()
+                     .BeFalse("child path should be blocked while parent is locked");
+
+        // Release parent
+        parentCanFinish.Set();
+        await parentTask;
+        await childTask;
+
+        // Assert - child should have executed after parent released
+        childExecuted.Should()
+                     .BeTrue();
+    }
+
+    [Test]
     public void SafeExecute_ShouldLockDirectory()
     {
         const string DIRECTORY = "testDir";

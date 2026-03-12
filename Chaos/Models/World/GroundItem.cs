@@ -7,7 +7,6 @@ using Chaos.Models.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
 using Chaos.Models.World.Abstractions;
-using Chaos.Scripting.Abstractions;
 #endregion
 
 namespace Chaos.Models.World;

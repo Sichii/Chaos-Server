@@ -54,7 +54,8 @@ public static class PointExtensions
                 yield return (T)setPoint;
     }
 
-    [OverloadResolutionPriority(1), MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [OverloadResolutionPriority(1)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool WithinRange(this Point point, Point other, int distance = 15) => point.ManhattanDistanceFrom(other) <= distance;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

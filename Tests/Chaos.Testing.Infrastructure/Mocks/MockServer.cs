@@ -97,7 +97,7 @@ public sealed class MockServer : ServerBase<MockConnectedClient>
         {
             clientSocket.NoDelay = true;
 
-            OnConnected(clientSocket);
+            _ = OnConnected(clientSocket);
         }
     }
 }

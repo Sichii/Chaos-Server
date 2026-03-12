@@ -1,6 +1,5 @@
 #region
 using Chaos.Collections.Common;
-using Chaos.Extensions.Geometry;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Services.Factories.Abstractions;

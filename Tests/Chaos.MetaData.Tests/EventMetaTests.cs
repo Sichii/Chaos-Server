@@ -29,6 +29,67 @@ public sealed class EventMetaTests
           .NotBe(0u);
     }
 
+      [Test]
+      public void EventMetaNode_Serialize_WithNullProperties_UsesDefaults()
+      {
+            // All optional properties are null — should use ?? defaults
+            var node = new EventMetaNode("QuestNull", 2);
+
+            var writer = new SpanWriter(Encoding.GetEncoding(949));
+            node.Serialize(ref writer);
+            writer.Flush();
+
+            var buffer = writer.ToSpan()
+                               .ToArray();
+            var reader = new SpanReader(Encoding.GetEncoding(949), buffer);
+
+            // 02_start
+            reader.ReadString8()
+                  .Should()
+                  .Be("02_start");
+            reader.ReadInt16(); // property count
+
+            // 02_title
+            reader.ReadString8()
+                  .Should()
+                  .Be("02_title");
+
+            var titlePropCount = reader.ReadInt16();
+
+            titlePropCount.Should()
+                          .Be(1);
+
+            reader.ReadString16()
+                  .Should()
+                  .Be("QuestNull");
+
+            // 02_id — should be empty string (Id ?? string.Empty)
+            reader.ReadString8()
+                  .Should()
+                  .Be("02_id");
+
+            reader.ReadInt16(); // prop count
+
+            reader.ReadString16()
+                  .Should()
+                  .Be(string.Empty);
+
+            // 02_qual — should use defaults "1234567" and "012345"
+            reader.ReadString8()
+                  .Should()
+                  .Be("02_qual");
+
+            reader.ReadInt16();
+
+            reader.ReadString16()
+                  .Should()
+                  .Be("1234567");
+
+            reader.ReadString16()
+                  .Should()
+                  .Be("012345");
+      }
+
     [Test]
     public void EventMetaNode_Serialize_Writes_Sequence_Of_Subnodes()
     {

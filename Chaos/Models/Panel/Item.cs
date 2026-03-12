@@ -7,7 +7,6 @@ using Chaos.Models.Data;
 using Chaos.Models.Panel.Abstractions;
 using Chaos.Models.Templates;
 using Chaos.Models.World;
-using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.ItemScripts.Abstractions;
 using Chaos.TypeMapper.Abstractions;

@@ -58,6 +58,43 @@ public sealed class FileExTests
     }
 
     [Test]
+    public void SafeOpenRead_RetryableException_ShouldTryNextPath()
+    {
+        var basePath = CreateTempFilePath();
+        var bakPath = basePath + ".bak";
+
+        // Create primary and backup files
+        File.WriteAllText(basePath, "primary");
+        File.WriteAllText(bakPath, "backup");
+
+        var callCount = 0;
+
+        // First call throws RetryableException (should continue to next path), second succeeds
+        var result = FileEx.SafeOpenRead(
+            basePath,
+            stream =>
+            {
+                callCount++;
+
+                if (callCount == 1)
+                    throw new RetryableException("retryable");
+
+                using var reader = new StreamReader(stream);
+
+                return reader.ReadToEnd();
+            });
+
+        result.Should()
+              .Be("backup");
+
+        callCount.Should()
+                 .Be(2); // primary (throw) + backup (success). Temp gets FileNotFound before reaching func.
+
+        File.Delete(basePath);
+        File.Delete(bakPath);
+    }
+
+    [Test]
     public void SafeOpenRead_WhenAllMissing_ShouldThrowAggregateWithInnerFileNotFound()
     {
         var basePath = CreateTempFilePath();
@@ -120,6 +157,32 @@ public sealed class FileExTests
     }
 
     [Test]
+    public async Task SafeOpenReadAsync_AllMissing_ShouldThrowAggregateException()
+    {
+        var basePath = CreateTempFilePath();
+
+        Func<Task> act = () => FileEx.SafeOpenReadAsync<string>(basePath, _ => Task.FromResult(""));
+
+        await act.Should()
+                 .ThrowAsync<AggregateException>();
+    }
+
+    [Test]
+    public async Task SafeOpenReadAsync_NonRetryableException_ShouldBreakEarly()
+    {
+        var path = CreateTempFilePath();
+        File.WriteAllText(path, "data");
+
+        Func<Task> act = () => FileEx.SafeOpenReadAsync<string>(path, _ => throw new InvalidOperationException("non-retryable"));
+
+        await act.Should()
+                 .ThrowAsync<AggregateException>()
+                 .Where(e => (e.InnerExceptions.Count == 1) && e.InnerExceptions[0] is InvalidOperationException);
+
+        File.Delete(path);
+    }
+
+    [Test]
     public async Task SafeOpenReadAsync_PrimaryFilePresent_ReturnsImmediately()
     {
         var path = CreateTempFilePath();
@@ -138,6 +201,38 @@ public sealed class FileExTests
               .Be("async-primary");
 
         File.Delete(path);
+    }
+
+    [Test]
+    public async Task SafeOpenReadAsync_RetryableException_ShouldTryNextPath()
+    {
+        var basePath = CreateTempFilePath();
+        var bakPath = basePath + ".bak";
+
+        File.WriteAllText(basePath, "primary");
+        File.WriteAllText(bakPath, "backup");
+
+        var callCount = 0;
+
+        var result = await FileEx.SafeOpenReadAsync(
+            basePath,
+            async stream =>
+            {
+                callCount++;
+
+                if (callCount == 1)
+                    throw new RetryableException("retryable");
+
+                using var reader = new StreamReader(stream);
+
+                return await reader.ReadToEndAsync();
+            });
+
+        result.Should()
+              .Be("backup");
+
+        File.Delete(basePath);
+        File.Delete(bakPath);
     }
 
     [Test]
@@ -169,6 +264,28 @@ public sealed class FileExTests
 
         // Cleanup
         File.Delete(tempPath);
+    }
+
+    [Test]
+    public void SafeWriteAllText_WhenExistingFile_ShouldUseReplaceWithBak()
+    {
+        var path = CreateTempFilePath();
+        File.WriteAllText(path, "old");
+
+        FileEx.SafeWriteAllText(path, "new");
+
+        File.ReadAllText(path)
+            .Should()
+            .Be("new");
+
+        File.Exists(path + ".bak")
+            .Should()
+            .BeTrue();
+
+        File.Delete(path);
+
+        if (File.Exists(path + ".bak"))
+            File.Delete(path + ".bak");
     }
 
     [Test]
@@ -209,5 +326,22 @@ public sealed class FileExTests
 
         if (File.Exists(path + ".bak"))
             File.Delete(path + ".bak");
+    }
+
+    [Test]
+    public async Task SafeWriteAllTextAsync_WhenNewFile_ShouldWriteAndBeReadable()
+    {
+        var path = CreateTempFilePath();
+
+        if (File.Exists(path))
+            File.Delete(path);
+
+        await FileEx.SafeWriteAllTextAsync(path, "hello-async");
+
+        File.ReadAllText(path)
+            .Should()
+            .Be("hello-async");
+
+        File.Delete(path);
     }
 }

@@ -2,7 +2,6 @@
 using Chaos.Collections;
 using Chaos.Common.Abstractions;
 using Chaos.DarkAges.Definitions;
-using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;

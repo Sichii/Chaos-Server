@@ -48,6 +48,78 @@ public sealed class PolygonTests
     }
 
     [Test]
+    public void Polygon_Equals_IPolygon_Null_ReturnsFalse()
+    {
+        // Arrange
+        var polygon = new Polygon(
+            new List<IPoint>
+            {
+                new Point(1, 2),
+                new Point(3, 4),
+                new Point(5, 6)
+            });
+
+        // Act
+        var result = polygon.Equals(null);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+    }
+
+    [Test]
+    public void Polygon_Equals_IPolygon_SameReference_ReturnsTrue()
+    {
+        // Arrange
+        var polygon = new Polygon(
+            new List<IPoint>
+            {
+                new Point(1, 2),
+                new Point(3, 4),
+                new Point(5, 6)
+            });
+
+        // Act
+        var result = polygon.Equals(polygon);
+
+        // Assert
+        result.Should()
+              .BeTrue();
+    }
+
+    [Test]
+    public void Polygon_Equals_ReturnsFalse_WhenRotatedVerticesDoNotMatch()
+    {
+        // Arrange - polygons with same vertices but in a non-rotational different order
+        var vertices1 = new List<IPoint>
+        {
+            new Point(1, 1),
+            new Point(2, 2),
+            new Point(3, 3),
+            new Point(4, 4)
+        };
+
+        // Same first vertex but different sequence after that
+        var vertices2 = new List<IPoint>
+        {
+            new Point(1, 1),
+            new Point(3, 3),
+            new Point(2, 2),
+            new Point(4, 4)
+        };
+
+        var polygon1 = new Polygon(vertices1);
+        var polygon2 = new Polygon(vertices2);
+
+        // Act
+        var result = polygon1.Equals(polygon2);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+    }
+
+    [Test]
     public void Polygon_Equals_ReturnsFalseWhenComparingWithDifferentType()
     {
         // Arrange
@@ -161,6 +233,36 @@ public sealed class PolygonTests
 
         result2.Should()
                .BeFalse();
+    }
+
+    [Test]
+    public void Polygon_Equals_ReturnsTrue_WhenVerticesAreRotatedWithWrapAround()
+    {
+        // Arrange - vertices rotated so comparison wraps around the array
+        var vertices1 = new List<IPoint>
+        {
+            new Point(1, 1),
+            new Point(2, 2),
+            new Point(3, 3)
+        };
+
+        // Rotated by 2 positions - requires wrap around
+        var vertices2 = new List<IPoint>
+        {
+            new Point(3, 3),
+            new Point(1, 1),
+            new Point(2, 2)
+        };
+
+        var polygon1 = new Polygon(vertices1);
+        var polygon2 = new Polygon(vertices2);
+
+        // Act
+        var result = polygon1.Equals(polygon2);
+
+        // Assert
+        result.Should()
+              .BeTrue();
     }
 
     [Test]

@@ -268,22 +268,28 @@ public sealed class AutoReleasingReaderWriterLockSlimTests
     [Test]
     public async Task TryEnterReadLock_WhenContentionExists_ShouldReturnNullAfterTimeout()
     {
+        var lockAcquired = new ManualResetEventSlim(false);
+        var canRelease = new ManualResetEventSlim(false);
+
         // Use a different thread to create contention to avoid lock recursion issues
         var contentionTask = Task.Run(() =>
         {
             _rootLock.EnterWriteLock();
-            Thread.Sleep(100); // Hold the lock for a short time
+            lockAcquired.Set();
+            canRelease.Wait();
             _rootLock.ExitWriteLock();
         });
 
-        // Give the other thread time to acquire the write lock
-        await Task.Delay(10);
+        // Wait until the write lock is actually held
+        lockAcquired.Wait();
 
         // Try to acquire read lock with minimal timeout - should fail due to write lock
         var readLock = _autoLock.TryEnterReadLock(1);
 
         readLock.Should()
                 .BeNull();
+
+        canRelease.Set();
 
         // Wait for the contention task to complete
         await contentionTask;
@@ -328,22 +334,28 @@ public sealed class AutoReleasingReaderWriterLockSlimTests
     [Test]
     public async Task TryEnterUpgradeableReadLock_WhenContentionExists_ShouldReturnNullAfterTimeout()
     {
+        var lockAcquired = new ManualResetEventSlim(false);
+        var canRelease = new ManualResetEventSlim(false);
+
         // Use a different thread to create contention (only one upgradeable read lock allowed)
         var contentionTask = Task.Run(() =>
         {
             _rootLock.EnterUpgradeableReadLock();
-            Thread.Sleep(100); // Hold the lock for a short time
+            lockAcquired.Set();
+            canRelease.Wait();
             _rootLock.ExitUpgradeableReadLock();
         });
 
-        // Give the other thread time to acquire the upgradeable read lock
-        await Task.Delay(10);
+        // Wait until the upgradeable read lock is actually held
+        lockAcquired.Wait();
 
         // Try to acquire another upgradeable read lock with minimal timeout - should fail
         var upgradeableLock = _autoLock.TryEnterUpgradeableReadLock(1);
 
         upgradeableLock.Should()
                        .BeNull();
+
+        canRelease.Set();
 
         // Wait for the contention task to complete
         await contentionTask;
@@ -374,22 +386,28 @@ public sealed class AutoReleasingReaderWriterLockSlimTests
     [Test]
     public async Task TryEnterWriteLock_WhenContentionExists_ShouldReturnNullAfterTimeout()
     {
+        var lockAcquired = new ManualResetEventSlim(false);
+        var canRelease = new ManualResetEventSlim(false);
+
         // Use a different thread to create contention
         var contentionTask = Task.Run(() =>
         {
             _rootLock.EnterReadLock();
-            Thread.Sleep(100); // Hold the lock for a short time
+            lockAcquired.Set();
+            canRelease.Wait();
             _rootLock.ExitReadLock();
         });
 
-        // Give the other thread time to acquire the read lock
-        await Task.Delay(10);
+        // Wait until the read lock is actually held
+        lockAcquired.Wait();
 
         // Try to acquire write lock with minimal timeout - should fail due to read lock
         var writeLock = _autoLock.TryEnterWriteLock(1);
 
         writeLock.Should()
                  .BeNull();
+
+        canRelease.Set();
 
         // Wait for the contention task to complete
         await contentionTask;

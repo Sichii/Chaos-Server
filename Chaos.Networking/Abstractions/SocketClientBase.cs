@@ -30,12 +30,19 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     private static readonly ActivitySource PacketActivitySource = new("chaos-server.packets");
 
     private readonly Memory<byte> Memory;
+    private readonly Lock SendSync = new();
     private readonly ConcurrentQueue<SocketAsyncEventArgs> SocketArgsQueue;
+    private volatile int _connected;
     private int Count;
     private int Sequence;
 
     /// <inheritdoc />
-    public bool Connected { get; set; }
+    public bool Connected
+    {
+        get => _connected == 1;
+
+        set => _connected = value ? 1 : 0;
+    }
 
     /// <inheritdoc />
     public ICrypto Crypto { get; set; }
@@ -274,8 +281,7 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
                 Disconnect();
             } finally
             {
-                if (Connected)
-                    ReceiveSync.Release();
+                ReceiveSync.Release();
             }
         });
 
@@ -313,9 +319,11 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
 
         packet.IsEncrypted = IsEncrypted(packet.OpCode);
 
+        using var sync = SendSync.EnterScope();
+
         if (packet.IsEncrypted)
         {
-            packet.Sequence = (byte)(Interlocked.Increment(ref Sequence) - 1);
+            packet.Sequence = (byte)Sequence++;
 
             Encrypt(ref packet);
         }
@@ -338,10 +346,8 @@ public abstract class SocketClientBase : ISocketClient, IDisposable
     /// <inheritdoc />
     public virtual void Disconnect()
     {
-        if (!Connected)
+        if (Interlocked.CompareExchange(ref _connected, 0, 1) != 1)
             return;
-
-        Connected = false;
 
         try
         {

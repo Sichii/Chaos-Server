@@ -12,6 +12,48 @@ namespace Chaos.Common.Tests;
 public sealed class TypeExtensionsTests
 {
       [Test]
+      public void EnumerateProperties_ShouldRecurseIntoComplexProperties()
+      {
+            // Arrange
+            var type = typeof(NestedClass);
+
+            // Act
+            var properties = type.EnumerateProperties()
+                                 .Select(p => p.Name)
+                                 .ToList();
+
+            // Assert - Should recurse into Inner and yield its primitive properties
+            properties.Should()
+                      .Contain("IntValue");
+
+            properties.Should()
+                      .Contain("Name");
+
+            // Should not contain the complex property itself
+            properties.Should()
+                      .NotContain("Inner");
+      }
+
+      [Test]
+      public void EnumerateProperties_ShouldReturnPrimitiveAndStringProperties()
+      {
+            // Arrange
+            var type = typeof(FlatClass);
+
+            // Act
+            var properties = type.EnumerateProperties()
+                                 .Select(p => p.Name)
+                                 .ToList();
+
+            // Assert
+            properties.Should()
+                      .Contain("IntValue");
+
+            properties.Should()
+                      .Contain("Name");
+      }
+
+      [Test]
       public void ExtractGenericBaseType_Should_Return_AnotherDerivedType_When_GenericBaseType_Is_AnotherDerived()
       {
             // Arrange
@@ -139,6 +181,66 @@ public sealed class TypeExtensionsTests
 
             result.Should()
                   .ContainInOrder(typeof(AnotherDerived<string>), typeof(Base<string>), typeof(object));
+      }
+
+      [Test]
+      public void GetGenericMethod_ShouldReturnMethod_WhenMethodExists()
+      {
+            // Arrange
+            var type = typeof(ClassWithGenericMethod);
+
+            // Act
+            var method = type.GetGenericMethod("GenericMethod", [typeof(int)]);
+
+            // Assert
+            method.Should()
+                  .NotBeNull();
+
+            method!.IsGenericMethod
+                   .Should()
+                   .BeTrue();
+      }
+
+      [Test]
+      public void GetGenericMethod_ShouldReturnNull_WhenMethodDoesNotExist()
+      {
+            // Arrange
+            var type = typeof(ClassWithGenericMethod);
+
+            // Act
+            var method = type.GetGenericMethod("NonExistentMethod", [typeof(int)]);
+
+            // Assert
+            method.Should()
+                  .BeNull();
+      }
+
+      [Test]
+      public void HasAttribute_ShouldReturnFalse_WhenTypeDoesNotHaveAttribute()
+      {
+            // Arrange
+            var type = typeof(NonCompilerGeneratedClass);
+
+            // Act
+            var result = type.HasAttribute(typeof(CompilerGeneratedAttribute));
+
+            // Assert
+            result.Should()
+                  .BeFalse();
+      }
+
+      [Test]
+      public void HasAttribute_ShouldReturnTrue_WhenTypeHasAttribute()
+      {
+            // Arrange
+            var type = typeof(CompilerGeneratedClass);
+
+            // Act
+            var result = type.HasAttribute(typeof(CompilerGeneratedAttribute));
+
+            // Assert
+            result.Should()
+                  .BeTrue();
       }
 
       [Test]
@@ -367,6 +469,58 @@ public sealed class TypeExtensionsTests
         result.Should()
               .BeTrue();
     }
+
+      [Test]
+      public void LoadAttributedTypes_ShouldReturnTypesWithAttribute()
+      {
+            // Arrange
+            var attributeType = typeof(SerializableAttribute);
+
+            // Act
+            var types = attributeType.LoadAttributedTypes()
+                                     .ToList();
+
+            // Assert
+            types.Should()
+                 .NotBeEmpty();
+      }
+
+      [Test]
+      public void LoadImplementations_GenericTypeDefinition_Class_ShouldReturnDerived()
+      {
+            // Arrange
+            var genericBase = typeof(Base<>);
+
+            // Act
+            var implementations = genericBase.LoadImplementations()
+                                             .ToList();
+
+            // Assert
+            implementations.Should()
+                           .Contain(typeof(Derived));
+
+            implementations.Should()
+                           .Contain(typeof(YetAnotherDerived));
+      }
+
+      [Test]
+      public void LoadImplementations_GenericTypeDefinition_Interface_ShouldReturnImplementors()
+      {
+            // Arrange
+            var genericInterface = typeof(IBase<>);
+
+            // Act
+            var implementations = genericInterface.LoadImplementations()
+                                                  .ToList();
+
+            // Assert
+            implementations.Should()
+                           .Contain(typeof(MyClass));
+
+            // Generic type definitions return AnotherClass<T> not AnotherClass<int>
+            implementations.Should()
+                           .Contain(t => t.IsGenericType && (t.GetGenericTypeDefinition() == typeof(AnotherClass<>)));
+      }
 
       [Test]
       public void LoadImplementations_Should_Return_All_Constructable_Types_Implementing_Interface()
@@ -872,6 +1026,23 @@ public sealed class TypeExtensionsTests
             // Assert
             result.Should()
                   .BeNull();
+      }
+
+      public class ClassWithGenericMethod
+      {
+            public T GenericMethod<T>(T value) => value;
+      }
+
+      public class FlatClass
+      {
+            public int IntValue { get; set; }
+            public string Name { get; set; } = "";
+      }
+
+      public class NestedClass
+      {
+            public decimal DecimalValue { get; set; }
+            public FlatClass Inner { get; set; } = new();
       }
 
       #region MockTypes

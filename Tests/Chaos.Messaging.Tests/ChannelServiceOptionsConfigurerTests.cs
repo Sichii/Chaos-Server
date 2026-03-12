@@ -1,6 +1,5 @@
 #region
 using FluentAssertions;
-using Chaos.Messaging;
 using Microsoft.Extensions.Options;
 #endregion
 

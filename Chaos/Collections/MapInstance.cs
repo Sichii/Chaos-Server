@@ -285,12 +285,14 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     } catch (Exception e)
                     {
                         Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
-                              .LogError(e, "Failed to process action in map {@MapInstance}", this);
+                              .WithProperty(this)
+                              .LogError(e, "Failed to process action in map {@MapInstanceId}", InstanceId);
                     }
         } catch (Exception e)
         {
             Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
-                  .LogError(e, "Failed to update map {@MapInstance}", this);
+                  .WithProperty(this)
+                  .LogError(e, "Failed to update map {@MapInstanceId}", InstanceId);
         }
     }
 
@@ -413,7 +415,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         shard.Shards = Shards;
         Shards.TryAdd(shard.InstanceId, shard);
 
-        shard.AddAislingDirect(aisling, point);
+        shard.BeginInvoke(() => shard.AddAislingDirect(aisling, point));
     }
 
     /// <summary>
@@ -1530,7 +1532,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                         } catch (Exception e)
                         {
                             Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
-                                  .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
+                                  .WithProperty(this)
+                                  .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstanceId}", InstanceId);
                         }
                     }
                 })

@@ -1,5 +1,4 @@
 #region
-using Chaos.Scripting.Abstractions;
 using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
 #endregion

@@ -1,6 +1,5 @@
 #region
 using Chaos.Common.Definitions;
-using Chaos.Time;
 using FluentAssertions;
 #endregion
 

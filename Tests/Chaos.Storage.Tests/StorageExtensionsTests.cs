@@ -1,7 +1,9 @@
 #region
+using Chaos.Common.Abstractions;
 using Chaos.Extensions.DependencyInjection;
-using Chaos.Storage;
 using Chaos.Storage.Abstractions;
+using Chaos.Storage.Abstractions.Definitions;
+using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
@@ -18,9 +20,8 @@ public sealed class StorageExtensionsTests
         // Arrange
         var services = new ServiceCollection();
 
-        services.AddSingleton<Chaos.Common.Abstractions.IStagingDirectory>(sp => Chaos
-                                                                                 .Testing.Infrastructure.Mocks.MockStagingDirectory.Create()
-                                                                                 .Object);
+        services.AddSingleton<IStagingDirectory>(sp => MockStagingDirectory.Create()
+                                                                           .Object);
         services.AddSingleton<IConfiguration>(sp => new ConfigurationBuilder().Build());
 
         // Act
@@ -51,9 +52,8 @@ public sealed class StorageExtensionsAdditionalTests
     {
         var services = new ServiceCollection();
 
-        services.AddSingleton<Chaos.Common.Abstractions.IStagingDirectory>(sp => Chaos
-                                                                                 .Testing.Infrastructure.Mocks.MockStagingDirectory.Create()
-                                                                                 .Object);
+        services.AddSingleton<IStagingDirectory>(sp => MockStagingDirectory.Create()
+                                                                           .Object);
         services.AddSingleton<IConfiguration>(sp => new ConfigurationBuilder().Build());
         services.AddLogging();
         services.AddMemoryCache();
@@ -72,7 +72,7 @@ public sealed class StorageExtensionsAdditionalTests
             {
                 Directory = o.Directory,
                 FilePattern = "*.json",
-                SearchType = Chaos.Storage.Abstractions.Definitions.SearchType.Files
+                SearchType = SearchType.Files
             };
             o.Directory = configured.Directory;
         });
@@ -92,9 +92,8 @@ public sealed class StorageExtensionsAdditionalTests
     {
         var services = new ServiceCollection();
 
-        services.AddSingleton<Chaos.Common.Abstractions.IStagingDirectory>(sp => Chaos
-                                                                                 .Testing.Infrastructure.Mocks.MockStagingDirectory.Create()
-                                                                                 .Object);
+        services.AddSingleton<IStagingDirectory>(sp => MockStagingDirectory.Create()
+                                                                           .Object);
         services.AddSingleton<IConfiguration>(sp => new ConfigurationBuilder().Build());
         services.AddLogging();
         services.AddMemoryCache();
@@ -112,14 +111,12 @@ public sealed class StorageExtensionsAdditionalTests
             {
                 Directory = o.Directory,
                 FilePattern = "*.json",
-                SearchType = Chaos.Storage.Abstractions.Definitions.SearchType.Files
+                SearchType = SearchType.Files
             };
             o.Directory = configured.Directory;
         });
 
-        services
-            .AddExpiringCacheImpl<Sample, Chaos.Testing.Infrastructure.Mocks.MockCache<Sample, SampleSchema, ExpiringFileCacheOptions>,
-                ExpiringFileCacheOptions>();
+        services.AddExpiringCacheImpl<Sample, MockCache<Sample, SampleSchema, ExpiringFileCacheOptions>, ExpiringFileCacheOptions>();
 
         var provider = services.BuildServiceProvider();
         var cache = provider.GetRequiredService<ISimpleCache<Sample>>();
@@ -128,7 +125,7 @@ public sealed class StorageExtensionsAdditionalTests
              .NotBeNull();
 
         cache.Should()
-             .BeOfType<Chaos.Testing.Infrastructure.Mocks.MockCache<Sample, SampleSchema, ExpiringFileCacheOptions>>();
+             .BeOfType<MockCache<Sample, SampleSchema, ExpiringFileCacheOptions>>();
     }
 
     private sealed class Sample

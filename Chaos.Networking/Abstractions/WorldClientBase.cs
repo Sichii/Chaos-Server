@@ -87,7 +87,7 @@ public abstract class WorldClientBase : ConnectedClientBase, IWorldClient
     public virtual void SendDisplayPublicMessage(DisplayPublicMessageArgs args) => Send(args);
 
     /// <inheritdoc />
-    public void SendDisplayReadonlyNotepad(DisplayReadonlyNotepadArgs args) => Send(args);
+    public virtual void SendDisplayReadonlyNotepad(DisplayReadonlyNotepadArgs args) => Send(args);
 
     /// <inheritdoc />
     public virtual void SendDisplayUnequip(DisplayUnequipArgs args) => Send(args);

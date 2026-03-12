@@ -1,5 +1,4 @@
 #region
-using System.Runtime.InteropServices;
 using System.Text;
 using Chaos.Cryptography;
 using Chaos.IO.Compression;

@@ -1,11 +1,14 @@
+#region
 using Chaos.Collections.Common;
 using Chaos.DarkAges.Definitions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
+#endregion
 
 namespace Chaos.Messaging;
 
-[Command("help", false), Command("commands", false)]
+[Command("help", false)]
+[Command("commands", false)]
 public class HelpCommand : ICommand<Aisling>
 {
     /// <inheritdoc />

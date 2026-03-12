@@ -18,6 +18,25 @@ public sealed class StockServiceTests : IDisposable
 
     public void Dispose() => Service.Dispose();
 
+    #region TryDecrementStock — Edge Cases
+    [Test]
+    public void TryDecrementStock_ShouldNotChangeStock_WhenUnlimited()
+    {
+        Service.RegisterStock(
+            "merchant1",
+            [("item1", -1)],
+            TimeSpan.FromMinutes(30),
+            100);
+
+        Service.TryDecrementStock("merchant1", "item1", 999);
+
+        // Unlimited stock should still show unlimited
+        Service.HasStock("merchant1", "item1")
+               .Should()
+               .BeTrue();
+    }
+    #endregion
+
     #region GetStock / HasStock
     [Test]
     public void GetStock_ShouldReturnZero_WhenMerchantNotRegistered()
@@ -103,6 +122,21 @@ public sealed class StockServiceTests : IDisposable
     public void TryDecrementStock_ShouldReturnFalse_WhenMerchantNotRegistered()
     {
         var result = Service.TryDecrementStock("unknown", "item1");
+
+        result.Should()
+              .BeFalse();
+    }
+
+    [Test]
+    public void TryDecrementStock_ShouldReturnFalse_WhenItemNotRegistered()
+    {
+        Service.RegisterStock(
+            "merchant1",
+            [("item1", 5)],
+            TimeSpan.FromMinutes(30),
+            100);
+
+        var result = Service.TryDecrementStock("merchant1", "unknown_item");
 
         result.Should()
               .BeFalse();
@@ -332,6 +366,66 @@ public sealed class StockServiceTests : IDisposable
                .Should()
                .Be(5);
     }
+
+    [Test]
+    public void RegisterStock_ReRegister_ShouldAddNewItems_NotInExistingStock()
+    {
+        // First registration: only item1
+        Service.RegisterStock(
+            "merchant1",
+            [("item1", 10)],
+            TimeSpan.FromMinutes(30),
+            100);
+
+        // Re-register with both item1 and new item2
+        Service.RegisterStock(
+            "merchant1",
+            [
+                ("item1", 10),
+                ("item2", 5)
+            ],
+            TimeSpan.FromMinutes(30),
+            100);
+
+        // item1 should keep existing stock, item2 should have its max
+        Service.GetStock("merchant1", "item1")
+               .Should()
+               .Be(10);
+
+        Service.GetStock("merchant1", "item2")
+               .Should()
+               .Be(5);
+    }
+
+    [Test]
+    public void RegisterStock_ReRegister_ShouldDropItems_NotInNewStock()
+    {
+        // First registration: item1 and item2
+        Service.RegisterStock(
+            "merchant1",
+            [
+                ("item1", 10),
+                ("item2", 5)
+            ],
+            TimeSpan.FromMinutes(30),
+            100);
+
+        // Re-register with only item1 (item2 dropped)
+        Service.RegisterStock(
+            "merchant1",
+            [("item1", 10)],
+            TimeSpan.FromMinutes(30),
+            100);
+
+        Service.GetStock("merchant1", "item1")
+               .Should()
+               .Be(10);
+
+        // item2 should no longer exist
+        Service.HasStock("merchant1", "item2")
+               .Should()
+               .BeFalse();
+    }
     #endregion
 
     #region Restock
@@ -410,6 +504,42 @@ public sealed class StockServiceTests : IDisposable
         Service.GetStock("merchant1", "item2")
                .Should()
                .Be(20);
+    }
+
+    [Test]
+    public void Restock_ShouldNotAffectUnlimitedStock()
+    {
+        Service.RegisterStock(
+            "merchant1",
+            [("item1", -1)],
+            TimeSpan.FromMinutes(30),
+            100);
+
+        Service.Restock("merchant1", 50);
+
+        Service.HasStock("merchant1", "item1")
+               .Should()
+               .BeTrue();
+    }
+
+    [Test]
+    public void Restock_ShouldRestockPartially()
+    {
+        Service.RegisterStock(
+            "merchant1",
+            [("item1", 10)],
+            TimeSpan.FromMinutes(30),
+            100);
+
+        // Fully deplete
+        Service.TryDecrementStock("merchant1", "item1", 10);
+
+        // Restock only 30%
+        Service.Restock("merchant1", 30);
+
+        Service.GetStock("merchant1", "item1")
+               .Should()
+               .Be(3);
     }
     #endregion
 }

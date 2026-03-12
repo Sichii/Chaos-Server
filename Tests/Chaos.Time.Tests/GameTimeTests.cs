@@ -1,6 +1,5 @@
 #region
 using Chaos.DarkAges.Definitions;
-using Chaos.Time;
 using FluentAssertions;
 #endregion
 
@@ -83,6 +82,33 @@ public class GameTimeTests
         earlierTime.CompareTo(sameTime)
                    .Should()
                    .Be(0);
+    }
+
+    [Test]
+    public void CompareTo_With_GameTime_Object_Should_Compare_Correctly()
+    {
+        var gameTime1 = new GameTime(
+            new DateTime(
+                2023,
+                1,
+                1,
+                10,
+                0,
+                0));
+
+        var gameTime2 = new GameTime(
+            new DateTime(
+                2023,
+                1,
+                1,
+                12,
+                0,
+                0));
+
+        var result = gameTime1.CompareTo((object)gameTime2);
+
+        result.Should()
+              .BeLessThan(0);
     }
 
     [Test]
@@ -540,15 +566,25 @@ public class GameTimeTests
     public void TimeOfDay_Should_Return_Correct_Light_Level()
     {
         // Test different hours and their expected light levels
+        // Include boundary values to exercise all switch branches
         var testCases = new[]
         {
+            (10, LightLevel.Lightest_A), // Start of lightest
             (12, LightLevel.Lightest_A), // Noon - brightest
+            (17, LightLevel.Lightest_A), // End of lightest
             (9, LightLevel.Lighter_A), // Morning
+            (18, LightLevel.Lighter_A), // Evening boundary
             (8, LightLevel.Light_A), // Early morning
+            (19, LightLevel.Light_A), // Evening boundary
             (7, LightLevel.Dark_A), // Dawn
+            (20, LightLevel.Dark_A), // Dusk
             (6, LightLevel.Darker_A), // Pre-dawn
+            (21, LightLevel.Darker_A), // Post-dusk
+            (0, LightLevel.Darkest_A), // Midnight
             (3, LightLevel.Darkest_A), // Night - darkest
-            (22, LightLevel.Darkest_A) // Late night
+            (5, LightLevel.Darkest_A), // Early hours
+            (22, LightLevel.Darkest_A), // Late night
+            (23, LightLevel.Darkest_A) // Near midnight
         };
 
         foreach ((var hour, var expectedLight) in testCases)

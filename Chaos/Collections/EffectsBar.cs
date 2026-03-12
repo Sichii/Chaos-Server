@@ -3,15 +3,11 @@ using Chaos.Collections.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
-using Chaos.Models.Menu;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
-using Chaos.Scripting.ReactorTileScripts.Abstractions;
-using Chaos.Scripting.SkillScripts.Abstractions;
-using Chaos.Scripting.SpellScripts.Abstractions;
 #endregion
 
 namespace Chaos.Collections;
@@ -212,11 +208,7 @@ public sealed class EffectsBar : IEffectsBar
                 //remove the effect from the bar and re add it (this will move it up the list)
                 if (currentEffect.Remaining > effect.Remaining)
                 {
-                    //if i == 9, this effect was not previously being displayed
-                    //so we dont need to remove it from the bar
-                    if (i != 9)
-                        AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
-
+                    AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
                     AffectedAisling?.Client.SendEffect(currentEffect.Color, currentEffect.Icon);
                 }
             }

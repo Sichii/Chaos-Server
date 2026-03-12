@@ -60,6 +60,87 @@ public sealed class ItemMetaTests
     }
 
     [Test]
+    public void ItemMetaNode_Length_UpdatesCorrectly_WhenCategoryIsReassigned()
+    {
+        // First assignment sets category to "other" in constructor, then we set it to "weapon"
+        var node = new ItemMetaNode("TestItem");
+        var lengthAfterConstruction = node.Length;
+
+        // Reassigning Category should subtract old length and add new
+        node.Category = "weapon";
+        var lengthAfterReassign = node.Length;
+
+        // "other" = 5 bytes, "weapon" = 6 bytes, so length should increase by 1
+        lengthAfterReassign.Should()
+                           .Be(lengthAfterConstruction + 1);
+    }
+
+    [Test]
+    public void ItemMetaNode_Length_UpdatesCorrectly_WhenDescriptionIsReassigned()
+    {
+        var node = new ItemMetaNode("TestItem");
+
+        // Set description (was empty string from constructor, IsNullOrEmpty true → no subtraction)
+        node.Description = "short";
+        var lengthWithDescription = node.Length;
+
+        // Reassign to something else (old was "short", IsNullOrEmpty false → subtracts old length)
+        node.Description = "a longer description";
+        var lengthAfterReassign = node.Length;
+
+        lengthAfterReassign.Should()
+                           .BeGreaterThan(lengthWithDescription);
+    }
+
+    [Test]
+    public void ItemMetaNode_Serialize_WithDefaultProperties_WritesDefaults()
+    {
+        // No properties set beyond name — covers default values in serialization
+        var node = new ItemMetaNode("DefaultItem");
+
+        var writer = new SpanWriter(Encoding.GetEncoding(949));
+        node.Serialize(ref writer);
+        writer.Flush();
+
+        var buffer = writer.ToSpan()
+                           .ToArray();
+        var reader = new SpanReader(Encoding.GetEncoding(949), buffer);
+
+        reader.ReadString8()
+              .Should()
+              .Be("DefaultItem");
+
+        reader.ReadUInt16()
+              .Should()
+              .Be(5);
+
+        // Level default = 0
+        reader.ReadString16()
+              .Should()
+              .Be("0");
+
+        // Class default = Peasant (0)
+        reader.ReadString16()
+              .Should()
+              .Be("0");
+
+        // Weight default = 0
+        reader.ReadString16()
+              .Should()
+              .Be("0");
+
+        // Category default = "other"
+        reader.ReadString16()
+              .Should()
+              .Be("other");
+
+        // Description default = empty
+        reader.ReadString16()
+              .Should()
+              .Be(string.Empty);
+    }
+
+    [Test]
     public void ItemMetaNodeCollection_Split_Compresses_Final_Segment_And_Yields_All()
     {
         var coll = new ItemMetaNodeCollection();

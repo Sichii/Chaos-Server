@@ -1,5 +1,4 @@
 #region
-using Chaos.Storage;
 using Chaos.Storage.Abstractions.Definitions;
 using FluentAssertions;
 #endregion

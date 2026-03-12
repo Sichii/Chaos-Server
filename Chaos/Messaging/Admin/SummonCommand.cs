@@ -1,14 +1,9 @@
 #region
-using Chaos.Collections;
 using Chaos.Collections.Common;
-using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
-using Chaos.Geometry.Abstractions;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
-using Chaos.NLog.Logging.Definitions;
-using Chaos.NLog.Logging.Extensions;
 using Chaos.Utilities;
 #endregion
 
@@ -37,7 +32,7 @@ public class SummonCommand : ICommand<Aisling>
                                     .FirstOrDefault(a => a.Name.EqualsI(playerName));
 
         if (aisling == null)
-            source.SendOrangeBarMessage($"{aisling} is not online");
+            source.SendOrangeBarMessage($"{playerName} is not online");
         else
             ComplexActionHelper.AdminTraverseMap(
                 aisling,

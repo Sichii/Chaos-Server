@@ -1,7 +1,6 @@
 #region
 using System.Net;
 using System.Text.RegularExpressions;
-using Chaos.Security;
 using Chaos.Security.Abstractions;
 using Chaos.Security.Definitions;
 using Chaos.Security.Options;

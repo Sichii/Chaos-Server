@@ -904,6 +904,8 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
             foreach (var reactor in rentedReactors.Span)
                 reactor.OnGoldPickedUpFrom(this, money);
+
+            return true;
         }
 
         return false;

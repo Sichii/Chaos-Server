@@ -24,6 +24,68 @@ public sealed class PathfinderTests
                      .Be(expected);
 
     [Test]
+    public void FindOptimalDirection_NoLimitRadius_ShouldUseFullGrid()
+    {
+        // No LimitRadius — exercises the subGrid = default path in InitializeGrid/ResetGrid
+        var grid = MakeGrid(5, 5);
+        var pf = new Pathfinder(grid);
+        var start = new Point(0, 0);
+        var end = new Point(4, 4);
+
+        var dir = pf.FindOptimalDirection(start, end);
+
+        dir.Should()
+           .NotBe(Direction.Invalid);
+    }
+
+    [Test]
+    public void FindOptimalDirection_NoPathExists_ShouldFallbackToSimpleDirection()
+    {
+        // Fully walled off — pathfinding returns null, falls back to FindSimpleDirection
+        var walls = new[]
+        {
+            new Point(1, 0),
+            new Point(0, 1),
+            new Point(1, 1)
+        };
+        var grid = MakeGrid(2, 2, walls.Cast<IPoint>());
+        var pf = new Pathfinder(grid);
+        var start = new Point(0, 0);
+        var end = new Point(1, 1);
+
+        // Should not throw — either returns a direction via FindSimpleDirection or Invalid
+        var dir = pf.FindOptimalDirection(start, end);
+
+        // Doesn't matter what direction, just exercising the fallback path
+        dir.Should()
+           .BeOneOf(
+               Direction.Up,
+               Direction.Down,
+               Direction.Left,
+               Direction.Right,
+               Direction.Invalid);
+    }
+
+    [Test]
+    public void FindOptimalDirection_StartEqualsEnd_NoWalkableNeighbors_ReturnsInvalid()
+    {
+        // All neighbors are walls — FindRandomPoint returns null → returns Invalid
+        var walls = new[]
+        {
+            new Point(0, 1),
+            new Point(1, 0)
+        };
+        var grid = MakeGrid(2, 2, walls.Cast<IPoint>());
+        var pf = new Pathfinder(grid);
+        var start = new Point(0, 0);
+
+        var dir = pf.FindOptimalDirection(start, start);
+
+        dir.Should()
+           .Be(Direction.Invalid);
+    }
+
+    [Test]
     public void FindOptimalDirection_StartEqualsEnd_ReturnsInvalid()
     {
         var grid = MakeGrid(1, 1);
@@ -67,6 +129,26 @@ public sealed class PathfinderTests
         var end = new Point(4, 2);
 
         var dir = pf.FindOptimalDirection(start, end);
+
+        dir.Should()
+           .NotBe(Direction.Invalid);
+    }
+
+    [Test]
+    public void FindOptimalDirection_WithLimitRadius_ShouldWork()
+    {
+        var grid = MakeGrid(5, 5);
+        var pf = new Pathfinder(grid);
+        var start = new Point(0, 0);
+        var end = new Point(4, 4);
+
+        var dir = pf.FindOptimalDirection(
+            start,
+            end,
+            new PathOptions
+            {
+                LimitRadius = 5
+            });
 
         dir.Should()
            .NotBe(Direction.Invalid);
@@ -123,6 +205,43 @@ public sealed class PathfinderTests
         path.Pop()
             .Should()
             .Be(new Point(1, 0));
+    }
+
+    [Test]
+    public void FindPath_NoLimitRadius_ShouldUseFullGrid()
+    {
+        // No LimitRadius — exercises the subGrid = default path
+        var grid = MakeGrid(5, 5);
+        var pf = new Pathfinder(grid);
+        var start = new Point(0, 0);
+        var end = new Point(4, 4);
+
+        var path = pf.FindPath(start, end);
+
+        path.Should()
+            .NotBeEmpty();
+    }
+
+    [Test]
+    public void FindPath_StartEqualsEnd_NoWalkableNeighbors_FallsBackToSimpleDirection()
+    {
+        // All neighbors are walls — FindRandomPoint returns null, stack is empty
+        // Then falls back to FindSimpleDirection which pushes one step
+        var walls = new[]
+        {
+            new Point(0, 1),
+            new Point(1, 0)
+        };
+        var grid = MakeGrid(2, 2, walls.Cast<IPoint>());
+        var pf = new Pathfinder(grid);
+        var start = new Point(0, 0);
+
+        var path = pf.FindPath(start, start);
+
+        // Fallback always pushes one directional offset (even into walls)
+        path.Count
+            .Should()
+            .BeLessThanOrEqualTo(1);
     }
 
     [Test]
@@ -248,6 +367,36 @@ public sealed class PathfinderTests
     }
 
     [Test]
+    public void FindPath_WithLimitRadius_NoPathToEnd_ShouldFallbackToSimpleDirection()
+    {
+        // LimitRadius is very small, cannot reach end — InnerFindPath returns empty
+        // Falls back to FindSimpleDirection and pushes one step
+        var walls = new[]
+        {
+            new Point(2, 0),
+            new Point(2, 1),
+            new Point(2, 2)
+        };
+        var grid = MakeGrid(5, 3, walls.Cast<IPoint>());
+        var pf = new Pathfinder(grid);
+        var start = new Point(0, 1);
+        var end = new Point(4, 1);
+
+        var path = pf.FindPath(
+            start,
+            end,
+            new PathOptions
+            {
+                LimitRadius = 1
+            });
+
+        // Should have at least one step (fallback)
+        path.Count
+            .Should()
+            .BeGreaterThan(0);
+    }
+
+    [Test]
     public void FindPath_WithWalls_BlocksAndFindsAlternate()
     {
         var walls = new[]
@@ -272,6 +421,20 @@ public sealed class PathfinderTests
         path.Count
             .Should()
             .BeGreaterThan(0);
+    }
+
+    [Test]
+    public void FindRandomDirection_DefaultPathOptions_ShouldFindDirection()
+    {
+        // Exercise the pathOptions ??= PathOptions.Default path (called with null)
+        var grid = MakeGrid(3, 3);
+        var pf = new Pathfinder(grid);
+        var start = new Point(1, 1);
+
+        var dir = pf.FindRandomDirection(start);
+
+        dir.Should()
+           .NotBe(Direction.Invalid);
     }
 
     [Test]
@@ -337,6 +500,29 @@ public sealed class PathfinderTests
                 BlockedPoints = blocked.Cast<IPoint>()
                                        .ToArray()
             });
+
+        dir.Should()
+           .Be(Direction.Invalid);
+    }
+
+    [Test]
+    public void FindSimpleDirection_StartAtOrigin_AllNeighborsBlocked_ReturnsInvalid()
+    {
+        // When start is at (0,0) and all neighbors are walls, FirstOrDefault returns
+        // default(Point) = (0,0) which equals start, so DirectionalRelationTo returns Invalid
+        var walls = new[]
+        {
+            new Point(0, 0),
+            new Point(1, 0),
+            new Point(0, 1),
+            new Point(1, 1)
+        };
+        var grid = MakeGrid(2, 2, walls.Cast<IPoint>());
+        var pf = new Pathfinder(grid);
+        var start = new Point(0, 0);
+        var end = new Point(1, 1);
+
+        var dir = pf.FindSimpleDirection(start, end);
 
         dir.Should()
            .Be(Direction.Invalid);

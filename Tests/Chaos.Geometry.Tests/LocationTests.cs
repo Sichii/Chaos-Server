@@ -1,5 +1,6 @@
 #region
 using Chaos.Geometry.Abstractions;
+using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
 #endregion
 
@@ -171,6 +172,39 @@ public sealed class LocationTests
     }
 
     [Test]
+    public void Location_Equals_ILocation_DifferentMap_ReturnsFalse()
+    {
+        var location1 = new Location("Map1", 5, 10);
+        ILocation location2 = new Location("Map2", 5, 10);
+
+        location1.Equals(location2)
+                 .Should()
+                 .BeFalse();
+    }
+
+    [Test]
+    public void Location_Equals_ILocation_DifferentX_ReturnsFalse()
+    {
+        var location1 = new Location("Map1", 5, 10);
+        ILocation location2 = new Location("Map1", 6, 10);
+
+        location1.Equals(location2)
+                 .Should()
+                 .BeFalse();
+    }
+
+    [Test]
+    public void Location_Equals_ILocation_DifferentY_ReturnsFalse()
+    {
+        var location1 = new Location("Map1", 5, 10);
+        ILocation location2 = new Location("Map1", 5, 11);
+
+        location1.Equals(location2)
+                 .Should()
+                 .BeFalse();
+    }
+
+    [Test]
     public void Location_Equals_ReturnsFalseWhenComparingWithDifferentType()
     {
         // Arrange
@@ -222,8 +256,8 @@ public sealed class LocationTests
     public void Location_From_ReturnsNewLocationWithSameValuesWhenPassedLocationOfDifferentType()
     {
         // Arrange
-        ILocation originalLocation = Chaos.Testing.Infrastructure.Mocks.MockLocation.Create("Map1", 10, 20)
-                                          .Object;
+        var originalLocation = MockLocation.Create("Map1", 10, 20)
+                                           .Object;
 
         // Act
         var newLocation = Location.From(originalLocation);
@@ -290,6 +324,36 @@ public sealed class LocationTests
 
         location.Should()
                 .Be(null);
+    }
+
+    [Test]
+    public void Location_TryParse_ShouldReturnFalse_WhenXExceedsUshortRange()
+    {
+        // Regex matches digits, but 99999 > ushort.MaxValue (65535)
+        const string INPUT = "Map1: (99999, 123)";
+
+        var result = Location.TryParse(INPUT, out var location);
+
+        result.Should()
+              .BeFalse();
+
+        location.Should()
+                .BeNull();
+    }
+
+    [Test]
+    public void Location_TryParse_ShouldReturnFalse_WhenYExceedsUshortRange()
+    {
+        // X is valid, but Y > ushort.MaxValue
+        const string INPUT = "Map1: (123, 99999)";
+
+        var result = Location.TryParse(INPUT, out var location);
+
+        result.Should()
+              .BeFalse();
+
+        location.Should()
+                .BeNull();
     }
 
     [Test]

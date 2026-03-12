@@ -14,6 +14,7 @@ public static class MockItem
         string name = "TestItem",
         int count = 1,
         bool stackable = false,
+        Func<ItemTemplate, ItemTemplate>? templateSetup = null,
         Action<Item>? setup = null)
     {
         var template = new ItemTemplate
@@ -48,6 +49,9 @@ public static class MockItem
             ScriptKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase),
             ScriptVars = new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase)
         };
+
+        if (templateSetup is not null)
+            template = templateSetup(template);
 
         var item = new Item(template, MockScriptProvider.Instance.Object);
         item.Count = count;

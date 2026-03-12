@@ -73,6 +73,16 @@ public sealed class ScriptBaseTests
     }
 
     [Test]
+    public void Equals_ScriptBase_WithNull_ReturnsFalse()
+    {
+        var script = new MockScriptBase();
+
+        script.Equals(null)
+              .Should()
+              .BeFalse();
+    }
+
+    [Test]
     public void GetHashCode_ReturnsSameValue_ForObjectsWithSameScriptKey()
     {
         // Arrange

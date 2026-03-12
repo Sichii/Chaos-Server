@@ -37,6 +37,32 @@ public sealed class CounterCollectionTests
     }
 
     [Test]
+    public void AddOrIncrement_WithValue_ShouldAddNewCounter_WhenKeyDoesNotExist()
+    {
+        // Arrange
+        var counterCollection = new CounterCollection();
+
+        // Act
+        var value = counterCollection.AddOrIncrement("key", 10);
+
+        // Assert
+        value.Should()
+             .Be(10);
+    }
+
+    [Test]
+    public void Constructor_ShouldHandleNullEnumerable()
+    {
+        // Act
+        var counterCollection = new CounterCollection();
+
+        // Assert
+        counterCollection.ContainsKey("anything")
+                         .Should()
+                         .BeFalse();
+    }
+
+    [Test]
     public void Constructor_ShouldInitializeCountersFromEnumerable()
     {
         // Arrange
@@ -86,6 +112,23 @@ public sealed class CounterCollectionTests
     }
 
     [Test]
+    public void ContainsKey_ShouldBeCaseInsensitive()
+    {
+        // Arrange
+        var counterCollection = new CounterCollection();
+        counterCollection.Set("MyKey", 5);
+
+        // Act & Assert
+        counterCollection.ContainsKey("mykey")
+                         .Should()
+                         .BeTrue();
+
+        counterCollection.ContainsKey("MYKEY")
+                         .Should()
+                         .BeTrue();
+    }
+
+    [Test]
     public void ContainsKey_ShouldReturnFalse_WhenKeyDoesNotExist()
     {
         // Arrange
@@ -130,6 +173,20 @@ public sealed class CounterCollectionTests
     }
 
     [Test]
+    public void CounterGreaterThanOrEqualTo_ShouldReturnFalse_WhenKeyDoesNotExist()
+    {
+        // Arrange
+        var counterCollection = new CounterCollection();
+
+        // Act
+        var result = counterCollection.CounterGreaterThanOrEqualTo("missing", 1);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+    }
+
+    [Test]
     public void CounterGreaterThanOrEqualTo_ShouldReturnTrue_WhenCounterValueIsGreaterThanOrEqualToValue()
     {
         // Arrange
@@ -157,6 +214,20 @@ public sealed class CounterCollectionTests
         // Assert
         isLessThanOrEqualTo.Should()
                            .BeFalse();
+    }
+
+    [Test]
+    public void CounterLessThanOrEqualTo_ShouldReturnFalse_WhenKeyDoesNotExist()
+    {
+        // Arrange
+        var counterCollection = new CounterCollection();
+
+        // Act
+        var result = counterCollection.CounterLessThanOrEqualTo("missing", 1);
+
+        // Assert
+        result.Should()
+              .BeFalse();
     }
 
     [Test]

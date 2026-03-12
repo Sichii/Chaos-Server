@@ -1,5 +1,4 @@
 #region
-using System.Diagnostics;
 using Chaos.Common.Abstractions.Definitions;
 using Chaos.Definitions;
 using Chaos.Extensions.Common;

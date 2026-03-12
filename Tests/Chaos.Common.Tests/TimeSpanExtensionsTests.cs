@@ -79,6 +79,22 @@ public sealed class TimeSpanExtensionsTests
     }
 
     [Test]
+    public void ToReadableString_Should_Omit_Components_That_Are_Zero()
+    {
+        // Only minutes set — days, hours, seconds are 0
+        var timeSpan = new TimeSpan(
+            0,
+            0,
+            5,
+            0);
+
+        var result = timeSpan.ToReadableString();
+
+        result.Should()
+              .Be("5 mins");
+    }
+
+    [Test]
     public void ToReadableString_Should_Return_Empty_String_When_TimeSpan_Is_Zero()
     {
         // Arrange
@@ -127,5 +143,94 @@ public sealed class TimeSpanExtensionsTests
         // Assert
         result.Should()
               .Be("2 days 3 hours 15 mins 20 secs");
+    }
+
+    [Test]
+    public void ToReadableString_Should_Show_ZeroMilliseconds_AsEmpty_WhenShowMilliseconds()
+    {
+        // 0 milliseconds with showMilliseconds=true
+        var timeSpan = new TimeSpan(
+            0,
+            0,
+            0,
+            5,
+            0);
+
+        var result = timeSpan.ToReadableString(true);
+
+        result.Should()
+              .Be("5 secs");
+    }
+
+    [Test]
+    public void ToReadableString_Should_Use_Singular_Day_When_DayIs1()
+    {
+        // Arrange
+        var timeSpan = new TimeSpan(
+            1,
+            0,
+            0,
+            0);
+
+        // Act
+        var result = timeSpan.ToReadableString();
+
+        // Assert
+        result.Should()
+              .Be("1 day");
+    }
+
+    [Test]
+    public void ToReadableString_Should_Use_Singular_Hour_When_HourIs1()
+    {
+        // Arrange
+        var timeSpan = new TimeSpan(
+            0,
+            1,
+            0,
+            0);
+
+        // Act
+        var result = timeSpan.ToReadableString();
+
+        // Assert
+        result.Should()
+              .Be("1 hour");
+    }
+
+    [Test]
+    public void ToReadableString_Should_Use_Singular_Min_When_MinuteIs1()
+    {
+        // Arrange
+        var timeSpan = new TimeSpan(
+            0,
+            0,
+            1,
+            0);
+
+        // Act
+        var result = timeSpan.ToReadableString();
+
+        // Assert
+        result.Should()
+              .Be("1 min");
+    }
+
+    [Test]
+    public void ToReadableString_Should_Use_Singular_Sec_When_SecondIs1()
+    {
+        // Arrange
+        var timeSpan = new TimeSpan(
+            0,
+            0,
+            0,
+            1);
+
+        // Act
+        var result = timeSpan.ToReadableString();
+
+        // Assert
+        result.Should()
+              .Be("1 sec");
     }
 }

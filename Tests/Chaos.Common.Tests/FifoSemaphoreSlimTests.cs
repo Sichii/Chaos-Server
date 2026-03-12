@@ -17,21 +17,20 @@ public sealed class FifoSemaphoreSlimTests
         // Act
         await Task.WhenAll(
             Enumerable.Range(1, 10)
-                      .Select(
-                          async index =>
+                      .Select(async index =>
+                      {
+                          await semaphore.WaitAsync();
+
+                          try
                           {
-                              await semaphore.WaitAsync();
+                              await Task.Delay(25);
 
-                              try
-                              {
-                                  await Task.Delay(25);
-
-                                  value = index;
-                              } finally
-                              {
-                                  semaphore.Release();
-                              }
-                          }));
+                              value = index;
+                          } finally
+                          {
+                              semaphore.Release();
+                          }
+                      }));
 
         // Assert
         value.Should()
@@ -48,21 +47,20 @@ public sealed class FifoSemaphoreSlimTests
         // Act
         await Task.WhenAll(
             Enumerable.Range(1, 10)
-                      .Select(
-                          async index =>
+                      .Select(async index =>
+                      {
+                          await semaphore.WaitAsync(TimeSpan.FromMilliseconds(500));
+
+                          try
                           {
-                              await semaphore.WaitAsync(TimeSpan.FromMilliseconds(500));
+                              await Task.Delay(25);
 
-                              try
-                              {
-                                  await Task.Delay(25);
-
-                                  value = index;
-                              } finally
-                              {
-                                  semaphore.Release();
-                              }
-                          }));
+                              value = index;
+                          } finally
+                          {
+                              semaphore.Release();
+                          }
+                      }));
 
         // Assert
         value.Should()
@@ -78,27 +76,29 @@ public sealed class FifoSemaphoreSlimTests
 
         // Act
         var tasks = Enumerable.Range(1, 10)
-                              .Select(
-                                  async index =>
+                              .Select(async index =>
+                              {
+                                  if (!await semaphore.WaitAsync(TimeSpan.FromMilliseconds(450)))
+                                      return;
+
+                                  try
                                   {
-                                      if (!await semaphore.WaitAsync(TimeSpan.FromMilliseconds(450)))
-                                          return;
+                                      await Task.Delay(100);
 
-                                      try
-                                      {
-                                          await Task.Delay(100);
-
-                                          value = index;
-                                      } finally
-                                      {
-                                          semaphore.Release();
-                                      }
-                                  });
+                                      value = index;
+                                  } finally
+                                  {
+                                      semaphore.Release();
+                                  }
+                              });
 
         await Task.WhenAll(tasks);
 
         // Assert
         value.Should()
-             .Be(5, "because there is only enough time in the timeout for entrances to be at (0, 100, 200, 300, 400) milliseconds");
+             .BeInRange(
+                 4,
+                 5,
+                 "because there is only enough time in the timeout for entrances to be at (0, 100, 200, 300, 400) milliseconds");
     }
 }

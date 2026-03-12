@@ -1,7 +1,9 @@
 #region
 using System.Net;
 using Chaos.Collections;
+using Chaos.Collections.Abstractions;
 using Chaos.DarkAges.Definitions;
+using Chaos.Models.Board;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.FunctionalScripts;
 using Chaos.Scripting.FunctionalScripts.NaturalRegeneration;
@@ -78,11 +80,42 @@ public static class ServerSetup
         registry.Register(DefaultNaturalRegenerationScript.Key, typeof(DefaultNaturalRegenerationScript));
 
         LogManager.Setup()
-                  .SetupSerialization(builder => builder.RegisterCollectionTransformations((Group obj) => new
+                  .SetupSerialization(builder =>
                   {
-                      Id = obj.Id,
-                      LeaderName = obj.Leader.Name,
-                      MemberCount = obj.Count
-                  }));
+                      builder.RegisterObjectTransformation<Post>(obj => new
+                      {
+                          PostId = obj.PostId,
+                          Author = obj.Author,
+                          Subject = obj.Subject,
+                          Message = obj.Message,
+                          Creation = obj.CreationDate
+                      });
+
+                      builder.RegisterCollectionTransformations(
+                          (BoardBase obj) => new
+                          {
+                              Key = obj.Key,
+                              Name = obj.Name,
+                              Posts = obj.Posts.Count
+                          },
+                          (MailBox obj) => new
+                          {
+                              Key = obj.Key,
+                              Name = obj.Name,
+                              Posts = obj.Posts.Count
+                          },
+                          (BulletinBoard obj) => new
+                          {
+                              Key = obj.Key,
+                              Name = obj.Name,
+                              Posts = obj.Posts.Count
+                          },
+                          (Group obj) => new
+                          {
+                              Id = obj.Id,
+                              LeaderName = obj.Leader.Name,
+                              MemberCount = obj.Count
+                          });
+                  });
     }
 }

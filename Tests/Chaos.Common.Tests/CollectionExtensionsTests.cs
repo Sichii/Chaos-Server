@@ -196,6 +196,45 @@ public sealed class CollectionExtensionsTests
     }
 
     [Test]
+    public void IsNullOrEmpty_ShouldReturnFalse_WhenCollectionHasItems()
+    {
+        // Arrange
+        ICollection<int> collection = new List<int>
+        {
+            1
+        };
+
+        // Act & Assert
+        collection.IsNullOrEmpty()
+                  .Should()
+                  .BeFalse();
+    }
+
+    [Test]
+    public void IsNullOrEmpty_ShouldReturnTrue_WhenCollectionIsEmpty()
+    {
+        // Arrange
+        ICollection<int> emptyCollection = new List<int>();
+
+        // Act & Assert
+        emptyCollection.IsNullOrEmpty()
+                       .Should()
+                       .BeTrue();
+    }
+
+    [Test]
+    public void IsNullOrEmpty_ShouldReturnTrue_WhenCollectionIsNull()
+    {
+        // Arrange
+        ICollection<int>? nullCollection = null;
+
+        // Act & Assert
+        nullCollection.IsNullOrEmpty()
+                      .Should()
+                      .BeTrue();
+    }
+
+    [Test]
     public void Replace_EmptyCollection_DoesNotModifyCollectionAndReturnsFalse()
     {
         var collection = new List<string>();

@@ -215,4 +215,162 @@ public sealed class BigFlagsTests
              .NotBeNull();
     }
     #endregion
+
+    #region Non-generic API — success paths with valid marker types
+    [Test]
+    public void GetName_ValidMarkerType_ShouldReturnName()
+    {
+        IBigFlagsValue value = TestFeatures.Feature2;
+
+        var name = BigFlags.GetName(ValidMarker, value);
+
+        name.Should()
+            .Be("Feature2");
+    }
+
+    [Test]
+    public void GetName_ValidMarkerType_UnknownValue_ShouldReturnNull()
+    {
+        IBigFlagsValue value = new BigFlagsValue<TestFeatures>(999);
+
+        var name = BigFlags.GetName(ValidMarker, value);
+
+        name.Should()
+            .BeNull();
+    }
+
+    [Test]
+    public void ToString_ValidMarkerType_ShouldReturnName()
+    {
+        IBigFlagsValue value = TestFeatures.Feature3;
+
+        var str = BigFlags.ToString(ValidMarker, value);
+
+        str.Should()
+           .Be("Feature3");
+    }
+
+    [Test]
+    public void ToString_ValidMarkerType_CombinedFlags_ShouldReturnCommaSeparated()
+    {
+        IBigFlagsValue value = TestFeatures.Feature1 | TestFeatures.Feature4;
+
+        var str = BigFlags.ToString(ValidMarker, value);
+
+        str.Should()
+           .Be("Feature1, Feature4");
+    }
+
+    [Test]
+    public void IsDefined_ByValue_ValidMarkerType_ShouldReturnTrue()
+    {
+        IBigFlagsValue value = TestFeatures.Feature1;
+
+        BigFlags.IsDefined(ValidMarker, value)
+                .Should()
+                .BeTrue();
+    }
+
+    [Test]
+    public void IsDefined_ByValue_ValidMarkerType_UnknownValue_ShouldReturnFalse()
+    {
+        IBigFlagsValue value = new BigFlagsValue<TestFeatures>(999);
+
+        BigFlags.IsDefined(ValidMarker, value)
+                .Should()
+                .BeFalse();
+    }
+
+    [Test]
+    public void IsDefined_ByName_ValidMarkerType_NotFound_ShouldReturnFalse()
+        => BigFlags.IsDefined(ValidMarker, "NonExistent")
+                   .Should()
+                   .BeFalse();
+
+    [Test]
+    public void Parse_ValidMarkerType_ShouldReturnValue()
+    {
+        var value = BigFlags.Parse(ValidMarker, "Feature2");
+
+        value.Should()
+             .NotBeNull();
+
+        value.Should()
+             .Be(TestFeatures.Feature2);
+    }
+
+    [Test]
+    public void Parse_ValidMarkerType_CaseInsensitive_ShouldReturnValue()
+    {
+        var value = BigFlags.Parse(ValidMarker, "feature3", true);
+
+        value.Should()
+             .Be(TestFeatures.Feature3);
+    }
+
+    [Test]
+    public void Parse_ValidMarkerType_NotFound_ShouldThrow()
+    {
+        var act = () => BigFlags.Parse(ValidMarker, "NonExistent");
+
+        act.Should()
+           .Throw<ArgumentException>();
+    }
+
+    [Test]
+    public void TryParse_ValidMarkerType_CaseInsensitive_ShouldReturnTrue()
+    {
+        var result = BigFlags.TryParse(
+            ValidMarker,
+            "FEATURE1",
+            true,
+            out var value);
+
+        result.Should()
+              .BeTrue();
+
+        value.Should()
+             .NotBeNull();
+    }
+
+    [Test]
+    public void TryParse_ValidMarkerType_CaseSensitive_NotFound_ShouldReturnFalse()
+    {
+        var result = BigFlags.TryParse(
+            ValidMarker,
+            "feature1",
+            false,
+            out var value);
+
+        result.Should()
+              .BeFalse();
+
+        value.Should()
+             .BeNull();
+    }
+
+    [Test]
+    public void Create_BigInteger_ValidMarkerType_ShouldReturnValue()
+    {
+        var value = BigFlags.Create(ValidMarker, BigInteger.One << 2);
+
+        value.Should()
+             .NotBeNull();
+
+        value.Should()
+             .Be(TestFeatures.Feature3);
+    }
+
+    [Test]
+    public void Create_BitIndex_ValidMarkerType_ShouldReturnValue()
+    {
+        var value = BigFlags.Create(ValidMarker, 0);
+
+        value.Should()
+             .NotBeNull();
+
+        value.Should()
+             .Be(TestFeatures.Feature1);
+    }
+    #endregion
 }

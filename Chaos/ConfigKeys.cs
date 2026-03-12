@@ -1,6 +1,7 @@
 namespace Chaos;
 
 [SuppressMessage("ReSharper", "MemberHidesStaticFromOuterClass")]
+[ExcludeFromCodeCoverage]
 public static class ConfigKeys
 {
     public static class Logging

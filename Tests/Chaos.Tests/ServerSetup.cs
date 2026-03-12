@@ -1,6 +1,5 @@
 #region
 using System.Runtime.CompilerServices;
-using Chaos.Testing.Infrastructure;
 #endregion
 
 namespace Chaos.Tests;

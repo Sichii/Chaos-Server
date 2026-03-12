@@ -21,8 +21,8 @@ public sealed class DisplayEditableNotepadConverter : PacketConverterBase<Displa
     {
         var slot = reader.ReadByte();
         var type = reader.ReadByte();
-        var height = reader.ReadByte();
         var width = reader.ReadByte();
+        var height = reader.ReadByte();
         var message = reader.ReadString16();
 
         return new DisplayEditableNotepadArgs

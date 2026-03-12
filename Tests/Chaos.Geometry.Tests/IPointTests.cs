@@ -1,5 +1,4 @@
 #region
-using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
 using FluentAssertions;
 

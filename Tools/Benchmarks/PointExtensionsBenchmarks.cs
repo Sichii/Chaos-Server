@@ -5,7 +5,6 @@ using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry;
 using Chaos.Geometry.Abstractions;
-using Chaos.Geometry.Abstractions.Definitions;
 #endregion
 
 namespace Benchmarks;
@@ -18,11 +17,12 @@ namespace Benchmarks;
 ///     without sacrificing performance.
 /// </summary>
 [InliningDiagnoser(
-     false,
-     [
-         "Benchmarks",
-         "Chaos.Extensions.Geometry"
-     ]), DisassemblyDiagnoser(3)]
+    false,
+    [
+        "Benchmarks",
+        "Chaos.Extensions.Geometry"
+    ])]
+[DisassemblyDiagnoser(3)]
 public class PointExtensionsBenchmarks
 {
     private IPoint InterfacePoint1 = null!;

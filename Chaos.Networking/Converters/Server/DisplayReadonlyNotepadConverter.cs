@@ -20,8 +20,8 @@ public sealed class DisplayReadonlyNotepadConverter : PacketConverterBase<Displa
     public override DisplayReadonlyNotepadArgs Deserialize(ref SpanReader reader)
     {
         var type = reader.ReadByte();
-        var height = reader.ReadByte();
         var width = reader.ReadByte();
+        var height = reader.ReadByte();
 
         // ReSharper disable once UnusedVariable
         var unknown = reader.ReadByte();

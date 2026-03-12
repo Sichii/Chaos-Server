@@ -47,7 +47,11 @@ internal static class SocketExtensions
         {
             //fast path but not threadsafe
             if (socket.IsDisposed())
+            {
+                completedEvent(socket, args);
+
                 return;
+            }
 
             try
             {
@@ -55,11 +59,12 @@ internal static class SocketExtensions
 
                 if (completedSynchronously)
                     completedEvent(socket, args);
-            } catch (ObjectDisposedException)
+            } catch (Exception ex) when (ex is ObjectDisposedException or SocketException)
             {
-                //ignored
-                //trying to send while socket is disposed
+                //trying to send while socket is disposed or faulted
                 //expected error that occurs when logging out or disconnecting
+                //invoke the completion handler to clean up the args
+                completedEvent(socket, args);
             }
         }
     }

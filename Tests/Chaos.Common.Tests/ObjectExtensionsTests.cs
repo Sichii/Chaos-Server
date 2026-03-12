@@ -35,7 +35,9 @@ public sealed class ObjectExtensionsTests
     }
 
     //formatter:off
-    [Test, Arguments(0, "result"), Arguments(42, "another-result")]
+    [Test]
+    [Arguments(0, "result")]
+    [Arguments(42, "another-result")]
     public void TryCatch_Generic_Returns_Func_Result(int input, string expected)
 
         //formatter:on
@@ -47,7 +49,9 @@ public sealed class ObjectExtensionsTests
     }
 
     //formatter:off
-    [Test, Arguments(1, "handled"), Arguments(2, "handled-2")]
+    [Test]
+    [Arguments(1, "handled")]
+    [Arguments(2, "handled-2")]
     public void TryCatch_Generic_When_Exception_Returns_Handler_Result(int input, string handlerResult)
 
         //formatter:on
@@ -82,7 +86,9 @@ public sealed class ObjectExtensionsTests
     }
 
     //formatter:off
-    [Test, Arguments("boom"), Arguments("oops")]
+    [Test]
+    [Arguments("boom")]
+    [Arguments("oops")]
     public void TryCatch_Void_When_Exception_Calls_Handler(string message)
 
         //formatter:on

@@ -1,6 +1,6 @@
-using System.Threading.Tasks;
-using Chaos.Time;
+#region
 using FluentAssertions;
+#endregion
 
 namespace Chaos.Time.Tests;
 
@@ -10,7 +10,7 @@ public sealed class IntervalTimerTests
     public void Ctor_StartAsElapsedTrue_ShouldTriggerElapsedOnZeroUpdate()
     {
         var interval = TimeSpan.FromMilliseconds(100);
-        var timer = new IntervalTimer(interval, startAsElapsed: true);
+         var timer = new IntervalTimer(interval);
 
         timer.IntervalElapsed
              .Should()
@@ -50,7 +50,7 @@ public sealed class IntervalTimerTests
     public void SetOrigin_ShouldSetRemainderSoNextUpdateCanElapse()
     {
         var interval = TimeSpan.FromMilliseconds(100);
-        var timer = new IntervalTimer(interval, startAsElapsed: false);
+         var timer = new IntervalTimer(interval, false);
 
         // Choose an origin very slightly in the past so remainder is tiny and the next update crosses the interval boundary
         var origin = DateTime.UtcNow - TimeSpan.FromMilliseconds(1);
@@ -66,7 +66,7 @@ public sealed class IntervalTimerTests
     [Test]
     public void Update_EqualToInterval_ShouldElapseOnce()
     {
-        var timer = new IntervalTimer(TimeSpan.FromMilliseconds(100), startAsElapsed: false);
+         var timer = new IntervalTimer(TimeSpan.FromMilliseconds(100), false);
 
         timer.Update(TimeSpan.FromMilliseconds(100));
 
@@ -85,7 +85,7 @@ public sealed class IntervalTimerTests
     [Test]
     public void Update_GreaterThanInterval_ShouldElapseOnceAndKeepRemainder()
     {
-        var timer = new IntervalTimer(TimeSpan.FromMilliseconds(100), startAsElapsed: false);
+         var timer = new IntervalTimer(TimeSpan.FromMilliseconds(100), false);
 
         timer.Update(TimeSpan.FromMilliseconds(150));
 
@@ -111,7 +111,7 @@ public sealed class IntervalTimerTests
     [Test]
     public void Update_LessThanInterval_ShouldNotElapse()
     {
-        var timer = new IntervalTimer(TimeSpan.FromMilliseconds(100), startAsElapsed: false);
+         var timer = new IntervalTimer(TimeSpan.FromMilliseconds(100), false);
 
         timer.Update(TimeSpan.FromMilliseconds(99));
 
