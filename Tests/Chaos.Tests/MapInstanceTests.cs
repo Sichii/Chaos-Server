@@ -110,7 +110,8 @@ public sealed class MapInstanceTests
                 StatSheet = new StatSheet()
             },
             SpawnArea = null,
-            SpawnTimer = new Mock<IIntervalTimer>().Object
+            SpawnTimer = new Mock<IIntervalTimer>().Object,
+            OnlyCountMonstersInSpawnArea = false
         };
 
     private static MapTemplate CreateNewMapTemplate()

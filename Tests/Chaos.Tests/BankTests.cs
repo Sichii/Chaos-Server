@@ -260,7 +260,7 @@ public sealed class BankTests
     {
         var bank = CreateBankWithCloner();
 
-        var result = bank.TryWithdraw("Nonexistent", 1, out var items);
+        var result = bank.TryRemove("Nonexistent", 1, out var items);
 
         result.Should()
               .BeFalse();
@@ -275,7 +275,7 @@ public sealed class BankTests
         var bank = CreateBankWithCloner();
         bank.Deposit(MockItem.Create("Potion", 3));
 
-        var result = bank.TryWithdraw("Potion", 10, out var items);
+        var result = bank.TryRemove("Potion", 10, out var items);
 
         result.Should()
               .BeFalse();
@@ -290,7 +290,7 @@ public sealed class BankTests
         var bank = CreateBankWithCloner();
         bank.Deposit(MockItem.Create("Potion", 5));
 
-        var result = bank.TryWithdraw("Potion", 5, out var items);
+        var result = bank.TryRemove("Potion", 5, out var items);
 
         result.Should()
               .BeTrue();
@@ -309,7 +309,7 @@ public sealed class BankTests
         var bank = CreateBankWithCloner();
         bank.Deposit(MockItem.Create("Potion", 10, true));
 
-        var result = bank.TryWithdraw("Potion", 3, out var items);
+        var result = bank.TryRemove("Potion", 3, out var items);
 
         result.Should()
               .BeTrue();
@@ -329,7 +329,7 @@ public sealed class BankTests
         var bank = CreateBankWithCloner();
         bank.Deposit(MockItem.Create("Potion", 5));
 
-        var act = () => bank.TryWithdraw("Potion", 0, out _);
+        var act = () => bank.TryRemove("Potion", 0, out _);
 
         act.Should()
            .Throw<ArgumentOutOfRangeException>();

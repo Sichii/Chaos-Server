@@ -10,7 +10,7 @@ namespace Chaos.Time;
 public sealed class ResettingCounter : IDeltaUpdatable
 {
     private readonly IIntervalTimer Timer;
-    private readonly int UpdateIntervalSecs;
+    private readonly decimal UpdateIntervalSecs;
     private int _counter;
 
     private int MaxCount { get; set; }
@@ -28,22 +28,6 @@ public sealed class ResettingCounter : IDeltaUpdatable
     /// <summary>
     ///     Initializes a new instance of the <see cref="ResettingCounter" /> class
     /// </summary>
-    /// <param name="maxCount">
-    ///     The maximum value of the counter
-    /// </param>
-    /// <param name="timer">
-    ///     The timer to use internally to determine when to reset the counter
-    /// </param>
-    public ResettingCounter(int maxCount, IIntervalTimer timer)
-    {
-        Timer = timer;
-        MaxCount = maxCount;
-        UpdateIntervalSecs = 1;
-    }
-
-    /// <summary>
-    ///     Initializes a new instance of the <see cref="ResettingCounter" /> class
-    /// </summary>
     /// <param name="maxPerSecond">
     ///     The max acceptable increments per second. Note that this is not necessarily enforced per second, but instead
     ///     calculates a max value for the number of seconds in each interval
@@ -51,10 +35,10 @@ public sealed class ResettingCounter : IDeltaUpdatable
     /// <param name="updateIntervalSecs">
     ///     The number of seconds that must elapse before resetting the counter
     /// </param>
-    public ResettingCounter(int maxPerSecond, int updateIntervalSecs = 1)
+    public ResettingCounter(decimal maxPerSecond, decimal updateIntervalSecs = 1)
     {
-        Timer = new IntervalTimer(TimeSpan.FromSeconds(updateIntervalSecs));
-        MaxCount = maxPerSecond * updateIntervalSecs;
+        Timer = new IntervalTimer(TimeSpan.FromSeconds((double)updateIntervalSecs));
+        MaxCount = (int)Math.Ceiling(maxPerSecond * updateIntervalSecs);
         UpdateIntervalSecs = updateIntervalSecs;
     }
 
@@ -73,12 +57,20 @@ public sealed class ResettingCounter : IDeltaUpdatable
     public void Reset() => _counter = 0;
 
     /// <summary>
-    ///     Sets the maximum count of the counter (will be automatically multiplied by the update interval)
+    ///     Updates the maximum count value of the counter
     /// </summary>
     /// <param name="maxCount">
-    ///     The new MaxCount to use
+    ///     The new maximum value to set for the counter
     /// </param>
-    public void SetMaxCount(int maxCount) => MaxCount = maxCount * UpdateIntervalSecs;
+    public void SetMaxCount(int maxCount) => MaxCount = maxCount;
+
+    /// <summary>
+    ///     Sets the maximum count of the counter (will be automatically multiplied by the update interval)
+    /// </summary>
+    /// <param name="maxPerSecond">
+    ///     The max per second, which will get automatically multiplied by the update interval
+    /// </param>
+    public void SetMaxPerSecond(int maxPerSecond) => MaxCount = (int)Math.Ceiling(maxPerSecond * UpdateIntervalSecs);
 
     /// <summary>
     ///     Attempts to increment the counter

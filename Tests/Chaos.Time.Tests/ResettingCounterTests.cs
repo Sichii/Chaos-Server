@@ -1,5 +1,4 @@
 #region
-using Chaos.Time.Abstractions;
 using FluentAssertions;
 #endregion
 
@@ -27,9 +26,30 @@ public class ResettingCounterTests
     }
 
     [Test]
-    public void SetMaxCount_Should_Multiply_By_UpdateInterval()
+       public void SetMaxCount_Should_Set_MaxCount_Directly()
     {
-           var counter = new ResettingCounter(2, 3); // MaxCount = 6
+              var counter = new ResettingCounter(2, 3); // MaxCount = ceil(2*3) = 6
+
+              counter.TryIncrement()
+                     .Should()
+                     .BeTrue();
+
+              counter.TryIncrement()
+                     .Should()
+                     .BeTrue();
+
+              counter.SetMaxCount(2); // Directly sets MaxCount = 2
+
+              // We already used 2 increments; MaxCount is now 2, so we cannot increment
+              counter.TryIncrement()
+                     .Should()
+                     .BeFalse();
+       }
+
+       [Test]
+       public void SetMaxPerSecond_Should_Multiply_By_UpdateInterval()
+       {
+              var counter = new ResettingCounter(2, 3); // MaxCount = ceil(2*3) = 6
 
         counter.TryIncrement()
                .Should()
@@ -39,7 +59,7 @@ public class ResettingCounterTests
                .Should()
                .BeTrue();
 
-        counter.SetMaxCount(1); // 1 * 3 = 3
+              counter.SetMaxPerSecond(1); // ceil(1 * 3) = 3
 
         // We already used 2 increments; ensure we cannot exceed 3
         counter.TryIncrement()
@@ -72,8 +92,10 @@ public class ResettingCounterTests
     [Test]
     public void Update_Should_Reset_Counter_When_Timer_Elapsed()
     {
-        var timer = new ManualIntervalTimer();
-           var counter = new ResettingCounter(3, timer);
+           var counter = new ResettingCounter(3);
+
+           // Consume initial elapsed state (IntervalTimer starts as elapsed)
+           counter.Update(TimeSpan.Zero);
 
         counter.TryIncrement()
                .Should()
@@ -83,8 +105,8 @@ public class ResettingCounterTests
                .Should()
                .BeTrue();
 
-        timer.ForceElapse();
-        counter.Update(TimeSpan.FromMilliseconds(1));
+           // Elapse the 1-second timer
+           counter.Update(TimeSpan.FromSeconds(1));
 
         counter.Counter
                .Should()
@@ -93,18 +115,5 @@ public class ResettingCounterTests
         counter.CanIncrement
                .Should()
                .BeTrue();
-    }
-
-    private sealed class ManualIntervalTimer : IIntervalTimer
-    {
-           public bool IntervalElapsed { get; private set; }
-
-           public void Reset() => IntervalElapsed = false;
-
-        public void SetOrigin(DateTime origin) { }
-
-        public void Update(TimeSpan delta) { }
-
-           public void ForceElapse() => IntervalElapsed = true;
     }
 }

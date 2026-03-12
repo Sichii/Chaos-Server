@@ -498,7 +498,7 @@ public static class ComplexActionHelper
         if (!source.CanCarry((bankItem, amount)))
             return WithdrawItemResult.CantCarry;
 
-        source.Bank.TryWithdraw(itemName, amount, out var items);
+        source.Bank.TryRemove(itemName, amount, out var items);
 
         foreach (var item in items!)
             source.Inventory.TryAddToNextSlot(item);

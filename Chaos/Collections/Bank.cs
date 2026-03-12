@@ -214,7 +214,7 @@ public sealed class Bank : IEnumerable<Item>
     ///         false
     ///     </c>
     /// </returns>
-    public bool TryWithdraw(string itemName, int amount, [MaybeNullWhen(false)] out IEnumerable<Item> outItems)
+    public bool TryRemove(string itemName, int amount, [MaybeNullWhen(false)] out IEnumerable<Item> outItems)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(amount, 1);
 
