@@ -360,12 +360,14 @@ public class GameTimeTests
         var gameTime = GameTime.FromDateTime(realDateTime);
 
         // Assert
-        // Should be 24 hours (1 day) in game time (24x speed)
-        var totalGameHours = (realDateTime - TestOrigin).TotalHours * 24;
+        // 1 real hour at 24x speed = 24 game hours = exactly 1 day from epoch
+        var expectedTicks = TimeSpan.FromHours(1)
+                                    .Ticks
+                            * 24;
 
-        gameTime.Day
+        gameTime.Ticks
                 .Should()
-                .BeGreaterThan(TestOrigin.Day);
+                .Be(expectedTicks);
     }
 
     [Test]
