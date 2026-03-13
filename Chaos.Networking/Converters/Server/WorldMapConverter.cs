@@ -1,9 +1,11 @@
+#region
 using Chaos.Extensions.Networking;
 using Chaos.Geometry;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Converters.Server;
 
@@ -20,7 +22,7 @@ public sealed class WorldMapConverter : PacketConverterBase<WorldMapArgs>
     {
         var fieldName = reader.ReadString8();
         var nodeCount = reader.ReadByte();
-        var fieldIndex = reader.ReadByte();
+        var currentNodeIndex = reader.ReadByte();
 
         var nodes = new List<WorldMapNodeInfo>(nodeCount);
 
@@ -47,7 +49,7 @@ public sealed class WorldMapConverter : PacketConverterBase<WorldMapArgs>
         {
             FieldName = fieldName,
             Nodes = nodes,
-            FieldIndex = fieldIndex
+            CurrentNodeIndex = currentNodeIndex
         };
     }
 
@@ -56,7 +58,7 @@ public sealed class WorldMapConverter : PacketConverterBase<WorldMapArgs>
     {
         writer.WriteString8(args.FieldName);
         writer.WriteByte((byte)args.Nodes.Count);
-        writer.WriteByte(args.FieldIndex);
+        writer.WriteByte(args.CurrentNodeIndex);
 
         foreach (var node in args.Nodes)
         {

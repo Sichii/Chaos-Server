@@ -9,6 +9,7 @@ using Chaos.DarkAges.Extensions;
 using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
+using Chaos.Extensions.Geometry;
 using Chaos.Extensions.Networking;
 using Chaos.Geometry.Abstractions.Definitions;
 using Chaos.Models.Board;
@@ -39,6 +40,8 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
     private readonly ITypeMapper Mapper;
     private readonly IWorldServer<IChaosWorldClient> Server;
     private Animation? CurrentAnimation;
+
+    // ReSharper disable once NotAccessedField.Local
     private Task HeartbeatTask = null!;
     public Aisling Aisling { get; set; } = null!;
 
@@ -903,6 +906,16 @@ public sealed class ChaosWorldClient : WorldClientBase, IChaosWorldClient
     public void SendWorldMap(WorldMap worldMap)
     {
         var args = Mapper.Map<WorldMapArgs>(worldMap);
+
+        var currentNode = worldMap.Nodes
+                                  .Select(kvp => new
+                                  {
+                                      kvp.Key,
+                                      kvp.Value
+                                  })
+                                  .FirstOrDefault(pair => pair.Value.Destination.OnSameMapAs(Aisling));
+
+        args.CurrentNodeIndex = (byte)(currentNode?.Key ?? 0);
 
         Send(args);
     }
