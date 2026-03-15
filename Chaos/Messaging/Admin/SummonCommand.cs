@@ -4,7 +4,7 @@ using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
-using Chaos.Utilities;
+using Chaos.Services.Other.Abstractions;
 #endregion
 
 namespace Chaos.Messaging.Admin;
@@ -13,12 +13,12 @@ namespace Chaos.Messaging.Admin;
 public class SummonCommand : ICommand<Aisling>
 {
     private readonly IClientRegistry<IChaosWorldClient> ClientRegistry;
-    private readonly ILogger<SummonCommand> Logger;
+    private readonly IMapTraversalService MapTraversalService;
 
-    public SummonCommand(IClientRegistry<IChaosWorldClient> clientRegistry, ILogger<SummonCommand> logger)
+    public SummonCommand(IClientRegistry<IChaosWorldClient> clientRegistry, IMapTraversalService mapTraversalService)
     {
         ClientRegistry = clientRegistry;
-        Logger = logger;
+        MapTraversalService = mapTraversalService;
     }
 
     /// <inheritdoc />
@@ -34,11 +34,7 @@ public class SummonCommand : ICommand<Aisling>
         if (aisling == null)
             source.SendOrangeBarMessage($"{playerName} is not online");
         else
-            ComplexActionHelper.AdminTraverseMap(
-                aisling,
-                source.MapInstance,
-                source,
-                Logger);
+            MapTraversalService.AdminTraverseMap(aisling, source.MapInstance, source);
 
         return default;
     }

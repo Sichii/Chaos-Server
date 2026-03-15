@@ -589,7 +589,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         if (count == 0)
             exchange.AddItem(source, slot);
         else
-            exchange.AddStackableItem(this, slot, count);
+            exchange.AddStackableItem(source, slot, count);
     }
 
     public void Refresh(bool forceRefresh = false)

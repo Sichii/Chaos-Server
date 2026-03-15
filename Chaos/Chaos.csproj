@@ -73,6 +73,7 @@
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Chaos.Testing.Infrastructure"/>
+        <InternalsVisibleTo Include="Chaos.Tests"/>
     </ItemGroup>
     <ItemGroup>
         <AdditionalFiles Include="Site\Pages\Index.cshtml"/>

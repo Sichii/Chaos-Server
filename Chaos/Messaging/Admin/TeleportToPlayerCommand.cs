@@ -4,7 +4,7 @@ using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Networking.Abstractions;
-using Chaos.Utilities;
+using Chaos.Services.Other.Abstractions;
 #endregion
 
 namespace Chaos.Messaging.Admin;
@@ -13,12 +13,12 @@ namespace Chaos.Messaging.Admin;
 public class TeleportToPlayerCommand : ICommand<Aisling>
 {
     private readonly IClientRegistry<IChaosWorldClient> ClientRegistry;
-    private readonly ILogger<TeleportToPlayerCommand> Logger;
+    private readonly IMapTraversalService MapTraversalService;
 
-    public TeleportToPlayerCommand(IClientRegistry<IChaosWorldClient> clientRegistry, ILogger<TeleportToPlayerCommand> logger)
+    public TeleportToPlayerCommand(IClientRegistry<IChaosWorldClient> clientRegistry, IMapTraversalService mapTraversalService)
     {
         ClientRegistry = clientRegistry;
-        Logger = logger;
+        MapTraversalService = mapTraversalService;
     }
 
     /// <inheritdoc />
@@ -38,11 +38,7 @@ public class TeleportToPlayerCommand : ICommand<Aisling>
             return default;
         }
 
-        ComplexActionHelper.AdminTraverseMap(
-            source,
-            player.MapInstance,
-            player,
-            Logger);
+        MapTraversalService.AdminTraverseMap(source, player.MapInstance, player);
 
         return default;
     }

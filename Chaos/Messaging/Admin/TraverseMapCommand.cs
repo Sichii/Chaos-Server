@@ -3,8 +3,8 @@ using Chaos.Collections;
 using Chaos.Collections.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Storage.Abstractions;
-using Chaos.Utilities;
 #endregion
 
 namespace Chaos.Messaging.Admin;
@@ -13,12 +13,12 @@ namespace Chaos.Messaging.Admin;
 public sealed class TraverseMapCommand : ICommand<Aisling>
 {
     private readonly ISimpleCache Cache;
-    private readonly ILogger<TraverseMapCommand> Logger;
+    private readonly IMapTraversalService MapTraversalService;
 
-    public TraverseMapCommand(ISimpleCache cache, ILogger<TraverseMapCommand> logger)
+    public TraverseMapCommand(ISimpleCache cache, IMapTraversalService mapTraversalService)
     {
         Cache = cache;
-        Logger = logger;
+        MapTraversalService = mapTraversalService;
     }
 
     /// <inheritdoc />
@@ -36,11 +36,7 @@ public sealed class TraverseMapCommand : ICommand<Aisling>
         else
             point = new Point(mapInstance.Template.Width / 2, mapInstance.Template.Height / 2);
 
-        ComplexActionHelper.AdminTraverseMap(
-            aisling,
-            mapInstance,
-            point,
-            Logger);
+        MapTraversalService.AdminTraverseMap(aisling, mapInstance, point);
 
         return default;
     }

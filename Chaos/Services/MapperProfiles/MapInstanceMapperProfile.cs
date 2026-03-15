@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Models.Data;
 using Chaos.Models.Map;
@@ -7,9 +8,11 @@ using Chaos.Networking.Entities.Server;
 using Chaos.Schemas.Content;
 using Chaos.Schemas.Templates;
 using Chaos.Scripting.Abstractions;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -18,6 +21,7 @@ public sealed class MapInstanceMapperProfile(
     IScriptProvider scriptProvider,
     ITypeMapper mapper,
     IShardGenerator shardGenerator,
+    IMapTraversalService mapTraversalService,
     IAsyncStore<Aisling> aislingStore,
     CancellationTokenSource serverCtx,
     ILoggerFactory loggerFactory) : IMapperProfile<MapInstance, MapInstanceSchema>,
@@ -27,6 +31,7 @@ public sealed class MapInstanceMapperProfile(
     private readonly IAsyncStore<Aisling> AislingStore = aislingStore;
     private readonly ILoggerFactory LoggerFactory = loggerFactory;
     private readonly ITypeMapper Mapper = mapper;
+    private readonly IMapTraversalService MapTraversalService = mapTraversalService;
     private readonly IScriptProvider ScriptProvider = scriptProvider;
     private readonly CancellationTokenSource ServerCtx = serverCtx;
     private readonly IShardGenerator ShardGenerator = shardGenerator;
@@ -54,7 +59,7 @@ public sealed class MapInstanceMapperProfile(
         var mapInstance = new MapInstance(
             template,
             SimpleCache,
-            ShardGenerator,
+            MapTraversalService,
             ScriptProvider,
             obj.Name,
             obj.InstanceId,

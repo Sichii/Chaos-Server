@@ -1,13 +1,8 @@
 #region
-using Chaos.Collections;
-using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
-using Chaos.Geometry.Abstractions;
 using Chaos.Models.Abstractions;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
-using Chaos.NLog.Logging.Definitions;
-using Chaos.NLog.Logging.Extensions;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.TypeMapper.Abstractions;
 #endregion
@@ -90,68 +85,6 @@ public static class ComplexActionHelper
         CantCarry,
         DontHaveThatMany,
         BadInput
-    }
-
-    /// <summary>
-    ///     Attempts to move this entity from its current map to the destination map
-    /// </summary>
-    /// <remarks>
-    ///     This method does not use the MapInstance.BeginInvoke api due to not knowing who the caller is. The caller could be
-    ///     from another map, which would require entrancy into this entity's map synchronization, but there is no way of
-    ///     knowing where the caller is from. In order for this to be safe, it has to make no assumptions and deal with every
-    ///     requirement itself.
-    /// </remarks>
-    internal static void AdminTraverseMap(
-        Aisling aisling,
-        MapInstance destinationMap,
-        IPoint destinationPoint,
-        ILogger? logger = null)
-    {
-        using (ExecutionContext.SuppressFlow())
-            Task.Run<Task>(async () =>
-            {
-                var currentMap = aisling.MapInstance;
-
-                await aisling.Client.ReceiveSync.WaitAsync();
-
-                try
-                {
-                    await destinationMap.Initialization;
-
-                    await using var sync = await ComplexSynchronizationHelper.WaitAsync(
-                        TimeSpan.FromMilliseconds(1000),
-                        TimeSpan.FromMilliseconds(5),
-                        currentMap.Sync,
-                        destinationMap.Sync);
-
-                    if (!currentMap.RemoveEntity(aisling))
-                        return;
-
-                    if (currentMap.InstanceId != destinationMap.InstanceId)
-                    {
-                        aisling.Trackers.LastMapInstance = currentMap;
-                        aisling.Trackers.LastMapInstanceId = currentMap.InstanceId;
-                        aisling.Trackers.LastBaseMapInstanceId = currentMap.LoadedFromInstanceId;
-                    }
-
-                    destinationMap.AddAislingDirect(aisling, destinationPoint);
-                } catch (Exception e)
-                {
-                    logger?.WithTopics(Topics.Entities.MapInstance, Topics.Entities.Creature, Topics.Actions.Traverse)
-                          .WithProperty(aisling)
-                          .WithProperty(currentMap)
-                          .WithProperty(destinationMap)
-                          .LogError(
-                              e,
-                              "Exception thrown while creature {@CreatureName} attempted to traverse from map {@FromMapInstanceId} to map {@ToMapInstanceId}",
-                              aisling.Name,
-                              currentMap.InstanceId,
-                              destinationMap.InstanceId);
-                } finally
-                {
-                    aisling.Client.ReceiveSync.Release();
-                }
-            });
     }
 
     public static BuyItemResult BuyItem(

@@ -189,6 +189,8 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddSingleton<IShardGenerator, ExpiringMapInstanceCache>(p
         => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
 
+    builder.Services.AddSingleton<IMapTraversalService, IHostedService, MapTraversalService>();
+
     builder.Services.AddLobbyServer();
     builder.Services.AddLoginserver();
     builder.Services.AddWorldServer();

@@ -13,6 +13,8 @@ using Chaos.Models.World.Abstractions;
 using Chaos.Networking;
 using Chaos.Networking.Abstractions;
 using Chaos.Services.Factories.Abstractions;
+using Chaos.Services.Other;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Testing.Infrastructure.Mocks;
@@ -53,7 +55,7 @@ public sealed class MapInstanceTests
         var mapInstance = new MapInstance(
             template,
             new Mock<ISimpleCache>().Object,
-            new Mock<IShardGenerator>().Object,
+            new Mock<IMapTraversalService>().Object,
             MockScriptProvider.Instance.Object,
             "ExtraKeyMap",
             "extra_key_map1",
@@ -75,6 +77,17 @@ public sealed class MapInstanceTests
                    .Contain("ExtraScript2");
     }
     #endregion
+
+    private static MapTraversalService CreateMapTraversalService(
+        Mock<IShardGenerator>? shardGeneratorMock = null,
+        Mock<ISimpleCache>? simpleCacheMock = null)
+    {
+        shardGeneratorMock ??= new Mock<IShardGenerator>();
+        simpleCacheMock ??= new Mock<ISimpleCache>();
+        var loggerMock = new Mock<ILogger<MapTraversalService>>();
+
+        return new MapTraversalService(shardGeneratorMock.Object, simpleCacheMock.Object, loggerMock.Object);
+    }
 
     private static MonsterSpawn CreateMonsterSpawn()
         => new()
@@ -138,14 +151,6 @@ public sealed class MapInstanceTests
             ["test"],
             new Dictionary<string, IScriptVars>());
 
-    private static Mock<IShardGenerator> GetShardGeneratorMock(MapInstance map)
-    {
-        var field = typeof(MapInstance).GetField("ShardGenerator", BindingFlags.NonPublic | BindingFlags.Instance)!;
-        var shardGenerator = (IShardGenerator)field.GetValue(map)!;
-
-        return Mock.Get(shardGenerator);
-    }
-
     private static Mock<ISimpleCache> GetSimpleCacheMock(MapInstance map)
     {
         var field = typeof(MapInstance).GetField("SimpleCache", BindingFlags.NonPublic | BindingFlags.Instance)!;
@@ -182,14 +187,6 @@ public sealed class MapInstanceTests
 
     [Before(Test)]
     public void Setup() => Map = MockMapInstance.Create(width: 20, height: 20);
-
-    private static void SetupShardGenerator(MapInstance baseMap, MapInstance shardToReturn)
-    {
-        var mock = GetShardGeneratorMock(baseMap);
-
-        mock.Setup(sg => sg.CreateShardOfInstance(baseMap.InstanceId))
-            .Returns(shardToReturn);
-    }
 
     #region Stop
     [Test]
@@ -1852,7 +1849,7 @@ public sealed class MapInstanceTests
     }
     #endregion
 
-    #region HandleSharding (via AddEntity)
+    #region ResolveShardTarget / AddEntity sharding bypass
     [Test]
     public void AddEntity_ShouldBypassSharding_WhenIsShard()
     {
@@ -1938,7 +1935,7 @@ public sealed class MapInstanceTests
     }
 
     [Test]
-    public void AddEntity_PlayerLimit_ShouldJoinGroupMemberShard()
+    public void ResolveShardTarget_PlayerLimit_ShouldJoinGroupMemberShard()
     {
         var shardMap = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
         shardMap.BaseInstanceId = Map.InstanceId;
@@ -1970,12 +1967,13 @@ public sealed class MapInstanceTests
         existingMember.Group = group;
         newPlayer.Group = group;
 
-        // AddEntity should route to the shard where the group member is
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var service = CreateMapTraversalService();
 
-        shardMap.TryGetEntity<Aisling>(newPlayer.Id, out _)
-                .Should()
-                .BeTrue();
+        // ResolveShardTarget should route to the shard where the group member is
+        var target = service.ResolveShardTarget(newPlayer, Map);
+
+        target.Should()
+              .BeSameAs(shardMap);
     }
 
     [Test]
@@ -2004,10 +2002,13 @@ public sealed class MapInstanceTests
     }
 
     [Test]
-    public void AddEntity_PlayerLimit_ShouldCreateNewShard_WhenAtLimit()
+    public void ResolveShardTarget_PlayerLimit_ShouldCreateNewShard_WhenAtLimit()
     {
         var newShard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
-        SetupShardGenerator(Map, newShard);
+        var shardGeneratorMock = new Mock<IShardGenerator>();
+
+        shardGeneratorMock.Setup(sg => sg.CreateShardOfInstance(Map.InstanceId))
+                          .Returns(newShard);
 
         SetShardingOptions(
             Map,
@@ -2022,17 +2023,14 @@ public sealed class MapInstanceTests
         var existing = MockAisling.Create(Map, "Existing");
         Map.SimpleAdd(existing);
 
-        // Add another player — should go to new shard
+        var service = CreateMapTraversalService(shardGeneratorMock);
+
+        // Player limit=1 always creates new shard
         var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var target = service.ResolveShardTarget(newPlayer, Map);
 
-        // Player limit=1 always creates new shard (regardless of existing shard capacity)
-        // Entity is queued via BeginInvoke — process the shard's queue
-        newShard.Update(TimeSpan.FromSeconds(1));
-
-        newShard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-                .Should()
-                .BeTrue();
+        target.Should()
+              .BeSameAs(newShard);
     }
 
     [Test]
@@ -2059,10 +2057,13 @@ public sealed class MapInstanceTests
     }
 
     [Test]
-    public void AddEntity_AbsolutePlayerLimit_ShouldCreateNewShard_WhenAllFull()
+    public void ResolveShardTarget_AbsolutePlayerLimit_ShouldCreateNewShard_WhenAllFull()
     {
         var newShard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
-        SetupShardGenerator(Map, newShard);
+        var shardGeneratorMock = new Mock<IShardGenerator>();
+
+        shardGeneratorMock.Setup(sg => sg.CreateShardOfInstance(Map.InstanceId))
+                          .Returns(newShard);
 
         SetShardingOptions(
             Map,
@@ -2077,20 +2078,18 @@ public sealed class MapInstanceTests
         var existing = MockAisling.Create(Map, "Existing");
         Map.SimpleAdd(existing);
 
-        // Add new player — no room, should create shard
+        var service = CreateMapTraversalService(shardGeneratorMock);
+
+        // No room, should create shard
         var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var target = service.ResolveShardTarget(newPlayer, Map);
 
-        // Entity is queued via BeginInvoke — process the shard's queue
-        newShard.Update(TimeSpan.FromSeconds(1));
-
-        newShard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-                .Should()
-                .BeTrue();
+        target.Should()
+              .BeSameAs(newShard);
     }
 
     [Test]
-    public void AddEntity_AbsolutePlayerLimit_ShouldJoinExistingShardUnderLimit()
+    public void ResolveShardTarget_AbsolutePlayerLimit_ShouldJoinExistingShardUnderLimit()
     {
         // Create a shard with space
         var shard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
@@ -2116,17 +2115,18 @@ public sealed class MapInstanceTests
         var shardMember = MockAisling.Create(shard, "ShardMember");
         shard.SimpleAdd(shardMember);
 
+        var service = CreateMapTraversalService();
+
         // New player should go to shard (has space)
         var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var target = service.ResolveShardTarget(newPlayer, Map);
 
-        shard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-             .Should()
-             .BeTrue();
+        target.Should()
+              .BeSameAs(shard);
     }
 
     [Test]
-    public void AddEntity_AbsoluteGroupLimit_ShouldJoinGroupMemberShard()
+    public void ResolveShardTarget_AbsoluteGroupLimit_ShouldJoinGroupMemberShard()
     {
         var shardMap = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
         shardMap.BaseInstanceId = Map.InstanceId;
@@ -2158,11 +2158,12 @@ public sealed class MapInstanceTests
         existingMember.Group = group;
         newPlayer.Group = group;
 
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var service = CreateMapTraversalService();
 
-        shardMap.TryGetEntity<Aisling>(newPlayer.Id, out _)
-                .Should()
-                .BeTrue();
+        var target = service.ResolveShardTarget(newPlayer, Map);
+
+        target.Should()
+              .BeSameAs(shardMap);
     }
 
     [Test]
@@ -2190,10 +2191,13 @@ public sealed class MapInstanceTests
     }
 
     [Test]
-    public void AddEntity_AbsoluteGroupLimit_ShouldCreateNewShard_WhenAtGroupLimit()
+    public void ResolveShardTarget_AbsoluteGroupLimit_ShouldCreateNewShard_WhenAtGroupLimit()
     {
         var newShard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
-        SetupShardGenerator(Map, newShard);
+        var shardGeneratorMock = new Mock<IShardGenerator>();
+
+        shardGeneratorMock.Setup(sg => sg.CreateShardOfInstance(Map.InstanceId))
+                          .Returns(newShard);
 
         SetShardingOptions(
             Map,
@@ -2208,15 +2212,13 @@ public sealed class MapInstanceTests
         var existing = MockAisling.Create(Map, "Existing");
         Map.SimpleAdd(existing);
 
+        var service = CreateMapTraversalService(shardGeneratorMock);
+
         var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var target = service.ResolveShardTarget(newPlayer, Map);
 
-        // Entity is queued via BeginInvoke — process the shard's queue
-        newShard.Update(TimeSpan.FromSeconds(1));
-
-        newShard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-                .Should()
-                .BeTrue();
+        target.Should()
+              .BeSameAs(newShard);
     }
 
     [Test]
@@ -2243,10 +2245,13 @@ public sealed class MapInstanceTests
     }
 
     [Test]
-    public void AddEntity_AbsoluteGuildLimit_ShouldCreateNewShard_WhenAtGuildLimit()
+    public void ResolveShardTarget_AbsoluteGuildLimit_ShouldCreateNewShard_WhenAtGuildLimit()
     {
         var newShard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
-        SetupShardGenerator(Map, newShard);
+        var shardGeneratorMock = new Mock<IShardGenerator>();
+
+        shardGeneratorMock.Setup(sg => sg.CreateShardOfInstance(Map.InstanceId))
+                          .Returns(newShard);
 
         SetShardingOptions(
             Map,
@@ -2260,22 +2265,23 @@ public sealed class MapInstanceTests
         var existing = MockAisling.Create(Map, "Existing");
         Map.SimpleAdd(existing);
 
+        var service = CreateMapTraversalService(shardGeneratorMock);
+
         var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var target = service.ResolveShardTarget(newPlayer, Map);
 
-        // Entity is queued via BeginInvoke — process the shard's queue
-        newShard.Update(TimeSpan.FromSeconds(1));
-
-        newShard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-                .Should()
-                .BeTrue();
+        target.Should()
+              .BeSameAs(newShard);
     }
 
     [Test]
-    public void AddEntity_PlayerLimit_Limit1_ShouldAlwaysCreateNewShard()
+    public void ResolveShardTarget_PlayerLimit_Limit1_ShouldAlwaysCreateNewShard()
     {
         var newShard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
-        SetupShardGenerator(Map, newShard);
+        var shardGeneratorMock = new Mock<IShardGenerator>();
+
+        shardGeneratorMock.Setup(sg => sg.CreateShardOfInstance(Map.InstanceId))
+                          .Returns(newShard);
 
         SetShardingOptions(
             Map,
@@ -2286,16 +2292,14 @@ public sealed class MapInstanceTests
                 ExitLocation = new Location("exit", 5, 5)
             });
 
+        var service = CreateMapTraversalService(shardGeneratorMock);
+
         // Even with no one on the map, limit=1 should create a new shard
         var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var target = service.ResolveShardTarget(newPlayer, Map);
 
-        // Entity is queued via BeginInvoke — process the shard's queue
-        newShard.Update(TimeSpan.FromSeconds(1));
-
-        newShard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-                .Should()
-                .BeTrue();
+        target.Should()
+              .BeSameAs(newShard);
     }
     #endregion
 
@@ -2371,7 +2375,8 @@ public sealed class MapInstanceTests
         var client1 = Mock.Get(aisling1.Client);
         var client2 = Mock.Get(aisling2.Client);
 
-        Map.Update(TimeSpan.FromSeconds(2));
+        var service = CreateMapTraversalService();
+        service.HandleShardLimiters(Map);
 
         // One of the two should receive a warning about being over the limit
         var totalWarnings = client1.Invocations.Count(i => i.Method.Name == "SendServerMessage")
@@ -2398,14 +2403,16 @@ public sealed class MapInstanceTests
         Map.SimpleAdd(aisling1);
         Map.SimpleAdd(aisling2);
 
+        var service = CreateMapTraversalService();
+
         // Trigger limiter creation
-        Map.Update(TimeSpan.FromSeconds(2));
+        service.HandleShardLimiters(Map);
 
         // Remove aisling2 from map
         Map.RemoveEntity(aisling2);
 
-        // Update again — should clean up the timer for the removed aisling
-        Map.Update(TimeSpan.FromSeconds(2));
+        // Call again — should clean up the timer for the removed aisling
+        service.HandleShardLimiters(Map);
 
         // Should not throw
         Map.ShardLimiterTimers
@@ -2435,7 +2442,8 @@ public sealed class MapInstanceTests
         var client1 = Mock.Get(aisling1.Client);
         var client2 = Mock.Get(aisling2.Client);
 
-        Map.Update(TimeSpan.FromSeconds(2));
+        var service = CreateMapTraversalService();
+        service.HandleShardLimiters(Map);
 
         var totalWarnings = client1.Invocations.Count(i => i.Method.Name == "SendServerMessage")
                             + client2.Invocations.Count(i => i.Method.Name == "SendServerMessage");
@@ -2465,7 +2473,8 @@ public sealed class MapInstanceTests
         var client1 = Mock.Get(aisling1.Client);
         var client2 = Mock.Get(aisling2.Client);
 
-        Map.Update(TimeSpan.FromSeconds(2));
+        var service = CreateMapTraversalService();
+        service.HandleShardLimiters(Map);
 
         var totalWarnings = client1.Invocations.Count(i => i.Method.Name == "SendServerMessage")
                             + client2.Invocations.Count(i => i.Method.Name == "SendServerMessage");
@@ -2646,7 +2655,8 @@ public sealed class MapInstanceTests
 
         var lonerClient = Mock.Get(loner.Client);
 
-        Map.Update(TimeSpan.FromSeconds(2));
+        var service = CreateMapTraversalService();
+        service.HandleShardLimiters(Map);
 
         // 2 groups > 1 limit — loner should get warning (highest Id, smallest group)
         var totalWarnings = lonerClient.Invocations.Count(i => i.Method.Name == "SendServerMessage");
@@ -2656,9 +2666,9 @@ public sealed class MapInstanceTests
     }
     #endregion
 
-    #region HandleSharding — AbsoluteGroupLimit grouped join
+    #region ResolveShardTarget — AbsoluteGroupLimit grouped join
     [Test]
-    public void AddEntity_AbsoluteGroupLimit_ShouldJoinUnderLimitShard_WhenGroupCountLow()
+    public void ResolveShardTarget_AbsoluteGroupLimit_ShouldJoinUnderLimitShard_WhenGroupCountLow()
     {
         var shard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
         shard.BaseInstanceId = Map.InstanceId;
@@ -2685,17 +2695,18 @@ public sealed class MapInstanceTests
         var shardMember = MockAisling.Create(shard, "ShardMem");
         shard.SimpleAdd(shardMember);
 
+        var service = CreateMapTraversalService();
+
         // New ungrouped player — base map is at limit (3 groups), shard is under (1 group)
         var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var target = service.ResolveShardTarget(newPlayer, Map);
 
-        shard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-             .Should()
-             .BeTrue();
+        target.Should()
+              .BeSameAs(shard);
     }
 
     [Test]
-    public void AddEntity_AbsoluteGuildLimit_ShouldJoinUnderLimitShard_WhenGuildCountLow()
+    public void ResolveShardTarget_AbsoluteGuildLimit_ShouldJoinUnderLimitShard_WhenGuildCountLow()
     {
         var shard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
         shard.BaseInstanceId = Map.InstanceId;
@@ -2722,21 +2733,25 @@ public sealed class MapInstanceTests
         var shardMember = MockAisling.Create(shard, "ShardMem");
         shard.SimpleAdd(shardMember);
 
-        var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var service = CreateMapTraversalService();
 
-        shard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-             .Should()
-             .BeTrue();
+        var newPlayer = MockAisling.Create(Map, "NewPlayer");
+        var target = service.ResolveShardTarget(newPlayer, Map);
+
+        target.Should()
+              .BeSameAs(shard);
     }
     #endregion
 
-    #region HandleSharding — Limit=1 always creates new shard
+    #region ResolveShardTarget — Limit=1 always creates new shard
     [Test]
-    public void AddEntity_AbsoluteGroupLimit_Limit1_ShouldAlwaysCreateNewShard()
+    public void ResolveShardTarget_AbsoluteGroupLimit_Limit1_ShouldAlwaysCreateNewShard()
     {
         var newShard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
-        SetupShardGenerator(Map, newShard);
+        var shardGeneratorMock = new Mock<IShardGenerator>();
+
+        shardGeneratorMock.Setup(sg => sg.CreateShardOfInstance(Map.InstanceId))
+                          .Returns(newShard);
 
         SetShardingOptions(
             Map,
@@ -2747,22 +2762,23 @@ public sealed class MapInstanceTests
                 ExitLocation = new Location("exit", 5, 5)
             });
 
+        var service = CreateMapTraversalService(shardGeneratorMock);
+
         var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var target = service.ResolveShardTarget(newPlayer, Map);
 
-        // Entity is queued via BeginInvoke — process the shard's queue
-        newShard.Update(TimeSpan.FromSeconds(1));
-
-        newShard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-                .Should()
-                .BeTrue();
+        target.Should()
+              .BeSameAs(newShard);
     }
 
     [Test]
-    public void AddEntity_AbsoluteGuildLimit_Limit1_ShouldAlwaysCreateNewShard()
+    public void ResolveShardTarget_AbsoluteGuildLimit_Limit1_ShouldAlwaysCreateNewShard()
     {
         var newShard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
-        SetupShardGenerator(Map, newShard);
+        var shardGeneratorMock = new Mock<IShardGenerator>();
+
+        shardGeneratorMock.Setup(sg => sg.CreateShardOfInstance(Map.InstanceId))
+                          .Returns(newShard);
 
         SetShardingOptions(
             Map,
@@ -2773,22 +2789,23 @@ public sealed class MapInstanceTests
                 ExitLocation = new Location("exit", 5, 5)
             });
 
+        var service = CreateMapTraversalService(shardGeneratorMock);
+
         var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var target = service.ResolveShardTarget(newPlayer, Map);
 
-        // Entity is queued via BeginInvoke — process the shard's queue
-        newShard.Update(TimeSpan.FromSeconds(1));
-
-        newShard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-                .Should()
-                .BeTrue();
+        target.Should()
+              .BeSameAs(newShard);
     }
 
     [Test]
-    public void AddEntity_AbsolutePlayerLimit_Limit1_ShouldAlwaysCreateNewShard()
+    public void ResolveShardTarget_AbsolutePlayerLimit_Limit1_ShouldAlwaysCreateNewShard()
     {
         var newShard = MockMapInstance.Create("test_map_shard", width: 20, height: 20);
-        SetupShardGenerator(Map, newShard);
+        var shardGeneratorMock = new Mock<IShardGenerator>();
+
+        shardGeneratorMock.Setup(sg => sg.CreateShardOfInstance(Map.InstanceId))
+                          .Returns(newShard);
 
         SetShardingOptions(
             Map,
@@ -2799,15 +2816,13 @@ public sealed class MapInstanceTests
                 ExitLocation = new Location("exit", 5, 5)
             });
 
+        var service = CreateMapTraversalService(shardGeneratorMock);
+
         var newPlayer = MockAisling.Create(Map, "NewPlayer");
-        Map.AddEntity(newPlayer, new Point(5, 5));
+        var target = service.ResolveShardTarget(newPlayer, Map);
 
-        // Entity is queued via BeginInvoke — process the shard's queue
-        newShard.Update(TimeSpan.FromSeconds(1));
-
-        newShard.TryGetEntity<Aisling>(newPlayer.Id, out _)
-                .Should()
-                .BeTrue();
+        target.Should()
+              .BeSameAs(newShard);
     }
     #endregion
 

@@ -458,66 +458,13 @@ public abstract class Creature : NamedEntity, IAffected, IScripted<ICreatureScri
         bool ignoreSharding = false,
         bool fromWorldMap = false,
         Func<Task>? onTraverse = null)
-    {
-        using (ExecutionContext.SuppressFlow())
-            Task.Run<Task>(async () =>
-            {
-                var currentMap = MapInstance;
-
-                var aisling = this as Aisling;
-
-                if (aisling is not null)
-                    await aisling.Client.ReceiveSync.WaitAsync();
-
-                try
-                {
-                    await destinationMap.Initialization;
-
-                    //if it's from the world map, remove should be true
-                    var removed = fromWorldMap;
-
-                    //if its not from the world map, make sure we successfully remove it
-                    if (!fromWorldMap)
-                        await currentMap.InvokeAsync(() => removed = currentMap.RemoveEntity(this));
-
-                    if (!removed)
-                        return;
-
-                    //set tracker info
-                    if (currentMap.InstanceId != destinationMap.InstanceId)
-                    {
-                        Trackers.LastMapInstance = currentMap;
-                        Trackers.LastMapInstanceId = currentMap.InstanceId;
-                        Trackers.LastBaseMapInstanceId = currentMap.LoadedFromInstanceId;
-                    }
-
-                    await destinationMap.InvokeAsync(() =>
-                    {
-                        if (aisling is not null && ignoreSharding)
-                            destinationMap.AddAislingDirect(aisling, destinationPoint);
-                        else
-                            destinationMap.AddEntity(this, destinationPoint);
-
-                        onTraverse?.Invoke();
-                    });
-                } catch (Exception e)
-                {
-                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.Creature, Topics.Actions.Traverse)
-                          .WithProperty(this)
-                          .WithProperty(currentMap)
-                          .WithProperty(destinationMap)
-                          .LogError(
-                              e,
-                              "Exception thrown while creature {@CreatureName} attempted to traverse from map {@FromMapInstanceId} to map {@ToMapInstanceId}",
-                              Name,
-                              currentMap.InstanceId,
-                              destinationMap.InstanceId);
-                } finally
-                {
-                    aisling?.Client.ReceiveSync.Release();
-                }
-            });
-    }
+        => MapInstance.TraversalService.TraverseMap(
+            this,
+            destinationMap,
+            destinationPoint,
+            ignoreSharding,
+            fromWorldMap,
+            onTraverse);
 
     public virtual bool TryDrop(IPoint point, IEnumerable<Item> items, [MaybeNullWhen(false)] out GroundItem[] groundItems)
     {

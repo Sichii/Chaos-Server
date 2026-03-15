@@ -6,6 +6,7 @@ using Chaos.Geometry.Abstractions;
 using Chaos.Models.Map;
 using Chaos.Models.Templates;
 using Chaos.Models.World;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Logging;
@@ -39,6 +40,7 @@ public static class MockMapInstance
 
         var simpleCacheMock = new Mock<ISimpleCache>();
         var shardGeneratorMock = new Mock<IShardGenerator>();
+        var mapTraversalServiceMock = new Mock<IMapTraversalService>();
         var aislingStoreMock = new Mock<IAsyncStore<Aisling>>();
         var loggerMock = new Mock<ILogger<MapInstance>>();
         var serverCtx = new CancellationTokenSource();
@@ -46,7 +48,7 @@ public static class MockMapInstance
         var mapInstance = new MapInstance(
             template,
             simpleCacheMock.Object,
-            shardGeneratorMock.Object,
+            mapTraversalServiceMock.Object,
             MockScriptProvider.Instance.Object,
             name,
             $"{templateKey}1",

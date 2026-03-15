@@ -18,8 +18,8 @@ using Chaos.NLog.Logging.Extensions;
 using Chaos.Pathfinding.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MapScripts.Abstractions;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
-using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
@@ -42,8 +42,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     private readonly MapEntityCollection Objects;
     private readonly ConcurrentQueue<Action> ProcessingQueue;
     private readonly CancellationToken ServerShutdownToken;
-    private readonly IShardGenerator ShardGenerator;
     private readonly ISimpleCache SimpleCache;
+    private int _pendingAislingCount;
 
     /// <summary>
     ///     Whether the map will experience day/night cycles automatically
@@ -144,6 +144,12 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// </summary>
     public FifoAutoReleasingSemaphoreSlim Sync { get; }
 
+    /// <summary>
+    ///     The number of aislings on this map plus aislings that have been assigned to this map by sharding but not yet added
+    ///     to the entity collection. Used for sharding capacity decisions
+    /// </summary>
+    public int EffectiveAislingCount => Objects.AislingCount + Volatile.Read(ref _pendingAislingCount);
+
     public bool HasAislings => Objects.AislingCount > 0;
 
     /// <summary>
@@ -162,6 +168,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public string LoadedFromInstanceId => BaseInstanceId ?? InstanceId;
 
     /// <summary>
+    ///     The service that coordinates map traversal and sharding
+    /// </summary>
+    public IMapTraversalService TraversalService { get; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="MapInstance" /> class
     /// </summary>
     /// <param name="template">
@@ -170,8 +181,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <param name="simpleCache">
     ///     A generic cache provider
     /// </param>
-    /// <param name="shardGenerator">
-    ///     A services used to generate shards of maps
+    /// <param name="mapTraversalService">
+    ///     A service that coordinates map traversal and sharding
     /// </param>
     /// <param name="scriptProvider">
     ///     A service used to generate scripts
@@ -197,7 +208,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public MapInstance(
         MapTemplate template,
         ISimpleCache simpleCache,
-        IShardGenerator shardGenerator,
+        IMapTraversalService mapTraversalService,
         IScriptProvider scriptProvider,
         string name,
         string instanceId,
@@ -209,6 +220,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         Name = name;
         InstanceId = instanceId;
         AislingStore = aislingStore;
+        TraversalService = mapTraversalService;
         Logger = logger;
         ServerShutdownToken = serverCtx.Token;
         SimpleCache = simpleCache;
@@ -224,7 +236,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
         Shards = new ConcurrentDictionary<string, MapInstance>(StringComparer.OrdinalIgnoreCase);
         ShardLimiterTimers = new ConcurrentDictionary<Aisling, IIntervalTimer>();
-        ShardGenerator = shardGenerator;
         HandleShardLimitersTimer = new IntervalTimer(TimeSpan.FromSeconds(1));
         DayNightCycleTimer = new IntervalTimer(TimeSpan.FromSeconds(1));
         var delta = 1000.0 / WorldOptions.Instance.UpdatesPerSecond;
@@ -261,7 +272,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                     timer.Update(delta);
 
                 if (HandleShardLimitersTimer.IntervalElapsed)
-                    HandleShardLimiters();
+                    TraversalService.HandleShardLimiters(this);
 
                 if (AutoDayNightCycle && DayNightCycleTimer.IntervalElapsed)
                 {
@@ -385,17 +396,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <remarks>
     ///     This method will handle all aspects of this operation, including updating viewports, and invoking events on scripts
     /// </remarks>
-    public void AddEntity(VisibleEntity visibleEntity, IPoint point)
-    {
-        //shards cant shard, shardtype none means no sharding, non-aisling cant create shards
-        if (IsShard
-            || (ShardingOptions == null)
-            || (ShardingOptions.ShardingType == ShardingType.None)
-            || visibleEntity is not Aisling aisling)
-            InnerAddEntity(visibleEntity, point);
-        else
-            HandleSharding(aisling, point);
-    }
+    public void AddEntity(VisibleEntity visibleEntity, IPoint point) => InnerAddEntity(visibleEntity, point);
 
     /// <summary>
     ///     Adds a monster spawner to the map
@@ -407,15 +408,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     {
         monsterSpawn.MapInstance = this;
         MonsterSpawns.Add(monsterSpawn);
-    }
-
-    private void AddToNewShard(Aisling aisling, IPoint point)
-    {
-        var shard = ShardGenerator.CreateShardOfInstance(InstanceId);
-        shard.Shards = Shards;
-        Shards.TryAdd(shard.InstanceId, shard);
-
-        shard.BeginInvoke(() => shard.AddAislingDirect(aisling, point));
     }
 
     /// <summary>
@@ -470,6 +462,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             obj?.OnClicked(source);
         }
     }
+
+    /// <summary>
+    ///     Decrements the pending aisling reservation count. Call after the aisling has been added (or if the add fails)
+    /// </summary>
+    public void DecrementPendingAislings() => Interlocked.Decrement(ref _pendingAislingCount);
 
     /// <summary>
     ///     Destroys the map instance
@@ -561,390 +558,10 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 15) where T: MapEntity
         => Objects.WithinRange<T>(point, range);
 
-    private void HandleSharding(Aisling aisling, IPoint point)
-    {
-        switch (ShardingOptions!.ShardingType)
-        {
-            case ShardingType.None:
-            //the shard is generated on create, so just add the entity to whatever instance it is already being added to
-            case ShardingType.AlwaysShardOnCreate:
-                InnerAddEntity(aisling, point);
-
-                break;
-            case ShardingType.PlayerLimit:
-            case ShardingType.AbsolutePlayerLimit:
-            {
-                //if the limit is 1, do not re-use instances
-                if (ShardingOptions.Limit == 1) { } else
-                {
-                    //non-absolute player limit will allow group members to go over the normal player limit
-                    if (ShardingOptions.ShardingType == ShardingType.PlayerLimit)
-                    {
-                        var shard = aisling.Group
-                                           ?.Where(a => !a.Equals(aisling))
-                                           .Select(m => m.MapInstance)
-                                           .FirstOrDefault(m
-                                               => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
-
-                        if (shard != null)
-                        {
-                            //add this player to that instance or shard
-                            shard.AddAislingDirect(aisling, point);
-
-                            return;
-                        }
-                    }
-
-                    //if the limit is not 1, using previously opened shards is allowed
-                    //starting with this base instance, check each shard to see if there is an available spot
-                    foreach (var instance in Shards.Values.Prepend(this))
-                    {
-                        var playerCount = instance.Objects
-                                                  .Values<Aisling>()
-                                                  .Count();
-
-                        if (playerCount < ShardingOptions.Limit)
-                        {
-                            instance.InnerAddEntity(aisling, point);
-
-                            return;
-                        }
-                    }
-
-                    //if there is no available spots, create a new shard
-                }
-
-                AddToNewShard(aisling, point);
-
-                break;
-            }
-            case ShardingType.AbsoluteGroupLimit:
-            {
-                //if any group member is already in this instance or a shard of this instance
-                var shard = aisling.Group
-                                   ?.Where(a => !a.Equals(aisling))
-                                   .Select(m => m.MapInstance)
-                                   .FirstOrDefault(m
-                                       => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
-
-                if (shard != null)
-                {
-                    //add this player to that instance or shard
-                    shard.AddAislingDirect(aisling, point);
-
-                    return;
-                }
-
-                //if the limit is 1, do not re-use instances
-                if (ShardingOptions.Limit == 1) { } else
-                    foreach (var instance in Shards.Values.Prepend(this))
-                    {
-                        //get the number of groups in this instance
-                        var groupCount = instance.Objects
-                                                 .Values<Aisling>()
-                                                 .GroupBy(a => a.Group)
-                                                 .Sum(grp => grp.Key == null ? grp.Count() : 1);
-
-                        //if this instance isnt at the group limit
-                        if (groupCount < ShardingOptions.Limit)
-                        {
-                            //add this player to that instance and return
-                            instance.InnerAddEntity(aisling, point);
-
-                            return;
-                        }
-                    }
-
-                //if we couldnt find a suitable instance to place the player, generate a new one and add them to it
-                AddToNewShard(aisling, point);
-
-                break;
-            }
-            case ShardingType.AbsoluteGuildLimit:
-            {
-                //if any guild member is already in this instance or a shard of this instance
-                var shard = aisling.Guild
-                                   ?.GetOnlineMembers()
-                                   .Where(a => !a.Equals(aisling))
-                                   .Select(m => m.MapInstance)
-                                   .FirstOrDefault(m
-                                       => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
-
-                if (shard != null)
-                {
-                    //add this player to that instance or shard
-                    shard.AddAislingDirect(aisling, point);
-
-                    return;
-                }
-
-                //if the limit is 1, do not re-use instances
-                if (ShardingOptions.Limit == 1) { } else
-                    foreach (var instance in Shards.Values.Prepend(this))
-                    {
-                        //get the number of guilds in this instance
-                        var guildCount = instance.Objects
-                                                 .Values<Aisling>()
-                                                 .GroupBy(a => a.Guild)
-                                                 .Sum(gld => gld.Key == null ? gld.Count() : 1);
-
-                        //if this instance isnt at the guild limit
-                        if (guildCount < ShardingOptions.Limit)
-                        {
-                            //add this player to that instance and return
-                            instance.InnerAddEntity(aisling, point);
-
-                            return;
-                        }
-                    }
-
-                //if we couldnt find a suitable instance to place the player, generate a new one and add them to it
-                AddToNewShard(aisling, point);
-
-                break;
-            }
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-
-    private void HandleShardLimiters()
-    {
-        if (ShardingOptions is null)
-            return;
-
-        //clean up limiter timers
-        foreach (var aisling in ShardLimiterTimers.Keys)
-            if (!Objects.ContainsKey(aisling.Id))
-                ShardLimiterTimers.Remove(aisling, out _);
-
-        var limit = ShardingOptions.Limit;
-
-        switch (ShardingOptions.ShardingType)
-        {
-            case ShardingType.None:
-            case ShardingType.PlayerLimit:
-            case ShardingType.AlwaysShardOnCreate:
-                break;
-            case ShardingType.AbsolutePlayerLimit:
-            {
-                using var rentedAislings = Objects.Values<Aisling>()
-                                                  .Where(aisling => !aisling.IsAdmin)
-                                                  .ToRented();
-
-                var aislings = rentedAislings.Array;
-
-                var amountOverLimit = aislings.Count - limit;
-
-                //if we're not over the limit, do nothing
-                if (amountOverLimit <= 0)
-                    return;
-
-                using var rentedAislingToRemove = aislings.OrderByDescending(a => a.Id)
-                                                          .ThenBy(a =>
-                                                          {
-                                                              if (a.Group == null)
-                                                                  return 0;
-
-                                                              return a.Group.Count(m => m.MapInstance == this);
-                                                          })
-                                                          .Take(amountOverLimit)
-                                                          .ToRented();
-
-                var aislingsToRemove = rentedAislingToRemove.Array;
-
-                //for each timer that isnt for one of these aislings
-                //remove that timer
-                foreach (var aislingToRemove in ShardLimiterTimers.Keys.Except(aislingsToRemove))
-                    ShardLimiterTimers.Remove(aislingToRemove, out _);
-
-                //for each aisling that doesnt have a timer
-                //create a timer and send an initial warning
-                foreach (var newAisling in aislingsToRemove.Except(ShardLimiterTimers.Keys))
-                {
-                    ShardLimiterTimers.TryAdd(
-                        newAisling,
-                        new PeriodicMessageTimer(
-                            TimeSpan.FromSeconds(15),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(1),
-                            "You will be removed from the map in {Time}",
-                            message => newAisling.SendActiveMessage(message)));
-
-                    newAisling.SendActiveMessage("The map has reached it's player limit");
-                    newAisling.SendActiveMessage("You will be removed from the map in 15 seconds");
-                }
-
-                //for each timer that has expired
-                //move the player to the exit and remove the timer
-                foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
-                                                      .ToArray())
-                    if (kvp.Value.IntervalElapsed)
-                    {
-                        var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
-                        kvp.Key.TraverseMap(exitMapInstance, ShardingOptions.ExitLocation);
-                        ShardLimiterTimers.Remove(kvp.Key, out _);
-                    }
-
-                break;
-            }
-            case ShardingType.AbsoluteGroupLimit:
-            {
-                var aislings = Objects.Values<Aisling>()
-                                      .Where(aisling => !aisling.IsAdmin);
-
-                //number of unique groups in the zone
-                using var rentedGroups = aislings.GroupBy(a => a.Group)
-                                                 .SelectMany(grp =>
-                                                 {
-                                                     if (grp.Key == null)
-                                                         return grp.Select(m => new[]
-                                                         {
-                                                             m
-                                                         });
-
-                                                     return
-                                                     [
-                                                         grp.Where(m => m.MapInstance == this)
-                                                            .ToArray()
-                                                     ];
-                                                 })
-                                                 .ToRented();
-
-                var groups = rentedGroups.Array;
-                var groupCount = groups.Count;
-
-                var amountOverLimit = groupCount - limit;
-
-                //if we're not over the limit, do nothing
-                if (amountOverLimit <= 0)
-                    return;
-
-                using var rentedAislingsToRemove = groups.OrderByDescending(grp => grp.Max(a => a.Id))
-                                                         .ThenBy(grp => grp.Length)
-                                                         .Take(amountOverLimit)
-                                                         .SelectMany(a => a)
-                                                         .ToRented();
-
-                var aislingsToRemove = rentedAislingsToRemove.Array;
-
-                //for each timer that isnt for one of these aislings
-                //remove that timer
-                foreach (var aislingToRemove in ShardLimiterTimers.Keys.Except(aislingsToRemove))
-                    ShardLimiterTimers.Remove(aislingToRemove, out _);
-
-                //for each aisling that doesnt have a timer
-                //create a timer and send an initial warning
-                foreach (var newAisling in aislingsToRemove.Except(ShardLimiterTimers.Keys))
-                {
-                    ShardLimiterTimers.TryAdd(
-                        newAisling,
-                        new PeriodicMessageTimer(
-                            TimeSpan.FromSeconds(15),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(1),
-                            "You will be removed from the map in {Time}",
-                            message => newAisling.SendActiveMessage(message)));
-
-                    newAisling.SendActiveMessage("The map has reached it's group limit");
-                    newAisling.SendActiveMessage("You will be removed from the map in 15 seconds");
-                }
-
-                //for each timer that has expired
-                //move the player to the exit and remove the timer
-                foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
-                                                      .ToArray())
-                    if (kvp.Value.IntervalElapsed)
-                    {
-                        var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
-                        kvp.Key.TraverseMap(exitMapInstance, ShardingOptions.ExitLocation);
-                        ShardLimiterTimers.Remove(kvp.Key, out _);
-                    }
-
-                break;
-            }
-            case ShardingType.AbsoluteGuildLimit:
-            {
-                var aislings = Objects.Values<Aisling>()
-                                      .Where(aisling => !aisling.IsAdmin);
-
-                //number of unique groups in the zone
-                using var rentedGuilds = aislings.GroupBy(a => a.Guild)
-                                                 .SelectMany(gld =>
-                                                 {
-                                                     if (gld.Key == null)
-                                                         return gld.Select(m => new[]
-                                                         {
-                                                             m
-                                                         });
-
-                                                     return
-                                                     [
-                                                         gld.Where(m => m.MapInstance == this)
-                                                            .ToArray()
-                                                     ];
-                                                 })
-                                                 .ToRented();
-
-                var guilds = rentedGuilds.Array;
-                var guildCount = guilds.Count;
-
-                var amountOverLimit = guildCount - limit;
-
-                //if we're not over the limit, do nothing
-                if (amountOverLimit <= 0)
-                    return;
-
-                using var rentedAislingsToRemove = guilds.OrderByDescending(gld => gld.Max(a => a.Id))
-                                                         .ThenBy(gld => gld.Length)
-                                                         .Take(amountOverLimit)
-                                                         .SelectMany(l => l)
-                                                         .ToRented();
-
-                var aislingsToRemove = rentedAislingsToRemove.Array;
-
-                //for each timer that isnt for one of these aislings
-                //remove that timer
-                foreach (var aislingToRemove in ShardLimiterTimers.Keys.Except(aislingsToRemove))
-                    ShardLimiterTimers.Remove(aislingToRemove, out _);
-
-                //for each aisling that doesnt have a timer
-                //create a timer and send an initial warning
-                foreach (var newAisling in aislingsToRemove.Except(ShardLimiterTimers.Keys))
-                {
-                    ShardLimiterTimers.TryAdd(
-                        newAisling,
-                        new PeriodicMessageTimer(
-                            TimeSpan.FromSeconds(15),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(1),
-                            "You will be removed from the map in {Time}",
-                            message => newAisling.SendActiveMessage(message)));
-
-                    newAisling.SendActiveMessage("The map has reached it's guild limit");
-                    newAisling.SendActiveMessage("You will be removed from the map in 15 seconds");
-                }
-
-                //for each timer that has expired
-                //move the player to the exit and remove the timer
-                foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
-                                                      .ToArray())
-                    if (kvp.Value.IntervalElapsed)
-                    {
-                        var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
-                        kvp.Key.TraverseMap(exitMapInstance, ShardingOptions.ExitLocation);
-                        ShardLimiterTimers.Remove(kvp.Key, out _);
-                    }
-
-                break;
-            }
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
+    /// <summary>
+    ///     Increments the pending aisling reservation count. Call when a sharding decision assigns a player to this map
+    /// </summary>
+    public void IncrementPendingAislings() => Interlocked.Increment(ref _pendingAislingCount);
 
     private void InnerAddEntity(VisibleEntity visibleEntity, IPoint point)
     {
