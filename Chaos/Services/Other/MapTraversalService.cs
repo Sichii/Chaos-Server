@@ -29,8 +29,9 @@ public sealed class MapTraversalService : BackgroundService, IMapTraversalServic
     private readonly ILogger<MapTraversalService> Logger;
 
     /// <summary>
-    ///     Per-destination-map semaphores that serialize sharding decisions and placement for the same base map. Different
-    ///     destination maps process concurrently
+    ///     Per-destination-map semaphores that serialize sharding decisions and placement for the same base map. The semaphore
+    ///     is held through the entire resolve-and-place sequence so that the next aisling's sharding decision always sees
+    ///     fully up-to-date MapInstance values. Different destination maps process concurrently
     /// </summary>
     private readonly ConcurrentDictionary<string, SemaphoreSlim> PerMapSemaphores = new(StringComparer.OrdinalIgnoreCase);
 
@@ -429,28 +430,19 @@ public sealed class MapTraversalService : BackgroundService, IMapTraversalServic
 
             if (shouldShard)
             {
-                //acquire per-map semaphore to serialize sharding decisions for this destination
+                //acquire per-map semaphore to serialize sharding decisions and placement for this destination.
+                //the semaphore is held through AddAislingDirect so that the next aisling's sharding decision
+                //sees fully up-to-date MapInstance values on group/guild members
                 var semaphore = PerMapSemaphores.GetOrAdd(destinationMap.LoadedFromInstanceId, _ => new SemaphoreSlim(1, 1));
 
-                MapInstance targetMap;
+                MapInstance? targetMap = null;
 
                 await semaphore.WaitAsync();
 
                 try
                 {
-                    //resolve which shard to place the player on (does not add the entity)
                     targetMap = ResolveShardTarget(aisling!, destinationMap);
 
-                    //increment the reservation so the next sharding decision sees this pending player
-                    targetMap.IncrementPendingAislings();
-                } finally
-                {
-                    semaphore.Release();
-                }
-
-                //add the entity under the target map's own synchronization
-                try
-                {
                     await targetMap.Initialization;
 
                     await targetMap.InvokeAsync(() =>
@@ -463,18 +455,18 @@ public sealed class MapTraversalService : BackgroundService, IMapTraversalServic
                     Logger.WithTopics(Topics.Entities.MapInstance, Topics.Entities.Creature, Topics.Actions.Traverse)
                           .WithProperty(creature)
                           .WithProperty(currentMap)
-                          .WithProperty(targetMap)
+                          .WithProperty(targetMap ?? (object)destinationMap)
                           .LogError(
                               e,
                               "Exception thrown while adding aisling {@AislingName} to shard {@ToMapInstanceId}, attempting recovery",
                               aisling!.Name,
-                              targetMap.InstanceId);
+                              targetMap?.InstanceId ?? destinationMap.InstanceId);
 
                     if (!request.FromWorldMap)
                         await RecoverFromFailedTraversal(aisling, currentMap, sourcePoint);
                 } finally
                 {
-                    targetMap.DecrementPendingAislings();
+                    semaphore.Release();
                 }
             } else
                 try
