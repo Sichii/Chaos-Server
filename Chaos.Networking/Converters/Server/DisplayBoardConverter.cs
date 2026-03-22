@@ -30,11 +30,8 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
         {
             case BoardOrResponseType.BoardList:
             {
-                var count = reader.ReadByte();
+                var count = reader.ReadUInt16();
                 args.Boards = new List<BoardInfo>(count);
-
-                // ReSharper disable once UnusedVariable
-                var unknown = reader.ReadByte(); //per silo, literal empty string with no purpose (so length = 0)
 
                 for (var i = 0; i < count; i++)
                 {
@@ -56,11 +53,35 @@ public sealed class DisplayBoardConverter : PacketConverterBase<DisplayBoardArgs
                 _ = reader.ReadBoolean();
                 var boardId = reader.ReadUInt16();
                 var boardName = reader.ReadString8();
+                var postCount = reader.ReadSByte();
+                var posts = new List<PostInfo>(postCount);
+
+                for (var i = 0; i < postCount; i++)
+                {
+                    var isHighlighted = reader.ReadBoolean();
+                    var postId = reader.ReadInt16();
+                    var author = reader.ReadString8();
+                    var month = reader.ReadByte();
+                    var day = reader.ReadByte();
+                    var subject = reader.ReadString8();
+
+                    posts.Add(
+                        new PostInfo
+                        {
+                            IsHighlighted = isHighlighted,
+                            PostId = postId,
+                            Author = author,
+                            MonthOfYear = month,
+                            DayOfMonth = day,
+                            Subject = subject
+                        });
+                }
 
                 args.Board = new BoardInfo
                 {
                     BoardId = boardId,
-                    Name = boardName
+                    Name = boardName,
+                    Posts = posts
                 };
 
                 break;
