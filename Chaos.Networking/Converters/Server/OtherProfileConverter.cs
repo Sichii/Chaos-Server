@@ -35,13 +35,11 @@ public sealed class OtherProfileConverter : PacketConverterBase<OtherProfileArgs
             {
                 sprite -= NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET;
 
-                equipment.Add(
-                    slot,
-                    new ItemInfo
-                    {
-                        Sprite = sprite,
-                        Color = (DisplayColor)color
-                    });
+                equipment[slot] = new ItemInfo
+                {
+                    Sprite = sprite,
+                    Color = (DisplayColor)color
+                };
             }
         }
 
