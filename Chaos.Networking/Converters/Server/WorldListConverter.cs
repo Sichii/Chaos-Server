@@ -25,7 +25,9 @@ public sealed class WorldListConverter : PacketConverterBase<WorldListArgs>
 
         for (var i = 0; i < countryCount; i++)
         {
-            var baseClass = reader.ReadByte();
+            var classAndFlags = reader.ReadByte();
+            var baseClass = (BaseClass)(classAndFlags & 0b_0000_0111);
+            var isGuilded = (classAndFlags & 0b_0000_1000) != 0;
             var color = reader.ReadByte();
             var socialStatus = reader.ReadByte();
             var title = reader.ReadString8();
@@ -35,7 +37,8 @@ public sealed class WorldListConverter : PacketConverterBase<WorldListArgs>
             countryList.Add(
                 new WorldListMemberInfo
                 {
-                    BaseClass = (BaseClass)baseClass,
+                    BaseClass = baseClass,
+                    IsGuilded = isGuilded,
                     Color = (WorldListColor)color,
                     SocialStatus = (SocialStatus)socialStatus,
                     Title = title,
