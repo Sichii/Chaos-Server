@@ -1,4 +1,5 @@
 ﻿#region
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.Definitions;
@@ -142,12 +143,12 @@ public readonly struct Point : IPoint, IEquatable<IPoint>, IEquatable<Point>
     /// <param name="point">
     ///     Any implementation of <see cref="IPoint" />
     /// </param>
-    public static Point From(IPoint point)
+    public static Point From<T>(T point) where T: IPoint, allows ref struct
     {
-        if (point is Point pt)
-            return pt;
+        if (typeof(T) == typeof(Point))
+            return Unsafe.As<T, Point>(ref point);
 
-        return new Point(point);
+        return new Point(point.X, point.Y);
     }
 
     /// <inheritdoc />

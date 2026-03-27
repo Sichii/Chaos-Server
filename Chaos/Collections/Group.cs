@@ -67,6 +67,8 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel, ITransforma
         IChannelService channelService,
         ILogger<Group> logger)
     {
+        Sync = new Lock();
+
         Id = Guid.NewGuid()
                  .ToString();
         Logger = logger;
@@ -116,8 +118,6 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel, ITransforma
                   sender.Name,
                   receiver.Name,
                   Id);
-
-        Sync = new Lock();
     }
 
     /// <inheritdoc />
@@ -126,12 +126,11 @@ public sealed class Group : IEnumerable<Aisling>, IDedicatedChannel, ITransforma
     /// <inheritdoc />
     public IEnumerator<Aisling> GetEnumerator()
     {
-        List<Aisling> snapshot;
+        using var @lock = Sync.EnterScope();
 
-        using (Sync.EnterScope())
-            snapshot = Members.ToList();
+        var snapshot = Members.ToArray();
 
-        return snapshot.GetEnumerator();
+        return snapshot.GetGenericEnumerator();
     }
 
     /// <inheritdoc />

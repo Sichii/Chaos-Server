@@ -1,8 +1,10 @@
+#region
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Chaos.IO.Exceptions;
 using Chaos.IO.FileSystem;
 using Chaos.IO.Json;
+#endregion
 
 namespace Chaos.Common.Utilities;
 
@@ -97,6 +99,35 @@ public static class JsonSerializerEx
     /// <param name="safeSaves">
     ///     Whether or not to use atomic saves. This will produce a .bak file in the same directory as the file being saved
     /// </param>
+    public static void Serialize<T>(
+        string path,
+        T value,
+        JsonSerializerOptions options,
+        bool safeSaves = true)
+    {
+        var json = JsonSerializer.Serialize(value, options);
+
+        if (safeSaves)
+            FileEx.SafeWriteAllText(path, json);
+        else
+            File.WriteAllText(path, json);
+    }
+
+    /// <summary>
+    ///     Serializes an object to the specified path
+    /// </summary>
+    /// <param name="path">
+    ///     The path to serialize the object to
+    /// </param>
+    /// <param name="value">
+    ///     The object to be serialized
+    /// </param>
+    /// <param name="options">
+    ///     The serialization options to use
+    /// </param>
+    /// <param name="safeSaves">
+    ///     Whether or not to use atomic saves. This will produce a .bak file in the same directory as the file being saved
+    /// </param>
     public static void Serialize(
         string path,
         object value,
@@ -109,6 +140,35 @@ public static class JsonSerializerEx
             FileEx.SafeWriteAllText(path, json);
         else
             File.WriteAllText(path, json);
+    }
+
+    /// <summary>
+    ///     Serializes an object to the specified path
+    /// </summary>
+    /// <param name="path">
+    ///     The path to serialize the object to
+    /// </param>
+    /// <param name="value">
+    ///     The object to be serialized
+    /// </param>
+    /// <param name="options">
+    ///     The serialization options to use
+    /// </param>
+    /// <param name="safeSaves">
+    ///     Whether or not to use atomic saves. This will produce a .bak file in the same directory as the file being saved
+    /// </param>
+    public static Task SerializeAsync<T>(
+        string path,
+        T value,
+        JsonSerializerOptions options,
+        bool safeSaves = true)
+    {
+        var json = JsonSerializer.Serialize(value, options);
+
+        if (safeSaves)
+            return FileEx.SafeWriteAllTextAsync(path, json);
+
+        return File.WriteAllTextAsync(path, json);
     }
 
     /// <summary>

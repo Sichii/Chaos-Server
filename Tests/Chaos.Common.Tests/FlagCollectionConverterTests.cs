@@ -14,7 +14,7 @@ namespace Chaos.Common.Tests;
 
 public sealed class FlagCollectionConverterTests
 {
-      [Test]
+    [Test]
     public void Read_ShouldDeserializeJsonObjectAndCreateFlagCollection()
     {
         // Arrange
@@ -42,7 +42,24 @@ public sealed class FlagCollectionConverterTests
               .BeTrue();
     }
 
-      [Test]
+    [Test]
+    public void Read_ShouldThrowJsonException_ForUnresolvableEnumType()
+    {
+        // Arrange — use JsonSerializer.Deserialize which handles the reader internally
+        const string JSON = "{\"CompletelyFakeEnumType\": \"Value1\"}";
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new FlagCollectionConverter());
+
+        // Act
+        var act = () => JsonSerializer.Deserialize<FlagCollection>(JSON, options);
+
+        // Assert
+        act.Should()
+           .Throw<JsonException>()
+           .WithMessage("*Could not resolve enum type*");
+    }
+
+    [Test]
     public void Write_ShouldSerializeFlagCollectionAsJsonObject()
     {
         // Arrange

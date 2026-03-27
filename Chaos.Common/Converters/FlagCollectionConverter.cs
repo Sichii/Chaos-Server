@@ -1,6 +1,8 @@
+#region
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
+#endregion
 
 namespace Chaos.Common.Converters;
 
@@ -16,26 +18,10 @@ public sealed class FlagCollectionConverter : JsonConverter<FlagCollection>
 
         var flagCollection = new FlagCollection();
 
-        var possibleTypes = AppDomain.CurrentDomain
-                                     .GetAssemblies()
-                                     .Where(a => a is { IsDynamic: false, ReflectionOnly: false })
-                                     .SelectMany(
-                                         a =>
-                                         {
-                                             try
-                                             {
-                                                 return a.GetTypes();
-                                             } catch
-                                             {
-                                                 return [];
-                                             }
-                                         })
-                                     .Where(asmType => asmType.IsEnum && asmType is { IsInterface: false, IsAbstract: false })
-                                     .ToList();
-
         foreach (var kvp in serializedDictionary!)
         {
-            var flagType = possibleTypes.Single(type => type.Name.Equals(kvp.Key));
+            var flagType = TypeCache.GetEnumType(kvp.Key) ?? throw new JsonException($"Could not resolve enum type: {kvp.Key}");
+
             var flagValue = (Enum)Enum.Parse(flagType, kvp.Value);
             flagCollection.AddFlag(flagType, flagValue);
         }

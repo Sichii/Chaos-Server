@@ -1,5 +1,5 @@
 #region
-using Chaos.Scripting.Abstractions.Tests.Mocks;
+using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
 #endregion
 
@@ -7,7 +7,7 @@ namespace Chaos.Scripting.Abstractions.Tests;
 
 public sealed class ConfigurableScriptTests
 {
-      [Test]
+    [Test]
     public void Ctor_DoesNotSetPropertiesIfNoScriptVarsForKey()
     {
         // Arrange
@@ -29,7 +29,7 @@ public sealed class ConfigurableScriptTests
               .Be(0);
     }
 
-      [Test]
+    [Test]
     public void Ctor_SetsPropertiesFromScriptVars()
     {
         // Arrange
@@ -51,7 +51,7 @@ public sealed class ConfigurableScriptTests
               .Be(42);
     }
 
-      [Test]
+    [Test]
     public void Ctor_WithFactory_SetsPropertiesFromScriptVars()
     {
         // Arrange
@@ -73,7 +73,7 @@ public sealed class ConfigurableScriptTests
               .Be(42);
     }
 
-      [Test]
+    [Test]
     public void Ctor_WithFactory_ThrowsIfFactoryReturnsNull()
     {
         // Arrange

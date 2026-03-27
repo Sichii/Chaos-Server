@@ -1,6 +1,7 @@
 #region
 using Chaos.Common.Identity;
 using FluentAssertions;
+using Assembly = System.Reflection.Assembly;
 #endregion
 
 namespace Chaos.Common.Tests;
@@ -19,6 +20,30 @@ public sealed class PersistentIdGeneratorTests : IDisposable
     {
         if (File.Exists(FILE_PATH))
             File.Delete(FILE_PATH);
+    }
+
+    [Test]
+    public void NextId_Does_Not_Save_When_Not_Advanced()
+    {
+        var gen = new PersistentIdGenerator<int>("NoAdvance");
+
+        // Give background saver a chance to run
+        Thread.Sleep(1200);
+
+        // No call to NextId; file should not exist
+        var path = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            "Chaos",
+            "PersistentIdentity",
+            Assembly.GetEntryAssembly()
+                    ?.GetName()
+                    .Name
+            ?? "Unknown",
+            "NoAdvance.json");
+
+        File.Exists(path)
+            .Should()
+            .BeFalse();
     }
 
     [Test]

@@ -6,6 +6,7 @@ namespace Chaos.Utilities.SequenceScripter.Builder;
 
 public sealed class ThresholdActionDescriptor<T> where T: Creature
 {
+    public TimeSpan? DelayAfterThreshold { get; init; }
     public Action<T> Action { get; }
     public int Threshold { get; }
 

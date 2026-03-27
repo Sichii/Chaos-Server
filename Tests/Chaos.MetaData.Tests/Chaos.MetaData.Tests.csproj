@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Chaos.MetaData\Chaos.MetaData.csproj"/>
+        <ProjectReference Include="..\..\Chaos.IO\Chaos.IO.csproj"/>
+        <ProjectReference Include="..\..\Chaos.Common\Chaos.Common.csproj"/>
+        <ProjectReference Include="..\Chaos.Testing.Infrastructure\Chaos.Testing.Infrastructure.csproj"/>
+    </ItemGroup>
+
+</Project>

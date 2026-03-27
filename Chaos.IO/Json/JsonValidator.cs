@@ -1,4 +1,6 @@
+#region
 using System.Text.Json;
+#endregion
 
 namespace Chaos.IO.Json;
 
@@ -27,7 +29,7 @@ public static class JsonValidator
         var position = jsonStream.Position;
         var buffer = new byte[jsonStream.Length];
 
-        _ = jsonStream.Read(buffer);
+        jsonStream.ReadExactly(buffer);
 
         try
         {

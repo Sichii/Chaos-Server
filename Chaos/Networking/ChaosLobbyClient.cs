@@ -1,9 +1,11 @@
 #region
 using System.Net.Sockets;
 using System.Text;
+using Chaos.Common.Abstractions.Definitions;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Extensions.Networking;
 using Chaos.Networking.Abstractions;
+using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
@@ -64,6 +66,8 @@ public sealed class ChaosLobbyClient : LobbyClientBase, IChaosLobbyClient
     /// <inheritdoc />
     protected override ValueTask HandlePacketAsync(Span<byte> span)
     {
+        var encryptionActivity = ActivitySources.StartPacketActivity("Packet.Handle.Encryption");
+
         var opCode = span[3];
         var packet = new Packet(ref span, Crypto.IsClientEncrypted(opCode));
 
@@ -77,7 +81,7 @@ public sealed class ChaosLobbyClient : LobbyClientBase, IChaosLobbyClient
                       Topics.Entities.Packet,
                       Topics.Actions.Receive)
                   .WithProperty(this)
-                  .LogTrace("[Rcv] {@Packet}", packet.ToString());
+                  .LogTrace("[Rcv] {Packet}", packet.ToString());
         else if (LogReceivePacketCode)
             Logger.WithTopics(
                       Topics.Qualifiers.Raw,
@@ -86,6 +90,8 @@ public sealed class ChaosLobbyClient : LobbyClientBase, IChaosLobbyClient
                       Topics.Actions.Receive)
                   .WithProperty(this)
                   .LogTrace("Received packet with code {@OpCode} from {@ClientIp}", opCode, RemoteIp);
+
+        encryptionActivity?.Dispose();
 
         return Server.HandlePacketAsync(this, in packet);
     }

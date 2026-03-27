@@ -3,7 +3,7 @@ namespace Chaos.Common.Synchronization;
 /// <summary>
 ///     An object that offers subscription-style blocking synchronization by abusing the using pattern.
 /// </summary>
-public class AutoReleasingReaderWriterLockSlim
+public sealed class AutoReleasingReaderWriterLockSlim
 {
     private readonly ReaderWriterLockSlim Root;
 

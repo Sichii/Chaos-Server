@@ -1,0 +1,7 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\Chaos.Collections\Chaos.Collections.csproj"/>
+        <ProjectReference Include="..\Chaos.Testing.Infrastructure\Chaos.Testing.Infrastructure.csproj"/>
+    </ItemGroup>
+</Project>

@@ -1,8 +1,13 @@
+#region
+using System.Diagnostics.CodeAnalysis;
+#endregion
+
 namespace Chaos.Common.Comparers;
 
 /// <summary>
 ///     Represents a comparer that uses a lambda expression to compare two objects.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = "Wrapper class")]
 public sealed class LambdaComparer<T> : IComparer<T>
 {
     private readonly bool Ascending;

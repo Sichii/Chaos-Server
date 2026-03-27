@@ -41,5 +41,5 @@ public sealed record MapTemplate : ITemplate, IScripted
 
     public bool IsWall(IPoint point) => !IsWithinMap(point) || Tiles[point.X, point.Y].IsWall;
 
-    public bool IsWithinMap(IPoint point) => Bounds.Contains(point);
+    public bool IsWithinMap(IPoint point) => Bounds.ContainsPoint(point);
 }

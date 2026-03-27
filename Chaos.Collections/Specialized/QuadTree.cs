@@ -52,23 +52,40 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     protected QuadTree<T>?[] Children { get; }
 
     /// <summary>
+    ///     Whether or not this is the root level QuadTree
+    /// </summary>
+    protected bool IsRoot { get; }
+
+    /// <summary>
     ///     The items in the <see cref="QuadTree{T}" />.
     /// </summary>
     protected List<T> Items { get; }
 
-    static QuadTree() => Pool = new QuadTreePool<T>(short.MaxValue / 4);
+    /// <summary>
+    ///     Synchronization object only used by the root node
+    /// </summary>
+    protected Lock? Sync { get; }
+
+    static QuadTree() => Pool = new QuadTreePool<T>(new QuadTreePoolPolicy<T>(), short.MaxValue / 4);
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="QuadTree{T}" /> class.
     /// </summary>
     /// <param name="bounds">
     /// </param>
-    public QuadTree(IRectangle bounds)
+    /// <param name="isRoot">
+    ///     Whether or not this is the root level QuadTree
+    /// </param>
+    public QuadTree(IRectangle bounds, bool isRoot = false)
     {
         Items = new List<T>(Capacity);
         Bounds = bounds;
         Children = new QuadTree<T>[4];
         Divided = false;
+        IsRoot = isRoot;
+
+        if (IsRoot)
+            Sync = new Lock();
     }
 
     /// <summary>
@@ -80,26 +97,15 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     /// <inheritdoc />
     public IEnumerator<T> GetEnumerator()
     {
-        // ReSharper disable once ArrangeMethodOrOperatorBody
-        return new QuadTreeEnumerator(this);
+        using var @lock = GetLockIfNeeded();
 
-        /*if (Count > 0)
-        {
-            if (Divided)
-                for (var i = 0; i < Children.Length; i++)
-                {
-                    var child = Children[i]!;
+        var buffer = new List<T>();
+        using var enumerator = new QuadTreeEnumerator(this);
 
-                    if (child.Count == 0)
-                        continue;
+        while (enumerator.MoveNext())
+            buffer.Add(enumerator.Current);
 
-                    foreach (var item in child)
-                        yield return item;
-                }
-            else
-                for (var i = 0; i < Items.Count; i++)
-                    yield return Items[i];
-        }*/
+        return buffer.GetEnumerator();
     }
 
     /// <inheritdoc />
@@ -108,6 +114,8 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     /// <inheritdoc />
     public bool TryReset()
     {
+        using var @lock = GetLockIfNeeded();
+
         Clear();
 
         return true;
@@ -118,6 +126,8 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     /// </summary>
     public virtual void Clear()
     {
+        using var @lock = GetLockIfNeeded();
+
         Items.Clear();
         Count = 0;
 
@@ -132,6 +142,17 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
 
             Divided = false;
         }
+    }
+
+    /// <summary>
+    ///     Returns a lock scope if this is the root node
+    /// </summary>
+    protected Lock.Scope GetLockIfNeeded()
+    {
+        if (IsRoot)
+            return Sync!.EnterScope();
+
+        return new Lock.Scope();
     }
 
     /// <summary>
@@ -189,7 +210,9 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     /// </returns>
     public virtual bool Insert(T item)
     {
-        if (!Bounds.Contains(item))
+        using var @lock = GetLockIfNeeded();
+
+        if (!Bounds.ContainsPoint(item))
             return false;
 
         if (!Divided && (Count >= Capacity) && Bounds is { Width: > 1, Height: > 1 })
@@ -252,7 +275,18 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     ///     a new iterator every time we go depth+1 from current, which would result in hundreds of allocations every time we
     ///     query the tree. Instead, only one instance of the custom iterator is needed.
     /// </remarks>
-    public virtual IEnumerable<T> Query(IRectangle bounds) => new QuadTreeRectangleQueryIterator(this, bounds);
+    public virtual IEnumerable<T> Query(IRectangle bounds)
+    {
+        using var @lock = GetLockIfNeeded();
+        using var enumerator = new QuadTreeRectangleQueryIterator(this, bounds);
+
+        var snapshot = new List<T>();
+
+        while (enumerator.MoveNext())
+            snapshot.Add(enumerator.Current);
+
+        return snapshot;
+    }
 
     /// <summary>
     ///     Queries the <see cref="QuadTree{T}" /> for items within the specified bounds.
@@ -269,7 +303,18 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     ///     a new iterator every time we go depth+1 from current, which would result in hundreds of allocations every time we
     ///     query the tree. Instead, only one instance of the custom iterator is needed.
     /// </remarks>
-    public virtual IEnumerable<T> Query(ICircle bounds) => new QuadTreeCircleQueryIterator(this, bounds);
+    public virtual IEnumerable<T> Query(ICircle bounds)
+    {
+        using var @lock = GetLockIfNeeded();
+        using var enumerator = new QuadTreeCircleQueryIterator(this, bounds);
+
+        var snapshot = new List<T>();
+
+        while (enumerator.MoveNext())
+            snapshot.Add(enumerator.Current);
+
+        return snapshot;
+    }
 
     /// <summary>
     ///     Queries the <see cref="QuadTree{T}" /> for items at the specified point.
@@ -282,7 +327,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     /// </returns>
     public virtual IEnumerable<T> Query(Point point)
     {
-        if ((Count > 0) && Bounds.Contains(point))
+        if ((Count > 0) && Bounds.ContainsPoint(point))
         {
             if (Divided)
                 for (var i = 0; i < Children.Length; i++)
@@ -323,7 +368,9 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     /// </returns>
     public virtual bool Remove(T entity)
     {
-        if ((Count == 0) || !Bounds.Contains(entity))
+        using var @lock = GetLockIfNeeded();
+
+        if ((Count == 0) || !Bounds.ContainsPoint(entity))
             return false;
 
         if (Divided)
@@ -354,7 +401,12 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     /// </summary>
     /// <param name="bounds">
     /// </param>
-    public virtual void SetBounds(IRectangle bounds) => Bounds = bounds;
+    public virtual void SetBounds(IRectangle bounds)
+    {
+        using var @lock = GetLockIfNeeded();
+
+        Bounds = bounds;
+    }
 
     /// <summary>
     ///     Sets the capacity of the <see cref="QuadTree{T}" /> pool.
@@ -362,7 +414,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
     /// <param name="capacity">
     ///     A number specific to your application needs. The pool is shared amonst all QuadTree instances.
     /// </param>
-    public static void SetPoolCapacity(int capacity) => Pool = new QuadTreePool<T>(capacity);
+    public static void SetPoolCapacity(int capacity) => Pool = new QuadTreePool<T>(new QuadTreePoolPolicy<T>(), capacity);
 
     private void Subdivide()
     {
@@ -567,7 +619,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
                 var item = current.Items[Index++];
 
                 //if the item is within the bounds, return it (set it as the current item for the iterator)
-                if (Bounds.Contains(item))
+                if (Bounds.ContainsPoint(item))
                 {
                     Current = item;
 
@@ -669,7 +721,7 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
                 var item = current.Items[Index++];
 
                 //if the item is within the bounds, return it (set it as the current item for the iterator)
-                if (Bounds.Contains(item, DistanceType.Manhattan))
+                if (Bounds.ContainsPoint(item, DistanceType.Manhattan))
                 {
                     Current = item;
 
@@ -685,6 +737,8 @@ public class QuadTree<T> : IEnumerable<T>, IResettable where T: IPoint
         {
             Index = 0;
             Stack.Clear();
+            Stack.Push(Tree);
+            Current = default!;
         }
 
         /// <inheritdoc />

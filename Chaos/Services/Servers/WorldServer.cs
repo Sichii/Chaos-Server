@@ -6,6 +6,7 @@ using Chaos.Collections;
 using Chaos.Collections.Abstractions;
 using Chaos.Collections.Common;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Abstractions.Definitions;
 using Chaos.Common.Identity;
 using Chaos.Common.Synchronization;
 using Chaos.Cryptography;
@@ -16,8 +17,6 @@ using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.Data;
-using Chaos.Models.Panel;
-using Chaos.Models.Panel.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Networking.Abstractions;
@@ -31,8 +30,6 @@ using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
-using Chaos.Scripting.SpellScripts.Abstractions;
-using Chaos.Services.Factories;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Other;
 using Chaos.Services.Other.Abstractions;
@@ -181,7 +178,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 if (aislingFacade is null)
                     return false;
 
-                effect.Source = aislingFacade!;
+                effect.Source = aislingFacade;
 
                 break;
             }
@@ -195,76 +192,92 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
     private async ValueTask LoadAislingAsync(IChaosWorldClient client, IRedirect redirect)
     {
+        using var loadAislingActivity = ActivitySources.StartInternalActivity("LoadAisling");
+        loadAislingActivity?.AddTag("AislingName", redirect.Name);
+
         try
         {
             client.Crypto = new Crypto(redirect.Seed, redirect.Key, redirect.Name);
 
+            var fromStoreActivity = ActivitySources.StartInternalActivity("LoadAisling.FromStore");
             var aisling = await AislingStore.LoadAsync(redirect.Name);
+            aisling.MailBox = MailStore.Load(aisling.Name);
+            fromStoreActivity?.Dispose();
 
             client.Aisling = aisling;
             aisling.Client = client;
 
+            var syncActivity = ActivitySources.StartInternalActivity("LoadAisling.Sync");
             await using var sync = await aisling.MapInstance.Sync.WaitAsync();
+            syncActivity?.Dispose();
 
             try
             {
-                foreach (var effect in aisling.Effects.ToList())
-                {
-                    try
+                using (ActivitySources.StartInternalActivity("LoadAisling.Effects"))
+                    foreach (var effect in aisling.Effects.ToArray())
                     {
-                        effect.Subject = aisling;
+                        try
+                        {
+                            effect.Subject = aisling;
 
-                        if (TrySetSource(aisling, effect))
-                            continue;
-                    } catch
-                    {
-                        //ignored
-                    }
+                            if (TrySetSource(aisling, effect))
+                                continue;
+                        } catch
+                        {
+                            //ignored
+                        }
 
-                    try
-                    {
-                        aisling.Effects.Dispel(effect.Name);
-                    } catch
-                    {
-                        //ignored
+                        try
+                        {
+                            aisling.Effects.Dispel(effect.Name);
+                        } catch
+                        {
+                            //ignored
+                        }
                     }
-                }
 
                 aisling.Guild?.Associate(aisling);
-                aisling.MailBox = MailStore.Load(aisling.Name);
-                aisling.BeginObserving();
-                client.SendAttributes(StatUpdateType.Full);
-                client.SendLightLevel(aisling.MapInstance.CurrentLightLevel);
-                client.SendUserId();
-                aisling.MapInstance.AddAislingDirect(aisling, aisling);
-                client.SendEditableProfileRequest();
 
-                foreach (var channel in aisling.ChannelSettings.ToList())
+                using (ActivitySources.StartInternalActivity("LoadAisling.BeginObserving"))
+                    aisling.BeginObserving();
+
+                using (ActivitySources.StartInternalActivity("LoadAisling.AddToMap"))
                 {
-                    //try to join channel
-                    if (!ChannelService.JoinChannel(aisling, channel.ChannelName, true))
-                    {
-                        //if we fail to join
-                        //if the channel is a custom channel, then recreate it
-                        if (channel.CustomChannel)
-                            ChannelService.RegisterChannel(
-                                aisling,
-                                channel.ChannelName,
-                                CHAOS_CONSTANTS.DEFAULT_CHANNEL_MESSAGE_COLOR,
-                                Helpers.DefaultChannelMessageHandler);
-
-                        //otherwise, remove it
-                        else
-                            aisling.ChannelSettings.Remove(channel);
-
-                        continue;
-                    }
-
-                    //set custom channel color if it exists
-                    if (channel.MessageColor.HasValue)
-                        ChannelService.SetChannelColor(aisling, channel.ChannelName, channel.MessageColor.Value);
+                    client.SendAttributes(StatUpdateType.Full);
+                    client.SendLightLevel(aisling.MapInstance.CurrentLightLevel);
+                    client.SendUserId();
+                    aisling.MapInstance.AddAislingDirect(aisling, aisling);
+                    client.SendEditableProfileRequest();
                 }
 
+                using (ActivitySources.StartInternalActivity("LoadAisling.JoinChannels"))
+                    foreach (var channel in aisling.ChannelSettings.ToArray())
+                    {
+                        //try to join channel
+                        if (!ChannelService.JoinChannel(aisling, channel.ChannelName, true))
+                        {
+                            //if we fail to join
+                            //if the channel is a custom channel, then recreate it
+                            if (channel.CustomChannel)
+                                ChannelService.RegisterChannel(
+                                    aisling,
+                                    channel.ChannelName,
+                                    CHAOS_CONSTANTS.DEFAULT_CHANNEL_MESSAGE_COLOR,
+                                    Helpers.DefaultChannelMessageHandler);
+
+                            //otherwise, remove it
+                            else
+                                aisling.ChannelSettings.Remove(channel);
+
+                            continue;
+                        }
+
+                        //set custom channel color if it exists
+                        if (channel.MessageColor.HasValue)
+                            ChannelService.SetChannelColor(aisling, channel.ChannelName, channel.MessageColor.Value);
+                    }
+
+                using var miscActivity = ActivitySources.StartInternalActivity("LoadAisling.Misc");
                 client.ReceiveSync.Name = $"WorldClient {client.RemoteIp} {aisling.Name}";
 
                 aisling.Trackers.LastLogin = DateTime.UtcNow;
@@ -836,7 +849,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                       .WithProperty(aisling)
                       .WithProperty(obj)
                       .LogTrace(
-                          "Aisling {@AislingName} attempted to forcefully display an entity {@EntityId} that they cannot observe. (Unknown why this happens)",
+                          "Aisling {@AislingName} attempted to forcefully display an entity {@EntityId} that they cannot observe. We have likely sent a packet(animate, turn, etc) with an entity's id that the client can not observe",
                           aisling.Name,
                           obj.Id);
 
@@ -1266,22 +1279,10 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
     public override ValueTask OnHeartBeatAsync(IChaosWorldClient client, in Packet packet)
     {
         var args = PacketSerializer.Deserialize<HeartBeatResponseArgs>(in packet);
+        var hbVal = (ushort)((args.Second << 8) | args.First);
 
-        if ((args.First != client.Heartbeat2) || (args.Second != client.Heartbeat1))
-        {
-            Logger.WithTopics(Topics.Servers.WorldServer, Topics.Entities.Client, Topics.Actions.Processing)
-                  .WithProperty(client)
-                  .LogWarning(
-                      "Client {@ClientIp} sent an invalid heartbeat. Expected: {@Expected}, Received: {@Received}",
-                      client.RemoteIp,
-                      (client.Heartbeat2, client.Heartbeat1),
-                      (args.First, args.Second));
-
-            client.Disconnect();
-        }
-
-        client.Heartbeat1 = null;
-        client.Heartbeat2 = null;
+        if (client.HeartBeatValues.Contains(hbVal))
+            client.HeartBeatValues.Clear();
 
         return default;
     }
@@ -1355,11 +1356,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                 return default;
 
             var possibleObjs = map.GetEntitiesAtPoints<GroundEntity>(localArgs.SourcePoint)
-                                  .OrderByDescending(obj => obj.Creation)
-                                  .ToList();
-
-            if (possibleObjs.Count == 0)
-                return default;
+                                  .OrderByDescending(obj => obj.Creation);
 
             //loop through the items on the ground, try to pick each one up
             //if we pick one up, return (only pick up 1 obj at a time)
@@ -1925,7 +1922,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
             if (localClient.Aisling.IsOnWorldMap)
                 return default;
 
-            localClient.SendWorldList(Aislings.ToList());
+            localClient.SendWorldList(Aislings.ToArray());
 
             return default;
         }
@@ -1961,6 +1958,8 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         TArgs args,
         Func<IChaosWorldClient, TArgs, ValueTask> action)
     {
+        var syncActivity = ActivitySources.StartPacketActivity("Packet.Handle.Sync");
+
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = client.Aisling?.MapInstance;
         IPolyDisposable disposable;
@@ -1983,6 +1982,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         }
 
         await using var sync = disposable;
+        syncActivity?.Dispose();
+
+        using var executeActivity = ActivitySources.StartPacketActivity("Packet.Handle.Execute");
 
         try
         {
@@ -2008,6 +2010,8 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
     public override async ValueTask ExecuteHandler(IChaosWorldClient client, Func<IChaosWorldClient, ValueTask> action)
     {
+        var syncActivity = ActivitySources.StartPacketActivity("Packet.Handle.Sync");
+
         // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
         var mapInstance = client.Aisling?.MapInstance;
         IPolyDisposable disposable;
@@ -2029,6 +2033,9 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         }
 
         await using var sync = disposable;
+        syncActivity?.Dispose();
+
+        using var executeActivity = ActivitySources.StartPacketActivity("Packet.Handle.Execute");
 
         try
         {
@@ -2123,7 +2130,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
         ClientHandlers[(byte)ClientOpCode.MetaDataRequest] = OnMetaDataRequest;
     }
 
-    protected override void OnConnected(Socket clientSocket)
+    protected override async Task OnConnected(Socket clientSocket)
     {
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
 
@@ -2144,7 +2151,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                   .LogError("Somehow two clients got the same id");
 
             client.Disconnect();
-            clientSocket.Disconnect(false);
+            await clientSocket.DisconnectAsync(false);
 
             return;
         }

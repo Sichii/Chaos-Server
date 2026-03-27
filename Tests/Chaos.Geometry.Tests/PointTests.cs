@@ -1,5 +1,6 @@
 #region
 using Chaos.Geometry.Abstractions;
+using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
 #endregion
 
@@ -7,6 +8,26 @@ namespace Chaos.Geometry.Tests;
 
 public sealed class PointTests
 {
+    [Test]
+    public void Operator_Equality_And_Inequality_With_IPoint()
+    {
+        var p = new Point(1, 2);
+        IPoint same = new Point(1, 2);
+        IPoint diff = new Point(2, 3);
+
+        (p == same).Should()
+                   .BeTrue();
+
+        (p != same).Should()
+                   .BeFalse();
+
+        (p == diff).Should()
+                   .BeFalse();
+
+        (p != diff).Should()
+                   .BeTrue();
+    }
+
     [Test]
     public void Point_Constructor_CreatesPointWithGivenCoordinates()
     {
@@ -43,6 +64,65 @@ public sealed class PointTests
 
         y.Should()
          .Be(Y);
+    }
+
+    [Test]
+    public void Point_Equals_IPoint_Null_ReturnsFalse()
+    {
+        var point = new Point(1, 2);
+
+        point.Equals(null)
+             .Should()
+             .BeFalse();
+    }
+
+    [Test]
+    public void Point_Equals_IPoint_XDiffers_ReturnsFalse()
+    {
+        var point1 = new Point(1, 2);
+        IPoint point2 = new Point(9, 2);
+
+        point1.Equals(point2)
+              .Should()
+              .BeFalse();
+    }
+
+    [Test]
+    public void Point_Equals_IPoint_YDiffers_ReturnsFalse()
+    {
+        var point1 = new Point(1, 2);
+        IPoint point2 = new Point(1, 9);
+
+        point1.Equals(point2)
+              .Should()
+              .BeFalse();
+    }
+
+    [Test]
+    public void Point_Equals_Object_IPoint_Path()
+    {
+        var p = new Point(7, 8);
+        object obj = new Point(7, 8);
+
+        p.Equals(obj)
+         .Should()
+         .BeTrue();
+
+        obj = new Point(1, 1);
+
+        p.Equals(obj)
+         .Should()
+         .BeFalse();
+    }
+
+    [Test]
+    public void Point_Equals_Object_NonIPoint_ReturnsFalse()
+    {
+        var point = new Point(1, 2);
+
+        point.Equals("not a point")
+             .Should()
+             .BeFalse();
     }
 
     [Test]
@@ -96,7 +176,8 @@ public sealed class PointTests
     public void Point_From_ReturnsNewPointWithSameValuesWhenPassedPointOfDifferentType()
     {
         // Arrange
-        IPoint originalPoint = new MockPoint(10, 20);
+        var originalPoint = MockPoint.Create(10, 20)
+                                     .Object;
 
         // Act
         var newPoint = Point.From(originalPoint);
@@ -162,6 +243,32 @@ public sealed class PointTests
     }
 
     [Test]
+    public void Point_TryParse_ShouldReturnFalse_WhenXExceedsUshortRange()
+    {
+        // Regex matches digits, but 99999 > ushort.MaxValue (65535)
+        var result = Point.TryParse("(99999, 123)", out var point);
+
+        result.Should()
+              .BeFalse();
+
+        point.Should()
+             .Be(default(Point));
+    }
+
+    [Test]
+    public void Point_TryParse_ShouldReturnFalse_WhenYExceedsUshortRange()
+    {
+        // X is valid, but Y > ushort.MaxValue
+        var result = Point.TryParse("(123, 99999)", out var point);
+
+        result.Should()
+              .BeFalse();
+
+        point.Should()
+             .Be(default(Point));
+    }
+
+    [Test]
     public void Point_TryParse_ValidInput_ReturnsTrueAndParsesPoint()
     {
         // Arrange
@@ -185,10 +292,5 @@ public sealed class PointTests
              .Be(EXPECTED_Y);
     }
 
-    // CustomPoint class for testing Point.From method
-    private sealed class MockPoint(int x, int y) : IPoint
-    {
-        public int X { get; } = x;
-        public int Y { get; } = y;
-    }
+    // moved to Chaos.Testing.Infrastructure.Mocks.MockPoint
 }

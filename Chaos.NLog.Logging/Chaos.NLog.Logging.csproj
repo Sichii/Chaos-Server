@@ -10,11 +10,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
+        <InternalsVisibleTo Include="Chaos.Testing.Infrastructure"/>
+        <InternalsVisibleTo Include="Chaos.NLog.Logging.Tests"/>
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="Chaos.Testing.Infrastructure"/>
+        <ProjectReference Include="..\Chaos.Common\Chaos.Common.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -32,6 +32,13 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
     public ICollection<IPoint> BlackList { get; set; }
     public int Experience { get; set; }
     public ILootTable LootTable { get; set; }
+
+    /// <summary>
+    ///     Modified WanderTimer and MoveTimer deltas. 0 is default speed. Positive values increase speed, negative values
+    ///     decrease speed. works similarly to AtkSpeedPct.
+    /// </summary>
+    public int MovementSpeedPct { get; set; }
+
     public Creature? Target { get; set; }
     public AggroList AggroList { get; }
     public ContributionList Contribution { get; }
@@ -136,8 +143,16 @@ public sealed class Monster : Creature, IScripted<IMonsterScript>, IDialogSource
         foreach (ref var spell in CollectionsMarshal.AsSpan(Spells))
             spell.Update(delta);
 
-        WanderTimer.Update(delta);
-        MoveTimer.Update(delta);
+        var modifier = MovementSpeedPct / 100d;
+        var movementDelta = delta;
+
+        if (modifier < 0)
+            movementDelta *= Math.Abs(modifier - 1);
+        else
+            movementDelta /= 1 + modifier;
+
+        WanderTimer.Update(movementDelta);
+        MoveTimer.Update(movementDelta);
         SkillTimer.Update(delta);
         SpellTimer.Update(delta);
 

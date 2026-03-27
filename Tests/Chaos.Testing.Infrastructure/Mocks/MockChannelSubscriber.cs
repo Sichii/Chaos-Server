@@ -1,29 +1,26 @@
+#region
 using Chaos.Messaging.Abstractions;
 using Moq;
+#endregion
 
 namespace Chaos.Testing.Infrastructure.Mocks;
 
 public class MockChannelSubscriber
 {
-    public static Mock<IChannelSubscriber> Create(Action<Mock<IChannelSubscriber>>? setup = null)
+    public static Mock<IChannelSubscriber> Create()
     {
         var mock = new Mock<IChannelSubscriber>();
-        setup?.Invoke(mock);
 
         return mock;
     }
 
-    public static Mock<IChannelSubscriber> Create(string name, Action<Mock<IChannelSubscriber>>? setup = null)
+    public static Mock<IChannelSubscriber> Create(string name)
     {
-        var subscriber = Create(
-            mock =>
-            {
-                setup?.Invoke(mock);
+        var mock = Create();
 
-                mock.Setup(s => s.Name)
-                    .Returns(name);
-            });
+        mock.Setup(s => s.Name)
+            .Returns(name);
 
-        return subscriber;
+        return mock;
     }
 }

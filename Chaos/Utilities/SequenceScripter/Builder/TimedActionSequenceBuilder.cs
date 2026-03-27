@@ -1,10 +1,6 @@
-#region
-using Chaos.Models.World.Abstractions;
-#endregion
-
 namespace Chaos.Utilities.SequenceScripter.Builder;
 
-public class TimedActionSequenceBuilder<T> where T: Creature
+public sealed class TimedActionSequenceBuilder<T>
 {
     private readonly List<TimedActionDescriptor<T>> Sequence = [];
 
@@ -15,13 +11,6 @@ public class TimedActionSequenceBuilder<T> where T: Creature
         return this;
     }
 
-    public TimedActionSequenceDescriptor<T> Build(int startingAtHealthPercent)
-        => new()
-        {
-            Sequence = Sequence,
-            StartingAtHealthPercent = startingAtHealthPercent
-        };
-
     public TimedActionSequenceDescriptor<T> Build(TimeSpan startingAtTime)
         => new()
         {
@@ -29,12 +18,10 @@ public class TimedActionSequenceBuilder<T> where T: Creature
             StartingAtTime = startingAtTime
         };
 
-    public TimedActionSequenceDescriptor<T> Build(int startingAtHealthPercent, TimeSpan startingAtTime)
+    public TimedActionSequenceDescriptor<T> Build()
         => new()
         {
-            Sequence = Sequence,
-            StartingAtHealthPercent = startingAtHealthPercent,
-            StartingAtTime = startingAtTime
+            Sequence = Sequence
         };
 
     public TimedActionSequenceBuilder<T> ThenAfter(TimeSpan time, Action<T> action, bool startAsElapsed = false)

@@ -24,7 +24,7 @@ public class NotepadScript : ItemScriptBase
 
     /// <inheritdoc />
     public override void OnUse(Aisling source)
-        => source.Client.SendDisplayNotepad(
+        => source.Client.SendDisplayEditableNotepad(
             NotepadType.White,
             Subject,
             30,

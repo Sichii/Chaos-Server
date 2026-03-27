@@ -123,6 +123,14 @@ public interface IWorldClient : IConnectedClient
     void SendDisplayDialog(DisplayDialogArgs args);
 
     /// <summary>
+    ///     Sends a packet to display an editable notepad
+    /// </summary>
+    /// <remarks>
+    ///     Opcode: <see cref="ServerOpCode.DisplayEditableNotepad" />
+    /// </remarks>
+    void SendDisplayEditableNotepad(DisplayEditableNotepadArgs args);
+
+    /// <summary>
     ///     Sends a packet to display, close, or update an exchange
     /// </summary>
     /// <remarks>
@@ -139,20 +147,20 @@ public interface IWorldClient : IConnectedClient
     void SendDisplayGroupInvite(DisplayGroupInviteArgs args);
 
     /// <summary>
-    ///     Sends a packet to display a notepad
-    /// </summary>
-    /// <remarks>
-    ///     Opcode: <see cref="ServerOpCode.DisplayNotepad" />
-    /// </remarks>
-    void SendDisplayNotepad(DisplayNotepadArgs args);
-
-    /// <summary>
     ///     Sends a packet to display a public message. (Normal, Shout, Chant)
     /// </summary>
     /// <remarks>
     ///     Opcode: <see cref="ServerOpCode.DisplayPublicMessage" />
     /// </remarks>
     void SendDisplayPublicMessage(DisplayPublicMessageArgs args);
+
+    /// <summary>
+    ///     Sends a packet to display a readonly notepad
+    /// </summary>
+    /// <remarks>
+    ///     Opcode: <see cref="ServerOpCode.DisplayReadonlyNotepad" />
+    /// </remarks>
+    void SendDisplayReadonlyNotepad(DisplayReadonlyNotepadArgs args);
 
     /// <summary>
     ///     Sends a packet to unequip an item (remove from equipment pane)
@@ -294,9 +302,9 @@ public interface IWorldClient : IConnectedClient
     ///     Sends a packet to display an editable notepad
     /// </summary>
     /// <remarks>
-    ///     Opcode: <see cref="ServerOpCode.DisplayNotepad" />
+    ///     Opcode: <see cref="ServerOpCode.DisplayEditableNotepad" />
     /// </remarks>
-    void SendNotepad(DisplayNotepadArgs args);
+    void SendNotepad(DisplayEditableNotepadArgs args);
 
     /// <summary>
     ///     Sends a packet to display another player's profile

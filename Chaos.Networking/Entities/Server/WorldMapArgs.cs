@@ -13,7 +13,7 @@ public sealed record WorldMapArgs : IPacketSerializable
     /// <summary>
     ///     The index of the image to use
     /// </summary>
-    public byte FieldIndex { get; set; }
+    public byte CurrentNodeIndex { get; set; }
 
     /// <summary>
     ///     The name of the world map

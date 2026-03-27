@@ -1,4 +1,6 @@
+#region
 using AutoMapper;
+#endregion
 
 public static class AutoMapperEx
 {
@@ -32,12 +34,15 @@ public static class AutoMapperEx
         Mapper = Configuration.CreateMapper();
     }
 
-    public static TDestination MapPropertiesToInstance<TDestination>(this object source, TDestination destination)
+    extension(object source)
     {
-        Mapper.Map(source, destination);
+        public TDestination MapPropertiesToInstance<TDestination>(TDestination destination)
+        {
+            Mapper.Map(source, destination);
 
-        return destination;
+            return destination;
+        }
+
+        public TDestination MapTo<TDestination>() => Mapper.Map<TDestination>(source)!;
     }
-
-    public static TDestination MapTo<TDestination>(this object source) => Mapper.Map<TDestination>(source)!;
 }

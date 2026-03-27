@@ -12,7 +12,7 @@
             "memberLayout": "separatePages",
             "enumSortingOrder": "declaringOrder",
             "coverTitle": "Chaos Docs",
-            "allowCompilationErrors": "true"
+            "allowCompilationErrors": true
         }
     ],
     "build": {
@@ -32,6 +32,9 @@
         "resource": [
             {
                 "files": ["images/**"]
+            },
+            {
+                "files": ["schemas/**"]
             }
         ],
         "overwrite": [

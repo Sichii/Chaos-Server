@@ -1,4 +1,7 @@
+#region
 using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
+#endregion
 
 namespace Chaos.Common.Utilities;
 
@@ -83,6 +86,7 @@ public class TypeSwitch
     ///     A helper class that simulates switch-case behavior on type objects. The cases are frozen and this object is meant
     ///     to be reused.
     /// </summary>
+    [ExcludeFromCodeCoverage(Justification = "Variant class, no new logic")]
     private class FrozenTypeSwitch(TypeSwitch ts) : TypeSwitch
     {
         /// <inheritdoc />

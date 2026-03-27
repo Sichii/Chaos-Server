@@ -121,7 +121,7 @@ public sealed record ItemTemplateSchema : PanelEntityTemplateSchema
     ///     <br />
     ///     If specified, this armor will have pants, and they will be this color
     /// </summary>
-    public DisplayColor? PantsColor { get; set; }
+    public DisplayColor PantsColor { get; set; }
 
     /// <summary>
     ///     Whether or not the item can be banked

@@ -1,7 +1,6 @@
 #region
 using System.Text;
 using Chaos.DarkAges.Definitions;
-using Chaos.Extensions.Common;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Definitions;
@@ -318,13 +317,12 @@ public sealed class DisplayMenuConverter : PacketConverterBase<DisplayMenuArgs>
 
                     args.Items = args.Items
                                      .Shuffle()
-                                     .TakeWhile(
-                                         item =>
-                                         {
-                                             currentCount += 11 + encoding.GetByteCount(item.Name);
+                                     .TakeWhile(item =>
+                                     {
+                                         currentCount += 11 + encoding.GetByteCount(item.Name);
 
-                                             return currentCount < ushort.MaxValue;
-                                         })
+                                         return currentCount < ushort.MaxValue;
+                                     })
                                      .ToList();
                 }
 

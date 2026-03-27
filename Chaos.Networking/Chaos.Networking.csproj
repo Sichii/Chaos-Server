@@ -3,6 +3,9 @@
     <PropertyGroup>
         <Version>1.0.0</Version>
     </PropertyGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="Chaos.Networking.Tests"/>
+    </ItemGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -14,7 +17,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Chaos.Cryptography\Chaos.Cryptography.csproj"/>
-        <ProjectReference Include="..\Chaos.Extensions.Common\Chaos.Extensions.Common.csproj"/>
         <ProjectReference Include="..\Chaos.Geometry\Chaos.Geometry.csproj"/>
         <ProjectReference Include="..\Chaos.Networking.Abstractions\Chaos.Networking.Abstractions.csproj"/>
         <ProjectReference Include="..\Chaos.NLog.Logging\Chaos.NLog.Logging.csproj"/>

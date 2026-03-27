@@ -8,6 +8,27 @@ namespace Chaos.Common.Tests;
 public sealed class DeepCloneTests
 {
     [Test]
+    public void Create_CircularReference_ShouldResolveViaVisitedCache()
+    {
+        var node = new CircularNode();
+        node.Self = node; // circular reference
+
+        // Should terminate without StackOverflowException and use visited cache
+        var clone = DeepClone.Create(node)!;
+
+        clone.Should()
+             .NotBeNull();
+
+        clone.Should()
+             .NotBeSameAs(node);
+
+        // Cloned node's Self points back to the clone (circular preserved)
+        clone.Self
+             .Should()
+             .BeSameAs(clone);
+    }
+
+    [Test]
     public void Create_CreatesDeepClone()
     {
         // Arrange
@@ -176,6 +197,90 @@ public sealed class DeepCloneTests
     }
 
     [Test]
+    public void Create_DelegateType_ShouldCloneDelegate()
+    {
+        var original = () => { };
+
+        var clone = DeepClone.Create(original);
+
+        // Delegates are cloned via Delegate.Clone()
+        clone.Should()
+             .NotBeNull();
+    }
+
+    [Test]
+    public void Create_DictionaryOfPrimitives_ShouldDeepClone()
+    {
+        // Arrange
+        var original = new Dictionary<string, int>
+        {
+            ["a"] = 1,
+            ["b"] = 2
+        };
+
+        // Act
+        var clone = DeepClone.Create(original)!;
+
+        // Assert
+        clone.Should()
+             .NotBeSameAs(original);
+
+        clone.Should()
+             .BeEquivalentTo(original);
+
+        // Modifying clone should not affect original
+        clone["a"] = 99;
+
+        original["a"]
+            .Should()
+            .Be(1);
+    }
+
+    [Test]
+    public void Create_IntPrimitive_ReturnsEquivalentValue()
+    {
+        // int (ValueType + IsPrimitive) → returned as-is from InternalCopy
+        const int original = 42;
+
+        var clone = DeepClone.Create(original);
+
+        clone.Should()
+             .Be(original);
+    }
+
+    [Test]
+    public void Create_ObjectWithNullNestedProperty_ShouldHandleGracefully()
+    {
+        // Arrange
+        var original = new MockClonable
+        {
+            IntValue = 42,
+            StringValue = null!,
+            IntList = null!,
+            NestedClass = null!
+        };
+
+        // Act
+        var clone = DeepClone.Create(original)!;
+
+        // Assert
+        clone.Should()
+             .NotBeSameAs(original);
+
+        clone.IntValue
+             .Should()
+             .Be(42);
+
+        clone.StringValue
+             .Should()
+             .BeNull();
+
+        clone.NestedClass
+             .Should()
+             .BeNull();
+    }
+
+    [Test]
     public void Create_ReturnsNullForNullInput()
     {
         // Act
@@ -184,6 +289,37 @@ public sealed class DeepCloneTests
         // Assert
         clone.Should()
              .BeNull();
+    }
+
+    [Test]
+    public void Create_StringPrimitive_ReturnsEquivalentValue()
+    {
+        // string is considered "primitive" by IsPrimitive() → returned as-is from InternalCopy
+        const string original = "hello";
+
+        var clone = DeepClone.Create(original);
+
+        clone.Should()
+             .Be(original);
+    }
+
+    [Test]
+    public void Create_StructValueType_ShouldReturnCopy()
+    {
+        // Arrange - struct (ValueType but not IsPrimitive)
+        var original = new DateTime(2025, 1, 1);
+
+        // Act
+        var clone = DeepClone.Create(original);
+
+        // Assert
+        clone.Should()
+             .Be(original);
+    }
+
+    internal sealed class CircularNode
+    {
+        public CircularNode Self { get; set; } = null!;
     }
 
     internal sealed class MockClonable

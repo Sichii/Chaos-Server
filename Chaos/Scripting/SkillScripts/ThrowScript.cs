@@ -1,5 +1,5 @@
 #region
-using Chaos.DarkAges.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Models.Data;
 using Chaos.Models.Panel;
@@ -30,20 +30,18 @@ public class ThrowScript : SkillScriptBase
         var targetPoint = thrownPoint.DirectionalOffset(throwDirection);
 
         //potential points are the throw point, and the 3 points around it
-        var potentialTargetPoints = targetPoint.GenerateCardinalPoints()
-                                               .WithConsistentDirectionBias(throwDirection)
-                                               .SkipLast(1)
-                                               .Prepend(targetPoint)
-                                               .ToList();
+        using var rented = targetPoint.GenerateCardinalPoints()
+                                      .WithConsistentDirectionBias(throwDirection)
+                                      .SkipLast(1)
+                                      .Prepend(targetPoint)
+                                      .ToRented();
+
+        var potentialTargetPoints = rented.Span;
 
         foreach (var aisling in thrownAislings)
         {
             foreach (var point in potentialTargetPoints)
-                if (context.SourceMap.IsWalkable(
-                        point,
-                        false,
-                        false,
-                        collisionType: CreatureType.Aisling))
+                if (context.SourceMap.IsWalkable(point, aisling, false))
                 {
                     var aislingPoint = Point.From(aisling);
                     aisling.WarpTo(point);

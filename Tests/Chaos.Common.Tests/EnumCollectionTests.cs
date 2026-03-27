@@ -72,7 +72,7 @@ public sealed class EnumCollectionTests
     }
 
     [Test]
-    public void Remove_ShouldRemoveEnum_WhenTypeExists()
+    public void Remove_ShouldRemoveEnum_WhenTypeists()
     {
         // Arrange
         var collection = new EnumCollection();
@@ -137,7 +137,7 @@ public sealed class EnumCollectionTests
     }
 
     [Test]
-    public void TryGetValue_ShouldReturnTrueAndSetValue_WhenTypeExists()
+    public void TryGetValue_ShouldReturnTrueAndSetValue_WhenTypeists()
     {
         // Arrange
         var collection = new EnumCollection();

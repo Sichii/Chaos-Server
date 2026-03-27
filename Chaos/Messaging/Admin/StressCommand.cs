@@ -1,8 +1,9 @@
+#region
 using Chaos.Collections.Common;
-using Chaos.Extensions.Geometry;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
 using Chaos.Services.Factories.Abstractions;
+#endregion
 
 namespace Chaos.Messaging.Admin;
 
@@ -30,7 +31,7 @@ public class StressCommand(IItemFactory itemFactory, IMonsterFactory monsterFact
 
                 for (var i = 0; i < amount; i++)
                 {
-                    if (!map.Template.Bounds.TryGetRandomPoint(pt => !map.IsWall(pt), out var point))
+                    if (!map.TryGetRandomWalkablePoint(out var point))
                         continue;
 
                     var item = ItemFactory.Create("stick");

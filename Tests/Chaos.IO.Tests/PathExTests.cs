@@ -38,6 +38,51 @@ public sealed class PathExTests
     }
 
     [Test]
+    public void IsSubPathOf_ShouldReturnFalse_WhenPathSharesPrefix_ButIsNotSubPath()
+    {
+        // Arrange - "ParentExtra" starts with "Parent" but is not a subpath
+        const string PATH = @"C:\ParentExtra\Child";
+        const string PARENT_PATH = @"C:\Parent";
+
+        // Act
+        var result = PathEx.IsSubPathOf(PATH, PARENT_PATH);
+
+        // Assert
+        result.Should()
+              .BeFalse();
+    }
+
+    [Test]
+    public void IsSubPathOf_ShouldReturnTrue_WhenPathEqualsParentPath()
+    {
+        // Arrange
+        const string PATH = @"C:\Parent";
+        const string PARENT_PATH = @"C:\Parent";
+
+        // Act
+        var result = PathEx.IsSubPathOf(PATH, PARENT_PATH);
+
+        // Assert
+        result.Should()
+              .BeTrue();
+    }
+
+    [Test]
+    public void IsSubPathOf_ShouldReturnTrue_WhenPathIsCaseInsensitiveMatch()
+    {
+        // Arrange
+        const string PATH = @"C:\parent\CHILD\SubChild";
+        const string PARENT_PATH = @"C:\Parent\child";
+
+        // Act
+        var result = PathEx.IsSubPathOf(PATH, PARENT_PATH);
+
+        // Assert
+        result.Should()
+              .BeTrue();
+    }
+
+    [Test]
     public void IsSubPathOf_ShouldReturnTrue_WhenPathIsSubPathOfParentPath()
     {
         // Arrange

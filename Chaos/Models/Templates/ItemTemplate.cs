@@ -51,7 +51,7 @@ public sealed record ItemTemplate : PanelEntityTemplateBase
         init { }
     }
 
-    public required DisplayColor? PantsColor { get; init; }
+    public required DisplayColor PantsColor { get; init; }
     public required bool PreventBanking { get; init; }
     public required int SellValue { get; init; }
 

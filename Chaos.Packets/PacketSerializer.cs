@@ -1,7 +1,9 @@
+#region
 using System.Collections.Frozen;
 using System.Text;
 using Chaos.IO.Memory;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Packets;
 
@@ -57,11 +59,12 @@ public sealed class PacketSerializer : IPacketSerializer
         if (!Converters.TryGetValue(type, out var converter))
             throw new InvalidOperationException($"No converter exists for type \"{type.FullName}\"");
 
-        var packet = new Packet(converter.OpCode);
-        var writer = new SpanWriter(Encoding);
-        converter.Serialize(ref writer, obj);
+        var writer = new SpanWriter(Encoding, usePooling: true);
 
-        packet.Buffer = writer.ToSpan();
+        converter.Serialize(ref writer, obj);
+        var ownership = writer.TransferOwnership();
+
+        var packet = new Packet(converter.OpCode, ownership.Owner, ownership.Length);
 
         return packet;
     }

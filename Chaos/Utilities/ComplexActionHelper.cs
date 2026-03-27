@@ -287,9 +287,11 @@ public static class ComplexActionHelper
         if (items.Count == 0)
             return RemoveManyItemsResult.Success;
 
-        var groupedItems = items.GroupBy(item => item.ItemNameOrTemplateKey)
-                                .Select(group => (ItemNameOrTemplateKey: group.Key, Amount: group.Sum(item => item.Amount)))
-                                .ToList();
+        using var rentedGroupedItems = items.GroupBy(item => item.ItemNameOrTemplateKey)
+                                            .Select(group => (ItemNameOrTemplateKey: group.Key, Amount: group.Sum(item => item.Amount)))
+                                            .ToRented();
+
+        var groupedItems = rentedGroupedItems.Array;
 
         if (groupedItems.Any(item => !source.Inventory.HasCount(item.ItemNameOrTemplateKey, item.Amount)))
             return RemoveManyItemsResult.DontHaveThatMany;
@@ -429,7 +431,7 @@ public static class ComplexActionHelper
         if (!source.CanCarry((bankItem, amount)))
             return WithdrawItemResult.CantCarry;
 
-        source.Bank.TryWithdraw(itemName, amount, out var items);
+        source.Bank.TryRemove(itemName, amount, out var items);
 
         foreach (var item in items!)
             source.Inventory.TryAddToNextSlot(item);

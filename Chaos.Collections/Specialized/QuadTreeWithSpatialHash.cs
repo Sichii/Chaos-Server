@@ -31,6 +31,8 @@ public sealed class QuadTreeWithSpatialHash<T> : QuadTree<T> where T: IPoint
     /// <inheritdoc />
     public override void Clear()
     {
+        using var @lock = GetLockIfNeeded();
+
         base.Clear();
         SpatialHash.Clear();
     }
@@ -38,6 +40,8 @@ public sealed class QuadTreeWithSpatialHash<T> : QuadTree<T> where T: IPoint
     /// <inheritdoc />
     public override bool Insert(T item)
     {
+        using var @lock = GetLockIfNeeded();
+
         if (base.Insert(item))
         {
             SpatialHash.Add(item);
@@ -54,6 +58,8 @@ public sealed class QuadTreeWithSpatialHash<T> : QuadTree<T> where T: IPoint
     /// <inheritdoc />
     public override bool Remove(T entity)
     {
+        using var @lock = GetLockIfNeeded();
+
         if (base.Remove(entity))
         {
             SpatialHash.Remove(entity);

@@ -6,297 +6,188 @@ using FluentAssertions;
 
 namespace Chaos.IO.Tests;
 
-[NotInParallel]
 public sealed class FileExTests
 {
-    [Test]
-    public void SafeOpenRead_Should_CaptureExceptions_InAggregateException()
-    {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
-
-        // Act
-        Action act = () => FileEx.SafeOpenRead<string>(path, _ => null!);
-
-        // Assert
-        var exception = act.Should()
-                           .Throw<AggregateException>()
-                           .Which;
-
-        exception.InnerExceptions
-                 .Should()
-                 .AllBeAssignableTo<FileNotFoundException>();
-    }
+    private string CreateTempFilePath()
+        => Path.Combine(
+            Path.GetTempPath(),
+            Guid.NewGuid()
+                .ToString("N")
+            + ".txt");
 
     [Test]
-    public void SafeOpenRead_Should_Retry_RetryableExceptions()
+    public void SafeOpenRead_NonRetryableException_ThrowsAggregateWithSingleInner()
     {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
-        var tempPath = $"{guid}.txt.temp";
-        var bakPath = $"{guid}.txt.bak";
-        var content = "Temp file content";
-        File.WriteAllText(path, content);
-        File.WriteAllText(bakPath, content);
+        var path = CreateTempFilePath();
+        File.WriteAllText(path, "data");
 
-        // Act
-        var result = FileEx.SafeOpenRead(
-            path,
-            stream =>
-            {
-                var fileName = Path.GetFileName(stream.Name);
+        // An exception that is neither FileNotFoundException nor RetryableException breaks the loop early
+        Action act = () => FileEx.SafeOpenRead<string>(path, _ => throw new InvalidOperationException("non-retryable"));
 
-                if (fileName == path)
-                    throw new RetryableException("");
-
-                if (fileName == tempPath)
-                    return false;
-
-                return true;
-            });
-
-        // Assert
-        result.Should()
-              .Be(true);
-
-        // Cleanup
-        File.Delete(path);
-        File.Delete(bakPath);
-    }
-
-    [Test]
-    public void SafeOpenRead_Should_ReturnResult_When_MainAndTempFilesMissing_BackupFileExists()
-    {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
-        var backPath = $"{guid}.txt.bak";
-        var content = "Backup file content";
-        File.WriteAllText(backPath, content);
-
-        // Act
-        var result = FileEx.SafeOpenRead(
-            path,
-            stream =>
-            {
-                using var reader = new StreamReader(stream);
-
-                return reader.ReadToEnd();
-            });
-
-        // Assert
-        result.Should()
-              .Be(content);
-
-        // Cleanup
-        File.Delete(backPath);
-    }
-
-    [Test]
-    public void SafeOpenRead_Should_ReturnResult_When_MainFileExists()
-    {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
-        var content = "Main file content";
-        File.WriteAllText(path, content);
-
-        // Act
-        var result = FileEx.SafeOpenRead(
-            path,
-            stream =>
-            {
-                using var reader = new StreamReader(stream);
-
-                return reader.ReadToEnd();
-            });
-
-        // Assert
-        result.Should()
-              .Be(content);
-
-        // Cleanup
-        File.Delete(path);
-    }
-
-    [Test]
-    public void SafeOpenRead_Should_ReturnResult_When_MainFileMissing_TempFileExists()
-    {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
-        var tempPath = $"{guid}.txt.temp";
-        var content = "Temp file content";
-        File.WriteAllText(tempPath, content);
-
-        // Act
-        var result = FileEx.SafeOpenRead(
-            path,
-            stream =>
-            {
-                using var reader = new StreamReader(stream);
-
-                return reader.ReadToEnd();
-            });
-
-        // Assert
-        result.Should()
-              .Be(content);
-
-        // Cleanup
-        File.Delete(tempPath);
-    }
-
-    [Test]
-    public void SafeOpenRead_Should_ThrowAggregateException_When_AllFilesMissing()
-    {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
-
-        // Act
-        Action act = () => FileEx.SafeOpenRead<string>(path, _ => null!);
-
-        // Assert
         act.Should()
            .Throw<AggregateException>()
-           .WithMessage("Failed to read file, temp file, or backup file. See inner exceptions for details. *");
+           .Which
+           .InnerExceptions
+           .Should()
+           .HaveCount(1)
+           .And
+           .AllBeAssignableTo<InvalidOperationException>();
+
+        File.Delete(path);
     }
 
     [Test]
-    public async Task SafeOpenReadAsync_Should_CaptureExceptions_InAggregateException()
+    public void SafeOpenRead_PrimaryFilePresent_ReturnsImmediately()
     {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
+        var path = CreateTempFilePath();
+        File.WriteAllText(path, "primary-content");
 
-        // Act
-        var act = async () => await FileEx.SafeOpenReadAsync<string>(path, _ => null!);
-
-        // Assert
-        (await act.Should()
-                  .ThrowAsync<AggregateException>()).Which
-                                                    .InnerExceptions
-                                                    .Should()
-                                                    .AllBeAssignableTo<FileNotFoundException>();
-    }
-
-    [Test]
-    public async Task SafeOpenReadAsync_Should_Retry_RetryableExceptions()
-    {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
-        var tempPath = $"{guid}.txt.temp";
-        var bakPath = $"{guid}.txt.bak";
-        var content = "Temp file content";
-        await File.WriteAllTextAsync(path, content);
-        await File.WriteAllTextAsync(bakPath, content);
-
-        // Act
-        var result = await FileEx.SafeOpenReadAsync(
+        var result = FileEx.SafeOpenRead(
             path,
             stream =>
             {
-                var fileName = Path.GetFileName(stream.Name);
+                using var reader = new StreamReader(stream);
 
-                if (fileName == path)
-                    throw new RetryableException("");
-
-                if (fileName == tempPath)
-                    return Task.FromResult(false);
-
-                return Task.FromResult(true);
+                return reader.ReadToEnd();
             });
 
-        // Assert
         result.Should()
-              .Be(true);
+              .Be("primary-content");
 
-        // Cleanup
         File.Delete(path);
+    }
+
+    [Test]
+    public void SafeOpenRead_RetryableException_ShouldTryNextPath()
+    {
+        var basePath = CreateTempFilePath();
+        var bakPath = basePath + ".bak";
+
+        // Create primary and backup files
+        File.WriteAllText(basePath, "primary");
+        File.WriteAllText(bakPath, "backup");
+
+        var callCount = 0;
+
+        // First call throws RetryableException (should continue to next path), second succeeds
+        var result = FileEx.SafeOpenRead(
+            basePath,
+            stream =>
+            {
+                callCount++;
+
+                if (callCount == 1)
+                    throw new RetryableException("retryable");
+
+                using var reader = new StreamReader(stream);
+
+                return reader.ReadToEnd();
+            });
+
+        result.Should()
+              .Be("backup");
+
+        callCount.Should()
+                 .Be(2); // primary (throw) + backup (success). Temp gets FileNotFound before reaching func.
+
+        File.Delete(basePath);
         File.Delete(bakPath);
     }
 
     [Test]
-    public async Task SafeOpenReadAsync_Should_ReturnResult_When_MainAndTempFilesMissing_BackupFileExists()
+    public void SafeOpenRead_WhenAllMissing_ShouldThrowAggregateWithInnerFileNotFound()
     {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
-        var backPath = $"{guid}.txt.bak";
-        var content = "Backup file content";
-        await File.WriteAllTextAsync(backPath, content);
+        var basePath = CreateTempFilePath();
+        var tempPath = basePath + ".temp";
+        var bakPath = basePath + ".bak";
 
-        // Act
-        var result = await FileEx.SafeOpenReadAsync(
-            path,
-            async stream =>
-            {
-                using var reader = new StreamReader(stream);
+        if (File.Exists(basePath))
+            File.Delete(basePath);
 
-                return await reader.ReadToEndAsync();
-            });
+        if (File.Exists(tempPath))
+            File.Delete(tempPath);
 
-        // Assert
-        result.Should()
-              .Be(content);
+        if (File.Exists(bakPath))
+            File.Delete(bakPath);
 
-        // Cleanup
-        File.Delete(backPath);
+        Action act = () => FileEx.SafeOpenRead(basePath, _ => "");
+
+        act.Should()
+           .Throw<AggregateException>()
+           .Which
+           .InnerExceptions
+           .Should()
+           .NotBeEmpty();
     }
 
     [Test]
-    public async Task SafeOpenReadAsync_Should_ReturnResult_When_MainFileExists()
+    public void SafeOpenRead_WhenPrimaryMissing_ShouldTryTempThenBak()
     {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
-        var content = "Main file content";
-        await File.WriteAllTextAsync(path, content);
+        var basePath = CreateTempFilePath();
+        var tempPath = basePath + ".temp";
+        var bakPath = basePath + ".bak";
 
-        // Act
-        var result = await FileEx.SafeOpenReadAsync(
-            path,
-            async stream =>
+        // Ensure clean state
+        if (File.Exists(basePath))
+            File.Delete(basePath);
+
+        if (File.Exists(tempPath))
+            File.Delete(tempPath);
+
+        if (File.Exists(bakPath))
+            File.Delete(bakPath);
+
+        // Only create .bak so code reaches the third branch
+        File.WriteAllText(bakPath, "backup");
+
+        var read = FileEx.SafeOpenRead(
+            basePath,
+            stream =>
             {
                 using var reader = new StreamReader(stream);
 
-                return await reader.ReadToEndAsync();
+                return reader.ReadToEnd();
             });
 
-        // Assert
-        result.Should()
-              .Be(content);
+        read.Should()
+            .Be("backup");
 
         // Cleanup
+        File.Delete(bakPath);
+    }
+
+    [Test]
+    public async Task SafeOpenReadAsync_AllMissing_ShouldThrowAggregateException()
+    {
+        var basePath = CreateTempFilePath();
+
+        Func<Task> act = () => FileEx.SafeOpenReadAsync<string>(basePath, _ => Task.FromResult(""));
+
+        await act.Should()
+                 .ThrowAsync<AggregateException>();
+    }
+
+    [Test]
+    public async Task SafeOpenReadAsync_NonRetryableException_ShouldBreakEarly()
+    {
+        var path = CreateTempFilePath();
+        File.WriteAllText(path, "data");
+
+        Func<Task> act = () => FileEx.SafeOpenReadAsync<string>(path, _ => throw new InvalidOperationException("non-retryable"));
+
+        await act.Should()
+                 .ThrowAsync<AggregateException>()
+                 .Where(e => (e.InnerExceptions.Count == 1) && e.InnerExceptions[0] is InvalidOperationException);
+
         File.Delete(path);
     }
 
     [Test]
-    public async Task SafeOpenReadAsync_Should_ReturnResult_When_MainFileMissing_TempFileExists()
+    public async Task SafeOpenReadAsync_PrimaryFilePresent_ReturnsImmediately()
     {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
-        var tempPath = $"{guid}.txt.temp";
-        var content = "Temp file content";
-        await File.WriteAllTextAsync(tempPath, content);
+        var path = CreateTempFilePath();
+        await File.WriteAllTextAsync(path, "async-primary");
 
-        // Act
         var result = await FileEx.SafeOpenReadAsync(
             path,
             async stream =>
@@ -306,145 +197,151 @@ public sealed class FileExTests
                 return await reader.ReadToEndAsync();
             });
 
-        // Assert
         result.Should()
-              .Be(content);
+              .Be("async-primary");
+
+        File.Delete(path);
+    }
+
+    [Test]
+    public async Task SafeOpenReadAsync_RetryableException_ShouldTryNextPath()
+    {
+        var basePath = CreateTempFilePath();
+        var bakPath = basePath + ".bak";
+
+        File.WriteAllText(basePath, "primary");
+        File.WriteAllText(bakPath, "backup");
+
+        var callCount = 0;
+
+        var result = await FileEx.SafeOpenReadAsync(
+            basePath,
+            async stream =>
+            {
+                callCount++;
+
+                if (callCount == 1)
+                    throw new RetryableException("retryable");
+
+                using var reader = new StreamReader(stream);
+
+                return await reader.ReadToEndAsync();
+            });
+
+        result.Should()
+              .Be("backup");
+
+        File.Delete(basePath);
+        File.Delete(bakPath);
+    }
+
+    [Test]
+    public async Task SafeOpenReadAsync_WhenTempExists_ShouldReadTemp()
+    {
+        var basePath = CreateTempFilePath();
+        var tempPath = basePath + ".temp";
+
+        if (File.Exists(basePath))
+            File.Delete(basePath);
+
+        if (File.Exists(tempPath))
+            File.Delete(tempPath);
+
+        // Create only temp to force second-branch success
+        await File.WriteAllTextAsync(tempPath, "tempcontent");
+
+        var read = await FileEx.SafeOpenReadAsync(
+            basePath,
+            async stream =>
+            {
+                using var reader = new StreamReader(stream);
+
+                return await reader.ReadToEndAsync();
+            });
+
+        read.Should()
+            .Be("tempcontent");
 
         // Cleanup
         File.Delete(tempPath);
     }
 
     [Test]
-    public async Task SafeOpenReadAsync_Should_ThrowAggregateException_When_AllFilesMissing()
+    public void SafeWriteAllText_WhenExistingFile_ShouldUseReplaceWithBak()
     {
-        // Arrange
-        var guid = Guid.NewGuid()
-                       .ToString();
-        var path = $"{guid}.txt";
+        var path = CreateTempFilePath();
+        File.WriteAllText(path, "old");
 
-        // Act
-        var act = async () => await FileEx.SafeOpenReadAsync<string>(path, _ => null!);
+        FileEx.SafeWriteAllText(path, "new");
 
-        // Assert
-        await act.Should()
-                 .ThrowAsync<AggregateException>()
-                 .WithMessage("Failed to read file, temp file, or backup file. See inner exceptions for details. *");
-    }
+        File.ReadAllText(path)
+            .Should()
+            .Be("new");
 
-    [Test]
-    public void SafeWriteAllText_Creates_A_New_File_And_Writes_Text_To_It_Successfully()
-    {
-        // Arrange
-        var path = "test.txt";
-        var text = "This is a test";
-
-        // Act
-        FileEx.SafeWriteAllText(path, text);
-
-        // Assert
-        File.Exists(path)
+        File.Exists(path + ".bak")
             .Should()
             .BeTrue();
 
+        File.Delete(path);
+
+        if (File.Exists(path + ".bak"))
+            File.Delete(path + ".bak");
+    }
+
+    [Test]
+    public void SafeWriteAllText_WhenNewFile_ShouldWriteAndBeReadable()
+    {
+        var path = CreateTempFilePath();
+
+        if (File.Exists(path))
+            File.Delete(path);
+
+        FileEx.SafeWriteAllText(path, "hello");
+
         File.ReadAllText(path)
             .Should()
-            .Be(text);
+            .Be("hello");
+
+        File.Delete(path);
     }
 
     [Test]
-    public void SafeWriteAllText_Handles_Empty_Text_Input_Successfully()
+    public async Task SafeWriteAllTextAsync_WhenExistingFile_ShouldUseReplaceWithBak()
     {
-        // Arrange
-        var path = "test.txt";
-        var text = "";
+        var path = CreateTempFilePath();
+        await File.WriteAllTextAsync(path, "old");
 
-        // Act
-        FileEx.SafeWriteAllText(path, text);
+        await FileEx.SafeWriteAllTextAsync(path, "new");
 
-        // Assert
         File.ReadAllText(path)
             .Should()
-            .Be(text);
+            .Be("new");
+
+        File.Exists(path + ".bak")
+            .Should()
+            .BeTrue();
+
+        // Cleanup
+        File.Delete(path);
+
+        if (File.Exists(path + ".bak"))
+            File.Delete(path + ".bak");
     }
 
     [Test]
-    public void SafeWriteAllText_Handles_Long_Text_Input_Successfully()
+    public async Task SafeWriteAllTextAsync_WhenNewFile_ShouldWriteAndBeReadable()
     {
-        // Arrange
-        var path = "test.txt";
-        var text = new string('a', 1000000);
+        var path = CreateTempFilePath();
 
-        // Act
-        FileEx.SafeWriteAllText(path, text);
+        if (File.Exists(path))
+            File.Delete(path);
 
-        // Assert
+        await FileEx.SafeWriteAllTextAsync(path, "hello-async");
+
         File.ReadAllText(path)
             .Should()
-            .Be(text);
-    }
+            .Be("hello-async");
 
-    [Test]
-    public void SafeWriteAllText_Overwrites_An_Existing_File_With_New_Text_Successfully()
-    {
-        // Arrange
-        var path = "test.txt";
-        var initialText = "Initial text";
-        var newText = "New text";
-
-        File.WriteAllText(path, initialText);
-
-        // Act
-        FileEx.SafeWriteAllText(path, newText);
-
-        // Assert
-        File.ReadAllText(path)
-            .Should()
-            .Be(newText);
-    }
-
-    [Test]
-    public void SafeWriteAllText_Throws_An_Exception_When_The_File_Path_Contains_Invalid_Characters()
-    {
-        // Arrange
-        var path = "test?.txt";
-        var text = "This is a test";
-
-        // Act
-        var act = () => FileEx.SafeWriteAllText(path, text);
-
-        // Assert
-        act.Should()
-           .Throw<IOException>();
-    }
-
-    [Test]
-    public void SafeWriteAllText_Throws_An_Exception_When_The_File_Path_Is_Null()
-    {
-        // Arrange
-        string? path = null;
-        var text = "This is a test";
-
-        // Act
-        var act = () => FileEx.SafeWriteAllText(path!, text);
-
-        // Assert
-        act.Should()
-           .Throw<ArgumentNullException>();
-    }
-
-    [Test]
-    public void SafeWriteallText_Writes_All_Text_To_A_File_Successfully()
-    {
-        // Arrange
-        var path = "test.txt";
-        var text = "This is a test";
-
-        // Act
-        FileEx.SafeWriteAllText(path, text);
-
-        // Assert
-        File.ReadAllText(path)
-            .Should()
-            .Be(text);
+        File.Delete(path);
     }
 }

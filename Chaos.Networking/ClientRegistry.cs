@@ -34,5 +34,5 @@ public class ClientRegistry<T> : IClientRegistry<T> where T: ISocketClient
     public virtual bool TryAdd(T client) => Clients.TryAdd(client.Id, client);
 
     /// <inheritdoc />
-    public virtual bool TryRemove(uint id, [MaybeNullWhen(false)] out T client) => Clients.Remove(id, out client);
+    public virtual bool TryRemove(uint id, [MaybeNullWhen(false)] out T client) => Clients.TryRemove(id, out client);
 }

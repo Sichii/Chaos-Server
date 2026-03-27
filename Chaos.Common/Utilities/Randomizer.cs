@@ -1,5 +1,7 @@
+#region
 using System.Diagnostics;
 using Chaos.Extensions.Common;
+#endregion
 
 namespace Chaos.Common.Utilities;
 
@@ -100,6 +102,6 @@ public static class Randomizer
     /// </returns>
     public static T PickRandomWeighted<T>(this IEnumerable<T> choices, IEnumerable<int> weights)
         => choices.Zip(weights, (choice, weight) => new KeyValuePair<T, int>(choice, weight))
-                  .ToList()
+                  .ToArray()
                   .PickRandomWeighted();
 }

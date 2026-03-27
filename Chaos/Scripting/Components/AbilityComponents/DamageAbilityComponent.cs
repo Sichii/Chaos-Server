@@ -1,6 +1,6 @@
 #region
-using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
@@ -55,7 +55,7 @@ public struct DamageAbilityComponent : IComponent
     {
         var finalDamage = baseDamage ?? 0;
 
-        finalDamage += MathEx.GetPercentOf<int>((int)target.StatSheet.EffectiveMaximumHp, pctHpDamage ?? 0);
+        finalDamage += Math.GetPercentOf<int>((int)target.StatSheet.EffectiveMaximumHp, pctHpDamage ?? 0);
 
         if (!damageStat.HasValue)
             return finalDamage;

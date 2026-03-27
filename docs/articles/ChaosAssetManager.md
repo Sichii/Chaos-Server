@@ -25,14 +25,19 @@ Alternatively, clone them wherever you want and fix the reference to dalib in th
 
 ## Features
 
-- view, patch, compile, decompile all dat files
-- convert to/from any dat file format (except .HEA)
-- effect editor for for .EFA and .EPF files (allows you to center the effects as they would be displayed in game)
-- metafile editor
-- palette remapper
+- Archive Tools (viewing, patching, compiling, extracting)
+- Conversion Tools (.png, .jpg, .jpeg, .bmp, .efa, .epf, .hpf, .mpf, .spf)
+- Panel Sprite Importer (legend.dat)
+- Equipment Importer (khan archives)
+- NPC Importer (hades.dat)
+- Tile Importer (background and foreground)
+- Effect Editor (.efa, .epf)
+- Equipment Editor (.epf khan files)
+- NPC Editor (.mpf)
+- Map Editor (.map) Panel Sprite Editor (.epf legend files)
+- Palette Remapper (.pal)
+- Background Tile splicer
 
 ## Future Features
 
-- mpf creator
-- map editor
-- anything else creators request that might be generally useful
+- none currently planned, feel free to make a request

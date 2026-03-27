@@ -67,6 +67,11 @@ public sealed record MonsterSpawnSchema
     public string MonsterTemplateKey { get; set; } = null!;
 
     /// <summary>
+    ///     When determining the number of monsters to spawn, only count monsters that are within the spawn area
+    /// </summary>
+    public bool OnlyCountMonstersInSpawnArea { get; set; }
+
+    /// <summary>
     ///     Defaults to spawn on entire map
     ///     <br />
     ///     If specified, monsters will only spawn within the specified bounds

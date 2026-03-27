@@ -2,6 +2,8 @@
 
     <PropertyGroup>
         <Version>1.0.0</Version>
+        <OutputType>Library</OutputType>
+        <IsPackable>true</IsPackable>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,6 +15,10 @@
 
     <ItemGroup>
         <PackageReference Include="Namotion.Reflection"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="schemas\"/>
     </ItemGroup>
 
 </Project>

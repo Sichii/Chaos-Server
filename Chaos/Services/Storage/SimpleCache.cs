@@ -8,6 +8,11 @@ public sealed class SimpleCache(IServiceProvider provider) : ISimpleCache, ISimp
 {
     private readonly IServiceProvider Provider = provider;
 
+    /// <inheritdoc />
+    public bool Exists<T>(string key)
+        => Provider.GetRequiredService<ISimpleCache<T>>()
+                   .Exists(key);
+
     public T Get<T>(string key)
         => Provider.GetRequiredService<ISimpleCache<T>>()
                    .Get(key);
@@ -23,4 +28,8 @@ public sealed class SimpleCache(IServiceProvider provider) : ISimpleCache, ISimp
     public Task ReloadAsync<T>(string key)
         => Provider.GetRequiredService<ISimpleCache<T>>()
                    .ReloadAsync(key);
+
+    public bool TryGetValue<T>(string key, [MaybeNullWhen(false)] out T value)
+        => Provider.GetRequiredService<ISimpleCache<T>>()
+                   .TryGetValue(key, out value);
 }

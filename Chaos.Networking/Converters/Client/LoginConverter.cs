@@ -75,39 +75,44 @@ public sealed class LoginConverter : PacketConverterBase<LoginArgs>
         writer.WriteString8(args.Password);
 
         //generate random keys
-        var xorInverseSource = Random.Shared.Next<byte>(0, byte.MaxValue);
-        var saltSource = Random.Shared.Next<byte>(0, byte.MaxValue);
+        var key1 = Random.Shared.Next<byte>(0, byte.MaxValue);
+        var key2 = Random.Shared.Next<byte>(0, byte.MaxValue);
 
-        //generate randomIdA and salt
-        var randomIdA = Random.Shared.Next<uint>(0, 0xFFFFFFF);
-        var randomIdASalt = (uint)(byte)(saltSource + 138);
+        //encrypt client id
+        var clientIdKey = (byte)(key2 + 138);
 
-        //generate randomIdB and salt
+        var mask32 = clientIdKey | ((uint)(clientIdKey + 1) << 8) | ((uint)(clientIdKey + 2) << 16) | ((uint)(clientIdKey + 3) << 24);
+
+        var encryptedClientId = args.ClientId1 ^ mask32;
+
+        //encrypt checksum
+        var checksumKey = (byte)(key2 + 0x5E);
+        var mask16 = (ushort)(checksumKey | ((ushort)(checksumKey + 1) << 8));
+
+        var encryptedChecksum = (ushort)(args.ClientId2 ^ mask16);
+
+        writer.WriteByte(key1);
+        writer.WriteByte((byte)(key2 ^ (key1 + 59)));
+        writer.WriteUInt32(encryptedClientId);
+        writer.WriteUInt16(encryptedChecksum);
+
+        //encrypt and write random id B
         var randomIdB = Random.Shared.Next<uint>(0, 0xFFFF);
-        var randomIdBSalt = (uint)(byte)(saltSource + 115);
+        var randomIdBKey = (byte)(key2 + 115);
 
-        //get checksum and salt
-        //intentionally little endian
-        var checkSum = Crc.Generate16(BitConverter.GetBytes(randomIdA));
-        var checksumSalt = (uint)(byte)(saltSource + 94);
+        var randomIdBMask = randomIdBKey
+                            | ((uint)(randomIdBKey + 1) << 8)
+                            | ((uint)(randomIdBKey + 2) << 16)
+                            | ((uint)(randomIdBKey + 3) << 24);
 
-        randomIdA ^= randomIdASalt | ((randomIdASalt + 1) << 8) | ((randomIdASalt + 2) << 16) | ((randomIdASalt + 3) << 24);
-        checkSum ^= (ushort)(checksumSalt | ((checksumSalt + 1) << 8));
-        randomIdB ^= randomIdBSalt | ((randomIdBSalt + 1) << 8) | ((randomIdBSalt + 2) << 16) | ((randomIdBSalt + 3) << 24);
+        writer.WriteUInt32(randomIdB ^ randomIdBMask);
 
-        writer.WriteByte(xorInverseSource);
-        writer.WriteByte((byte)(saltSource ^ (xorInverseSource + 59)));
-        writer.WriteUInt32(randomIdA);
-        writer.WriteUInt16(checkSum);
-        writer.WriteUInt32(randomIdB);
-
+        //compute and encrypt key checksum over all key data written so far
         var buffer = writer.ToSpan();
-
-        //get a checksum of the key data that has been written thusfar
         var keyBuffer = buffer[(args.Name.Length + args.Password.Length + 2)..];
         var keyChecksum = Crc.Generate16(keyBuffer);
-        int checksumKey = (byte)(saltSource + 165);
-        keyChecksum ^= (ushort)(checksumKey | ((checksumKey + 1) << 8));
+        var keyChecksumKey = (byte)(key2 + 165);
+        keyChecksum ^= (ushort)(keyChecksumKey | ((ushort)(keyChecksumKey + 1) << 8));
 
         writer.WriteUInt16(keyChecksum);
         writer.WriteUInt16(256);

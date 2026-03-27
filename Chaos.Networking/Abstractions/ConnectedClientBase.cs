@@ -77,7 +77,16 @@ public abstract class ConnectedClientBase : SocketClientBase, IConnectedClient
     }
 
     /// <inheritdoc />
-    public override void Encrypt(ref Packet packet) => Crypto.ServerEncrypt(ref packet.Buffer, packet.OpCode, packet.Sequence);
+    public override void Encrypt(ref Packet packet)
+    {
+        Crypto.ServerEncrypt(
+            ref packet.MemoryOwner!,
+            ref packet.Length,
+            packet.OpCode,
+            packet.Sequence);
+
+        packet.Buffer = packet.MemoryOwner.Memory.Span[..packet.Length];
+    }
 
     /// <inheritdoc />
     public override bool IsEncrypted(byte opCode) => Crypto.IsServerEncrypted(opCode);

@@ -1,7 +1,9 @@
-using Chaos.Common.Utilities;
+#region
+using Chaos.Extensions.Common;
 using Chaos.Formulae.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
+#endregion
 
 namespace Chaos.Formulae.Regen;
 
@@ -21,7 +23,7 @@ public sealed class DefaultRegenFormula : IRegenFormula
             _        => throw new ArgumentOutOfRangeException(nameof(creature), creature, null)
         };
 
-        return MathEx.GetPercentOf<int>((int)creature.StatSheet.EffectiveMaximumHp, percentToRegenerate);
+        return Math.GetPercentOf<int>((int)creature.StatSheet.EffectiveMaximumHp, percentToRegenerate);
     }
 
     /// <inheritdoc />
@@ -41,6 +43,6 @@ public sealed class DefaultRegenFormula : IRegenFormula
             _        => throw new ArgumentOutOfRangeException(nameof(creature), creature, null)
         };
 
-        return MathEx.GetPercentOf<int>((int)creature.StatSheet.EffectiveMaximumMp, percentToRegenerate);
+        return Math.GetPercentOf<int>((int)creature.StatSheet.EffectiveMaximumMp, percentToRegenerate);
     }
 }

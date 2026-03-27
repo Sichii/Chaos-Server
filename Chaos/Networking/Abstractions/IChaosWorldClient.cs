@@ -22,14 +22,9 @@ public interface IChaosWorldClient : IConnectedClient
     Aisling Aisling { get; set; }
 
     /// <summary>
-    ///     The first byte of the heartbeat
+    ///     Possible heart beat values
     /// </summary>
-    byte? Heartbeat1 { get; set; }
-
-    /// <summary>
-    ///     The second byte of the heartbeat
-    /// </summary>
-    byte? Heartbeat2 { get; set; }
+    List<ushort> HeartBeatValues { get; set; }
 
     /// <summary>
     ///     Client side id of the client
@@ -63,10 +58,9 @@ public interface IChaosWorldClient : IConnectedClient
     void SendDisplayAisling(Aisling aisling);
     void SendDisplayBoard(BoardBase boardBase, short? startPostId = null);
     void SendDisplayDialog(Dialog dialog);
-    void SendDisplayGroupInvite(ServerGroupSwitch serverGroupSwitch, string fromName, DisplayGroupBoxInfo? groupBoxInfo = null);
 
     /// <summary>
-    ///     Displays a notepad to the client
+    ///     Displays an editable notepad to the client
     /// </summary>
     /// <param name="type">
     ///     The type of notepad
@@ -80,13 +74,37 @@ public interface IChaosWorldClient : IConnectedClient
     /// <param name="height">
     ///     In game, the notepad will display with a line height close to (1.4 * thisValue) with midpoint rouding
     /// </param>
-    void SendDisplayNotepad(
+    void SendDisplayEditableNotepad(
         NotepadType type,
         Item item,
         byte width,
         byte height);
 
+    void SendDisplayGroupInvite(ServerGroupSwitch serverGroupSwitch, string fromName, DisplayGroupBoxInfo? groupBoxInfo = null);
+
     void SendDisplayPublicMessage(uint id, PublicMessageType publicMessageType, string message);
+
+    /// <summary>
+    ///     Displays a readonly notepad to the client
+    /// </summary>
+    /// <param name="type">
+    ///     The type of notepad
+    /// </param>
+    /// <param name="text">
+    ///     The text to display in the notepad
+    /// </param>
+    /// <param name="width">
+    ///     In game, the notepad will display with a character width close to (2.5 * thisValue) with midpoint rounding
+    /// </param>
+    /// <param name="height">
+    ///     In game, the notepad will display with a line height close to (1.4 * thisValue) with midpoint rouding
+    /// </param>
+    void SendDisplayReadonlyNotepad(
+        NotepadType type,
+        string text,
+        byte width,
+        byte height);
+
     void SendDisplayUnequip(EquipmentSlot equipmentSlot);
     void SendDoors(params IEnumerable<Door> doors);
     void SendEditableProfileRequest();

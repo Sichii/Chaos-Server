@@ -1,7 +1,10 @@
-﻿using System.Security.Cryptography;
+﻿#region
+using System.Buffers;
+using System.Security.Cryptography;
 using System.Text;
 using Chaos.Cryptography.Abstractions;
 using Chaos.Cryptography.Abstractions.Definitions;
+#endregion
 
 namespace Chaos.Cryptography;
 
@@ -239,7 +242,11 @@ public sealed class Crypto : ICrypto
     /// <summary>
     ///     Encrypts a packet that's being sent from a server
     /// </summary>
-    public void ServerEncrypt(ref Span<byte> buffer, byte opCode, byte sequence)
+    public void ServerEncrypt(
+        ref IMemoryOwner<byte> memoryOwner,
+        ref int length,
+        byte opCode,
+        byte sequence)
     {
         IReadOnlyList<byte> thisKey;
         var a = (ushort)Random.Shared.Next(256, ushort.MaxValue);
@@ -260,7 +267,10 @@ public sealed class Crypto : ICrypto
                 return;
         }
 
-        for (var i = 0; i < buffer.Length; i++)
+        var memory = memoryOwner.Memory;
+        var buffer = memory.Span[..length];
+
+        for (var i = 0; i < length; i++)
         {
             var i2 = (byte)(i / Key.Length);
             buffer[i] ^= (byte)(Salts[i2] ^ thisKey[i % thisKey.Count]);
@@ -269,15 +279,23 @@ public sealed class Crypto : ICrypto
                 buffer[i] ^= Salts[sequence];
         }
 
-        var newBuffer = new Span<byte>(new byte[buffer.Length + 3]);
-        buffer.CopyTo(newBuffer);
+        length += 3;
 
-        newBuffer[^3] = (byte)((byte)a ^ 116);
-        newBuffer[^2] = (byte)(b ^ 36U);
-        newBuffer[^1] = (byte)((byte)(a >> 8) ^ 100);
+        // check if current buffer has enough room for the extra 3 bytes
+        if (memory.Length < length)
+        {
+            var newMemoryOwner = MemoryPool<byte>.Shared.Rent(length);
+            memory.CopyTo(newMemoryOwner.Memory);
+            memoryOwner.Dispose();
+            memoryOwner = newMemoryOwner;
+            memory = memoryOwner.Memory;
+        }
 
-        //overwrite ref
-        buffer = newBuffer;
+        buffer = memory.Span[..length];
+
+        buffer[^3] = (byte)((byte)a ^ 116);
+        buffer[^2] = (byte)(b ^ 36U);
+        buffer[^1] = (byte)((byte)(a >> 8) ^ 100);
     }
 
     /// <summary>

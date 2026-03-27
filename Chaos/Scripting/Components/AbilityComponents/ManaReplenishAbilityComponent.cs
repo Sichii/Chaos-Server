@@ -1,10 +1,12 @@
-using Chaos.Common.Utilities;
+#region
 using Chaos.DarkAges.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Models.Data;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
 using Chaos.Scripting.Components.Execution;
+#endregion
 
 namespace Chaos.Scripting.Components.AbilityComponents;
 
@@ -20,7 +22,7 @@ public struct ManaReplenishAbilityComponent : IComponent
 
         foreach (var target in targets)
         {
-            var finalReplenish = replenish + MathEx.GetPercentOf<int>((int)target.StatSheet.EffectiveMaximumMp, options.PctManaReplenish);
+            var finalReplenish = replenish + Math.GetPercentOf<int>((int)target.StatSheet.EffectiveMaximumMp, options.PctManaReplenish);
 
             target.StatSheet.AddMp(finalReplenish);
             (target as Aisling)?.Client.SendAttributes(StatUpdateType.Vitality);

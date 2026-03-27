@@ -159,10 +159,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     // <inheritdoc />
     public IEnumerator<T> GetEnumerator()
     {
-        List<T?> snapshot;
+        using var @lock = Sync.EnterScope();
 
-        using (Sync.EnterScope())
-            snapshot = Objects.ToList();
+        var snapshot = Objects.ToArray();
 
         return snapshot.Where((obj, index) => (obj != null) && IsValidSlot((byte)index))
                        .GetEnumerator()!;
@@ -276,12 +275,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         using var @lock = Sync.EnterScope();
 
-        var actualObjects = Objects.Where(obj => obj is not null)
-                                   .ToList();
+        obj = Objects.FirstOrDefault(obj => obj is not null && obj.Template.Name.EqualsI(name));
 
-        obj = actualObjects.FirstOrDefault(obj => obj!.Template.Name.EqualsI(name));
-
-        return obj != null;
+        return obj is not null;
     }
 
     // <inheritdoc />
@@ -289,12 +285,9 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
     {
         using var @lock = Sync.EnterScope();
 
-        var actualObjects = Objects.Where(obj => obj is not null)
-                                   .ToList();
+        obj = Objects.FirstOrDefault(obj => obj is not null && obj.Template.TemplateKey.EqualsI(templateKey));
 
-        obj = actualObjects.FirstOrDefault(obj => obj!.Template.TemplateKey.EqualsI(templateKey));
-
-        return obj != null;
+        return obj is not null;
     }
 
     // <inheritdoc />
@@ -493,4 +486,6 @@ public abstract class PanelBase<T> : IPanel<T> where T: PanelEntityBase
 
         return true;
     }
+
+    protected IEnumerable<T> UnsafeEnumerate() => Objects.Where((obj, index) => (obj != null) && IsValidSlot((byte)index))!;
 }

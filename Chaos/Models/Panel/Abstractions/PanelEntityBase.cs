@@ -1,9 +1,11 @@
+#region
 using Chaos.Common.Identity;
 using Chaos.Models.Templates.Abstractions;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Models.Panel.Abstractions;
 
@@ -40,22 +42,22 @@ public abstract class PanelEntityBase : IDeltaUpdatable, IScripted
         var ts = Elapsed.Value + delta;
         Elapsed = ts;
 
-        if (Elapsed > Cooldown)
+        if (Elapsed > (Cooldown ?? TimeSpan.Zero))
             Elapsed = null;
     }
 
     public virtual void BeginCooldown(Creature creature, TimeSpan? customCooldown = null)
     {
-        if (Cooldown is { Ticks: > 0 })
+        if (Cooldown is { Ticks: > 0 } || Elapsed.HasValue || customCooldown.HasValue)
         {
-            Elapsed ??= customCooldown.HasValue ? Cooldown - customCooldown : TimeSpan.Zero;
+            Elapsed ??= customCooldown.HasValue ? (Cooldown ?? TimeSpan.Zero) - customCooldown : TimeSpan.Zero;
 
-            if (creature is Aisling aisling)
-                aisling.Client.SendCooldown(this);
+            if (creature is Aisling aisling2)
+                aisling2.Client.SendCooldown(this);
         }
     }
 
     public virtual bool CanUse() => !Cooldown.HasValue || !Elapsed.HasValue || (Elapsed > Cooldown);
 
-    public virtual void SetTemporaryCooldown(TimeSpan temporaryCooldown) => Elapsed = Cooldown - temporaryCooldown;
+    public virtual void SetTemporaryCooldown(TimeSpan temporaryCooldown) => Elapsed = (Cooldown ?? TimeSpan.Zero) - temporaryCooldown;
 }

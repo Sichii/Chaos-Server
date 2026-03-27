@@ -1,5 +1,6 @@
 #region
 using Chaos.Collections.Common;
+using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.World;
@@ -19,6 +20,13 @@ public class LeaveChannelCommand(IChannelService channelService) : ICommand<Aisl
             return default;
 
         channelName = ChannelService.PrependPrefix(channelName);
+
+        if (channelName.EqualsI("!guild") && (source.Guild != null))
+        {
+            source.Guild.LeaveChannel(source);
+
+            return default;
+        }
 
         source.ChannelSettings.Remove(new ChannelSettings(channelName, true));
         ChannelService.LeaveChannel(source, channelName);

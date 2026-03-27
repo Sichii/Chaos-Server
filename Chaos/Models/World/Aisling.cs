@@ -5,6 +5,7 @@ using Chaos.Collections.Common;
 using Chaos.Collections.Synchronized;
 using Chaos.Collections.Time;
 using Chaos.Common.Abstractions;
+using Chaos.Common.Abstractions.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.DarkAges.Definitions;
 using Chaos.Definitions;
@@ -284,7 +285,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     {
         panel.AddObserver(observer);
 
-        var objs = panel.ToList();
+        var objs = panel.ToArray();
         panel.Clear();
 
         foreach (var obj in objs)
@@ -318,7 +319,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                      set => set.Item.DisplayName,
                      (_, grp) =>
                      {
-                         var col = grp.ToList();
+                         var col = grp.ToArray();
 
                          return (col.First()
                                     .Item, Count: col.Sum(i => i.Count));
@@ -588,7 +589,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         if (count == 0)
             exchange.AddItem(source, slot);
         else
-            exchange.AddStackableItem(this, slot, count);
+            exchange.AddStackableItem(source, slot, count);
     }
 
     public void Refresh(bool forceRefresh = false)
@@ -610,8 +611,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         Client.SendRefreshResponse();
         Client.SendLightLevel(MapInstance.CurrentLightLevel);
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
-                                           .ToList())
+        using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(this)
+                                              .ToRented();
+
+        foreach (var reactor in rentedReactors.Span)
             reactor.OnWalkedOn(this);
     }
 
@@ -761,8 +764,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                   money.Amount,
                   ILocation.ToString(money));
 
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(money)
-                                           .ToList())
+        using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(money)
+                                              .ToRented();
+
+        foreach (var reactor in rentedReactors.Span)
             reactor.OnGoldDroppedOn(this, money);
 
         return true;
@@ -864,8 +869,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             MapInstance.RemoveEntity(groundItem);
             item.Script.OnPickup(this, originalItem, originalCount);
 
-            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(groundItem)
-                                               .ToList())
+            using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(groundItem)
+                                                  .ToRented();
+
+            foreach (var reactor in rentedReactors.Span)
                 reactor.OnItemPickedUpFrom(this, groundItem, originalCount);
 
             return true;
@@ -892,9 +899,13 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
 
             MapInstance.RemoveEntity(money);
 
-            foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(money)
-                                               .ToList())
+            using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(money)
+                                                  .ToRented();
+
+            foreach (var reactor in rentedReactors.Span)
                 reactor.OnGoldPickedUpFrom(this, money);
+
+            return true;
         }
 
         return false;
@@ -1153,7 +1164,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
     }
 
     /// <inheritdoc />
-    public override void UpdateViewPort(HashSet<VisibleEntity>? partialUpdateEntities = null, bool refresh = false)
+    public override void UpdateViewPort(ICollection<VisibleEntity>? partialUpdateEntities = null, bool refresh = false)
     {
         Dictionary<VisibleEntity, DateTime>? stashedApproachTime = null;
 
@@ -1192,6 +1203,7 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             }
 
         foreach (var entity in currentlyObservable)
+        {
             if (!previouslyObservable.Contains(entity))
             {
                 if (entity.Equals(this))
@@ -1203,8 +1215,9 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                         entity.ShowTo(this);
 
                         break;
+
                     case Door door:
-                        doorsToSend.AddRange(door.GetCluster());
+                        doorsToSend.Add(door);
 
                         break;
                     default:
@@ -1216,6 +1229,10 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                 OnApproached(entity, refresh);
             }
 
+            if (entity is Door stillADoor && (stillADoor.ManhattanDistanceFrom(this) == 11))
+                doorsToSend.Add(stillADoor);
+        }
+
         Client.SendVisibleEntities(entitiesToSend);
         Client.SendDoors(doorsToSend);
 
@@ -1225,28 +1242,89 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
                     ApproachTime[kvp.Key] = kvp.Value;
     }
 
+    /// <inheritdoc />
+    public override void UpdateViewPort(VisibleEntity singleEntity)
+    {
+        var wasPreviouslyObserved = ApproachTime.ContainsKey(singleEntity);
+
+        var isCurrentlyObservable = singleEntity.WithinRange(this)
+                                    && MapInstance.TryGetEntity<WorldEntity>(singleEntity.Id, out _)
+                                    && CanObserve(singleEntity, true);
+
+        if (wasPreviouslyObserved && !isCurrentlyObservable)
+        {
+            if (!singleEntity.Equals(this))
+                singleEntity.HideFrom(this);
+
+            OnDeparture(singleEntity);
+        } else if (!wasPreviouslyObserved && isCurrentlyObservable)
+        {
+            if (!singleEntity.Equals(this))
+                switch (singleEntity)
+                {
+                    case Aisling:
+                        singleEntity.ShowTo(this);
+
+                        break;
+
+                    case Door door:
+                        Client.SendDoors(door);
+
+                        break;
+                    default:
+                        Client.SendVisibleEntities(singleEntity);
+
+                        break;
+                }
+
+            OnApproached(singleEntity);
+        }
+
+        if (isCurrentlyObservable && singleEntity is Door stillADoor && (stillADoor.ManhattanDistanceFrom(this) == 11))
+            Client.SendDoors(stillADoor);
+    }
+
     public override void Walk(
         Direction direction,
         bool? ignoreBlockingReactors = null,
         bool? ignoreWalls = null,
         bool? ignoreCollision = null)
     {
-        if (!Script.CanMove() || ((direction != Direction) && !Script.CanTurn()) || !ShouldWalk)
-        {
-            Refresh(true);
+        using var walkActivity = ActivitySources.StartInternalActivity("Aisling.Walk");
 
-            return;
-        }
-
-        Direction = direction;
         var startPosition = Location.From(this);
         var startPoint = Point.From(this);
         var endPoint = this.DirectionalOffset(direction);
 
-        //if admin, just check if we're within the map
-        if (IsAdmin)
+        using (ActivitySources.StartInternalActivity("Aisling.Walk.Checks"))
         {
-            if (!MapInstance.IsWithinMap(endPoint))
+            if (!Script.CanMove() || ((direction != Direction) && !Script.CanTurn()) || !ShouldWalk)
+            {
+                Refresh(true);
+
+                return;
+            }
+
+            Direction = direction;
+
+            //if admin, just check if we're within the map
+            if (IsAdmin)
+            {
+                if (!MapInstance.IsWithinMap(endPoint))
+                {
+                    Refresh(true);
+
+                    return;
+                }
+            }
+
+            //otherwise, check if the point is walkable
+            else if (!MapInstance.IsWalkable(
+                         endPoint,
+                         this,
+                         ignoreBlockingReactors,
+                         ignoreWalls,
+                         ignoreCollision))
             {
                 Refresh(true);
 
@@ -1254,60 +1332,61 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
             }
         }
 
-        //otherwise, check if the point is walkable
-        else if (!MapInstance.IsWalkable(
-                     endPoint,
-                     ignoreBlockingReactors,
-                     ignoreWalls,
-                     ignoreCollision,
-                     Type))
+        using (ActivitySources.StartInternalActivity("Aisling.Walk.Movement"))
         {
-            Refresh(true);
+            SetLocation(endPoint);
+            Trackers.LastWalk = DateTime.UtcNow;
+            Trackers.LastPosition = startPosition;
 
-            return;
+            using var rentedCreaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint, 16)
+                                                           .ThatAreWithinRange(
+                                                               points:
+                                                               [
+                                                                   startPoint,
+                                                                   endPoint
+                                                               ])
+                                                           .ToRented();
+
+            var creaturesToUpdate = rentedCreaturesToUpdate.Array;
+
+            var isDarkMap = MapInstance.Flags.HasFlag(MapFlags.Darkness);
+
+            foreach (var creature in creaturesToUpdate)
+                if (creature.Equals(this))
+                    UpdateViewPort();
+                else if (creature is Aisling && isDarkMap)
+                    creature.UpdateViewPort();
+                else
+                    creature.UpdateViewPort(this);
+
+            var aislingsThatWatchedUsWalk = creaturesToUpdate.ThatAreWithinRange(startPoint)
+                                                             .ThatAreWithinRange(endPoint)
+                                                             .ThatCanObserve(this)
+                                                             .OfType<Aisling>();
+
+            foreach (var aisling in aislingsThatWatchedUsWalk)
+                if (!aisling.Equals(this))
+                    aisling.Client.SendCreatureWalk(Id, startPoint, direction);
+
+            Client.SendClientWalkResponse(startPoint, direction);
         }
 
-        SetLocation(endPoint);
-        Trackers.LastWalk = DateTime.UtcNow;
-        Trackers.LastPosition = startPosition;
+        using (ActivitySources.StartInternalActivity("Aisling.Walk.PostMovement"))
+        {
+            using var rentedReactors = MapInstance.GetDistinctReactorsAtPoint(this)
+                                                  .ToRented();
 
-        var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint, 16)
-                                           .ThatAreWithinRange(
-                                               points:
-                                               [
-                                                   startPoint,
-                                                   endPoint
-                                               ])
-                                           .ToList();
+            foreach (var reactor in rentedReactors.Span)
+                reactor.OnWalkedOn(this);
 
-        foreach (var creature in creaturesToUpdate)
-            if (creature is Aisling)
-                creature.UpdateViewPort();
-            else
-                creature.UpdateViewPort([this]);
+            var startOnWater = MapInstance.Template.Tiles[startPosition.X, startPosition.Y].IsWater;
+            var endOnWater = MapInstance.Template.Tiles[endPoint.X, endPoint.Y].IsWater;
 
-        var aislingsThatWatchedUsWalk = creaturesToUpdate.ThatAreWithinRange(startPoint)
-                                                         .ThatAreWithinRange(endPoint)
-                                                         .ThatCanObserve(this)
-                                                         .OfType<Aisling>();
-
-        foreach (var aisling in aislingsThatWatchedUsWalk)
-            if (!aisling.Equals(this))
-                aisling.Client.SendCreatureWalk(Id, startPoint, direction);
-
-        Client.SendClientWalkResponse(startPoint, direction);
-
-        foreach (var reactor in MapInstance.GetDistinctReactorsAtPoint(this)
-                                           .ToList())
-            reactor.OnWalkedOn(this);
-
-        var startOnWater = MapInstance.Template.Tiles[startPosition.X, startPosition.Y].IsWater;
-        var endOnWater = MapInstance.Template.Tiles[endPoint.X, endPoint.Y].IsWater;
-
-        //if we transition between water / nonwater tiles
-        //send attributes to update the water walking status
-        if (startOnWater != endOnWater)
-            Client.SendAttributes(StatUpdateType.Full);
+            //if we transition between water / nonwater tiles
+            //send attributes to update the water walking status
+            if (startOnWater != endOnWater)
+                Client.SendAttributes(StatUpdateType.Full);
+        }
     }
 
     /// <inheritdoc />
@@ -1317,15 +1396,21 @@ public sealed class Aisling : Creature, IScripted<IAislingScript>, IDialogSource
         SetLocation(destinationPoint);
         Trackers.LastPosition = startPoint;
 
-        var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint)
-                                           .Union(MapInstance.GetEntitiesWithinRange<Creature>(destinationPoint))
-                                           .ToList();
+        using var rentedCreaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint)
+                                                       .Union(MapInstance.GetEntitiesWithinRange<Creature>(destinationPoint))
+                                                       .ToRented();
+
+        var creaturesToUpdate = rentedCreaturesToUpdate.Array;
+
+        var isDarkMap = MapInstance.Flags.HasFlag(MapFlags.Darkness);
 
         foreach (var creature in creaturesToUpdate)
-            if (creature is Aisling)
+            if (creature.Equals(this))
+                UpdateViewPort();
+            else if (creature is Aisling && isDarkMap)
                 creature.UpdateViewPort();
             else
-                creature.UpdateViewPort([this]);
+                creature.UpdateViewPort(this);
 
         var aislingsThatWatchedUsWarp = creaturesToUpdate.ThatAreWithinRange(startPoint)
                                                          .ThatAreWithinRange(destinationPoint)

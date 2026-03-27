@@ -1,4 +1,6 @@
+#region
 using System.Collections.Concurrent;
+#endregion
 
 namespace Chaos.Common.Synchronization;
 
@@ -40,7 +42,7 @@ public sealed class FifoSemaphoreSlim
     ///     Attempts to enter the semaphore. Sets the result on the next tcs in the queue, freeing the awaiter of the awaiter
     ///     of the tcs task to do work while the semaphore is held by the caller
     /// </summary>
-    private async void AcquireAndPop()
+    private async Task AcquireAndPop()
     {
         await Sync.WaitAsync();
 
@@ -60,7 +62,7 @@ public sealed class FifoSemaphoreSlim
     {
         var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         TaskQueue.Enqueue(tcs);
-        AcquireAndPop();
+        _ = AcquireAndPop();
 
         return tcs.Task;
     }

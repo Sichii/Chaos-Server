@@ -1,5 +1,6 @@
 #region
-using System.Diagnostics;
+using Chaos.Common.Abstractions.Definitions;
+using Chaos.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
@@ -39,26 +40,26 @@ public sealed class WorldScriptingService : BackgroundService
         var timer = new PeriodicTimer(TimeSpan.FromMilliseconds(delta));
         var deltaTime = new DeltaTime();
 
-        var monitor = new DeltaMonitor(
-            "WorldScripts",
-            Logger,
-            TimeSpan.FromMinutes(1),
-            Math.Min(delta * 10, 500));
-
         while (!stoppingToken.IsCancellationRequested)
             try
             {
                 await timer.WaitForNextTickAsync(stoppingToken)
                            .ConfigureAwait(false);
-                var currentDelta = deltaTime.GetDelta;
-                monitor.Update(currentDelta);
 
-                var start = Stopwatch.GetTimestamp();
+                var currentDelta = deltaTime.GetDelta;
+
+                using var worldScriptUpdateActivity = ActivitySources.StartWorldScriptActivity("WorldScript.UpdateAll");
+                worldScriptUpdateActivity?.SetTag("worldscript.count", serverScripts.Count);
+                worldScriptUpdateActivity?.SetTag("delta_ms", currentDelta.TotalMilliseconds);
 
                 foreach (var script in serverScripts)
                     if (script.Enabled)
                         try
                         {
+                            var scriptType = script.GetType()
+                                                   .Name;
+
+                            using var updateActivity = ActivitySources.StartWorldScriptActivity($"WorldScript.Update.{scriptType}");
                             script.Update(currentDelta);
                         } catch (Exception e)
                         {
@@ -69,9 +70,6 @@ public sealed class WorldScriptingService : BackgroundService
                                       script.GetType()
                                             .Name);
                         }
-
-                var elapsed = Stopwatch.GetElapsedTime(start);
-                monitor.DigestDelta(elapsed);
             } catch (OperationCanceledException)
             {
                 return;

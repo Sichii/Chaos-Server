@@ -1,11 +1,13 @@
+#region
 using System.Text;
 using Namotion.Reflection;
+#endregion
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 namespace Chaos.Schemas.Extensions;
 
-public static class TypeExtensions
+public static class Typetensions
 {
     public static string GetXmlDocs(this Type type, string? propertyName = null)
     {

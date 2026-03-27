@@ -33,7 +33,7 @@ public interface IAccessManager
     /// <summary>
     ///     Bans the specified client id
     /// </summary>
-    Task IdBanishAsync(uint clientId1, ushort clientId2);
+    Task IdBanishAsync(uint clientId1, uint clientId2);
 
     /// <summary>
     ///     Bans the specified IP address
@@ -74,8 +74,11 @@ public interface IAccessManager
     /// <summary>
     ///     Determines whether the specified client id should be allowed to connect
     /// </summary>
-    /// <param name="clientId">
-    ///     The id of the client
+    /// <param name="clientId1">
+    ///     The first id of the client
+    /// </param>
+    /// <param name="clientId2">
+    ///     The second id of the client
     /// </param>
     /// <returns>
     ///     <c>
@@ -86,7 +89,7 @@ public interface IAccessManager
     ///         false
     ///     </c>
     /// </returns>
-    Task<bool> ShouldAllowAsync(uint clientId);
+    Task<bool> ShouldAllowAsync(uint clientId1, uint clientId2);
 
     /// <summary>
     ///     Validates the specified name and password combination against existing credentials

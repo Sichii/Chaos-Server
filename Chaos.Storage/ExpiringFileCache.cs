@@ -1,6 +1,7 @@
 #region
 using System.Collections;
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Chaos.Extensions.Common;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
@@ -90,6 +91,16 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
             Directory.CreateDirectory(Options.Directory);
 
         Paths = LoadPaths();
+    }
+
+    /// <inheritdoc />
+    public virtual bool Exists(string key)
+    {
+        key = ConstructKeyForType(key);
+
+        using var @lock = Sync.EnterScope();
+
+        return Cache.TryGetValue(key, out _);
     }
 
     /// <inheritdoc />
@@ -217,6 +228,16 @@ public class ExpiringFileCache<T, TSchema, TOptions> : ISimpleCache<T> where TSc
         }
 
         return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public bool TryGetValue(string key, [MaybeNullWhen(false)] out T value)
+    {
+        key = ConstructKeyForType(key);
+
+        using var @lock = Sync.EnterScope();
+
+        return Cache.TryGetValue(key, out value);
     }
 
     /// <summary>

@@ -1,4 +1,7 @@
+#region
 using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
+#endregion
 
 namespace Chaos.Common.Utilities;
 
@@ -145,6 +148,7 @@ public class TypeSwitchExpression<TResult>
     /// <typeparam name="T">
     ///     The return type of the switch expression
     /// </typeparam>
+    [ExcludeFromCodeCoverage(Justification = "Variant class, no new logic")]
     private sealed class FrozenTypeSwitchExpression<T>(TypeSwitchExpression<T> tse) : TypeSwitchExpression<T>
     {
         /// <inheritdoc />

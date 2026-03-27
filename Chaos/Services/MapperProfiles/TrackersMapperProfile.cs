@@ -17,6 +17,7 @@ public class TrackersMapperProfile : IMapperProfile<Trackers, TrackersSchema>, I
             Counters = obj.Counters,
             Enums = obj.Enums,
             Flags = obj.Flags,
+            BigFlags = obj.BigFlags,
             Tags = obj.Tags,
             TimedEvents = obj.TimedEvents,
             LastLogin = obj.LastLogin,
@@ -34,6 +35,7 @@ public class TrackersMapperProfile : IMapperProfile<Trackers, TrackersSchema>, I
             Counters = obj.Counters,
             Enums = obj.Enums,
             Flags = obj.Flags,
+            BigFlags = obj.BigFlags,
             Tags = obj.Tags,
             TimedEvents = obj.TimedEvents,
             LastLogin = obj.LastLogin,
@@ -49,6 +51,7 @@ public class TrackersMapperProfile : IMapperProfile<Trackers, TrackersSchema>, I
             Counters = obj.Counters,
             Enums = obj.Enums,
             Flags = obj.Flags,
+            BigFlags = obj.BigFlags,
             Tags = obj.Tags,
             TimedEvents = obj.TimedEvents
         };
@@ -60,6 +63,7 @@ public class TrackersMapperProfile : IMapperProfile<Trackers, TrackersSchema>, I
             Counters = obj.Counters,
             Enums = obj.Enums,
             Flags = obj.Flags,
+            BigFlags = obj.BigFlags,
             Tags = obj.Tags,
             TimedEvents = obj.TimedEvents
         };

@@ -1,8 +1,10 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Entities.Server;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Converters.Server;
 
@@ -81,7 +83,7 @@ public sealed class MetaDataConverter : PacketConverterBase<MetaDataArgs>
 
                 break;
             case MetaDataRequestType.AllCheckSums:
-                writer.WriteUInt16((byte)args.MetaDataCollection!.Count);
+                writer.WriteUInt16((ushort)args.MetaDataCollection!.Count);
 
                 foreach (var info in args.MetaDataCollection!)
                 {

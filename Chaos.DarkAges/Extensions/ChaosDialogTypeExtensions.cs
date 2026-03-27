@@ -7,58 +7,58 @@ namespace Chaos.DarkAges.Extensions;
 /// <summary>
 ///     Provides extension methods for <see cref="ChaosDialogType" />.
 /// </summary>
-public static class ChaosDialogTypeExtensions
+public static class ChaosDialogTypetensions
 {
-    /// <summary>
-    ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="DialogType" />
-    /// </summary>
     /// <param name="value">
     ///     The value to convert
     /// </param>
-    /// <returns>
-    ///     An equivalent <see cref="DialogType" /> to the <see cref="DialogType" /> if one exists, otherwise
-    ///     <c>
-    ///         null
-    ///     </c>
-    /// </returns>
-    public static DialogType? ToDialogType(this ChaosDialogType value)
-        => value switch
-        {
-            ChaosDialogType.Normal          => DialogType.Normal,
-            ChaosDialogType.DialogMenu      => DialogType.DialogMenu,
-            ChaosDialogType.DialogTextEntry => DialogType.TextEntry,
-            ChaosDialogType.Speak           => DialogType.Speak,
-            ChaosDialogType.CreatureMenu    => DialogType.CreatureMenu,
-            ChaosDialogType.Protected       => DialogType.Protected,
-            ChaosDialogType.CloseDialog     => DialogType.CloseDialog,
-            _                               => null
-        };
+    extension(ChaosDialogType value)
+    {
+        /// <summary>
+        ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="DialogType" />
+        /// </summary>
+        /// <returns>
+        ///     An equivalent <see cref="DialogType" /> to the <see cref="DialogType" /> if one exists, otherwise
+        ///     <c>
+        ///         null
+        ///     </c>
+        /// </returns>
+        public DialogType? ToDialogType()
+            => value switch
+            {
+                ChaosDialogType.Normal          => DialogType.Normal,
+                ChaosDialogType.DialogMenu      => DialogType.DialogMenu,
+                ChaosDialogType.DialogTextEntry => DialogType.TextEntry,
+                ChaosDialogType.Speak           => DialogType.Speak,
+                ChaosDialogType.CreatureMenu    => DialogType.CreatureMenu,
+                ChaosDialogType.Protected       => DialogType.Protected,
+                ChaosDialogType.CloseDialog     => DialogType.CloseDialog,
+                _                               => null
+            };
 
-    /// <summary>
-    ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="MenuType" />
-    /// </summary>
-    /// <param name="value">
-    ///     The value to convert
-    /// </param>
-    /// <returns>
-    ///     An equivalent <see cref="MenuType" /> to the <see cref="MenuType" /> if one exists, otherwise
-    ///     <c>
-    ///         null
-    ///     </c>
-    /// </returns>
-    public static MenuType? ToMenuType(this ChaosDialogType value)
-        => value switch
-        {
-            ChaosDialogType.Menu                  => MenuType.Menu,
-            ChaosDialogType.MenuWithArgs          => MenuType.MenuWithArgs,
-            ChaosDialogType.MenuTextEntry         => MenuType.TextEntry,
-            ChaosDialogType.MenuTextEntryWithArgs => MenuType.TextEntryWithArgs,
-            ChaosDialogType.ShowItems             => MenuType.ShowItems,
-            ChaosDialogType.ShowPlayerItems       => MenuType.ShowPlayerItems,
-            ChaosDialogType.ShowSpells            => MenuType.ShowSpells,
-            ChaosDialogType.ShowSkills            => MenuType.ShowSkills,
-            ChaosDialogType.ShowPlayerSpells      => MenuType.ShowPlayerSpells,
-            ChaosDialogType.ShowPlayerSkills      => MenuType.ShowPlayerSkills,
-            _                                     => null
-        };
+        /// <summary>
+        ///     Converts a <see cref="ChaosDialogType" /> to a <see cref="MenuType" />
+        /// </summary>
+        /// <returns>
+        ///     An equivalent <see cref="MenuType" /> to the <see cref="MenuType" /> if one exists, otherwise
+        ///     <c>
+        ///         null
+        ///     </c>
+        /// </returns>
+        public MenuType? ToMenuType()
+            => value switch
+            {
+                ChaosDialogType.Menu                  => MenuType.Menu,
+                ChaosDialogType.MenuWithArgs          => MenuType.MenuWithArgs,
+                ChaosDialogType.MenuTextEntry         => MenuType.TextEntry,
+                ChaosDialogType.MenuTextEntryWithArgs => MenuType.TextEntryWithArgs,
+                ChaosDialogType.ShowItems             => MenuType.ShowItems,
+                ChaosDialogType.ShowPlayerItems       => MenuType.ShowPlayerItems,
+                ChaosDialogType.ShowSpells            => MenuType.ShowSpells,
+                ChaosDialogType.ShowSkills            => MenuType.ShowSkills,
+                ChaosDialogType.ShowPlayerSpells      => MenuType.ShowPlayerSpells,
+                ChaosDialogType.ShowPlayerSkills      => MenuType.ShowPlayerSkills,
+                _                                     => null
+            };
+    }
 }

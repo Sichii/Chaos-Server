@@ -1,9 +1,11 @@
+#region
 using Chaos.Collections;
 using Chaos.Models.WorldMap;
 using Chaos.Networking.Entities.Server;
 using Chaos.Schemas.Content;
 using Chaos.Storage.Abstractions;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -22,8 +24,7 @@ public class WorldMapMapperProfile(ISimpleCache simpleCache, ITypeMapper mapper)
     WorldMapArgs IMapperProfile<WorldMap, WorldMapArgs>.Map(WorldMap obj)
         => new()
         {
-            FieldName = obj.WorldMapKey,
-            FieldIndex = obj.FieldIndex,
+            FieldName = $"field{obj.FieldIndex:D3}",
             Nodes = Mapper.MapMany<WorldMapNodeInfo>(obj.Nodes.Values)
                           .ToList()
         };
@@ -34,9 +35,10 @@ public class WorldMapMapperProfile(ISimpleCache simpleCache, ITypeMapper mapper)
         {
             WorldMapKey = obj.WorldMapKey,
             FieldIndex = obj.FieldIndex,
-            Nodes = obj.NodeKeys
-                       .Select(key => SimpleCache.Get<WorldMapNode>(key))
-                       .ToDictionary(node => node.UniqueId)
+            Nodes = new SortedList<ushort, WorldMapNode>(
+                obj.NodeKeys
+                   .Select(key => SimpleCache.Get<WorldMapNode>(key))
+                   .ToDictionary(node => node.UniqueId))
         };
 
     /// <inheritdoc />

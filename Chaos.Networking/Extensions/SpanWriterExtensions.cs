@@ -1,11 +1,16 @@
+#region
 using Chaos.Geometry.Abstractions;
 using Chaos.IO.Memory;
+#endregion
 
 // ReSharper disable once CheckNamespace
 namespace Chaos.Extensions.Networking;
 
 internal static class SpanWriterExtensions
 {
-    internal static void WritePoint16(this ref SpanWriter writer, IPoint point) => writer.WritePoint16((ushort)point.X, (ushort)point.Y);
-    internal static void WritePoint8(this ref SpanWriter writer, IPoint point) => writer.WritePoint8((byte)point.X, (byte)point.Y);
+    extension(ref SpanWriter writer)
+    {
+        internal void WritePoint16(IPoint point) => writer.WritePoint16((ushort)point.X, (ushort)point.Y);
+        internal void WritePoint8(IPoint point) => writer.WritePoint8((byte)point.X, (byte)point.Y);
+    }
 }

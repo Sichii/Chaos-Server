@@ -3,15 +3,11 @@ using Chaos.Collections.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
-using Chaos.Models.Menu;
 using Chaos.Models.Panel;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.EffectScripts.Abstractions;
-using Chaos.Scripting.ReactorTileScripts.Abstractions;
-using Chaos.Scripting.SkillScripts.Abstractions;
-using Chaos.Scripting.SpellScripts.Abstractions;
 #endregion
 
 namespace Chaos.Collections;
@@ -95,12 +91,11 @@ public sealed class EffectsBar : IEffectsBar
     /// <inheritdoc />
     public IEnumerator<IEffect> GetEnumerator()
     {
-        List<IEffect> snapshot;
+        using var @lock = Sync.EnterScope();
 
-        using (Sync.EnterScope())
-            snapshot = Effects.Values.ToList();
+        var snapshot = Effects.Values.ToArray();
 
-        return snapshot.GetEnumerator();
+        return snapshot.GetGenericEnumerator();
     }
 
     /// <inheritdoc />
@@ -116,8 +111,7 @@ public sealed class EffectsBar : IEffectsBar
         var orderedEffects = Effects.Values
                                     .OrderBy(e => e.Remaining)
                                     .DistinctBy(e => e.Icon)
-                                    .Take(9)
-                                    .ToList();
+                                    .Take(9);
 
         //re-apply all effects sorted by ascending remaining duration
         foreach (var effect in orderedEffects)
@@ -159,7 +153,7 @@ public sealed class EffectsBar : IEffectsBar
         using var @lock = Sync.EnterScope();
         var shouldResetDisplay = false;
 
-        foreach (var effect in Effects.Values.ToList())
+        foreach (var effect in Effects.Values.ToArray())
         {
             effect.Update(delta);
 
@@ -185,11 +179,13 @@ public sealed class EffectsBar : IEffectsBar
         if (removed)
         {
             //these are the effect that need to be displayed now
-            var currentlyDisplayed = Effects.Values
-                                            .OrderBy(e => e.Remaining)
-                                            .DistinctBy(e => e.Icon)
-                                            .Take(9)
-                                            .ToList();
+            using var rented = Effects.Values
+                                      .OrderBy(e => e.Remaining)
+                                      .DistinctBy(e => e.Icon)
+                                      .Take(9)
+                                      .ToRented();
+
+            var currentlyDisplayed = rented.Array;
 
             var wasBeingDisplayed = true;
 
@@ -212,11 +208,7 @@ public sealed class EffectsBar : IEffectsBar
                 //remove the effect from the bar and re add it (this will move it up the list)
                 if (currentEffect.Remaining > effect.Remaining)
                 {
-                    //if i == 9, this effect was not previously being displayed
-                    //so we dont need to remove it from the bar
-                    if (i != 9)
-                        AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
-
+                    AffectedAisling?.Client.SendEffect(EffectColor.None, currentEffect.Icon);
                     AffectedAisling?.Client.SendEffect(currentEffect.Color, currentEffect.Icon);
                 }
             }

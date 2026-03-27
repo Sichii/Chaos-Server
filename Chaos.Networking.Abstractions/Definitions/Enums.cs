@@ -538,7 +538,7 @@ public enum ServerOpCode : byte
     ///     <br />
     ///     Hex value: 0x1B
     /// </summary>
-    DisplayNotepad = 27,
+    DisplayEditableNotepad = 27,
 
     /// <summary>
     ///     OpCode used to signal to the client that a map change operation has completed
@@ -630,6 +630,13 @@ public enum ServerOpCode : byte
     ///     Hex value: 0x34
     /// </summary>
     OtherProfile = 52,
+
+    /// <summary>
+    ///     OpCode used to display a readonly notepad to a client
+    ///     <br />
+    ///     Hex value: 0x35
+    /// </summary>
+    DisplayReadonlyNotepad = 53,
 
     /// <summary>
     ///     OpCode used to display the world list to a client

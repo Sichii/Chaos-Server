@@ -171,59 +171,69 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
                 schema.InstanceId = shardId;
             };
 
-        var mapInstance = EntityRepository.LoadAndMap<MapInstance, MapInstanceSchema>(mapInstancePath, mapInstanceAction);
-        var monsterSpawns = EntityRepository.LoadAndMapMany<MonsterSpawn, MonsterSpawnSchema>(monsterSpawnsPath);
-        var merchantSpawnSchemas = EntityRepository.LoadMany<MerchantSpawnSchema>(merchantSpawnsPath);
-        var reactorsSchemas = EntityRepository.LoadMany<ReactorTileSchema>(reactorsPath);
+        var mapInstance = default(MapInstance)!;
+        var monsterSpawns = default(MonsterSpawn[])!;
+        var merchantSpawnSchemas = default(MerchantSpawnSchema[])!;
+        var reactorsSchemas = default(ReactorTileSchema[])!;
+
+        Parallel.Invoke(
+            () => mapInstance = EntityRepository.LoadAndMap<MapInstance, MapInstanceSchema>(mapInstancePath, mapInstanceAction),
+            () => monsterSpawns = EntityRepository.LoadAndMapMany<MonsterSpawn, MonsterSpawnSchema>(monsterSpawnsPath)
+                                                  .ToArray(),
+            () => merchantSpawnSchemas = EntityRepository.LoadMany<MerchantSpawnSchema>(merchantSpawnsPath)
+                                                         .ToArray(),
+            () => reactorsSchemas = EntityRepository.LoadMany<ReactorTileSchema>(reactorsPath)
+                                                    .ToArray());
 
         mapInstance.BaseInstanceId = baseInstanceId;
 
-        foreach (var reactorSchema in reactorsSchemas)
+        mapInstance.StartAsync(() =>
         {
-            var owner = string.IsNullOrEmpty(reactorSchema.OwnerMonsterTemplateKey)
-                ? null
-                : MonsterFactory.Create(reactorSchema.OwnerMonsterTemplateKey, mapInstance, reactorSchema.Source);
+            foreach (var reactorSchema in reactorsSchemas)
+            {
+                var owner = string.IsNullOrEmpty(reactorSchema.OwnerMonsterTemplateKey)
+                    ? null
+                    : MonsterFactory.Create(reactorSchema.OwnerMonsterTemplateKey, mapInstance, reactorSchema.Source);
 
-            var reactor = ReactorTileFactory.Create(
-                mapInstance,
-                reactorSchema.Source,
-                reactorSchema.ShouldBlockPathfinding,
-                reactorSchema.ScriptKeys,
-                new ConcurrentDictionary<string, IScriptVars>(
-                    reactorSchema.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
-                    StringComparer.OrdinalIgnoreCase),
-                owner);
+                var reactor = ReactorTileFactory.Create(
+                    mapInstance,
+                    reactorSchema.Source,
+                    reactorSchema.ShouldBlockPathfinding,
+                    reactorSchema.ScriptKeys,
+                    new ConcurrentDictionary<string, IScriptVars>(
+                        reactorSchema.ScriptVars.Select(kvp => new KeyValuePair<string, IScriptVars>(kvp.Key, kvp.Value)),
+                        StringComparer.OrdinalIgnoreCase),
+                    owner);
 
-            mapInstance.SimpleAdd(reactor);
-        }
+                mapInstance.SimpleAdd(reactor);
+            }
 
-        foreach (var merchantSpawn in merchantSpawnSchemas)
-        {
-            var merchant = MerchantFactory.Create(
-                merchantSpawn.MerchantTemplateKey,
-                mapInstance,
-                merchantSpawn.SpawnPoint,
-                merchantSpawn.ExtraScriptKeys);
+            foreach (var merchantSpawn in merchantSpawnSchemas)
+            {
+                var merchant = MerchantFactory.Create(
+                    merchantSpawn.MerchantTemplateKey,
+                    mapInstance,
+                    merchantSpawn.SpawnPoint,
+                    merchantSpawn.ExtraScriptKeys);
 
-            var pathingBoundsBlacklist = merchantSpawn.PathingBounds?.GetOutline() ?? [];
+                var pathingBoundsBlacklist = merchantSpawn.PathingBounds is { } bounds ? bounds.GetOutline() : [];
 
-            merchant.BlackList = merchantSpawn.BlackList
-                                              .Concat(pathingBoundsBlacklist.OfType<IPoint>())
-                                              .ToList();
-            merchant.Direction = merchantSpawn.Direction ?? (Direction)Random.Shared.Next(4);
-            mapInstance.SimpleAdd(merchant);
-        }
+                merchant.BlackList = merchantSpawn.BlackList
+                                                  .Concat(pathingBoundsBlacklist.OfType<IPoint>())
+                                                  .ToList();
+                merchant.Direction = merchantSpawn.Direction ?? (Direction)Random.Shared.Next(4);
+                mapInstance.SimpleAdd(merchant);
+            }
 
-        foreach (var monsterSpawn in monsterSpawns)
-        {
-            mapInstance.AddSpawner(monsterSpawn);
-            monsterSpawn.FullSpawn();
-        }
+            foreach (var monsterSpawn in monsterSpawns)
+            {
+                mapInstance.AddSpawner(monsterSpawn);
+                monsterSpawn.FullSpawn();
+            }
 
-        mapInstance.Pathfinder = PathfindingService;
-        PathfindingService.RegisterGrid(mapInstance);
-
-        mapInstance.StartAsync();
+            mapInstance.Pathfinder = PathfindingService;
+            PathfindingService.RegisterGrid(mapInstance);
+        });
 
         return mapInstance;
     }
@@ -343,9 +353,9 @@ public sealed class ExpiringMapInstanceCache : ExpiringFileCache<MapInstance, Ma
     {
         var shards = LocalLookup.Values
                                 .Where(m => m.IsShard)
-                                .ToList();
+                                .GroupBy(s => s.BaseInstanceId);
 
-        foreach (var mapGroup in shards.GroupBy(s => s.BaseInstanceId))
+        foreach (var mapGroup in shards)
         {
             var shardLookup = new ConcurrentDictionary<string, MapInstance>(StringComparer.OrdinalIgnoreCase);
 

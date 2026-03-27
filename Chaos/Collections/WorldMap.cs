@@ -17,7 +17,7 @@ public sealed class WorldMap
     /// <summary>
     ///     A collection of world map nodes keyed by their unique id
     /// </summary>
-    public required Dictionary<ushort, WorldMapNode> Nodes { get; init; } = new();
+    public required SortedList<ushort, WorldMapNode> Nodes { get; init; } = new();
 
     /// <summary>
     ///     A unique string identifier for this world map

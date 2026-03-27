@@ -1,4 +1,5 @@
 #region
+using Chaos.Geometry.Abstractions;
 using Chaos.Geometry.EqualityComparers;
 using FluentAssertions;
 #endregion
@@ -23,6 +24,28 @@ public sealed class LocationEqualityComparerTests
     }
 
     [Test]
+    public void Equals_ReturnsFalse_WhenXIsNull()
+    {
+        ILocation? x = null;
+        ILocation? y = new Location("Map", 1, 2);
+        var result = LocationEqualityComparer.Instance.Equals(x, y);
+
+        result.Should()
+              .BeFalse();
+    }
+
+    [Test]
+    public void Equals_ReturnsFalse_WhenYIsNull()
+    {
+        ILocation? x = new Location("Map", 1, 2);
+        ILocation? y = null;
+        var result = LocationEqualityComparer.Instance.Equals(x, y);
+
+        result.Should()
+              .BeFalse();
+    }
+
+    [Test]
     public void Equals_ReturnsTrue_WhenLocationsAreEqual()
     {
         // Arrange
@@ -33,6 +56,16 @@ public sealed class LocationEqualityComparerTests
         var result = LocationEqualityComparer.Instance.Equals(location1, location2);
 
         // Assert
+        result.Should()
+              .BeTrue();
+    }
+
+    [Test]
+    public void Equals_ReturnsTrue_WhenSameReference()
+    {
+        var loc = new Location("Map", 1, 2);
+        var result = LocationEqualityComparer.Instance.Equals(loc, loc);
+
         result.Should()
               .BeTrue();
     }

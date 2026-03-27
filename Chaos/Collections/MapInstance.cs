@@ -1,9 +1,10 @@
 #region
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Chaos.Common.Abstractions.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.DarkAges.Definitions;
+using Chaos.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
@@ -17,8 +18,8 @@ using Chaos.NLog.Logging.Extensions;
 using Chaos.Pathfinding.Abstractions;
 using Chaos.Scripting.Abstractions;
 using Chaos.Scripting.MapScripts.Abstractions;
+using Chaos.Services.Other.Abstractions;
 using Chaos.Services.Servers.Options;
-using Chaos.Services.Storage.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
@@ -33,16 +34,16 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 {
     private readonly IAsyncStore<Aisling> AislingStore;
     private readonly IIntervalTimer DayNightCycleTimer;
-    private readonly DeltaMonitor DeltaMonitor;
     private readonly DeltaTime DeltaTime;
     private readonly PeriodicTimer DeltaTimer;
     private readonly IIntervalTimer HandleShardLimitersTimer;
+    private readonly TaskCompletionSource InitializationTcs;
     private readonly ILogger<MapInstance> Logger;
     private readonly MapEntityCollection Objects;
     private readonly ConcurrentQueue<Action> ProcessingQueue;
     private readonly CancellationToken ServerShutdownToken;
-    private readonly IShardGenerator ShardGenerator;
     private readonly ISimpleCache SimpleCache;
+    private int _pendingAislingCount;
 
     /// <summary>
     ///     Whether the map will experience day/night cycles automatically
@@ -144,6 +145,19 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public FifoAutoReleasingSemaphoreSlim Sync { get; }
 
     /// <summary>
+    ///     The number of aislings on this map plus aislings that have been assigned to this map by sharding but not yet added
+    ///     to the entity collection. Used for sharding capacity decisions
+    /// </summary>
+    public int EffectiveAislingCount => Objects.AislingCount + Volatile.Read(ref _pendingAislingCount);
+
+    public bool HasAislings => Objects.AislingCount > 0;
+
+    /// <summary>
+    ///     A task that completes when the map instance has finished initialization
+    /// </summary>
+    public Task Initialization => InitializationTcs.Task;
+
+    /// <summary>
     ///     Whether this map is a shard of another map
     /// </summary>
     public bool IsShard => !string.IsNullOrEmpty(BaseInstanceId);
@@ -154,6 +168,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public string LoadedFromInstanceId => BaseInstanceId ?? InstanceId;
 
     /// <summary>
+    ///     The service that coordinates map traversal and sharding
+    /// </summary>
+    public IMapTraversalService TraversalService { get; }
+
+    /// <summary>
     ///     Initializes a new instance of the <see cref="MapInstance" /> class
     /// </summary>
     /// <param name="template">
@@ -162,8 +181,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <param name="simpleCache">
     ///     A generic cache provider
     /// </param>
-    /// <param name="shardGenerator">
-    ///     A services used to generate shards of maps
+    /// <param name="mapTraversalService">
+    ///     A service that coordinates map traversal and sharding
     /// </param>
     /// <param name="scriptProvider">
     ///     A service used to generate scripts
@@ -189,7 +208,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public MapInstance(
         MapTemplate template,
         ISimpleCache simpleCache,
-        IShardGenerator shardGenerator,
+        IMapTraversalService mapTraversalService,
         IScriptProvider scriptProvider,
         string name,
         string instanceId,
@@ -201,6 +220,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         Name = name;
         InstanceId = instanceId;
         AislingStore = aislingStore;
+        TraversalService = mapTraversalService;
         Logger = logger;
         ServerShutdownToken = serverCtx.Token;
         SimpleCache = simpleCache;
@@ -208,6 +228,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
         Objects = new MapEntityCollection(logger, template.Width, template.Height);
 
+        InitializationTcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         MapInstanceCtx = CancellationTokenSource.CreateLinkedTokenSource(ServerShutdownToken);
         MonsterSpawns = [];
         Sync = new FifoAutoReleasingSemaphoreSlim(1, 1, $"MapInstance {InstanceId}");
@@ -215,18 +236,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         ScriptKeys = new HashSet<string>(template.ScriptKeys, StringComparer.OrdinalIgnoreCase);
         Shards = new ConcurrentDictionary<string, MapInstance>(StringComparer.OrdinalIgnoreCase);
         ShardLimiterTimers = new ConcurrentDictionary<Aisling, IIntervalTimer>();
-        ShardGenerator = shardGenerator;
         HandleShardLimitersTimer = new IntervalTimer(TimeSpan.FromSeconds(1));
         DayNightCycleTimer = new IntervalTimer(TimeSpan.FromSeconds(1));
         var delta = 1000.0 / WorldOptions.Instance.UpdatesPerSecond;
         DeltaTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(delta));
         DeltaTime = new DeltaTime();
-
-        DeltaMonitor = new DeltaMonitor(
-            InstanceId,
-            logger,
-            TimeSpan.FromMinutes(1),
-            Math.Min(delta * 10, 500));
 
         if (extraScriptKeys != null)
             ScriptKeys.AddRange(extraScriptKeys);
@@ -239,47 +253,57 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     {
         try
         {
-            Objects.Update(delta);
+            using (ActivitySources.StartUpdateActivity("Update.Map.Objects"))
+                Objects.Update(delta);
 
-            foreach (ref var spawn in CollectionsMarshal.AsSpan(MonsterSpawns))
-                spawn.Update(delta);
+            using (ActivitySources.StartUpdateActivity("Update.Map.Spawns"))
+                foreach (ref var spawn in CollectionsMarshal.AsSpan(MonsterSpawns))
+                    spawn.Update(delta);
 
-            Script.Update(delta);
-            HandleShardLimitersTimer.Update(delta);
-            DayNightCycleTimer.Update(delta);
+            using (ActivitySources.StartUpdateActivity("Update.Map.Scripts"))
+                Script.Update(delta);
 
-            foreach (var timer in ShardLimiterTimers.Values)
-                timer.Update(delta);
-
-            if (HandleShardLimitersTimer.IntervalElapsed)
-                HandleShardLimiters();
-
-            if (AutoDayNightCycle && DayNightCycleTimer.IntervalElapsed)
+            using (ActivitySources.StartUpdateActivity("Update.Map.Timers"))
             {
-                var lightLevel = GameTime.Now.TimeOfDay;
+                HandleShardLimitersTimer.Update(delta);
+                DayNightCycleTimer.Update(delta);
 
-                if (CurrentLightLevel != lightLevel)
+                foreach (var timer in ShardLimiterTimers.Values)
+                    timer.Update(delta);
+
+                if (HandleShardLimitersTimer.IntervalElapsed)
+                    TraversalService.HandleShardLimiters(this);
+
+                if (AutoDayNightCycle && DayNightCycleTimer.IntervalElapsed)
                 {
-                    CurrentLightLevel = lightLevel;
+                    var lightLevel = GameTime.Now.TimeOfDay;
 
-                    foreach (var aisling in Objects.Values<Aisling>())
-                        aisling.Client.SendLightLevel(CurrentLightLevel);
+                    if (CurrentLightLevel != lightLevel)
+                    {
+                        CurrentLightLevel = lightLevel;
+
+                        foreach (var aisling in Objects.Values<Aisling>())
+                            aisling.Client.SendLightLevel(CurrentLightLevel);
+                    }
                 }
             }
 
-            while (ProcessingQueue.TryDequeue(out var action))
-                try
-                {
-                    action();
-                } catch (Exception e)
-                {
-                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
-                          .LogError(e, "Failed to process action in map {@MapInstance}", this);
-                }
+            using (ActivitySources.StartUpdateActivity("Update.Map.ProcessingQueue"))
+                while (ProcessingQueue.TryDequeue(out var action))
+                    try
+                    {
+                        action();
+                    } catch (Exception e)
+                    {
+                        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+                              .WithProperty(this)
+                              .LogError(e, "Failed to process action in map {@MapInstanceId}", InstanceId);
+                    }
         } catch (Exception e)
         {
             Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
-                  .LogError(e, "Failed to update map {@MapInstance}", this);
+                  .WithProperty(this)
+                  .LogError(e, "Failed to update map {@MapInstanceId}", InstanceId);
         }
     }
 
@@ -335,7 +359,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         var incomingEntities = visibleObjects.ToHashSet<VisibleEntity>();
 
         //update the viewport of any creature within range of the new objects
-        foreach (var creature in GetEntities<Creature>())
+        foreach (var creature in GetEntities<Creature>()
+                     .ToArray())
         {
             //incoming entities need full viewport updates so that they can see existing entities
             if (incomingEntities.Contains(creature))
@@ -347,9 +372,10 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
 
             //entities that were already on the map only need to be updated with the incoming entities
             //and only if there even are any incoming entities within their viewport
-            var withinRange = visibleObjects.ThatAreWithinRange(creature)
-                                            .OfType<VisibleEntity>()
-                                            .ToHashSet();
+            using var rentedWithinRange = visibleObjects.ThatAreWithinRange(creature)
+                                                        .OfType<VisibleEntity>()
+                                                        .ToRented();
+            var withinRange = rentedWithinRange.Array;
 
             //non-aislings only cause partial viewport updates because they do not have shared vision requirements (due to lanterns)
             //this method should never be called with aislings
@@ -370,17 +396,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <remarks>
     ///     This method will handle all aspects of this operation, including updating viewports, and invoking events on scripts
     /// </remarks>
-    public void AddEntity(VisibleEntity visibleEntity, IPoint point)
-    {
-        //shards cant shard, shardtype none means no sharding, non-aisling cant create shards
-        if (IsShard
-            || (ShardingOptions == null)
-            || (ShardingOptions.ShardingType == ShardingType.None)
-            || visibleEntity is not Aisling aisling)
-            InnerAddEntity(visibleEntity, point);
-        else
-            HandleSharding(aisling, point);
-    }
+    public void AddEntity(VisibleEntity visibleEntity, IPoint point) => InnerAddEntity(visibleEntity, point);
 
     /// <summary>
     ///     Adds a monster spawner to the map
@@ -392,15 +408,6 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     {
         monsterSpawn.MapInstance = this;
         MonsterSpawns.Add(monsterSpawn);
-    }
-
-    private void AddToNewShard(Aisling aisling, IPoint point)
-    {
-        var shard = ShardGenerator.CreateShardOfInstance(InstanceId);
-        shard.Shards = Shards;
-        Shards.TryAdd(shard.InstanceId, shard);
-
-        shard.AddAislingDirect(aisling, point);
     }
 
     /// <summary>
@@ -455,6 +462,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             obj?.OnClicked(source);
         }
     }
+
+    /// <summary>
+    ///     Decrements the pending aisling reservation count. Call after the aisling has been added (or if the add fails)
+    /// </summary>
+    public void DecrementPendingAislings() => Interlocked.Decrement(ref _pendingAislingCount);
 
     /// <summary>
     ///     Destroys the map instance
@@ -529,6 +541,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     [OverloadResolutionPriority(1)]
     public IEnumerable<T> GetEntitiesAtPoints<T>(params IEnumerable<Point> points) where T: MapEntity => Objects.AtPoints<T>(points);
 
+    public IEnumerable<T> GetEntitiesWithin<T>(IRectangle rectangle) where T: MapEntity => Objects.Within<T>(rectangle);
+
     /// <summary>
     ///     Gets all entities within the given range of a given point
     /// </summary>
@@ -544,386 +558,10 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     public IEnumerable<T> GetEntitiesWithinRange<T>(IPoint point, int range = 15) where T: MapEntity
         => Objects.WithinRange<T>(point, range);
 
-    private void HandleSharding(Aisling aisling, IPoint point)
-    {
-        switch (ShardingOptions!.ShardingType)
-        {
-            case ShardingType.None:
-            //the shard is generated on create, so just add the entity to whatever instance it is already being added to
-            case ShardingType.AlwaysShardOnCreate:
-                InnerAddEntity(aisling, point);
-
-                break;
-            case ShardingType.PlayerLimit:
-            case ShardingType.AbsolutePlayerLimit:
-            {
-                //if the limit is 1, do not re-use instances
-                if (ShardingOptions.Limit == 1) { } else
-                {
-                    //non-absolute player limit will allow group members to go over the normal player limit
-                    if (ShardingOptions.ShardingType == ShardingType.PlayerLimit)
-                    {
-                        var shard = aisling.Group
-                                           ?.Where(a => !a.Equals(aisling))
-                                           .Select(m => m.MapInstance)
-                                           .FirstOrDefault(m
-                                               => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
-
-                        if (shard != null)
-                        {
-                            //add this player to that instance or shard
-                            shard.AddAislingDirect(aisling, point);
-
-                            return;
-                        }
-                    }
-
-                    //if the limit is not 1, using previously opened shards is allowed
-                    //starting with this base instance, check each shard to see if there is an available spot
-                    foreach (var instance in Shards.Values.Prepend(this))
-                    {
-                        var playerCount = instance.Objects
-                                                  .Values<Aisling>()
-                                                  .Count();
-
-                        if (playerCount < ShardingOptions.Limit)
-                        {
-                            instance.InnerAddEntity(aisling, point);
-
-                            return;
-                        }
-                    }
-
-                    //if there is no available spots, create a new shard
-                }
-
-                AddToNewShard(aisling, point);
-
-                break;
-            }
-            case ShardingType.AbsoluteGroupLimit:
-            {
-                //if any group member is already in this instance or a shard of this instance
-                var shard = aisling.Group
-                                   ?.Where(a => !a.Equals(aisling))
-                                   .Select(m => m.MapInstance)
-                                   .FirstOrDefault(m
-                                       => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
-
-                if (shard != null)
-                {
-                    //add this player to that instance or shard
-                    shard.AddAislingDirect(aisling, point);
-
-                    return;
-                }
-
-                //if the limit is 1, do not re-use instances
-                if (ShardingOptions.Limit == 1) { } else
-                    foreach (var instance in Shards.Values.Prepend(this))
-                    {
-                        //get the number of groups in this instance
-                        var groupCount = instance.Objects
-                                                 .Values<Aisling>()
-                                                 .GroupBy(a => a.Group)
-                                                 .Sum(grp => grp.Key == null ? grp.Count() : 1);
-
-                        //if this instance isnt at the group limit
-                        if (groupCount < ShardingOptions.Limit)
-                        {
-                            //add this player to that instance and return
-                            instance.InnerAddEntity(aisling, point);
-
-                            return;
-                        }
-                    }
-
-                //if we couldnt find a suitable instance to place the player, generate a new one and add them to it
-                AddToNewShard(aisling, point);
-
-                break;
-            }
-            case ShardingType.AbsoluteGuildLimit:
-            {
-                //if any guild member is already in this instance or a shard of this instance
-                var shard = aisling.Guild
-                                   ?.GetOnlineMembers()
-                                   .Where(a => !a.Equals(aisling))
-                                   .Select(m => m.MapInstance)
-                                   .FirstOrDefault(m
-                                       => m.InstanceId.EqualsI(InstanceId) || (m.IsShard && m.BaseInstanceId!.EqualsI(InstanceId)));
-
-                if (shard != null)
-                {
-                    //add this player to that instance or shard
-                    shard.AddAislingDirect(aisling, point);
-
-                    return;
-                }
-
-                //if the limit is 1, do not re-use instances
-                if (ShardingOptions.Limit == 1) { } else
-                    foreach (var instance in Shards.Values.Prepend(this))
-                    {
-                        //get the number of guilds in this instance
-                        var guildCount = instance.Objects
-                                                 .Values<Aisling>()
-                                                 .GroupBy(a => a.Guild)
-                                                 .Sum(gld => gld.Key == null ? gld.Count() : 1);
-
-                        //if this instance isnt at the guild limit
-                        if (guildCount < ShardingOptions.Limit)
-                        {
-                            //add this player to that instance and return
-                            instance.InnerAddEntity(aisling, point);
-
-                            return;
-                        }
-                    }
-
-                //if we couldnt find a suitable instance to place the player, generate a new one and add them to it
-                AddToNewShard(aisling, point);
-
-                break;
-            }
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-
-    private void HandleShardLimiters()
-    {
-        if (ShardingOptions is null)
-            return;
-
-        //clean up limiter timers
-        foreach (var aisling in ShardLimiterTimers.Keys)
-            if (!Objects.ContainsKey(aisling.Id))
-                ShardLimiterTimers.Remove(aisling, out _);
-
-        var limit = ShardingOptions.Limit;
-
-        switch (ShardingOptions.ShardingType)
-        {
-            case ShardingType.None:
-            case ShardingType.PlayerLimit:
-            case ShardingType.AlwaysShardOnCreate:
-                break;
-            case ShardingType.AbsolutePlayerLimit:
-            {
-                var aislings = Objects.Values<Aisling>()
-                                      .Where(aisling => !aisling.IsAdmin)
-                                      .ToList();
-
-                var amountOverLimit = aislings.Count - limit;
-
-                //if we're not over the limit, do nothing
-                if (amountOverLimit <= 0)
-                    return;
-
-                var aislingsToRemove = aislings.OrderByDescending(a => a.Id)
-                                               .ThenBy(a =>
-                                               {
-                                                   if (a.Group == null)
-                                                       return 0;
-
-                                                   return a.Group.Count(m => m.MapInstance == this);
-                                               })
-                                               .Take(amountOverLimit)
-                                               .ToHashSet();
-
-                //for each timer that isnt for one of these aislings
-                //remove that timer
-                foreach (var aislingToRemove in ShardLimiterTimers.Keys.Except(aislingsToRemove))
-                    ShardLimiterTimers.Remove(aislingToRemove, out _);
-
-                //for each aisling that doesnt have a timer
-                //create a timer and send an initial warning
-                foreach (var newAisling in aislingsToRemove.Except(ShardLimiterTimers.Keys))
-                {
-                    ShardLimiterTimers.TryAdd(
-                        newAisling,
-                        new PeriodicMessageTimer(
-                            TimeSpan.FromSeconds(15),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(1),
-                            "You will be removed from the map in {Time}",
-                            message => newAisling.SendActiveMessage(message)));
-
-                    newAisling.SendActiveMessage("The map has reached it's player limit");
-                    newAisling.SendActiveMessage("You will be removed from the map in 15 seconds");
-                }
-
-                //for each timer that has expired
-                //move the player to the exit and remove the timer
-                foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
-                                                      .ToList())
-                    if (kvp.Value.IntervalElapsed)
-                    {
-                        var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
-                        kvp.Key.TraverseMap(exitMapInstance, ShardingOptions.ExitLocation);
-                        ShardLimiterTimers.Remove(kvp.Key, out _);
-                    }
-
-                break;
-            }
-            case ShardingType.AbsoluteGroupLimit:
-            {
-                var aislings = Objects.Values<Aisling>()
-                                      .Where(aisling => !aisling.IsAdmin)
-                                      .ToList();
-
-                //number of unique groups in the zone
-                var groups = aislings.GroupBy(a => a.Group)
-                                     .SelectMany(grp =>
-                                     {
-                                         if (grp.Key == null)
-                                             return grp.Select(m => new List<Aisling>
-                                             {
-                                                 m
-                                             });
-
-                                         return
-                                         [
-                                             grp.Where(m => m.MapInstance == this)
-                                                .ToList()
-                                         ];
-                                     })
-                                     .ToList();
-
-                var groupCount = groups.Count;
-
-                var amountOverLimit = groupCount - limit;
-
-                //if we're not over the limit, do nothing
-                if (amountOverLimit <= 0)
-                    return;
-
-                var groupsToRemove = groups.OrderByDescending(grp => grp.Max(a => a.Id))
-                                           .ThenBy(grp => grp.Count)
-                                           .Take(amountOverLimit)
-                                           .ToList();
-
-                var aislingsToRemove = groupsToRemove.SelectMany(l => l)
-                                                     .ToList();
-
-                //for each timer that isnt for one of these aislings
-                //remove that timer
-                foreach (var aislingToRemove in ShardLimiterTimers.Keys.Except(aislingsToRemove))
-                    ShardLimiterTimers.Remove(aislingToRemove, out _);
-
-                //for each aisling that doesnt have a timer
-                //create a timer and send an initial warning
-                foreach (var newAisling in aislingsToRemove.Except(ShardLimiterTimers.Keys))
-                {
-                    ShardLimiterTimers.TryAdd(
-                        newAisling,
-                        new PeriodicMessageTimer(
-                            TimeSpan.FromSeconds(15),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(1),
-                            "You will be removed from the map in {Time}",
-                            message => newAisling.SendActiveMessage(message)));
-
-                    newAisling.SendActiveMessage("The map has reached it's group limit");
-                    newAisling.SendActiveMessage("You will be removed from the map in 15 seconds");
-                }
-
-                //for each timer that has expired
-                //move the player to the exit and remove the timer
-                foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
-                                                      .ToList())
-                    if (kvp.Value.IntervalElapsed)
-                    {
-                        var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
-                        kvp.Key.TraverseMap(exitMapInstance, ShardingOptions.ExitLocation);
-                        ShardLimiterTimers.Remove(kvp.Key, out _);
-                    }
-
-                break;
-            }
-            case ShardingType.AbsoluteGuildLimit:
-            {
-                var aislings = Objects.Values<Aisling>()
-                                      .Where(aisling => !aisling.IsAdmin)
-                                      .ToList();
-
-                //number of unique groups in the zone
-                var guilds = aislings.GroupBy(a => a.Guild)
-                                     .SelectMany(gld =>
-                                     {
-                                         if (gld.Key == null)
-                                             return gld.Select(m => new List<Aisling>
-                                             {
-                                                 m
-                                             });
-
-                                         return
-                                         [
-                                             gld.Where(m => m.MapInstance == this)
-                                                .ToList()
-                                         ];
-                                     })
-                                     .ToList();
-
-                var guildCount = guilds.Count;
-
-                var amountOverLimit = guildCount - limit;
-
-                //if we're not over the limit, do nothing
-                if (amountOverLimit <= 0)
-                    return;
-
-                var guildsToRemove = guilds.OrderByDescending(gld => gld.Max(a => a.Id))
-                                           .ThenBy(gld => gld.Count)
-                                           .Take(amountOverLimit)
-                                           .ToList();
-
-                var aislingsToRemove = guildsToRemove.SelectMany(l => l)
-                                                     .ToList();
-
-                //for each timer that isnt for one of these aislings
-                //remove that timer
-                foreach (var aislingToRemove in ShardLimiterTimers.Keys.Except(aislingsToRemove))
-                    ShardLimiterTimers.Remove(aislingToRemove, out _);
-
-                //for each aisling that doesnt have a timer
-                //create a timer and send an initial warning
-                foreach (var newAisling in aislingsToRemove.Except(ShardLimiterTimers.Keys))
-                {
-                    ShardLimiterTimers.TryAdd(
-                        newAisling,
-                        new PeriodicMessageTimer(
-                            TimeSpan.FromSeconds(15),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(5),
-                            TimeSpan.FromSeconds(1),
-                            "You will be removed from the map in {Time}",
-                            message => newAisling.SendActiveMessage(message)));
-
-                    newAisling.SendActiveMessage("The map has reached it's guild limit");
-                    newAisling.SendActiveMessage("You will be removed from the map in 15 seconds");
-                }
-
-                //for each timer that has expired
-                //move the player to the exit and remove the timer
-                foreach (var kvp in ShardLimiterTimers.IntersectBy(aislingsToRemove, kvp => kvp.Key)
-                                                      .ToList())
-                    if (kvp.Value.IntervalElapsed)
-                    {
-                        var exitMapInstance = SimpleCache.Get<MapInstance>(ShardingOptions.ExitLocation.Map);
-                        kvp.Key.TraverseMap(exitMapInstance, ShardingOptions.ExitLocation);
-                        ShardLimiterTimers.Remove(kvp.Key, out _);
-                    }
-
-                break;
-            }
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
+    /// <summary>
+    ///     Increments the pending aisling reservation count. Call when a sharding decision assigns a player to this map
+    /// </summary>
+    public void IncrementPendingAislings() => Interlocked.Increment(ref _pendingAislingCount);
 
     private void InnerAddEntity(VisibleEntity visibleEntity, IPoint point)
     {
@@ -948,13 +586,18 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
                 aisling.Client.SendMapChangeComplete();
 
                 //only send sound if the music is different
-                if (!string.IsNullOrEmpty(aisling.Trackers.LastMapInstanceId))
-                {
-                    var lastMap = SimpleCache.Get<MapInstance>(aisling.Trackers.LastMapInstanceId);
+                if (aisling.Trackers.LastMapInstance is not null)
+                    try
+                    {
+                        var lastMap = aisling.Trackers.LastMapInstance;
 
-                    if (Music != lastMap.Music)
-                        aisling.Client.SendSound(Music, true);
-                } else
+                        if (Music != lastMap.Music)
+                            aisling.Client.SendSound(Music, true);
+                    } catch
+                    {
+                        //ignored
+                    }
+                else
                     aisling.Client.SendSound(Music, true);
 
                 aisling.Client.SendMapLoadComplete();
@@ -971,15 +614,17 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         //and the creature is an aisling
         //do a full viewport update
         //otherwise just do a partial update
+        var isDarkMap = Flags.HasFlag(MapFlags.Darkness);
+
         foreach (var creature in GetEntitiesWithinRange<Creature>(point))
             if (creature.Equals(visibleEntity))
 
                 // ReSharper disable once RedundantJumpStatement
                 continue;
-            else if (visibleEntity is Aisling && creature is Aisling)
+            else if (visibleEntity is Aisling && creature is Aisling && isDarkMap)
                 creature.UpdateViewPort();
             else
-                creature.UpdateViewPort([visibleEntity]);
+                creature.UpdateViewPort(visibleEntity);
     }
 
     /// <summary>
@@ -1077,151 +722,17 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
         => GetEntitiesAtPoints<ReactorTile>(point)
             .Any();
 
-    /*/// <summary>
-    ///     Determines if a point is walkable
-    /// </summary>
-    /// <param name="point">
-    ///     The point to check
-    /// </param>
-    /// <param name="creatureType">
-    ///     The type of the creature
-    /// </param>
-    /// <param name="ignoreBlockingReactors">
-    ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
-    /// </param>
-    /// <returns>
-    ///     <c>
-    ///         true
-    ///     </c>
-    ///     if the point is within the map, and walkable to the specified creature type, otherwise
-    ///     <c>
-    ///         false
-    ///     </c>
-    /// </returns>
-    /// <exception cref="ArgumentOutOfRangeException">
-    ///     Thrown when the creature type is not recognized
-    /// </exception>
-    /// <remarks>
-    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
-    ///     walking
-    /// </remarks>
-    public bool IsWalkable(IPoint point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
-        => IsWalkable(Point.From(point), creatureType, ignoreBlockingReactors);*/
-
-    /*/// <summary>
-    ///     Determines if a point is walkable
-    /// </summary>
-    /// <param name="point">
-    ///     The point to check
-    /// </param>
-    /// <param name="creatureType">
-    ///     The type of the creature
-    /// </param>
-    /// <param name="ignoreBlockingReactors">
-    ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
-    /// </param>
-    /// <returns>
-    ///     <c>
-    ///         true
-    ///     </c>
-    ///     if the point is within the map, and walkable to the specified creature type, otherwise
-    ///     <c>
-    ///         false
-    ///     </c>
-    /// </returns>
-    /// <exception cref="ArgumentOutOfRangeException">
-    ///     Thrown when the creature type is not recognized
-    /// </exception>
-    /// <remarks>
-    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
-    ///     walking
-    /// </remarks>
-    public bool IsWalkable(Point point, CreatureType creatureType, bool? ignoreBlockingReactors = null)
-    {
-        ignoreBlockingReactors ??= creatureType == CreatureType.Aisling;
-
-        var creatures = GetEntitiesAtPoints<Creature>(point)
-            .ToList();
-
-        if (!ignoreBlockingReactors.Value && IsBlockingReactor(point))
-            return false;
-
-        return creatureType switch
-        {
-            CreatureType.Normal      => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.WalkThrough => IsWithinMap(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.Merchant    => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.WhiteSquare => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            CreatureType.Aisling     => !IsWall(point) && !creatures.Any(c => creatureType.WillCollideWith(c)),
-            _                        => throw new ArgumentOutOfRangeException(nameof(creatureType), creatureType, null)
-        };
-    }*/
-
     /// <summary>
     ///     Determines if a point is walkable
     /// </summary>
     /// <param name="point">
     ///     The point to check
     /// </param>
-    /// <param name="creatureType">
-    ///     The type of the creature
-    /// </param>
-    /// <returns>
-    ///     <c>
-    ///         true
-    ///     </c>
-    ///     if the point is within the map, and walkable to the specified creature type, otherwise
-    ///     <c>
-    ///         false
-    ///     </c>
-    /// </returns>
-    /// <exception cref="ArgumentOutOfRangeException">
-    ///     Thrown when the creature type is not recognized
-    /// </exception>
-    /// <remarks>
-    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
-    ///     walking
-    /// </remarks>
-    public bool IsWalkable(Point point, CreatureType creatureType) => IsWalkable(point, collisionType: creatureType);
-
-    /// <summary>
-    ///     Determines if a point is walkable
-    /// </summary>
-    /// <param name="point">
-    ///     The point to check
-    /// </param>
-    /// <param name="creatureType">
-    ///     The type of the creature
-    /// </param>
-    /// <returns>
-    ///     <c>
-    ///         true
-    ///     </c>
-    ///     if the point is within the map, and walkable to the specified creature type, otherwise
-    ///     <c>
-    ///         false
-    ///     </c>
-    /// </returns>
-    /// <exception cref="ArgumentOutOfRangeException">
-    ///     Thrown when the creature type is not recognized
-    /// </exception>
-    /// <remarks>
-    ///     This method checks if a point is within the map, is a wall, or has a reactor or creature that will stop you from
-    ///     walking
-    /// </remarks>
-    public bool IsWalkable(IPoint point, CreatureType creatureType) => IsWalkable(Point.From(point), collisionType: creatureType);
-
-    /// <summary>
-    ///     Determines if a point is walkable
-    /// </summary>
-    /// <param name="point">
-    ///     The point to check
+    /// <param name="creature">
+    ///     The creature to make the check FOR
     /// </param>
     /// <param name="ignoreBlockingReactors">
     ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
-    /// </param>
-    /// <param name="collisionType">
-    ///     The type of the creature
     /// </param>
     /// <param name="ignoreWalls">
     ///     Whether to ignore walls. Default behavior ignores walls only for WalkThrough creatures
@@ -1247,16 +758,16 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// </remarks>
     public bool IsWalkable(
         IPoint point,
+        Creature? creature = null,
         bool? ignoreBlockingReactors = null,
         bool? ignoreWalls = null,
-        bool? ignoreCollision = null,
-        CreatureType? collisionType = null)
+        bool? ignoreCollision = null)
         => IsWalkable(
             Point.From(point),
+            creature,
             ignoreBlockingReactors,
             ignoreWalls,
-            ignoreCollision,
-            collisionType);
+            ignoreCollision);
 
     /// <summary>
     ///     Determines if a point is walkable
@@ -1264,11 +775,11 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <param name="point">
     ///     The point to check
     /// </param>
+    /// <param name="creature">
+    ///     The creature to make the check FOR
+    /// </param>
     /// <param name="ignoreBlockingReactors">
     ///     Whether to ignore blocking reactors. Default behavior ignores blocking reactors only for Aislings
-    /// </param>
-    /// <param name="collisionType">
-    ///     The type of the creature
     /// </param>
     /// <param name="ignoreWalls">
     ///     Whether to ignore walls. Default behavior ignores walls only for WalkThrough creatures
@@ -1294,18 +805,19 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// </remarks>
     public bool IsWalkable(
         Point point,
+        Creature? creature = null,
         bool? ignoreBlockingReactors = null,
         bool? ignoreWalls = null,
-        bool? ignoreCollision = null,
-        CreatureType? collisionType = null)
+        bool? ignoreCollision = null)
     {
-        collisionType ??= CreatureType.Normal;
+        var collisionType = creature?.Type ?? CreatureType.Normal;
         ignoreBlockingReactors ??= collisionType == CreatureType.Aisling;
         ignoreWalls ??= collisionType == CreatureType.WalkThrough;
         ignoreCollision ??= false;
 
-        var creatures = GetEntitiesAtPoints<Creature>(point)
-            .ToList();
+        using var rentedCreatures = GetEntitiesAtPoints<Creature>(point)
+            .ToRented();
+        var creatures = rentedCreatures.Array;
 
         if (!ignoreBlockingReactors.Value && IsBlockingReactor(point))
             return false;
@@ -1314,12 +826,23 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
             return false;
 
         if (!ignoreWalls.Value && IsWall(point))
-            return false;
+        {
+            var openDoor = GetEntitiesAtPoints<Door>(point)
+                .FirstOrDefault(d => !d.Closed);
+
+            //we have an open door that is also a wall
+            if (openDoor is null)
+                return false;
+        }
 
         if (ignoreCollision.Value)
             return true;
 
-        return !creatures.Any(c => collisionType.Value.WillCollideWith(c));
+        if (creature is not null)
+            return !creatures.ThatThisCollidesWith(creature)
+                             .Any();
+
+        return !creatures.Any(c => collisionType.WillCollideWith(c));
     }
 
     /// <summary>
@@ -1581,35 +1104,58 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <summary>
     ///     Begins execution of the map's update loop
     /// </summary>
-    public void StartAsync()
-        => Task.Run(async () =>
-        {
-            var linkedCancellationToken = MapInstanceCtx.Token;
+    public void StartAsync(Action? initializationAction = null)
+    {
+        using (ExecutionContext.SuppressFlow())
+            Task.Run(async () =>
+                {
+                    await Task.Yield();
 
-            while (true)
-            {
-                if (linkedCancellationToken.IsCancellationRequested)
-                    return;
+                    try
+                    {
+                        await using var sync = await Sync.WaitAsync();
+                        initializationAction?.Invoke();
+                        InitializationTcs.SetResult();
+                    } catch (Exception e)
+                    {
+                        Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Load)
+                              .WithProperty(this)
+                              .LogError(e, "Failed to initialize map instance {@MapInstanceId}", InstanceId);
 
-                try
-                {
-                    await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken)
-                                    .ConfigureAwait(false);
-                } catch (OperationCanceledException)
-                {
-                    return;
-                }
+                        InitializationTcs.SetException(e);
 
-                try
-                {
-                    await UpdateMapAsync(DeltaTime.GetDelta);
-                } catch (Exception e)
-                {
-                    Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
-                          .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstance}", this);
-                }
-            }
-        });
+                        return;
+                    }
+
+                    var linkedCancellationToken = MapInstanceCtx.Token;
+
+                    while (true)
+                    {
+                        if (linkedCancellationToken.IsCancellationRequested)
+                            return;
+
+                        try
+                        {
+                            await DeltaTimer.WaitForNextTickAsync(linkedCancellationToken)
+                                            .ConfigureAwait(false);
+                        } catch (OperationCanceledException)
+                        {
+                            return;
+                        }
+
+                        try
+                        {
+                            await UpdateMapAsync(DeltaTime.GetDelta);
+                        } catch (Exception e)
+                        {
+                            Logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Update)
+                                  .WithProperty(this)
+                                  .LogError(e, "Update succeeded, but some other error occurred for map {@MapInstanceId}", InstanceId);
+                        }
+                    }
+                })
+                .ConfigureAwait(false);
+    }
 
     /// <summary>
     ///     Stops execution of the map's update loop
@@ -1645,8 +1191,8 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <param name="point">
     ///     A random point if found
     /// </param>
-    /// <param name="creatureType">
-    ///     The type of the creature. This is used to determine if a point is walkable
+    /// <param name="creature">
+    ///     The creature to make the check FOR. This creature may have a special type or other circumstances
     /// </param>
     /// <returns>
     ///     <c>
@@ -1657,9 +1203,38 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     ///         false
     ///     </c>
     /// </returns>
-    public bool TryGetRandomWalkablePoint([NotNullWhen(true)] out Point? point, CreatureType creatureType = CreatureType.Normal)
+    public bool TryGetRandomWalkablePoint([NotNullWhen(true)] out Point? point, Creature? creature = null)
     {
-        if (!Template.Bounds.TryGetRandomPoint(pt => IsWalkable(pt, collisionType: creatureType), out point))
+        if (!Template.Bounds.TryGetRandomPoint(pt => IsWalkable(pt, creature), out point))
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Attempts to find a random walkable point on the map
+    /// </summary>
+    /// <param name="predicate">
+    ///     A predicate used to further filter valid points
+    /// </param>
+    /// <param name="point">
+    ///     A random point if found
+    /// </param>
+    /// <param name="creature">
+    ///     The creature to make the check FOR. This creature may have a special type or other circumstances
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if a walkable point was found, otherwise
+    ///     <c>
+    ///         false
+    ///     </c>
+    /// </returns>
+    public bool TryGetRandomWalkablePoint(Func<Point, bool> predicate, [NotNullWhen(true)] out Point? point, Creature? creature = null)
+    {
+        if (!Template.Bounds.TryGetRandomPoint(pt => IsWalkable(pt, creature) && predicate(pt), out point))
             return false;
 
         return true;
@@ -1673,21 +1248,30 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// </param>
     public async Task UpdateMapAsync(TimeSpan delta)
     {
+        using var activity = ActivitySources.StartUpdateActivity("Update.Map");
+        activity?.SetTag("map.instance_id", InstanceId);
+        activity?.SetTag("delta_ms", delta.TotalMilliseconds);
+
+        var syncActivity = ActivitySources.StartUpdateActivity("Update.Map.Sync");
         await using var sync = await Sync.WaitAsync();
+        syncActivity?.Dispose();
 
-        DeltaMonitor.Update(delta);
+        using (ActivitySources.StartUpdateActivity("Update.Map.Execute"))
+            Update(delta);
 
-        var start = Stopwatch.GetTimestamp();
+        using var rentedAislingsToSave = Objects.Values<Aisling>()
+                                                .Where(aisling => aisling.SaveTimer.IntervalElapsed)
+                                                .ToRented();
 
-        Update(delta);
+        var aislingsToSave = rentedAislingsToSave.Array;
 
-        var aislingsToSave = Objects.Values<Aisling>()
-                                    .Where(aisling => aisling.SaveTimer.IntervalElapsed);
+        if (aislingsToSave.Count > 0)
+        {
+            using var aislingSaveActivity = ActivitySources.StartUpdateActivity("Update.Map.AislingSave");
+            aislingSaveActivity?.SetTag("aisling_save_count", aislingsToSave.Count);
 
-        await Task.WhenAll(aislingsToSave.Select(AislingStore.SaveAsync));
-
-        var elapsed = Stopwatch.GetElapsedTime(start);
-        DeltaMonitor.DigestDelta(elapsed);
+            await Task.WhenAll(aislingsToSave.Select(AislingStore.SaveAsync));
+        }
     }
 
     /// <summary>
@@ -1699,7 +1283,7 @@ public sealed class MapInstance : IScripted<IMapScript>, IDeltaUpdatable
     /// <param name="partialUpdateEntities">
     ///     If the entities that changed are known, they are passed in to reduce computation cost of the update
     /// </param>
-    public void UpdateNearbyViewPorts(IPoint point, HashSet<VisibleEntity>? partialUpdateEntities = null)
+    public void UpdateNearbyViewPorts(IPoint point, ICollection<VisibleEntity>? partialUpdateEntities = null)
     {
         foreach (var creature in GetEntitiesWithinRange<Creature>(point))
             creature.UpdateViewPort(partialUpdateEntities);

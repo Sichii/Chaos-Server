@@ -29,6 +29,24 @@ public sealed class RectangleConverterTests
     }
 
     [Test]
+    public void Read_ShouldThrow_When_NotStartingWith_Object()
+    {
+        // Start token is a number, not StartObject
+        var json = Encoding.UTF8.GetBytes("123");
+        var reader = new Utf8JsonReader(json);
+        reader.Read();
+
+        try
+        {
+            RectangleConverter.Instance.Read(ref reader, typeof(Rectangle), null!);
+            Assert.Fail("Expected InvalidOperationException");
+        } catch (InvalidOperationException)
+        {
+            // expected
+        }
+    }
+
+    [Test]
     public void Read_ShouldThrowInvalidOperationException_WhenInputIsInvalid()
     {
         const string JSON_STRING = "{\"Left\": \"abcd\"}";

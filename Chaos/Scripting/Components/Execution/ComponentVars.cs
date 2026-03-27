@@ -32,7 +32,7 @@ public class ComponentVars : StaticVars
     public virtual IReadOnlyCollection<T> GetTargets<T>()
         => GetRequired<IReadOnlyCollection<MapEntity>>(TARGETS_KEY)
            .OfType<T>()
-           .ToList();
+           .ToArray();
 
     public virtual void SetAllPoints(List<Point> points) => Set(CASCADE_ALL_POINTS_KEY, points);
 

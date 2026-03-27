@@ -54,18 +54,18 @@ public struct GetCascadingTargetsAbilityComponent<TEntity> : IConditionalCompone
         //get the slice of points for the current stage
         var stagePoints = options.Shape
                                  .ResolvePointsForRange(cascadingAoeOptions)
-                                 .ToList();
+                                 .ToArray();
 
         var targetEntities = context.TargetMap
                                     .GetEntitiesAtPoints<TEntity>(stagePoints)
                                     .WithFilter(context.Source, options.Filter)
-                                    .ToList();
+                                    .ToArray();
 
         //set the points and targets for the current stage
         vars.SetPoints(stagePoints);
         vars.SetTargets(targetEntities);
 
-        return !options.MustHaveTargets || (targetEntities.Count != 0);
+        return !options.MustHaveTargets || (targetEntities.Length != 0);
     }
 
     private AoeShapeOptions CreateOptions(ActivationContext context, IGetCascadingTargetsComponentOptions options)

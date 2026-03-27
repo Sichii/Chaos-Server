@@ -18,10 +18,10 @@
         <ApplicationIcon>Resources\chaos.ico</ApplicationIcon>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <NoWarn>1701;1702;CS1591</NoWarn>
+        <NoWarn>1701;1702;CS1591;CS8620</NoWarn>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <NoWarn>1701;1702;CS1591</NoWarn>
+        <NoWarn>1701;1702;CS1591;CS8620</NoWarn>
     </PropertyGroup>
     <ItemGroup>
         <None Update="appsettings.json">
@@ -60,6 +60,11 @@
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"/>
         <PackageReference Include="NLog.Targets.Network"/>
         <PackageReference Include="NLog.Web.AspNetCore"/>
+        <PackageReference Include="OpenTelemetry"/>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http"/>
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol"/>
         <PackageReference Include="System.Configuration.ConfigurationManager"/>
     </ItemGroup>
     <ItemGroup>
@@ -68,6 +73,7 @@
     </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="Chaos.Testing.Infrastructure"/>
+        <InternalsVisibleTo Include="Chaos.Tests"/>
     </ItemGroup>
     <ItemGroup>
         <AdditionalFiles Include="Site\Pages\Index.cshtml"/>

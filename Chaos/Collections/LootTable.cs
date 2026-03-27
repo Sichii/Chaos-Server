@@ -19,6 +19,12 @@ namespace Chaos.Collections;
 /// <param name="itemFactory">
 ///     A service used to create items
 /// </param>
+/// <param name="cache">
+///     A service used to fetch cached data
+/// </param>
+/// <param name="itemCloner">
+///     A services used to clone items
+/// </param>
 public sealed class LootTable(IItemFactory itemFactory, ISimpleCache cache, ICloningService<Item> itemCloner) : ILootTable
 {
     private readonly ISimpleCache Cache = cache;

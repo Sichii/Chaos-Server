@@ -1,5 +1,6 @@
 #region
 using Chaos.Geometry.Abstractions;
+using Chaos.Testing.Infrastructure.Mocks;
 using FluentAssertions;
 #endregion
 
@@ -72,6 +73,38 @@ public sealed class LocationTests
     }
 
     [Test]
+    public void Equals_ReturnsFalse_When_Other_Is_Null()
+    {
+        var location1 = new Location("TestMap", 5, 10);
+
+        location1.Equals((ILocation?)null)
+                 .Should()
+                 .BeFalse();
+    }
+
+    [Test]
+    public void Equals_ReturnsFalse_When_X_Differs()
+    {
+        var a = new Location("Map", 1, 2);
+        ILocation b = new Location("Map", 9, 2);
+
+        a.Equals(b)
+         .Should()
+         .BeFalse();
+    }
+
+    [Test]
+    public void Equals_ReturnsFalse_When_Y_Differs()
+    {
+        var a = new Location("Map", 1, 2);
+        ILocation b = new Location("Map", 1, 9);
+
+        a.Equals(b)
+         .Should()
+         .BeFalse();
+    }
+
+    [Test]
     public void Equals_ReturnsFalseForDifferentLocations()
     {
         var location1 = new Location("TestMap1", 5, 10);
@@ -139,6 +172,39 @@ public sealed class LocationTests
     }
 
     [Test]
+    public void Location_Equals_ILocation_DifferentMap_ReturnsFalse()
+    {
+        var location1 = new Location("Map1", 5, 10);
+        ILocation location2 = new Location("Map2", 5, 10);
+
+        location1.Equals(location2)
+                 .Should()
+                 .BeFalse();
+    }
+
+    [Test]
+    public void Location_Equals_ILocation_DifferentX_ReturnsFalse()
+    {
+        var location1 = new Location("Map1", 5, 10);
+        ILocation location2 = new Location("Map1", 6, 10);
+
+        location1.Equals(location2)
+                 .Should()
+                 .BeFalse();
+    }
+
+    [Test]
+    public void Location_Equals_ILocation_DifferentY_ReturnsFalse()
+    {
+        var location1 = new Location("Map1", 5, 10);
+        ILocation location2 = new Location("Map1", 5, 11);
+
+        location1.Equals(location2)
+                 .Should()
+                 .BeFalse();
+    }
+
+    [Test]
     public void Location_Equals_ReturnsFalseWhenComparingWithDifferentType()
     {
         // Arrange
@@ -190,7 +256,8 @@ public sealed class LocationTests
     public void Location_From_ReturnsNewLocationWithSameValuesWhenPassedLocationOfDifferentType()
     {
         // Arrange
-        ILocation originalLocation = new MockLocation("Map1", 10, 20);
+        var originalLocation = MockLocation.Create("Map1", 10, 20)
+                                           .Object;
 
         // Act
         var newLocation = Location.From(originalLocation);
@@ -260,6 +327,36 @@ public sealed class LocationTests
     }
 
     [Test]
+    public void Location_TryParse_ShouldReturnFalse_WhenXExceedsUshortRange()
+    {
+        // Regex matches digits, but 99999 > ushort.MaxValue (65535)
+        const string INPUT = "Map1: (99999, 123)";
+
+        var result = Location.TryParse(INPUT, out var location);
+
+        result.Should()
+              .BeFalse();
+
+        location.Should()
+                .BeNull();
+    }
+
+    [Test]
+    public void Location_TryParse_ShouldReturnFalse_WhenYExceedsUshortRange()
+    {
+        // X is valid, but Y > ushort.MaxValue
+        const string INPUT = "Map1: (123, 99999)";
+
+        var result = Location.TryParse(INPUT, out var location);
+
+        result.Should()
+              .BeFalse();
+
+        location.Should()
+                .BeNull();
+    }
+
+    [Test]
     public void Location_TryParse_ValidInput_ReturnsTrueAndParsesLocation()
     {
         // Arrange
@@ -289,6 +386,34 @@ public sealed class LocationTests
     }
 
     [Test]
+    public void Location_TryParse_ValidMatch_But_XParseFails_ReturnsFalse()
+    {
+        const string INPUT = "Example: (abc, 123)";
+
+        var result = Location.TryParse(INPUT, out var location);
+
+        result.Should()
+              .BeFalse();
+
+        location.Should()
+                .BeNull();
+    }
+
+    [Test]
+    public void Location_TryParse_ValidMatch_But_YParseFails_ReturnsFalse()
+    {
+        const string INPUT = "Example: (123, abc)";
+
+        var result = Location.TryParse(INPUT, out var location);
+
+        result.Should()
+              .BeFalse();
+
+        location.Should()
+                .BeNull();
+    }
+
+    [Test]
     public void ToString_ReturnsExpectedFormat()
     {
         // Assuming ToString() outputs in the format: "Map: X,Y"
@@ -299,11 +424,5 @@ public sealed class LocationTests
               .Be("TestMap:(5, 10)"); // Adjust this based on your actual expected format
     }
 
-    // CustomLocation class for testing Location.From method
-    private sealed class MockLocation(string map, int x, int y) : ILocation
-    {
-        public string Map { get; } = map;
-        public int X { get; } = x;
-        public int Y { get; } = y;
-    }
+    // moved to Chaos.Testing.Infrastructure.Mocks.MockLocation
 }

@@ -53,8 +53,7 @@ public class AggroTargetingScript : MonsterScriptBase
 
         Target = null;
 
-        if (!Map.GetEntities<Aisling>()
-                .Any())
+        if (!Map.HasAislings)
             return;
 
         var isBlind = Subject.IsBlind;

@@ -1,4 +1,5 @@
 {
+  "$schema": "../../../../Chaos.Schemas/Json/item-template.schema.json",
   "buyCost": 100,
   "category": "food",
   "color": "Default",

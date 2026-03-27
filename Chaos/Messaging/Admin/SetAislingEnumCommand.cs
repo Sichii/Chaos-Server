@@ -1,7 +1,6 @@
 #region
 using Chaos.Collections.Common;
 using Chaos.Common.Converters;
-using Chaos.Common.Utilities;
 using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.World;
@@ -45,7 +44,7 @@ public class SetAislingEnumCommand(IClientRegistry<IChaosWorldClient> clients) :
         var typeName = split[0];
         var enumValue = split[1];
 
-        var type = TypeEx.LoadType(
+        var type = Type.LoadType(
             typeName,
             (asm, t) =>
             {

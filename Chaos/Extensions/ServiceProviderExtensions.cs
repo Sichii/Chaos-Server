@@ -22,489 +22,492 @@ namespace Chaos.Extensions;
 
 public static class ServiceProviderExtensions
 {
-    public static async Task ReloadDialogsAsync(this IServiceProvider provider, ILogger logger)
+    extension(IServiceProvider provider)
     {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var dialogCache = cacheProvider.GetCache<DialogTemplate>();
-
-        await dialogCache.ReloadAsync();
-    }
-
-    public static async Task ReloadItemsAsync(this IServiceProvider provider, ILogger logger)
-    {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-        var itemTemplateCache = cacheProvider.GetCache<ItemTemplate>();
-        var mapper = provider.GetRequiredService<ITypeMapper>();
-        var stockService = provider.GetRequiredService<IStockService>();
-
-        await itemTemplateCache.ReloadAsync();
-
-        foreach (var mapInstance in mapCache)
+        public async Task ReloadDialogsAsync(ILogger logger)
         {
-            await using var sync = await mapInstance.Sync.WaitAsync();
+            var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+            var dialogCache = cacheProvider.GetCache<DialogTemplate>();
 
-            foreach (var groundItem in mapInstance.GetEntities<GroundItem>()
-                                                  .ToList())
+            await dialogCache.ReloadAsync();
+        }
+
+        public async Task ReloadItemsAsync(ILogger logger)
+        {
+            var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+            var mapCache = cacheProvider.GetCache<MapInstance>();
+            var itemTemplateCache = cacheProvider.GetCache<ItemTemplate>();
+            var mapper = provider.GetRequiredService<ITypeMapper>();
+            var stockService = provider.GetRequiredService<IStockService>();
+
+            await itemTemplateCache.ReloadAsync();
+
+            foreach (var mapInstance in mapCache)
             {
-                var schema = mapper.Map<ItemSchema>(groundItem.Item);
-                var item = mapper.Map<Item>(schema);
+                await using var sync = await mapInstance.Sync.WaitAsync();
 
-                groundItem.Item = item;
-            }
-
-            foreach (var creature in mapInstance.GetEntities<Creature>())
-                switch (creature)
+                foreach (var groundItem in mapInstance.GetEntities<GroundItem>()
+                                                      .ToList())
                 {
-                    case Aisling aisling:
+                    var schema = mapper.Map<ItemSchema>(groundItem.Item);
+                    var item = mapper.Map<Item>(schema);
+
+                    groundItem.Item = item;
+                }
+
+                foreach (var creature in mapInstance.GetEntities<Creature>())
+                    switch (creature)
                     {
-                        //if the aisling has an exchange open, cancel it
-                        var exchange = aisling.ActiveObject.TryGet<Exchange>();
-                        exchange?.Cancel(aisling);
-
-                        var inventorySchemas = mapper.MapMany<ItemSchema>(aisling.Inventory);
-
-                        var inventoryItems = mapper.MapMany<Item>(inventorySchemas)
-                                                   .ToList();
-
-                        foreach (var item in inventoryItems)
+                        case Aisling aisling:
                         {
-                            aisling.Inventory.Remove(item.Slot);
-                            aisling.Inventory.TryAddDirect(item.Slot, item);
+                            //if the aisling has an exchange open, cancel it
+                            var exchange = aisling.ActiveObject.TryGet<Exchange>();
+                            exchange?.Cancel(aisling);
+
+                            var inventorySchemas = mapper.MapMany<ItemSchema>(aisling.Inventory);
+
+                            var inventoryItems = mapper.MapMany<Item>(inventorySchemas)
+                                                       .ToList();
+
+                            foreach (var item in inventoryItems)
+                            {
+                                aisling.Inventory.Remove(item.Slot);
+                                aisling.Inventory.TryAddDirect(item.Slot, item);
+                            }
+
+                            var equipmentSchemas = mapper.MapMany<ItemSchema>(aisling.Equipment);
+                            var equipmentItems = mapper.MapMany<Item>(equipmentSchemas);
+
+                            foreach (var item in equipmentItems)
+                            {
+                                aisling.Equipment.Remove(item.Slot);
+                                aisling.Equipment.TryAdd(item.Slot, item);
+                            }
+
+                            break;
                         }
-
-                        var equipmentSchemas = mapper.MapMany<ItemSchema>(aisling.Equipment);
-                        var equipmentItems = mapper.MapMany<Item>(equipmentSchemas);
-
-                        foreach (var item in equipmentItems)
+                        case Monster monster:
                         {
-                            aisling.Equipment.Remove(item.Slot);
-                            aisling.Equipment.TryAdd(item.Slot, item);
-                        }
+                            var schemas = mapper.MapMany<ItemSchema>(monster.Items);
 
-                        break;
+                            var items = mapper.MapMany<Item>(schemas)
+                                              .ToList();
+
+                            monster.Items.Clear();
+                            monster.Items.AddRange(items);
+
+                            break;
+                        }
+                        case Merchant merchant:
+                        {
+                            var hadStock = merchant.ItemsForSale.Count != 0;
+                            var itemsForSale = merchant.ItemsForSale.ToList();
+                            merchant.ItemsForSale.Clear();
+
+                            foreach (var item in itemsForSale)
+                            {
+                                var schema = mapper.Map<ItemSchema>(item);
+                                var mappedItem = mapper.Map<Item>(schema);
+
+                                merchant.ItemsForSale.Add(mappedItem);
+                            }
+
+                            var itemstoBuy = merchant.ItemsToBuy.ToList();
+                            merchant.ItemsToBuy.Clear();
+
+                            foreach (var item in itemstoBuy)
+                            {
+                                var schema = mapper.Map<ItemSchema>(item);
+                                var mappedItem = mapper.Map<Item>(schema);
+
+                                merchant.ItemsToBuy.Add(mappedItem);
+                            }
+
+                            //re-register this merchant's stock with the stock service
+                            if (hadStock)
+                                stockService.RegisterStock(
+                                    merchant.Template.TemplateKey,
+                                    merchant.Template.ItemsForSale.Select(kvp => (kvp.Key, kvp.Value)),
+                                    TimeSpan.FromHours(merchant.Template.RestockIntervalHrs),
+                                    merchant.Template.RestockPct);
+
+                            break;
+                        }
                     }
-                    case Monster monster:
+            }
+        }
+
+        public async Task ReloadLootTablesAsync(ILogger logger)
+        {
+            var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+            var lootTableCache = cacheProvider.GetCache<LootTable>();
+            var mapCache = cacheProvider.GetCache<MapInstance>();
+
+            await lootTableCache.ReloadAsync();
+
+            foreach (var mapInstance in mapCache)
+            {
+                await using var sync = await mapInstance.Sync.WaitAsync();
+
+                foreach (var monsterSpawn in mapInstance.MonsterSpawns)
+                {
+                    if (monsterSpawn.ExtraLootTables.Count == 0)
+                        continue;
+
+                    var lootTables = monsterSpawn.ExtraLootTables
+                                                 .Select(table => lootTableCache.Get(table.Key))
+                                                 .ToList();
+
+                    monsterSpawn.ExtraLootTables = lootTables;
+                    monsterSpawn.FinalLootTable = null;
+                }
+
+                foreach (var monster in mapInstance.GetEntities<Monster>())
+                {
+                    var lootTables = new List<LootTable>();
+
+                    switch (monster.LootTable)
                     {
-                        var schemas = mapper.MapMany<ItemSchema>(monster.Items);
+                        case CompositeLootTable composite:
+                            lootTables.AddRange(composite.GetLootTables());
 
-                        var items = mapper.MapMany<Item>(schemas)
-                                          .ToList();
+                            break;
+                        case LootTable table:
+                            lootTables.Add(table);
 
-                        monster.Items.Clear();
-                        monster.Items.AddRange(items);
-
-                        break;
+                            break;
                     }
-                    case Merchant merchant:
-                    {
-                        var hadStock = merchant.ItemsForSale.Count != 0;
-                        var itemsForSale = merchant.ItemsForSale.ToList();
-                        merchant.ItemsForSale.Clear();
 
-                        foreach (var item in itemsForSale)
-                        {
-                            var schema = mapper.Map<ItemSchema>(item);
-                            var mappedItem = mapper.Map<Item>(schema);
-
-                            merchant.ItemsForSale.Add(mappedItem);
-                        }
-
-                        var itemstoBuy = merchant.ItemsToBuy.ToList();
-                        merchant.ItemsToBuy.Clear();
-
-                        foreach (var item in itemstoBuy)
-                        {
-                            var schema = mapper.Map<ItemSchema>(item);
-                            var mappedItem = mapper.Map<Item>(schema);
-
-                            merchant.ItemsToBuy.Add(mappedItem);
-                        }
-
-                        //re-register this merchant's stock with the stock service
-                        if (hadStock)
-                            stockService.RegisterStock(
-                                merchant.Template.TemplateKey,
-                                merchant.Template.ItemsForSale.Select(kvp => (kvp.Key, kvp.Value)),
-                                TimeSpan.FromHours(merchant.Template.RestockIntervalHrs),
-                                merchant.Template.RestockPct);
-
-                        break;
-                    }
-                }
-        }
-    }
-
-    public static async Task ReloadLootTablesAsync(this IServiceProvider provider, ILogger logger)
-    {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var lootTableCache = cacheProvider.GetCache<LootTable>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-
-        await lootTableCache.ReloadAsync();
-
-        foreach (var mapInstance in mapCache)
-        {
-            await using var sync = await mapInstance.Sync.WaitAsync();
-
-            foreach (var monsterSpawn in mapInstance.MonsterSpawns)
-            {
-                if (monsterSpawn.ExtraLootTables.Count == 0)
-                    continue;
-
-                var lootTables = monsterSpawn.ExtraLootTables
-                                             .Select(table => lootTableCache.Get(table.Key))
-                                             .ToList();
-
-                monsterSpawn.ExtraLootTables = lootTables;
-                monsterSpawn.FinalLootTable = null;
-            }
-
-            foreach (var monster in mapInstance.GetEntities<Monster>())
-            {
-                var lootTables = new List<LootTable>();
-
-                switch (monster.LootTable)
-                {
-                    case CompositeLootTable composite:
-                        lootTables.AddRange(composite.GetLootTables());
-
-                        break;
-                    case LootTable table:
-                        lootTables.Add(table);
-
-                        break;
-                }
-
-                lootTables = lootTables.Select(table => lootTableCache.Get(table.Key))
-                                       .ToList();
-
-                monster.LootTable = new CompositeLootTable(lootTables);
-            }
-        }
-    }
-
-    public static async Task ReloadMapAsync(this IServiceProvider provider, ILogger logger, string key)
-    {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var mapTemplateCache = cacheProvider.GetCache<MapTemplate>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-        var oldMap = mapCache.Get(key);
-
-        oldMap.Stop();
-
-        //wait for oldMap to stop and become accessible
-        await using (await oldMap.Sync.WaitAsync(TimeSpan.FromSeconds(15))) { }
-
-        //reload template and mapinstance
-        await mapTemplateCache.ReloadAsync(oldMap.Template.TemplateKey);
-        await mapCache.ReloadAsync(key);
-
-        var newMap = mapCache.Get(key);
-
-        //lock both maps
-        await using var sync = await ComplexSynchronizationHelper.WaitAsync(
-            TimeSpan.FromSeconds(10),
-            TimeSpan.FromMilliseconds(50),
-            oldMap.Sync,
-            newMap.Sync);
-
-        foreach (var monster in newMap.GetEntities<Monster>())
-            newMap.RemoveEntity(monster);
-
-        foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
-            newMap.SimpleAdd(groundEntity);
-
-        foreach (var monster in oldMap.GetEntities<Monster>())
-            newMap.SimpleAdd(monster);
-
-        foreach (var aisling in oldMap.GetEntities<Aisling>())
-            if (aisling.Client.Connected) //dont copy dopplegangers
-                newMap.SimpleAdd(aisling);
-
-        oldMap.Destroy();
-
-        newMap.BaseInstanceId = oldMap.BaseInstanceId;
-    }
-
-    public static async Task ReloadMapsAsync(this IServiceProvider provider, ILogger logger)
-    {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var mapTemplateCache = cacheProvider.GetCache<MapTemplate>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-        var oldMaps = mapCache.ToDictionary(m => m.InstanceId, StringComparer.OrdinalIgnoreCase);
-
-        foreach (var map in oldMaps.Values)
-            map.Stop();
-
-        //ensure all maps are unlocked
-        foreach (var map in oldMaps.Values)
-            await using (await map.Sync.WaitAsync(TimeSpan.FromSeconds(15))) { }
-
-        //locks ALL maps
-        await using var oldSync = await ComplexSynchronizationHelper.WaitAsync(
-            TimeSpan.FromSeconds(10),
-            TimeSpan.FromMilliseconds(50),
-            oldMaps.Values
-                   .Select(m => m.Sync)
-                   .ToArray());
-
-        await mapTemplateCache.ReloadAsync();
-        await mapCache.ReloadAsync();
-
-        var newMaps = mapCache.ToDictionary(m => m.InstanceId, StringComparer.OrdinalIgnoreCase);
-
-        await using var newSync = await ComplexSynchronizationHelper.WaitAsync(
-            TimeSpan.FromSeconds(10),
-            TimeSpan.FromMilliseconds(50),
-            newMaps.Values
-                   .Select(m => m.Sync)
-                   .ToArray());
-
-        foreach (var oldMap in oldMaps.Values)
-            try
-            {
-                var newMap = mapCache.Get(oldMap.InstanceId);
-
-                foreach (var monster in newMap.GetEntities<Monster>())
-                    newMap.RemoveEntity(monster);
-
-                foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
-                    newMap.SimpleAdd(groundEntity);
-
-                foreach (var monster in oldMap.GetEntities<Monster>())
-                    newMap.SimpleAdd(monster);
-
-                foreach (var aisling in oldMap.GetEntities<Aisling>())
-                    if (aisling.Client.Connected) //dont copy dopplegangers
-                        newMap.SimpleAdd(aisling);
-
-                oldMap.Destroy();
-
-                newMap.BaseInstanceId = oldMap.BaseInstanceId;
-            } catch (Exception e)
-            {
-                logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Reload)
-                      .WithProperty(oldMap)
-                      .LogError(e, "Failed to migrate map {@MapInstanceId} during reload", oldMap.InstanceId);
-            }
-    }
-
-    public static async Task ReloadMerchantsAsync(this IServiceProvider provider, ILogger logger)
-    {
-        var merchantFactory = provider.GetRequiredService<IMerchantFactory>();
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-        var merchantTemplateCache = cacheProvider.GetCache<MerchantTemplate>();
-
-        await merchantTemplateCache.ReloadAsync();
-
-        foreach (var mapInstance in mapCache)
-        {
-            await using var sync = await mapInstance.Sync.WaitAsync();
-
-            var merchantsToAdd = new List<Merchant>();
-
-            foreach (var merchant in mapInstance.GetEntities<Merchant>()
-                                                .ToList())
-                try
-                {
-                    var extraScriptKeys = merchant.ScriptKeys.Except(merchant.Template.ScriptKeys);
-
-                    var newMerchant = merchantFactory.Create(
-                        merchant.Template.TemplateKey,
-                        merchant.MapInstance,
-                        merchant,
-                        merchant.Template
-                                .ScriptKeys
-                                .Concat(extraScriptKeys)
-                                .ToHashSet(StringComparer.OrdinalIgnoreCase));
-
-                    newMerchant.Direction = merchant.Direction;
-
-                    merchant.MapInstance.RemoveEntity(merchant);
-                    merchantsToAdd.Add(newMerchant);
-                } catch (Exception e)
-                {
-                    logger.WithTopics(Topics.Entities.Merchant, Topics.Actions.Reload)
-                          .WithProperty(merchant)
-                          .WithProperty(mapInstance)
-                          .LogError(
-                              e,
-                              "Failed to migrate merchant {@MerchantTemplateKey} on map {@MapInstanceId} during reload",
-                              merchant.Template.TemplateKey,
-                              mapInstance.InstanceId);
-                }
-
-            mapInstance.AddEntities(merchantsToAdd);
-        }
-    }
-
-    public static Task ReloadMetaDataAsync(this IServiceProvider provider, ILogger logger)
-    {
-        var metaDataStore = (MetaDataStore)provider.GetRequiredService<IMetaDataStore>();
-
-        metaDataStore.LoadMetaData();
-
-        return Task.CompletedTask;
-    }
-
-    public static async Task ReloadMonstersAsync(this IServiceProvider provider, ILogger logger)
-    {
-        var monsterFactory = provider.GetRequiredService<IMonsterFactory>();
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-        var monsterTemplateCache = cacheProvider.GetCache<MonsterTemplate>();
-
-        await monsterTemplateCache.ReloadAsync();
-
-        foreach (var mapInstance in mapCache)
-        {
-            await using var sync = await mapInstance.Sync.WaitAsync();
-
-            var monstersToAdd = new List<Monster>();
-
-            foreach (var monster in mapInstance.GetEntities<Monster>()
-                                               .ToList())
-                try
-                {
-                    var newMonster = monsterFactory.Create(
-                        monster.Template.TemplateKey,
-                        monster.MapInstance,
-                        monster,
-                        monster.ScriptKeys);
-
-                    newMonster.Items.AddRange(monster.Items);
-                    newMonster.Gold = monster.Gold;
-                    newMonster.Experience = monster.Experience;
-                    newMonster.AggroRange = monster.AggroRange;
-                    newMonster.LootTable = monster.LootTable;
-
-                    monster.MapInstance.RemoveEntity(monster);
-                    monstersToAdd.Add(newMonster);
-                } catch (Exception e)
-                {
-                    logger.WithTopics(Topics.Entities.Monster, Topics.Actions.Reload)
-                          .WithProperty(monster)
-                          .WithProperty(mapInstance)
-                          .LogError(
-                              e,
-                              "Failed to migrate monster {@MonsterTemplateKey} on map {@MapInstanceId} during reload",
-                              monster.Template.TemplateKey,
-                              mapInstance.InstanceId);
-                }
-
-            mapInstance.AddEntities(monstersToAdd);
-        }
-    }
-
-    public static async Task ReloadSkillsAsync(this IServiceProvider provider, ILogger logger)
-    {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-        var skillTemplateCache = cacheProvider.GetCache<SkillTemplate>();
-        var mapper = provider.GetRequiredService<ITypeMapper>();
-
-        await skillTemplateCache.ReloadAsync();
-
-        foreach (var mapInstance in mapCache)
-        {
-            await using var sync = await mapInstance.Sync.WaitAsync();
-
-            foreach (var creature in mapInstance.GetEntities<Creature>())
-                switch (creature)
-                {
-                    case Aisling aisling:
-                    {
-                        var schemas = mapper.MapMany<SkillSchema>(aisling.SkillBook);
-
-                        var skills = mapper.MapMany<Skill>(schemas)
+                    lootTables = lootTables.Select(table => lootTableCache.Get(table.Key))
                                            .ToList();
 
-                        foreach (var skill in skills)
-                        {
-                            aisling.SkillBook.Remove(skill.Slot);
-                            aisling.SkillBook.TryAdd(skill.Slot, skill);
-                        }
+                    monster.LootTable = new CompositeLootTable(lootTables);
+                }
+            }
+        }
+
+        public async Task ReloadMapAsync(ILogger logger, string key)
+        {
+            var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+            var mapTemplateCache = cacheProvider.GetCache<MapTemplate>();
+            var mapCache = cacheProvider.GetCache<MapInstance>();
+            var oldMap = mapCache.Get(key);
+
+            oldMap.Stop();
+
+            //wait for oldMap to stop and become accessible
+            await using (await oldMap.Sync.WaitAsync(TimeSpan.FromSeconds(15))) { }
+
+            //reload template and mapinstance
+            await mapTemplateCache.ReloadAsync(oldMap.Template.TemplateKey);
+            await mapCache.ReloadAsync(key);
+
+            var newMap = mapCache.Get(key);
+
+            //lock both maps
+            await using var sync = await ComplexSynchronizationHelper.WaitAsync(
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromMilliseconds(50),
+                oldMap.Sync,
+                newMap.Sync);
+
+            foreach (var monster in newMap.GetEntities<Monster>())
+                newMap.RemoveEntity(monster);
+
+            foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
+                newMap.SimpleAdd(groundEntity);
+
+            foreach (var monster in oldMap.GetEntities<Monster>())
+                newMap.SimpleAdd(monster);
+
+            foreach (var aisling in oldMap.GetEntities<Aisling>())
+                if (aisling.Client.Connected) //dont copy dopplegangers
+                    newMap.SimpleAdd(aisling);
+
+            oldMap.Destroy();
+
+            newMap.BaseInstanceId = oldMap.BaseInstanceId;
+        }
+
+        public async Task ReloadMapsAsync(ILogger logger)
+        {
+            var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+            var mapTemplateCache = cacheProvider.GetCache<MapTemplate>();
+            var mapCache = cacheProvider.GetCache<MapInstance>();
+            var oldMaps = mapCache.ToDictionary(m => m.InstanceId, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var map in oldMaps.Values)
+                map.Stop();
+
+            //ensure all maps are unlocked
+            foreach (var map in oldMaps.Values)
+                await using (await map.Sync.WaitAsync(TimeSpan.FromSeconds(15))) { }
+
+            //locks ALL maps
+            await using var oldSync = await ComplexSynchronizationHelper.WaitAsync(
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromMilliseconds(50),
+                oldMaps.Values
+                       .Select(m => m.Sync)
+                       .ToArray());
+
+            await mapTemplateCache.ReloadAsync();
+            await mapCache.ReloadAsync();
+
+            var newMaps = mapCache.ToDictionary(m => m.InstanceId, StringComparer.OrdinalIgnoreCase);
+
+            await using var newSync = await ComplexSynchronizationHelper.WaitAsync(
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromMilliseconds(50),
+                newMaps.Values
+                       .Select(m => m.Sync)
+                       .ToArray());
+
+            foreach (var oldMap in oldMaps.Values)
+                try
+                {
+                    var newMap = mapCache.Get(oldMap.InstanceId);
+
+                    foreach (var monster in newMap.GetEntities<Monster>())
+                        newMap.RemoveEntity(monster);
+
+                    foreach (var groundEntity in oldMap.GetEntities<GroundEntity>())
+                        newMap.SimpleAdd(groundEntity);
+
+                    foreach (var monster in oldMap.GetEntities<Monster>())
+                        newMap.SimpleAdd(monster);
+
+                    foreach (var aisling in oldMap.GetEntities<Aisling>())
+                        if (aisling.Client.Connected) //dont copy dopplegangers
+                            newMap.SimpleAdd(aisling);
+
+                    oldMap.Destroy();
+
+                    newMap.BaseInstanceId = oldMap.BaseInstanceId;
+                } catch (Exception e)
+                {
+                    logger.WithTopics(Topics.Entities.MapInstance, Topics.Actions.Reload)
+                          .WithProperty(oldMap)
+                          .LogError(e, "Failed to migrate map {@MapInstanceId} during reload", oldMap.InstanceId);
+                }
+        }
+
+        public async Task ReloadMerchantsAsync(ILogger logger)
+        {
+            var merchantFactory = provider.GetRequiredService<IMerchantFactory>();
+            var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+            var mapCache = cacheProvider.GetCache<MapInstance>();
+            var merchantTemplateCache = cacheProvider.GetCache<MerchantTemplate>();
+
+            await merchantTemplateCache.ReloadAsync();
+
+            foreach (var mapInstance in mapCache)
+            {
+                await using var sync = await mapInstance.Sync.WaitAsync();
+
+                var merchantsToAdd = new List<Merchant>();
+
+                foreach (var merchant in mapInstance.GetEntities<Merchant>()
+                                                    .ToList())
+                    try
+                    {
+                        var extraScriptKeys = merchant.ScriptKeys.Except(merchant.Template.ScriptKeys);
+
+                        var newMerchant = merchantFactory.Create(
+                            merchant.Template.TemplateKey,
+                            merchant.MapInstance,
+                            merchant,
+                            merchant.Template
+                                    .ScriptKeys
+                                    .Concat(extraScriptKeys)
+                                    .ToHashSet(StringComparer.OrdinalIgnoreCase));
+
+                        newMerchant.Direction = merchant.Direction;
+
+                        merchant.MapInstance.RemoveEntity(merchant);
+                        merchantsToAdd.Add(newMerchant);
+                    } catch (Exception e)
+                    {
+                        logger.WithTopics(Topics.Entities.Merchant, Topics.Actions.Reload)
+                              .WithProperty(merchant)
+                              .WithProperty(mapInstance)
+                              .LogError(
+                                  e,
+                                  "Failed to migrate merchant {@MerchantTemplateKey} on map {@MapInstanceId} during reload",
+                                  merchant.Template.TemplateKey,
+                                  mapInstance.InstanceId);
                     }
 
-                        break;
+                mapInstance.AddEntities(merchantsToAdd);
+            }
+        }
 
-                    case Monster monster:
+        public Task ReloadMetaDataAsync(ILogger logger)
+        {
+            var metaDataStore = (MetaDataStore)provider.GetRequiredService<IMetaDataStore>();
+
+            metaDataStore.LoadMetaData();
+
+            return Task.CompletedTask;
+        }
+
+        public async Task ReloadMonstersAsync(ILogger logger)
+        {
+            var monsterFactory = provider.GetRequiredService<IMonsterFactory>();
+            var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+            var mapCache = cacheProvider.GetCache<MapInstance>();
+            var monsterTemplateCache = cacheProvider.GetCache<MonsterTemplate>();
+
+            await monsterTemplateCache.ReloadAsync();
+
+            foreach (var mapInstance in mapCache)
+            {
+                await using var sync = await mapInstance.Sync.WaitAsync();
+
+                var monstersToAdd = new List<Monster>();
+
+                foreach (var monster in mapInstance.GetEntities<Monster>()
+                                                   .ToList())
+                    try
                     {
+                        var newMonster = monsterFactory.Create(
+                            monster.Template.TemplateKey,
+                            monster.MapInstance,
+                            monster,
+                            monster.ScriptKeys);
+
+                        newMonster.Items.AddRange(monster.Items);
+                        newMonster.Gold = monster.Gold;
+                        newMonster.Experience = monster.Experience;
+                        newMonster.AggroRange = monster.AggroRange;
+                        newMonster.LootTable = monster.LootTable;
+
+                        monster.MapInstance.RemoveEntity(monster);
+                        monstersToAdd.Add(newMonster);
+                    } catch (Exception e)
+                    {
+                        logger.WithTopics(Topics.Entities.Monster, Topics.Actions.Reload)
+                              .WithProperty(monster)
+                              .WithProperty(mapInstance)
+                              .LogError(
+                                  e,
+                                  "Failed to migrate monster {@MonsterTemplateKey} on map {@MapInstanceId} during reload",
+                                  monster.Template.TemplateKey,
+                                  mapInstance.InstanceId);
+                    }
+
+                mapInstance.AddEntities(monstersToAdd);
+            }
+        }
+
+        public async Task ReloadSkillsAsync(ILogger logger)
+        {
+            var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+            var mapCache = cacheProvider.GetCache<MapInstance>();
+            var skillTemplateCache = cacheProvider.GetCache<SkillTemplate>();
+            var mapper = provider.GetRequiredService<ITypeMapper>();
+
+            await skillTemplateCache.ReloadAsync();
+
+            foreach (var mapInstance in mapCache)
+            {
+                await using var sync = await mapInstance.Sync.WaitAsync();
+
+                foreach (var creature in mapInstance.GetEntities<Creature>())
+                    switch (creature)
+                    {
+                        case Aisling aisling:
                         {
-                            var schemas = mapper.MapMany<SkillSchema>(monster.Skills);
+                            var schemas = mapper.MapMany<SkillSchema>(aisling.SkillBook);
 
                             var skills = mapper.MapMany<Skill>(schemas)
                                                .ToList();
 
-                            monster.Skills.Clear();
-                            monster.Skills.AddRange(skills);
+                            foreach (var skill in skills)
+                            {
+                                aisling.SkillBook.Remove(skill.Slot);
+                                aisling.SkillBook.TryAdd(skill.Slot, skill);
+                            }
                         }
-                    }
 
-                        break;
-                }
+                            break;
+
+                        case Monster monster:
+                        {
+                            {
+                                var schemas = mapper.MapMany<SkillSchema>(monster.Skills);
+
+                                var skills = mapper.MapMany<Skill>(schemas)
+                                                   .ToList();
+
+                                monster.Skills.Clear();
+                                monster.Skills.AddRange(skills);
+                            }
+                        }
+
+                            break;
+                    }
+            }
         }
-    }
 
-    public static async Task ReloadSpellsAsync(this IServiceProvider provider, ILogger logger)
-    {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var mapCache = cacheProvider.GetCache<MapInstance>();
-        var spellTemplateCache = cacheProvider.GetCache<SpellTemplate>();
-        var mapper = provider.GetRequiredService<ITypeMapper>();
-
-        await spellTemplateCache.ReloadAsync();
-
-        foreach (var mapInstance in mapCache)
+        public async Task ReloadSpellsAsync(ILogger logger)
         {
-            await using var sync = await mapInstance.Sync.WaitAsync();
+            var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+            var mapCache = cacheProvider.GetCache<MapInstance>();
+            var spellTemplateCache = cacheProvider.GetCache<SpellTemplate>();
+            var mapper = provider.GetRequiredService<ITypeMapper>();
 
-            foreach (var creature in mapInstance.GetEntities<Creature>())
-                switch (creature)
-                {
-                    case Aisling aisling:
+            await spellTemplateCache.ReloadAsync();
+
+            foreach (var mapInstance in mapCache)
+            {
+                await using var sync = await mapInstance.Sync.WaitAsync();
+
+                foreach (var creature in mapInstance.GetEntities<Creature>())
+                    switch (creature)
                     {
-                        var schemas = mapper.MapMany<SpellSchema>(aisling.SpellBook);
-
-                        var spells = mapper.MapMany<Spell>(schemas)
-                                           .ToList();
-
-                        foreach (var spell in spells)
+                        case Aisling aisling:
                         {
-                            aisling.SpellBook.Remove(spell.Slot);
-                            aisling.SpellBook.TryAdd(spell.Slot, spell);
-                        }
-                    }
-
-                        break;
-
-                    case Monster monster:
-                    {
-                        {
-                            var schemas = mapper.MapMany<SpellSchema>(monster.Spells);
+                            var schemas = mapper.MapMany<SpellSchema>(aisling.SpellBook);
 
                             var spells = mapper.MapMany<Spell>(schemas)
                                                .ToList();
 
-                            monster.Spells.Clear();
-                            monster.Spells.AddRange(spells);
+                            foreach (var spell in spells)
+                            {
+                                aisling.SpellBook.Remove(spell.Slot);
+                                aisling.SpellBook.TryAdd(spell.Slot, spell);
+                            }
                         }
+
+                            break;
+
+                        case Monster monster:
+                        {
+                            {
+                                var schemas = mapper.MapMany<SpellSchema>(monster.Spells);
+
+                                var spells = mapper.MapMany<Spell>(schemas)
+                                                   .ToList();
+
+                                monster.Spells.Clear();
+                                monster.Spells.AddRange(spells);
+                            }
+                        }
+
+                            break;
                     }
-
-                        break;
-                }
+            }
         }
-    }
 
-    public static async Task ReloadWorldMapsAsync(this IServiceProvider provider, ILogger logger)
-    {
-        var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
-        var worldMapNodeCache = cacheProvider.GetCache<WorldMapNode>();
-        var worldMapCache = cacheProvider.GetCache<WorldMap>();
+        public async Task ReloadWorldMapsAsync(ILogger logger)
+        {
+            var cacheProvider = provider.GetRequiredService<ISimpleCacheProvider>();
+            var worldMapNodeCache = cacheProvider.GetCache<WorldMapNode>();
+            var worldMapCache = cacheProvider.GetCache<WorldMap>();
 
-        await worldMapNodeCache.ReloadAsync();
-        await worldMapCache.ReloadAsync();
+            await worldMapNodeCache.ReloadAsync();
+            await worldMapCache.ReloadAsync();
+        }
     }
 }

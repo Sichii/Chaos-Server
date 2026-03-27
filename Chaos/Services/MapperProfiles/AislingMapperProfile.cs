@@ -192,7 +192,6 @@ public sealed class AislingMapperProfile(
             var acc2 = obj.Equipment[EquipmentSlot.Accessory2];
             var acc3 = obj.Equipment[EquipmentSlot.Accessory3];
             var overcoat = obj.Equipment[EquipmentSlot.Overcoat];
-            var pantsColor = overcoat?.Template.PantsColor ?? armor?.Template.PantsColor;
 
             ushort headSprite;
             byte bootsSprite;
@@ -200,7 +199,13 @@ public sealed class AislingMapperProfile(
             DisplayColor bootsColor;
             ushort overcoatSprite;
             DisplayColor overcoatColor;
+            DisplayColor pantsColor;
             ushort armorSprite;
+
+            if ((overcoat?.PantsColor ?? 0) != 0)
+                pantsColor = overcoat!.PantsColor;
+            else
+                pantsColor = armor?.PantsColor ?? 0;
 
             //determine if we should override head/boots sprite
             var shouldOverrideHeadSprite = obj.Equipment.Any(item => item.Template.OverridesHeadSprite);
@@ -292,9 +297,12 @@ public sealed class AislingMapperProfile(
             }
 
             //determine armor sprite
-            if (overcoat?.ArmorUsesOvercoatSprites == true)
+            if (overcoat?.OvercoatUsesArmorSprites == true)
+            {
+                overcoatSprite = 0;
+                overcoatColor = DisplayColor.Default;
                 armorSprite = overcoat.ItemSprite.DisplaySprite;
-            else
+            } else
                 armorSprite = armor?.ItemSprite.DisplaySprite ?? 0;
 
             return new DisplayAislingArgs

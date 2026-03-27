@@ -15,7 +15,6 @@ using Chaos.NLog.Logging.Extensions;
 using Chaos.Packets;
 using Chaos.Packets.Abstractions;
 using Chaos.Services.Servers.Options;
-using Chaos.Time;
 using Microsoft.Extensions.Options;
 #endregion
 
@@ -139,7 +138,8 @@ public sealed class LobbyServer : ServerBase<IChaosLobbyClient>, ILobbyServer<IC
         ClientHandlers[(byte)ClientOpCode.ServerTableRequest] = OnServerTableRequest;
     }
 
-    protected override void OnConnected(Socket clientSocket)
+    // ReSharper disable once AsyncMethodWithoutAwait
+    protected override async Task OnConnected(Socket clientSocket)
     {
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
 

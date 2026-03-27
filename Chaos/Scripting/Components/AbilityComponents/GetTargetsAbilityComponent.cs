@@ -22,13 +22,13 @@ public struct GetTargetsAbilityComponent<TEntity> : IConditionalComponent where 
 
         var targetPoints = options.Shape
                                   .ResolvePoints(aoeOptions)
-                                  .ToList();
+                                  .ToArray();
 
         var targetEntities = map.GetEntitiesAtPoints<TEntity>(targetPoints)
                                 .WithFilter(context.Source, options.Filter)
-                                .ToList();
+                                .ToArray();
 
-        if (options.SingleTarget && (targetEntities.Count > 1))
+        if (options.SingleTarget && (targetEntities.Length > 1))
         {
             if (context.TargetCreature is TEntity entity && targetEntities.Contains(entity))
                 targetEntities = [entity];
@@ -43,7 +43,7 @@ public struct GetTargetsAbilityComponent<TEntity> : IConditionalComponent where 
         vars.SetPoints(targetPoints);
         vars.SetTargets(targetEntities);
 
-        return !options.MustHaveTargets || (targetEntities.Count != 0);
+        return !options.MustHaveTargets || (targetEntities.Length != 0);
     }
 
     private AoeShapeOptions CreateOptions(ActivationContext context, IGetTargetsComponentOptions options)

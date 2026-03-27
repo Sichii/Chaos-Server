@@ -1,4 +1,7 @@
+#region
+using System.Buffers;
 using Chaos.Cryptography.Abstractions.Definitions;
+#endregion
 
 namespace Chaos.Cryptography.Abstractions;
 
@@ -88,5 +91,9 @@ public interface ICrypto
     /// <summary>
     ///     Encrypts a packet that's being sent from a server
     /// </summary>
-    void ServerEncrypt(ref Span<byte> buffer, byte opCode, byte sequence);
+    void ServerEncrypt(
+        ref IMemoryOwner<byte> memoryOwner,
+        ref int length,
+        byte opCode,
+        byte sequence);
 }

@@ -48,7 +48,7 @@ public sealed class RedirectManager : BackgroundService, IRedirectManager
     /// <inheritdoc />
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
 
         while (!stoppingToken.IsCancellationRequested)
             try

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using Chaos.Extensions.Common;
 #endregion
 
 // ReSharper disable once CheckNamespace
@@ -98,13 +99,11 @@ public class SynchronizedHashSet<T> : ISet<T>, IReadOnlySet<T>
     /// <inheritdoc cref="IEnumerable{T}.GetEnumerator" />
     public IEnumerator<T> GetEnumerator()
     {
-        List<T> snapshot;
+        using var @lock = Sync.EnterScope();
 
-        using (Sync.EnterScope())
-            snapshot = Set.ToList();
+        var snapshot = Set.ToArray();
 
-        foreach (var item in snapshot)
-            yield return item;
+        return snapshot.GetGenericEnumerator();
     }
 
     /// <inheritdoc />

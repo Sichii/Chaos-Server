@@ -75,16 +75,19 @@ public abstract class WorldClientBase : ConnectedClientBase, IWorldClient
     public virtual void SendDisplayDialog(DisplayDialogArgs args) => Send(args);
 
     /// <inheritdoc />
+    public virtual void SendDisplayEditableNotepad(DisplayEditableNotepadArgs args) => Send(args);
+
+    /// <inheritdoc />
     public virtual void SendDisplayExchange(DisplayExchangeArgs args) => Send(args);
 
     /// <inheritdoc />
     public virtual void SendDisplayGroupInvite(DisplayGroupInviteArgs args) => Send(args);
 
     /// <inheritdoc />
-    public virtual void SendDisplayNotepad(DisplayNotepadArgs args) => Send(args);
+    public virtual void SendDisplayPublicMessage(DisplayPublicMessageArgs args) => Send(args);
 
     /// <inheritdoc />
-    public virtual void SendDisplayPublicMessage(DisplayPublicMessageArgs args) => Send(args);
+    public virtual void SendDisplayReadonlyNotepad(DisplayReadonlyNotepadArgs args) => Send(args);
 
     /// <inheritdoc />
     public virtual void SendDisplayUnequip(DisplayUnequipArgs args) => Send(args);
@@ -138,7 +141,7 @@ public abstract class WorldClientBase : ConnectedClientBase, IWorldClient
     public virtual void SendMetaData(MetaDataArgs args) => Send(args);
 
     /// <inheritdoc />
-    public virtual void SendNotepad(DisplayNotepadArgs args) => Send(args);
+    public virtual void SendNotepad(DisplayEditableNotepadArgs args) => Send(args);
 
     /// <inheritdoc />
     public virtual void SendOtherProfile(OtherProfileArgs args) => Send(args);

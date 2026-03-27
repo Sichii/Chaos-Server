@@ -1,5 +1,7 @@
+#region
 using Chaos.Models.World;
 using Chaos.Scripting.MonsterScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.MonsterScripts;
 
@@ -18,8 +20,7 @@ public class WanderingScript : MonsterScriptBase
         if ((Target != null) || !ShouldWander)
             return;
 
-        if (!Map.GetEntities<Aisling>()
-                .Any())
+        if (!Map.HasAislings)
             return;
 
         Subject.Wander();

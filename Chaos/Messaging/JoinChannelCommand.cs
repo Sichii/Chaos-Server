@@ -1,5 +1,6 @@
 #region
 using Chaos.Collections.Common;
+using Chaos.Extensions.Common;
 using Chaos.Messaging.Abstractions;
 using Chaos.Models.Data;
 using Chaos.Models.World;
@@ -19,6 +20,13 @@ public class JoinChannelCommand(IChannelService channelService) : ICommand<Aisli
             return default;
 
         channelName = ChannelService.PrependPrefix(channelName);
+
+        if (channelName.EqualsI("!guild") && (source.Guild != null))
+        {
+            source.Guild.JoinChannel(source);
+
+            return default;
+        }
 
         if (ChannelService.JoinChannel(source, channelName))
             source.ChannelSettings.Add(new ChannelSettings(channelName, true));

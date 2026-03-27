@@ -1,6 +1,6 @@
 #region
-using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
+using Chaos.Extensions.Common;
 using Chaos.Models.Data;
 using Chaos.Models.World.Abstractions;
 using Chaos.Scripting.Components.Abstractions;
@@ -42,7 +42,7 @@ public struct ManaBasedDamageAbilityComponent : IComponent
             baseDamage = Convert.ToInt32(baseDamage * options.BaseDamageMultiplier.Value);
 
         if (options.PctOfMana.HasValue)
-            manaDamage = MathEx.GetPercentOf<int>((int)context.Source.StatSheet.EffectiveMaximumMp, options.PctOfMana.Value);
+            manaDamage = Math.GetPercentOf<int>((int)context.Source.StatSheet.EffectiveMaximumMp, options.PctOfMana.Value);
 
         if (options.PctOfManaMultiplier.HasValue)
             manaDamage = Convert.ToInt32(manaDamage * options.PctOfManaMultiplier.Value);

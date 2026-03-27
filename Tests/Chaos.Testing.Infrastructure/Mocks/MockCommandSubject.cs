@@ -1,13 +1,17 @@
+#region
 using Chaos.Messaging.Abstractions;
 using Moq;
+#endregion
 
 namespace Chaos.Testing.Infrastructure.Mocks;
 
 public class MockCommandSubject
 {
+    public static Mock<ICommandSubject> Create() => new();
+
     public static Mock<ICommandSubject> Create(string name, bool isAdmin)
     {
-        var mock = new Mock<ICommandSubject>();
+        var mock = Create();
 
         mock.Setup(s => s.Name)
             .Returns(name);

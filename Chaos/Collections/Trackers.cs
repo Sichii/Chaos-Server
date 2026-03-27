@@ -49,6 +49,15 @@ public class Trackers : IDeltaUpdatable
     public FlagCollection Flags { get; init; } = new();
 
     /// <summary>
+    ///     A collection of big enum flags organized by type. These flags are different in that they can hold unlimited numbers
+    ///     of bit indexes, but are declared differently.
+    /// </summary>
+    /// <remarks>
+    ///     IS PERSISTENT / SERIALIZED TO FILE
+    /// </remarks>
+    public BigFlagsCollection BigFlags { get; init; } = new();
+
+    /// <summary>
     ///     A collection of timed events organized by key
     /// </summary>
     /// <remarks>
@@ -65,6 +74,22 @@ public class Trackers : IDeltaUpdatable
     ///     NOT PERSISTENT / SERIALIZED TO FILE
     /// </remarks>
     public Creature? LastDamagedBy { get; set; }
+
+    /// <summary>
+    ///     The instance of the last map this entity was on (excluding the current map)
+    /// </summary>
+    /// <remarks>
+    ///     NOT PERSISTENT / SERIALIZED TO FILE
+    /// </remarks>
+    public MapInstance? LastMapInstance { get; set; }
+
+    /// <summary>
+    ///     The base instance id of the last map this entity was on (excluding the current map)
+    /// </summary>
+    /// <remarks>
+    ///     NOT PERSISTENT / SERIALIZED TO FILE
+    /// </remarks>
+    public string? LastBaseMapInstanceId { get; set; }
 
     /// <summary>
     ///     The instance id of the last map this entity was on (excluding the current map)

@@ -1,3 +1,4 @@
+#region
 using Chaos.Collections;
 using Chaos.Extensions.Common;
 using Chaos.Models.Board;
@@ -5,6 +6,7 @@ using Chaos.Models.World;
 using Chaos.Scripting.BulletinBoardScripts.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.BulletinBoardScripts;
 
@@ -76,7 +78,7 @@ public sealed class PublicBoardScript : ConfigurableBulletinBoardScriptBase
             return;
 
         //prune old posts based on retention time
-        foreach (var post in Subject.ToList())
+        foreach (var post in Subject.ToArray())
             if (DateTime.UtcNow.Subtract(post.CreationDate) > PostRetentionTime)
                 Subject.Posts.Remove(post.PostId, out _);
     }

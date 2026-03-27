@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using Chaos;
 using Chaos.Collections;
 using Chaos.Collections.Abstractions;
+using Chaos.Common.Abstractions.Definitions;
 using Chaos.Extensions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.DependencyInjection;
@@ -32,8 +33,13 @@ using Chaos.Site.Utilities;
 using Chaos.Storage.Abstractions;
 using Microsoft.Extensions.Options;
 using NLog;
-using NLog.Config;
 using NLog.Extensions.Logging;
+using Chaos.Definitions;
+using Chaos.Networking.Abstractions.Definitions;
+using OpenTelemetry;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using AppContext = Chaos.AppContext;
 #endregion
 
@@ -73,7 +79,6 @@ ConfigureApp(app);
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 Console.WriteLine($"Server GC: {GCSettings.IsServerGC}");
-Console.WriteLine($"Concurrent GC: {GCSettings.LatencyMode != GCLatencyMode.Batch}");
 Console.WriteLine($"GC Latency Mode: {GCSettings.LatencyMode}");
 
 await Task.Delay(2500);
@@ -165,6 +170,8 @@ static void ConfigureServices(WebApplicationBuilder builder)
         logging.AddNLog();
     });
 
+    ConfigureOpenTelemetry(builder);
+
     builder.Services.AddJsonSerializerOptions();
     builder.Services.AddCommandInterceptor<Aisling, AislingCommandInterceptorOptions>(ConfigKeys.Options.Key);
     builder.Services.AddChannelService(ConfigKeys.Options.Key);
@@ -181,6 +188,8 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
     builder.Services.AddSingleton<IShardGenerator, ExpiringMapInstanceCache>(p
         => (ExpiringMapInstanceCache)p.GetRequiredService<ISimpleCache<MapInstance>>());
+
+    builder.Services.AddSingleton<IMapTraversalService, IHostedService, MapTraversalService>();
 
     builder.Services.AddLobbyServer();
     builder.Services.AddLoginserver();
@@ -205,6 +214,62 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
         builder.ConfigureSite();
     }
+}
+
+static void ConfigureOpenTelemetry(WebApplicationBuilder builder)
+{
+    var useSeq = builder.Configuration.GetValue<bool>(ConfigKeys.Logging.UseSeq);
+
+    if (!useSeq)
+        return;
+
+    var serviceName = builder.Configuration.GetValue<string>(ConfigKeys.OpenTelemetry.ServiceName) ?? "chaos-server";
+    var otlpEndpoint = builder.Configuration.GetValue<string>(ConfigKeys.OpenTelemetry.OtlpEndpoint);
+
+    if (string.IsNullOrWhiteSpace(otlpEndpoint))
+        return;
+
+    var samplingRatio = builder.Configuration.GetValue(ConfigKeys.OpenTelemetry.SamplingRatio, 1.0);
+    var updateSamplingRatio = builder.Configuration.GetValue(ConfigKeys.OpenTelemetry.UpdateSamplingRatio, 0.01);
+    var packetSamplingRatio = builder.Configuration.GetValue(ConfigKeys.OpenTelemetry.PacketSamplingRatio, 0.001);
+    var worldScriptSamplingRatio = builder.Configuration.GetValue(ConfigKeys.OpenTelemetry.WorldScriptSamplingRatio, 0.01);
+    var slowUpdateThresholdMs = builder.Configuration.GetValue(ConfigKeys.OpenTelemetry.SlowUpdateThresholdMs, 33.33);
+    var slowPacketThresholdMs = builder.Configuration.GetValue(ConfigKeys.OpenTelemetry.SlowPacketThresholdMs, 100.0);
+    var slowWorldScriptThresholdMs = builder.Configuration.GetValue(ConfigKeys.OpenTelemetry.SlowWorldScriptThresholdMs, 66.66);
+
+    var sampler = new ChaosTracingSampler(
+        samplingRatio,
+        updateSamplingRatio,
+        packetSamplingRatio,
+        worldScriptSamplingRatio);
+
+    var exporterOptions = new OtlpExporterOptions
+    {
+        Endpoint = new Uri(otlpEndpoint),
+        Protocol = OtlpExportProtocol.HttpProtobuf
+    };
+
+    var batchProcessor = new BatchActivityExportProcessor(new OtlpTraceExporter(exporterOptions));
+
+    var tailProcessor = new TailSamplingProcessor(
+        batchProcessor,
+        slowUpdateThresholdMs,
+        slowPacketThresholdMs,
+        slowWorldScriptThresholdMs);
+
+    builder.Services
+           .AddOpenTelemetry()
+           .ConfigureResource(resource => resource.AddService(serviceName))
+           .WithTracing(tracing =>
+           {
+               tracing.SetSampler(sampler)
+                      .AddSource(ActivitySources.GENERAL_SOURCE_NAME)
+                      .AddSource(ActivitySources.INTERNAL_SOURCE_NAME)
+                      .AddSource(NetworkingActivitySources.PACKET_SOURCE_NAME)
+                      .AddSource(ChaosActivitySources.UPDATE_SOURCE_NAME)
+                      .AddSource(ChaosActivitySources.WORLD_SCRIPT_SOURCE_NAME)
+                      .AddProcessor(tailProcessor);
+           });
 }
 
 static void RegisterStructuredLoggingTransformations()
@@ -413,22 +478,6 @@ static void RegisterStructuredLoggingTransformations()
                          Subject = obj.Subject,
                          Message = obj.Message,
                          Creation = obj.CreationDate
-                     });
-
-                     builder.RegisterObjectTransformation<List<NetworkStatistic>>(obj =>
-                     {
-                         var ret = obj.Select(x => new
-                                      {
-                                          OpCode = x.OpCode,
-                                          Average = x.Average,
-                                          Max = x.Max,
-                                          Upper95thPercentile = x.Upper95thPercentile,
-                                          Median = x.Median,
-                                          Count = x.Count
-                                      })
-                                      .ToList();
-
-                         return ret;
                      });
 
                      builder.RegisterCollectionTransformations(

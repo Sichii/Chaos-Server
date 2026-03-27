@@ -789,8 +789,30 @@ public enum UserOption
 /// </summary>
 public enum WorldListColor : byte
 {
-    Guilded = 84,
-    WithinLevelRange = 151,
+    Invisble = 0,
+    LightBlue = 1,
+    BrightRed = 2,
+    OffWhite = 10,
+    BrightGrey = 12,
+    Slate = 14,
+    GrayGreen = 15,
+    AnotherWhite = 16,
+    BrightBrightGrey = 19,
+    Black = 31,
+    LightYellow = 49,
+    LightOrange = 63,
+    Yellow = 67,
+    LightGreen = 75,
+    OliveBlue = 84,
+    Blue = 88,
+    LightPurple = 96,
+    DarkPurple = 100,
+    Pink = 105,
+    DarkGreen = 125,
+    Green = 128,
+    Orange = 151,
+    Brown = 160,
+    Red = 248,
     White = 255
 }
 

@@ -1,6 +1,5 @@
 #region
 using Chaos.DarkAges.Definitions;
-using Chaos.Extensions.Common;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Entities.Server;
@@ -106,7 +105,8 @@ public sealed class SelfProfileConverter : PacketConverterBase<SelfProfileArgs>
         {
             legendMarkCount = byte.MaxValue;
 
-            legendMarks = legendMarks.TakeRandom(byte.MaxValue)
+            legendMarks = legendMarks.Shuffle()
+                                     .Take(byte.MaxValue)
                                      .ToList();
         }
 

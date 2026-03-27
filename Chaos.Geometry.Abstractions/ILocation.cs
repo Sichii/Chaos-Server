@@ -12,4 +12,7 @@ public interface ILocation : IPoint
 
     /// <inheritdoc cref="Object.ToString" />
     static string ToString(ILocation location) => $"{location.Map}:{IPoint.ToString(location)}";
+
+    /// <inheritdoc cref="Object.ToString" />
+    new string? ToString() => $"{Map}:{((IPoint)this).ToString()}";
 }

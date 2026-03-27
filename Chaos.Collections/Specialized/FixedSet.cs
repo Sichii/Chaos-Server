@@ -4,6 +4,7 @@ namespace Chaos.Collections.Specialized;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Extensions.Common;
 #endregion
 
 /// <summary>
@@ -48,11 +49,15 @@ public sealed class FixedSet<T> : ICollection<T> where T: notnull
         if (capacity <= 0)
             throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be greater than zero.");
 
+        if (items is not null && comparer is not null)
+            items = items.Reverse()
+                         .Distinct(comparer)
+                         .Reverse();
+
         items = items?.Distinct();
         items ??= [];
 
         Capacity = capacity;
-
         Items = [];
         Lookup = new Dictionary<T, LinkedListNode<T>>(comparer);
         Sync = new Lock();
@@ -60,7 +65,7 @@ public sealed class FixedSet<T> : ICollection<T> where T: notnull
         foreach (var item in items)
         {
             var node = Items.AddLast(item);
-            Lookup.Add(item, node);
+            Lookup[item] = node;
         }
     }
 
@@ -137,9 +142,9 @@ public sealed class FixedSet<T> : ICollection<T> where T: notnull
     {
         using var @lock = Sync.EnterScope();
 
-        var snapshot = Items.ToList();
+        var snapshot = Items.ToArray();
 
-        return snapshot.GetEnumerator();
+        return snapshot.GetGenericEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();

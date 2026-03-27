@@ -1,8 +1,10 @@
+#region
 using Chaos.Collections;
 using Chaos.Geometry.Abstractions;
 using Chaos.Models.World;
 using Chaos.Pathfinding;
 using Chaos.Pathfinding.Abstractions;
+#endregion
 
 namespace Chaos.Extensions;
 
@@ -12,7 +14,7 @@ public static class PathfindingServiceExtensions
     {
         var blockingReactors = mapInstance.GetEntities<ReactorTile>()
                                           .Where(rt => rt.ShouldBlockPathfinding)
-                                          .ToList<IPoint>();
+                                          .ToArray<IPoint>();
 
         var walls = new List<IPoint>();
 

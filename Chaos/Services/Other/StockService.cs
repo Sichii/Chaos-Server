@@ -1,5 +1,6 @@
 #region
 using Chaos.Common.Utilities;
+using Chaos.Extensions.Common;
 using Chaos.NLog.Logging.Definitions;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Services.Other.Abstractions;
@@ -147,7 +148,7 @@ public sealed class StockService(ILogger<StockService> logger) : BackgroundServi
                 ref _currentStock,
                 () =>
                 {
-                    var res = _currentStock + MathEx.GetPercentOf<int>(MaxStock, percent);
+                    var res = _currentStock + Math.GetPercentOf<int>(MaxStock, percent);
 
                     return Math.Min(MaxStock, res);
                 });

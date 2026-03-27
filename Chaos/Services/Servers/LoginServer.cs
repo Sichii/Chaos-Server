@@ -222,13 +222,16 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
 
         async ValueTask InnerOnLogin(IChaosLoginClient localClient, LoginArgs localArgs)
         {
-            var allowed = await AccessManager.ShouldAllowAsync(localArgs.ClientId1);
+            var allowed = await AccessManager.ShouldAllowAsync(localArgs.ClientId1, localArgs.ClientId2);
 
             if (!allowed)
             {
                 Logger.WithTopics(Topics.Entities.Client, Topics.Actions.Login, Topics.Actions.Validation)
                       .WithProperty(localClient)
-                      .LogWarning("Client with id {@ClientId} tried to connect, but is id banned", localArgs.ClientId1);
+                      .LogWarning(
+                          "Client with Id1:{@ClientId1}, Id2:{@ClientId2} tried to connect, but is id banned",
+                          localArgs.ClientId1,
+                          localArgs.ClientId2);
 
                 localClient.SendLoginMessage(
                     LoginMessageType.CharacterDoesntExist,
@@ -390,7 +393,7 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
         ClientHandlers[(byte)ClientOpCode.PasswordChange] = OnPasswordChange;
     }
 
-    protected override async void OnConnected(Socket clientSocket)
+    protected override async Task OnConnected(Socket clientSocket)
     {
         var ip = clientSocket.RemoteEndPoint as IPEndPoint;
 

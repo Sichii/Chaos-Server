@@ -9,4 +9,8 @@
         <PackageReference Include="Microsoft.Extensions.ObjectPool"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleto Include="Chaos.Collections.Tests"/>
+    </ItemGroup>
+
 </Project>

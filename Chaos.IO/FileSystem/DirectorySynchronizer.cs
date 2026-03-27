@@ -30,99 +30,93 @@ public static class DirectorySynchronizer
             await Task.Yield();
     }
 
-    /// <summary>
-    ///     Executes the specified function on the specified directory, ensuring that no other actions are being performed on
-    ///     the directory
-    /// </summary>
     /// <param name="path">
     ///     The directory to lock during execution
     /// </param>
-    /// <param name="action">
-    ///     The function to execute
-    /// </param>
-    public static void SafeExecute(this string path, Action<string> action)
+    extension(string path)
     {
-        LockPath(path);
+        /// <summary>
+        ///     Executes the specified function on the specified directory, ensuring that no other actions are being performed on
+        ///     the directory
+        /// </summary>
+        /// <param name="action">
+        ///     The function to execute
+        /// </param>
+        public void SafeExecute(Action<string> action)
+        {
+            LockPath(path);
 
-        try
-        {
-            action(path);
-        } finally
-        {
-            lock (Sync)
-                LockedPaths.Remove(path);
+            try
+            {
+                action(path);
+            } finally
+            {
+                lock (Sync)
+                    LockedPaths.Remove(path);
+            }
         }
-    }
 
-    /// <summary>
-    ///     Executes the specified function on the specified directory, ensuring that no other actions are being performed on
-    ///     the directory
-    /// </summary>
-    /// <param name="path">
-    ///     The directory to lock during execution
-    /// </param>
-    /// <param name="function">
-    ///     The function to execute
-    /// </param>
-    public static TResult SafeExecute<TResult>(this string path, Func<string, TResult> function)
-    {
-        LockPath(path);
+        /// <summary>
+        ///     Executes the specified function on the specified directory, ensuring that no other actions are being performed on
+        ///     the directory
+        /// </summary>
+        /// <param name="function">
+        ///     The function to execute
+        /// </param>
+        public TResult SafeExecute<TResult>(Func<string, TResult> function)
+        {
+            LockPath(path);
 
-        try
-        {
-            return function(path);
-        } finally
-        {
-            lock (Sync)
-                LockedPaths.Remove(path);
+            try
+            {
+                return function(path);
+            } finally
+            {
+                lock (Sync)
+                    LockedPaths.Remove(path);
+            }
         }
-    }
 
-    /// <summary>
-    ///     Asynchronously executes the specified function on the specified path, ensuring that no other actions are being
-    ///     performed on the path, or any sub-paths
-    /// </summary>
-    /// <param name="path">
-    ///     The path to lock during execution
-    /// </param>
-    /// <param name="function">
-    ///     The function to execute
-    /// </param>
-    public static async Task SafeExecuteAsync(this string path, Func<string, Task> function)
-    {
-        await LockPathAsync(path);
+        /// <summary>
+        ///     Asynchronously executes the specified function on the specified path, ensuring that no other actions are being
+        ///     performed on the path, or any sub-paths
+        /// </summary>
+        /// <param name="function">
+        ///     The function to execute
+        /// </param>
+        public async Task SafeExecuteAsync(Func<string, Task> function)
+        {
+            await LockPathAsync(path);
 
-        try
-        {
-            await function(path);
-        } finally
-        {
-            lock (Sync)
-                LockedPaths.Remove(path);
+            try
+            {
+                await function(path);
+            } finally
+            {
+                lock (Sync)
+                    LockedPaths.Remove(path);
+            }
         }
-    }
 
-    /// <summary>
-    ///     Asynchronously executes the specified function on the specified path, ensuring that no other actions are being
-    ///     performed on the path, or any sub-paths
-    /// </summary>
-    /// <param name="path">
-    ///     The path to lock during execution
-    /// </param>
-    /// <param name="function">
-    ///     The function to execute
-    /// </param>
-    public static async Task<T> SafeExecuteAsync<T>(this string path, Func<string, Task<T>> function)
-    {
-        await LockPathAsync(path);
+        /// <summary>
+        ///     Asynchronously executes the specified function on the specified path, ensuring that no other actions are being
+        ///     performed on the path, or any sub-paths
+        /// </summary>
+        /// <param name="function">
+        ///     The function to execute
+        /// </param>
+        public async Task<T> SafeExecuteAsync<T>(Func<string, Task<T>> function)
+        {
+            await LockPathAsync(path);
 
-        try
-        {
-            return await function(path);
-        } finally
-        {
-            lock (Sync)
-                LockedPaths.Remove(path);
+            try
+            {
+                return await function(path);
+            } finally
+            {
+                lock (Sync)
+                    LockedPaths.Remove(path);
+            }
         }
     }
 }

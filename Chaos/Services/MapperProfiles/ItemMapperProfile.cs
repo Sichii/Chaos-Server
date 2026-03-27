@@ -62,6 +62,9 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
         if (obj.Color.HasValue)
             item.Color = obj.Color.Value;
 
+        if (obj.PantsColor.HasValue)
+            item.PantsColor = obj.PantsColor.Value;
+
         if (obj.PanelSprite.HasValue)
             item.ItemSprite.PanelSprite = obj.PanelSprite.Value;
 
@@ -99,11 +102,21 @@ public sealed class ItemMapperProfile(ISimpleCache simpleCache, IScriptProvider 
 
         var ret = new ItemSchema
         {
+            AccountBound = obj.AccountBound == obj.Template.AccountBound ? null : obj.AccountBound,
+            OvercoatUsesArmorSprites = obj.OvercoatUsesArmorSprites == obj.Template.OvercoatUsesArmorSprites
+                ? null
+                : obj.OvercoatUsesArmorSprites,
+            ArmorUsesOvercoatSprites = obj.ArmorUsesOvercoatSprites == obj.Template.ArmorUsesOvercoatSprites
+                ? null
+                : obj.ArmorUsesOvercoatSprites,
+            NoTrade = obj.NoTrade == obj.Template.NoTrade ? null : obj.NoTrade,
+            PreventBanking = obj.PreventBanking == obj.Template.PreventBanking ? null : obj.PreventBanking,
             UniqueId = obj.UniqueId,
             ElapsedMs = obj.Elapsed.HasValue ? Convert.ToInt32(obj.Elapsed.Value.TotalMilliseconds) : null,
             ScriptKeys = extraScriptKeys.Count != 0 ? extraScriptKeys : null,
             TemplateKey = obj.Template.TemplateKey,
             Color = obj.Template.Color == obj.Color ? null : obj.Color,
+            PantsColor = obj.Template.PantsColor == obj.PantsColor ? null : obj.PantsColor,
             Count = obj.Count,
             CurrentDurability = obj.CurrentDurability,
             Slot = obj.Slot,

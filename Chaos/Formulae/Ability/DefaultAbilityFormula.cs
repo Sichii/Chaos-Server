@@ -13,7 +13,7 @@ public class DefaultAbilityFormula : IAbilityFormula
         => killedCreature switch
         {
             Aisling         => 0,
-            Monster monster => Convert.ToInt64(monster.Experience),
+            Monster monster => Convert.ToInt64(monster.AbilityExperience),
             _               => 0
         };
 }

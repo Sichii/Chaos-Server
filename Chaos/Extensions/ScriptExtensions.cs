@@ -50,36 +50,6 @@ public static class ScriptExtensions
         scripted.ScriptKeys.Add(scriptKey);
     }
 
-    public static TScript? As<TScript>(this IScript script) where TScript: IScript
-        => script switch
-        {
-            TScript typedScript              => typedScript,
-            ICompositeScript compositeScript => compositeScript.GetScript<TScript>(),
-            _                                => default
-        };
-
-    public static IEnumerable<TScript> GetScripts<TScript>(this IScript script) where TScript: IScript
-    {
-        if (script is ICompositeScript compositeScript)
-            return compositeScript.GetScripts<TScript>();
-
-        return [];
-    }
-
-    public static bool Is<TScript>(this IScript script) where TScript: IScript
-    {
-        var outScript = script.As<TScript>();
-
-        return outScript is not null;
-    }
-
-    public static bool Is<TScript>(this IScript script, [MaybeNullWhen(false)] out TScript outScript) where TScript: IScript
-    {
-        outScript = script.As<TScript>();
-
-        return outScript is not null;
-    }
-
     public static void RemoveScript<TScriptToRemove>(this IScripted<IScript> scripted) where TScriptToRemove: IScript
     {
         if (!scripted.Script.Is<TScriptToRemove>(out var scriptToRemove))
@@ -89,5 +59,38 @@ public static class ScriptExtensions
             composite.Remove(scriptToRemove);
         else
             throw new UnreachableException("All scripted objects should have a composite script at the top level");
+    }
+
+    extension(IScript script)
+    {
+        public TScript? As<TScript>() where TScript: IScript
+            => script switch
+            {
+                TScript typedScript              => typedScript,
+                ICompositeScript compositeScript => compositeScript.GetScript<TScript>(),
+                _                                => default
+            };
+
+        public IEnumerable<TScript> GetScripts<TScript>() where TScript: IScript
+        {
+            if (script is ICompositeScript compositeScript)
+                return compositeScript.GetScripts<TScript>();
+
+            return [];
+        }
+
+        public bool Is<TScript>() where TScript: IScript
+        {
+            var outScript = script.As<TScript>();
+
+            return outScript is not null;
+        }
+
+        public bool Is<TScript>([MaybeNullWhen(false)] out TScript outScript) where TScript: IScript
+        {
+            outScript = script.As<TScript>();
+
+            return outScript is not null;
+        }
     }
 }

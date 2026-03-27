@@ -112,7 +112,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     }
 
     /// <inheritdoc />
-    public async Task IdBanishAsync(uint clientId1, ushort clientId2)
+    public async Task IdBanishAsync(uint clientId1, uint clientId2)
     {
         //don't banish the default values
         if ((clientId1 == 4278255360U) && (clientId2 == 7695))
@@ -123,7 +123,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
         var id1Str = clientId1.ToString();
         var id2Str = clientId2.ToString();
 
-        await File.AppendAllLinesAsync(ClientIdBanPath, [$"{id1Str},{id2Str}]"]);
+        await File.AppendAllLinesAsync(ClientIdBanPath, [$"{id1Str},{id2Str}"]);
     }
 
     /// <inheritdoc />
@@ -135,8 +135,8 @@ public sealed class AccessManager : BackgroundService, IAccessManager
 
         await File.AppendAllLinesAsync(BlacklistPath, [ipStr]);
 
-        var whiteList = (await File.ReadAllLinesAsync(WhitelistPath)).ToList();
-        whiteList.RemoveAll(str => str.EqualsI(ipStr));
+        var whiteList = (await File.ReadAllLinesAsync(WhitelistPath)).Where(line => !line.EqualsI(ipStr))
+                                                                     .ToArray();
 
         await File.WriteAllLinesAsync(WhitelistPath, whiteList);
     }
@@ -189,11 +189,11 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     }
 
     /// <inheritdoc />
-    public async Task<bool> ShouldAllowAsync(uint clientId)
+    public async Task<bool> ShouldAllowAsync(uint clientId1, uint clientId2)
     {
         await using var @lock = await AccessSync.WaitAsync();
 
-        return !await IsClientIdBanned(clientId);
+        return !await IsClientIdBanned(clientId1, clientId2);
     }
 
     /// <inheritdoc />
@@ -246,7 +246,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
 
             var now = DateTime.UtcNow;
 
-            foreach ((var ip, var details) in FailureDetails.ToList())
+            foreach ((var ip, var details) in FailureDetails.ToArray())
                 if (now.Subtract(details.MostRecentFailureTime)
                        .TotalMinutes
                     > Options.LockoutMins)
@@ -333,9 +333,9 @@ public sealed class AccessManager : BackgroundService, IAccessManager
                      .Where(obj => obj is not null)
                      .ContainsAsync(ipAddress);
 
-    private async Task<bool> IsClientIdBanned(uint clientId)
+    private async Task<bool> IsClientIdBanned(uint clientId1, uint clientId2)
     {
-        var clientIdStr = clientId.ToString();
+        var clientIdStr = $"{clientId1},{clientId2}";
 
         return await File.ReadLinesAsync(ClientIdBanPath)
                          .ContainsAsync(clientIdStr, StringComparer.OrdinalIgnoreCase);

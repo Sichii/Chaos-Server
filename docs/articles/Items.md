@@ -65,8 +65,9 @@ To add a script to an object at runtime, just use the extension method `AddScrip
 
 ## Notepad Text
 
-Items have a `NotepadText` property that can be used to store text. This is in place to support the `DisplayNotepad` and
-`SetNotepad` packets. This text is not guaranteed to persist through banking or stackable item transfer.
+Items have a `NotepadText` property that can be used to store text. This is in place to support the
+`DisplayEditableNotepad`, `DisplayReadonlyNotepad`, and `SetNotepad` packets. This text is not guaranteed to persist
+through banking or stackable item transfer.
 
 ## Dyeable items
 

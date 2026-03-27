@@ -70,6 +70,11 @@ public sealed record ItemSchema : PanelEntitySchema
     public ushort? PanelSprite { get; set; }
 
     /// <summary>
+    ///     The color of the item's pants
+    /// </summary>
+    public DisplayColor? PantsColor { get; set; }
+
+    /// <summary>
     ///     If specified, the prefix of the item
     /// </summary>
     public string? Prefix { get; set; }

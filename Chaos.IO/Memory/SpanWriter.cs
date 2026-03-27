@@ -17,6 +17,8 @@ public ref struct SpanWriter
     private readonly bool AutoGrow;
     private readonly bool IsLittleEndian;
     private Span<byte> Buffer;
+    private IMemoryOwner<byte>? RentedBlock;
+    private readonly bool UsePooling;
 
     /// <summary>
     ///     Gets or sets the current position within the Span.
@@ -78,6 +80,10 @@ public ref struct SpanWriter
     /// <param name="autoGrow">
     ///     A flag indicating whether the buffer should automatically grow when needed.
     /// </param>
+    /// <param name="usePooling">
+    ///     Whether to use MemoryPool.Shared when allocating internally. Setting this to true also means you must manage the
+    ///     lifetime of the IMemoryOwner reference
+    /// </param>
     /// <param name="endianness">
     ///     The endianness used for writing numbers.
     /// </param>
@@ -85,14 +91,54 @@ public ref struct SpanWriter
         Encoding encoding,
         int initialBufferSize = 50,
         bool autoGrow = true,
+        bool usePooling = false,
         Endianness endianness = Endianness.BigEndian)
     {
-        Buffer = new Span<byte>(new byte[initialBufferSize]);
         Encoding = encoding;
         Position = 0;
         AutoGrow = autoGrow;
+        UsePooling = usePooling;
         Endianness = endianness;
         IsLittleEndian = Endianness == Endianness.LittleEndian;
+
+        Grow(initialBufferSize);
+    }
+
+    private void Grow(int size)
+    {
+        if (UsePooling)
+        {
+            var newRentedBlock = MemoryPool<byte>.Shared.Rent(size);
+            var newBuffer = newRentedBlock.Memory.Span;
+
+            if (RentedBlock != null)
+            {
+                Buffer.CopyTo(newBuffer);
+                ReturnBufferToPool();
+            }
+
+            RentedBlock = newRentedBlock;
+            Buffer = newBuffer;
+        } else
+        {
+            Span<byte> newBuffer = new byte[size];
+            Buffer.CopyTo(newBuffer);
+
+            Buffer = newBuffer;
+        }
+    }
+
+    /// <summary>
+    ///     Returns the buffered array to the pool if pooling is enabled
+    /// </summary>
+    public void ReturnBufferToPool()
+    {
+        if (RentedBlock is not null)
+        {
+            RentedBlock.Dispose();
+            RentedBlock = null;
+            Buffer = null;
+        }
     }
 
     /// <summary>
@@ -108,12 +154,10 @@ public ref struct SpanWriter
         if (!AutoGrow)
             throw new EndOfStreamException();
 
-        var buffer = Buffer;
-
         //create a new buffer of length * 3 OR (length + bytesToWrite) * 1.5 (whichever is bigger)
-        var newLength = (int)Math.Max(buffer.Length * 3, (buffer.Length + bytesToWrite) * 1.5);
-        Buffer = new byte[newLength].AsSpan();
-        buffer.CopyTo(Buffer);
+        var newLength = (int)Math.Max(Buffer.Length * 3, (Buffer.Length + bytesToWrite) * 1.5);
+
+        Grow(newLength);
     }
 
     private void InnerWriteString(ReadOnlySpan<byte> buffer, bool lineFeed = false, bool terminate = false)
@@ -141,6 +185,23 @@ public ref struct SpanWriter
             Flush();
 
         return Buffer;
+    }
+
+    /// <summary>
+    ///     Transfers ownership of the allocated memory buffer to the caller.
+    /// </summary>
+    /// <returns>
+    ///     The <see cref="IMemoryOwner{T}" /> representing the allocated memory if ownership is available; otherwise
+    ///     <c>
+    ///         null
+    ///     </c>
+    /// </returns>
+    public (IMemoryOwner<byte> Owner, int Length) TransferOwnership()
+    {
+        var ret = RentedBlock ?? throw new InvalidOperationException("No rented block to transfer ownership of.");
+        RentedBlock = null;
+
+        return (ret, Position);
     }
 
     /// <summary>
@@ -450,4 +511,10 @@ public ref struct SpanWriter
         MemoryMarshal.Write(Buffer[Position..], in value);
         Position += sizeof(uint);
     }
+
+    /// <summary>
+    ///     Releases resources used by the current instance of <see cref="SpanWriter" />. Only necessary if using memory
+    ///     pooling.
+    /// </summary>
+    public void Dispose() => ReturnBufferToPool();
 }

@@ -1,6 +1,8 @@
+#region
 using Chaos.Extensions.Geometry;
 using Chaos.Models.World;
 using Chaos.Scripting.MonsterScripts.Abstractions;
+#endregion
 
 namespace Chaos.Scripting.MonsterScripts;
 
@@ -19,8 +21,7 @@ public class MoveToTargetScript : MonsterScriptBase
         if ((Target == null) || !ShouldMove)
             return;
 
-        if (!Map.GetEntities<Aisling>()
-                .Any())
+        if (!Map.HasAislings)
             return;
 
         var distance = Subject.ManhattanDistanceFrom(Target);

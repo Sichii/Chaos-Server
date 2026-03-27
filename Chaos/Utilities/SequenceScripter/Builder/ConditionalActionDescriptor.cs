@@ -1,10 +1,6 @@
-#region
-using Chaos.Models.World.Abstractions;
-#endregion
-
 namespace Chaos.Utilities.SequenceScripter.Builder;
 
-public class ConditionalActionDescriptor<T> where T: Creature
+public sealed class ConditionalActionDescriptor<T>
 {
     public Action<T> Action { get; }
     public Func<T, bool> Condition { get; }

@@ -1,8 +1,10 @@
+#region
 using System.Runtime.InteropServices;
 using System.Text;
 using Chaos.Cryptography;
 using Chaos.IO.Compression;
 using Chaos.IO.Memory;
+#endregion
 
 namespace Chaos.MetaData.Abstractions;
 
@@ -33,7 +35,9 @@ public abstract class MetaDataBase<TNode> : MetaNodeCollection<TNode>, IMetaData
     /// <inheritdoc />
     public virtual void Compress()
     {
-        var writer = new SpanWriter(Encoding.GetEncoding(949));
+        var writer = new SpanWriter(Encoding.GetEncoding(949), usePooling: true);
+        using var disposable = writer;
+
         var nodeCount = (ushort)Nodes.Count;
 
         writer.WriteUInt16(nodeCount);

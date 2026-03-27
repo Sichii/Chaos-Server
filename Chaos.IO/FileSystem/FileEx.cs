@@ -1,5 +1,7 @@
+#region
 using System.Text;
 using Chaos.IO.Exceptions;
+#endregion
 
 namespace Chaos.IO.FileSystem;
 
@@ -153,7 +155,11 @@ public static class FileEx
             File.WriteAllText(tempPath, text);
 
             if (File.Exists(path))
-                File.Replace(tempPath, path, bakPath);
+                File.Replace(
+                    tempPath,
+                    path,
+                    bakPath,
+                    true);
             else
                 File.Move(tempPath, path, true);
 

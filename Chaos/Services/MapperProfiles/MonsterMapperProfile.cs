@@ -40,7 +40,8 @@ public sealed class MonsterMapperProfile(IMonsterFactory monsterFactory, ISimple
             Direction = obj.Direction,
             SpawnTimer = obj.IntervalVariancePct.HasValue
                 ? new RandomizedIntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), obj.IntervalVariancePct.Value, startAsElapsed: false)
-                : new IntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), false)
+                : new IntervalTimer(TimeSpan.FromSeconds(obj.IntervalSecs), false),
+            OnlyCountMonstersInSpawnArea = obj.OnlyCountMonstersInSpawnArea
         };
 
     /// <inheritdoc />

@@ -1,6 +1,5 @@
 #region
 using Chaos.DarkAges.Definitions;
-using Chaos.Extensions.Common;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Networking.Definitions;
@@ -36,13 +35,11 @@ public sealed class OtherProfileConverter : PacketConverterBase<OtherProfileArgs
             {
                 sprite -= NETWORKING_CONSTANTS.ITEM_SPRITE_OFFSET;
 
-                equipment.Add(
-                    slot,
-                    new ItemInfo
-                    {
-                        Sprite = sprite,
-                        Color = (DisplayColor)color
-                    });
+                equipment[slot] = new ItemInfo
+                {
+                    Sprite = sprite,
+                    Color = (DisplayColor)color
+                };
             }
         }
 
@@ -137,7 +134,8 @@ public sealed class OtherProfileConverter : PacketConverterBase<OtherProfileArgs
         {
             legendMarkCount = byte.MaxValue;
 
-            legendMarks = legendMarks.TakeRandom(byte.MaxValue)
+            legendMarks = legendMarks.Shuffle()
+                                     .Take(byte.MaxValue)
                                      .ToList();
         }
 

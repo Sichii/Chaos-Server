@@ -33,15 +33,15 @@ public readonly ref struct ValuePolygon : IPolygon, IEquatable<IPolygon>
         if (ReferenceEquals(null, other))
             return false;
 
-        var vertices = Vertices.ToList();
-        var otherVertices = other.Vertices.ToList();
+        var vertices = Vertices.ToArray();
+        var otherVertices = other.Vertices.ToArray();
 
-        if (vertices.Count != otherVertices.Count)
+        if (vertices.Length != otherVertices.Length)
             return false;
 
         var index2 = 0;
 
-        while (index2 < otherVertices.Count)
+        while (index2 < otherVertices.Length)
         {
             if (Equals(vertices[0], otherVertices[index2]))
             {
@@ -49,7 +49,7 @@ public readonly ref struct ValuePolygon : IPolygon, IEquatable<IPolygon>
                 var tempIndex2 = index2;
                 var isSequentiallyEqual = true;
 
-                while ((tempIndex1 < vertices.Count) && (tempIndex2 < otherVertices.Count))
+                while ((tempIndex1 < vertices.Length) && (tempIndex2 < otherVertices.Length))
                 {
                     if (!Equals(vertices[tempIndex1], otherVertices[tempIndex2]))
                     {
@@ -61,8 +61,8 @@ public readonly ref struct ValuePolygon : IPolygon, IEquatable<IPolygon>
                     tempIndex1++;
                     tempIndex2++;
 
-                    //allow tempIndex2 to rollover to 0 if tempIndex1 is still less than vertices.Count
-                    if ((tempIndex1 < vertices.Count) && (tempIndex2 == otherVertices.Count))
+                    //allow tempIndex2 to rollover to 0 if tempIndex1 is still less than vertices.Length
+                    if ((tempIndex1 < vertices.Length) && (tempIndex2 == otherVertices.Length))
                         tempIndex2 = 0;
                 }
 

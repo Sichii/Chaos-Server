@@ -2,7 +2,6 @@
 using System.Collections.Frozen;
 using System.Linq.Expressions;
 using Chaos.NLog.Logging.Abstractions;
-using NLog;
 using NLog.Config;
 #endregion
 

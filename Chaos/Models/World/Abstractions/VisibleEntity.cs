@@ -1,7 +1,10 @@
+#region
 using Chaos.Collections;
 using Chaos.Definitions;
 using Chaos.Extensions;
+using Chaos.Extensions.Common;
 using Chaos.Geometry.Abstractions;
+#endregion
 
 namespace Chaos.Models.World.Abstractions;
 
@@ -10,7 +13,6 @@ namespace Chaos.Models.World.Abstractions;
 /// </summary>
 public abstract class VisibleEntity(ushort sprite, MapInstance mapInstance, IPoint point) : InteractableEntity(mapInstance, point)
 {
-    protected ConcurrentDictionary<uint, DateTime> LastClicked { get; init; } = new();
     public ushort Sprite { get; set; } = sprite;
     public VisibilityType Visibility { get; protected set; }
 
@@ -43,7 +45,7 @@ public abstract class VisibleEntity(ushort sprite, MapInstance mapInstance, IPoi
         }
     }
 
-    public virtual bool ShouldRegisterClick(uint fromId)
+    public override bool ShouldRegisterClick(uint fromId)
         => !LastClicked.TryGetValue(fromId, out var lastClick)
            || (DateTime.UtcNow.Subtract(lastClick)
                        .TotalMilliseconds
@@ -56,18 +58,22 @@ public abstract class VisibleEntity(ushort sprite, MapInstance mapInstance, IPoi
         var startPoint = Point.From(this);
         SetLocation(destinationPoint);
 
-        var creaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint)
-                                           .Union(MapInstance.GetEntitiesWithinRange<Creature>(destinationPoint))
-                                           .ToList();
+        using var rentedCreaturesToUpdate = MapInstance.GetEntitiesWithinRange<Creature>(startPoint)
+                                                       .Union(MapInstance.GetEntitiesWithinRange<Creature>(destinationPoint))
+                                                       .ToRented();
+        var creaturesToUpdate = rentedCreaturesToUpdate.Array;
 
         //non-aislings only cause partial viewport updates because they do not have shared vision requirements (due to lanterns)
         foreach (var creature in creaturesToUpdate)
-            creature.UpdateViewPort([this]);
+            creature.UpdateViewPort(this);
 
-        var aislingsThatWatchedUsWarp = creaturesToUpdate.ThatAreWithinRange(startPoint)
-                                                         .ThatAreWithinRange(destinationPoint)
-                                                         .ThatCanObserve(this)
-                                                         .OfType<Aisling>();
+        using var rentedAislingsThatWatchedUsWarp = creaturesToUpdate.ThatAreWithinRange(startPoint)
+                                                                     .ThatAreWithinRange(destinationPoint)
+                                                                     .ThatCanObserve(this)
+                                                                     .OfType<Aisling>()
+                                                                     .ToRented();
+
+        var aislingsThatWatchedUsWarp = rentedAislingsThatWatchedUsWarp.Span;
 
         foreach (var aisling in aislingsThatWatchedUsWarp)
         {

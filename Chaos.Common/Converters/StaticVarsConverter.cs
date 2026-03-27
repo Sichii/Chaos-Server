@@ -1,4 +1,5 @@
 #region
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Chaos.Collections.Common;
@@ -9,6 +10,7 @@ namespace Chaos.Common.Converters;
 /// <summary>
 ///     A converter for <see cref="StaticVars" />
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = "Logic already tested")]
 public sealed class StaticVarsConverter : JsonConverter<StaticVars>
 {
     /// <inheritdoc />

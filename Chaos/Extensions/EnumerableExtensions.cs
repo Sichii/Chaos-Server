@@ -24,19 +24,6 @@ public static class EnumerableExtensions
                 .SelectMany(i => i.FixStacks(itemCloner));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatAreIlluminatedBy<T>(this IEnumerable<T> objs, Aisling aisling) where T: VisibleEntity
-        => objs.Where(aisling.Illuminates);
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatAreInLanternVision<T>(this IEnumerable<T> objs) where T: VisibleEntity
-        => objs.Where(obj => obj.MapInstance.IsInSharedLanternVision(obj));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatAreObservedBy<T>(this IEnumerable<T> objs, Creature creature, bool fullCheck = false)
-        where T: VisibleEntity
-        => objs.Where(obj => creature.CanObserve(obj, fullCheck));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T> ThatAreOnPoint<T>(this IEnumerable<T> objs, IPoint point) where T: MapEntity
         => objs.Where(obj => PointEqualityComparer.Instance.Equals(obj, point));
 
@@ -45,54 +32,67 @@ public static class EnumerableExtensions
         => objs.Where(creature.CanSee);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, ILocation location, int range = 15) where T: MapEntity
-        => objs.Where(obj => obj.WithinRange(location, range));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, IPoint point, int range = 15) where T: MapEntity
-        => objs.Where(obj => obj.WithinRange(point, range));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, int range = 15, params IEnumerable<IPoint> points)
-        where T: MapEntity
-        => objs.Where(obj => points.Any(point => obj.WithinRange(point, range)));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatAreWithinRange<T>(this IEnumerable<T> objs, int range = 15, params IEnumerable<ILocation> locations)
-        where T: MapEntity
-        => objs.Where(obj => locations.Any(point => obj.WithinRange(point, range)));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T> ThatCanObserve<T>(this IEnumerable<T> objs, VisibleEntity visibleEntity, bool fullCheck = false)
         where T: VisibleEntity
         => objs.Where(obj => obj is Creature creature && creature.CanObserve(visibleEntity, fullCheck));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatCanSee<T>(this IEnumerable<T> objs, VisibleEntity visibleEntity) where T: Creature
-        => objs.Where(obj => obj.CanSee(visibleEntity));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatCollideWith<T>(this IEnumerable<T> objs, Creature creature) where T: Creature
-        => objs.Where(obj => !obj.Equals(creature) && obj.WillCollideWith(creature));
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IEnumerable<T> ThatThisCollidesWith<T>(this IEnumerable<T> objs, Creature creature) where T: Creature
-        => objs.Where(obj => !obj.Equals(creature) && creature.WillCollideWith(obj));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T? TopOrDefault<T>(this IEnumerable<T> objs) where T: WorldEntity => objs.MaxBy(o => o.Creation);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Item ToSingleStack(this IEnumerable<Item> items)
-        => items.Aggregate(
-            (item1, item2) =>
-            {
-                item1.Count += item2.Count;
+        => items.Aggregate((item1, item2) =>
+        {
+            item1.Count += item2.Count;
 
-                return item1;
-            });
+            return item1;
+        });
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T> WithFilter<T>(this IEnumerable<T> objs, Creature source, TargetFilter filter) where T: MapEntity
         => objs.Where(obj => obj is not Creature creature || filter.IsValidTarget(source, creature));
+
+    extension<T>(IEnumerable<T> objs) where T: VisibleEntity
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<T> ThatAreIlluminatedBy(Aisling aisling) => objs.Where(aisling.Illuminates);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<T> ThatAreInLanternVision() => objs.Where(obj => obj.MapInstance.IsInSharedLanternVision(obj));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<T> ThatAreObservedBy(Creature creature, bool fullCheck = false)
+            => objs.Where(obj => creature.CanObserve(obj, fullCheck));
+    }
+
+    extension<T>(IEnumerable<T> objs) where T: MapEntity
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<T> ThatAreWithinRange(ILocation location, int range = 15) => objs.Where(obj => obj.WithinRange(location, range));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<T> ThatAreWithinRange(IPoint point, int range = 15) => objs.Where(obj => obj.WithinRange(point, range));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<T> ThatAreWithinRange(int range = 15, params IEnumerable<IPoint> points)
+            => objs.Where(obj => points.Any(point => obj.WithinRange(point, range)));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<T> ThatAreWithinRange(int range = 15, params IEnumerable<ILocation> locations)
+            => objs.Where(obj => locations.Any(point => obj.WithinRange(point, range)));
+    }
+
+    extension<T>(IEnumerable<T> objs) where T: Creature
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<T> ThatCanSee(VisibleEntity visibleEntity) => objs.Where(obj => obj.CanSee(visibleEntity));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<T> ThatCollideWith(Creature creature)
+            => objs.Where(obj => !obj.Equals(creature) && obj.WillCollideWith(creature));
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEnumerable<T> ThatThisCollidesWith(Creature creature)
+            => objs.Where(obj => !obj.Equals(creature) && creature.WillCollideWith(obj));
+    }
 }

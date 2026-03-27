@@ -1,8 +1,10 @@
+#region
 using System.Text;
 using Chaos.Cryptography;
 using Chaos.IO.Compression;
 using Chaos.IO.Memory;
 using Chaos.Networking.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Entities;
 
@@ -28,7 +30,7 @@ public sealed class ServerTable : IServerTable
     {
         Servers = servers.ToDictionary(info => info.Id);
 
-        var spanWriter = new SpanWriter(Encoding.GetEncoding(949));
+        using var spanWriter = new SpanWriter(Encoding.GetEncoding(949), usePooling: true);
 
         spanWriter.WriteByte((byte)Servers.Count);
 

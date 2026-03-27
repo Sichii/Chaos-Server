@@ -595,7 +595,7 @@ public sealed partial class IntegrityCheckControl
             if (!node.NodeKey.EqualsI(expectedNodeKey))
                 await AddViolationAsync($"NodeKey mismatch: {node.NodeKey} != {expectedNodeKey}", handler, true);
 
-            if (!clientRect.Contains(node.ScreenPosition))
+            if (!clientRect.ContainsPoint(node.ScreenPosition))
                 await AddViolationAsync("ScreenPosition out of bounds", handler);
 
             if (!MapInstanceIndex.TryGetValue(node.Destination.Map, out var destinationMapInstance))
@@ -610,7 +610,7 @@ public sealed partial class IntegrityCheckControl
                     destinationMapTemplate.Width,
                     destinationMapTemplate.Height);
 
-                if (!bounds.Contains(node.Destination))
+                if (!bounds.ContainsPoint(node.Destination))
                     await AddViolationAsync("Destination out of bounds", handler);
             }
         }
@@ -966,7 +966,7 @@ public sealed partial class IntegrityCheckControl
 
         foreach (var reactor in reactors)
         {
-            if (!templateBounds.Contains(reactor.Source))
+            if (!templateBounds.ContainsPoint(reactor.Source))
                 await AddViolationAsync($"Reactor out of bounds: {reactor.Source}", handler);
 
             if (reactor.OwnerMonsterTemplateKey is not null && !MonsterTemplateIndex.ContainsKey(reactor.OwnerMonsterTemplateKey))
@@ -1019,7 +1019,7 @@ public sealed partial class IntegrityCheckControl
                              0,
                              0,
                              mt.Width,
-                             mt.Height).Contains(shardingOptions.ExitLocation))
+                             mt.Height).ContainsPoint(shardingOptions.ExitLocation))
                     await AddViolationAsync($"Exit location out of bounds: {shardingOptions.ExitLocation}", handler);
             }
         }
@@ -1053,13 +1053,13 @@ public sealed partial class IntegrityCheckControl
                     template.Width,
                     template.Height);
 
-                if (!templateBounds.Contains(merchantSpawn.SpawnPoint))
+                if (!templateBounds.ContainsPoint(merchantSpawn.SpawnPoint))
                     await AddViolationAsync("Merchant spawn point out of bounds", handler);
 
-                if (merchantSpawn.PathingBounds is not null && !templateBounds.Contains(merchantSpawn.PathingBounds))
+                if (merchantSpawn.PathingBounds is not null && !templateBounds.ContainsRectangle(merchantSpawn.PathingBounds))
                     await AddViolationAsync("Merchant pathing bounds out of bounds", handler);
 
-                if (merchantSpawn.BlackList.Any(pt => !templateBounds.Contains(pt)))
+                if (merchantSpawn.BlackList.Any(pt => !templateBounds.ContainsPoint(pt)))
                     await AddViolationAsync("Merchant blacklisted point out of bounds", handler);
             }
         }
@@ -1093,7 +1093,7 @@ public sealed partial class IntegrityCheckControl
                     template.Width,
                     template.Height);
 
-                if (monsterSpawn.SpawnArea is not null && !templateBounds.Contains(monsterSpawn.SpawnArea))
+                if (monsterSpawn.SpawnArea is not null && !templateBounds.ContainsRectangle(monsterSpawn.SpawnArea))
                     await AddViolationAsync("Monster spawn area out of bounds", handler);
 
                 if (monsterSpawn.IntervalSecs <= 0)
@@ -1105,7 +1105,7 @@ public sealed partial class IntegrityCheckControl
                 if (monsterSpawn.MaxPerSpawn <= 0)
                     await AddViolationAsync($"Invalid monster spawn max per spawn: {monsterSpawn.MaxPerSpawn}", handler);
 
-                if (monsterSpawn.BlackList.Any(pt => !templateBounds.Contains(pt)))
+                if (monsterSpawn.BlackList.Any(pt => !templateBounds.ContainsPoint(pt)))
                     await AddViolationAsync("Monster blacklisted point out of bounds", handler);
 
                 foreach (var extraLootTableKey in monsterSpawn.ExtraLootTableKeys)

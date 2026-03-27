@@ -1,6 +1,7 @@
 #region
 using System.Net;
 using System.Net.Sockets;
+using Chaos.Common.Abstractions.Definitions;
 using Chaos.Common.Synchronization;
 using Chaos.Extensions.Common;
 using Chaos.Networking.Abstractions.Definitions;
@@ -110,7 +111,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
         Logger = logger;
         ClientRegistry = clientRegistry;
         PacketSerializer = packetSerializer;
-        ClientHandlers = new ClientHandler?[byte.MaxValue];
+        ClientHandlers = new ClientHandler?[byte.MaxValue + 1];
         Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         Sync = new FifoAutoReleasingSemaphoreSlim(1, 1, $"{GetType().Name}");
         IndexHandlers();
@@ -170,8 +171,6 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
 
                 return default;
             });
-
-        Dispose();
     }
 
     /// <summary>
@@ -180,7 +179,7 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
     /// <param name="clientSocket">
     ///     The socket that connected to the server
     /// </param>
-    protected abstract void OnConnected(Socket clientSocket);
+    protected abstract Task OnConnected(Socket clientSocket);
 
     /// <summary>
     ///     Called when a new connection is accepted by the server.
@@ -199,9 +198,14 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
         } catch
         {
             //ignored
-        } finally
+        }
+
+        try
         {
             serverSocket.BeginAccept(OnConnection, serverSocket);
+        } catch
+        {
+            //ignored, socket was disposed during shutdown
         }
 
         if (clientSocket is not null && clientSocket.Connected)
@@ -252,7 +256,20 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
     /// </typeparam>
     public virtual async ValueTask ExecuteHandler<TArgs>(T client, TArgs args, Func<T, TArgs, ValueTask> action)
     {
+        var syncActivity = ActivitySources.StartPacketActivity("Packet.Handle.Sync");
         await using var @lock = await Sync.WaitAsync(TimeSpan.FromSeconds(1));
+        syncActivity?.Dispose();
+
+        if (@lock is null)
+        {
+            Logger.WithTopics(Topics.Entities.Packet, Topics.Actions.Processing)
+                  .WithProperty(client)
+                  .LogError("Sync semaphore timed out for {@ArgsType}, skipping handler", typeof(TArgs).Name);
+
+            return;
+        }
+
+        using var executeActivity = ActivitySources.StartPacketActivity("Packet.Handle.Execute");
 
         try
         {
@@ -283,7 +300,11 @@ public abstract class ServerBase<T> : BackgroundService, IServer<T> where T: ICo
     /// </param>
     public virtual async ValueTask ExecuteHandler(T client, Func<T, ValueTask> action)
     {
+        var syncActivity = ActivitySources.StartPacketActivity("Packet.Handle.Sync");
         await using var @lock = await Sync.WaitAsync();
+        syncActivity?.Dispose();
+
+        using var executeActivity = ActivitySources.StartPacketActivity("Packet.Handle.Execute");
 
         try
         {

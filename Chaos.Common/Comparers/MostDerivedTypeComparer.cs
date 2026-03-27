@@ -1,8 +1,13 @@
+#region
+using System.Diagnostics.CodeAnalysis;
+#endregion
+
 namespace Chaos.Common.Comparers;
 
 /// <summary>
 ///     Compares two types to determine which is the most derived.
 /// </summary>
+[ExcludeFromCodeCoverage(Justification = "No meaningful user code")]
 public sealed class MostDerivedTypeComparer : IComparer<Type>
 {
     /// <summary>

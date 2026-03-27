@@ -1,5 +1,4 @@
 #region
-using Chaos.Models.World.Abstractions;
 using Chaos.Time;
 using Chaos.Time.Abstractions;
 using Chaos.Utilities.SequenceScripter.Builder;
@@ -7,23 +6,19 @@ using Chaos.Utilities.SequenceScripter.Builder;
 
 namespace Chaos.Utilities.SequenceScripter;
 
-public class TimedActionSequence<T> where T: Creature
+public sealed class TimedActionSequence<T>
 {
     private readonly List<Action<T>> Actions;
     private readonly IIntervalTimer? InitialTimer;
-    private readonly int? StartingAtHealthPercent;
     private readonly List<IIntervalTimer> Timers;
     private int CurrentIndex;
     private bool InitialTimerExpired;
-    private decimal PreviousHealthPercent;
 
     public TimedActionSequence(TimedActionSequenceDescriptor<T> descriptor)
     {
-        StartingAtHealthPercent = descriptor.StartingAtHealthPercent;
         InitialTimer = descriptor.StartingAtTime is not null ? new IntervalTimer(descriptor.StartingAtTime.Value) : null;
         Actions = [];
         Timers = [];
-        PreviousHealthPercent = 100;
 
         foreach (var timedAction in descriptor.Sequence)
         {
@@ -36,7 +31,6 @@ public class TimedActionSequence<T> where T: Creature
     {
         CurrentIndex = 0;
         InitialTimerExpired = false;
-        PreviousHealthPercent = 100;
 
         foreach (var timer in Timers)
             timer.Reset();
@@ -44,16 +38,6 @@ public class TimedActionSequence<T> where T: Creature
 
     public bool Update(T entity, TimeSpan delta)
     {
-        if (StartingAtHealthPercent.HasValue)
-        {
-            var previousHealthPercent = PreviousHealthPercent;
-            var currentHealthPercent = entity.StatSheet.HealthPercent;
-            PreviousHealthPercent = currentHealthPercent;
-
-            if ((previousHealthPercent <= StartingAtHealthPercent.Value) && (currentHealthPercent > StartingAtHealthPercent.Value))
-                return false;
-        }
-
         if (InitialTimer is not null && !InitialTimerExpired)
         {
             InitialTimer.Update(delta);

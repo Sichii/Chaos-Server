@@ -1,15 +1,21 @@
+#region
 using System.Collections.Concurrent;
 using System.Collections.Frozen;
+using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using Bogus;
+#endregion
 
 namespace Benchmarks;
 
 [MemoryDiagnoser]
+[SuppressMessage("ReSharper", "ClassCanBeSealed.Global")]
 public class DictionaryLookupBenchmarks
 {
     private readonly ConcurrentDictionary<string, string> ConcurrentDictionary = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, string> NormalDictionary = new(StringComparer.OrdinalIgnoreCase);
+
+    // ReSharper disable once CollectionNeverQueried.Local
     private readonly List<string> ValuesList = [];
     private FrozenDictionary<string, string> FrozenDictionary = null!;
 

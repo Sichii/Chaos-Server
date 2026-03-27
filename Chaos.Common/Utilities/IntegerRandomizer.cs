@@ -1,5 +1,7 @@
+#region
 using System.Diagnostics.CodeAnalysis;
 using Chaos.Common.Definitions;
+#endregion
 
 namespace Chaos.Common.Utilities;
 
@@ -36,56 +38,6 @@ public static class IntegerRandomizer
 
         return weightedChoices.PickRandomWeighted();
     }
-
-    /// <summary>
-    ///     Picks a random choice based on the common weight. Chances are NOT exhaustive. Only picks at most 1 item. Each item
-    ///     has the same chance to be picked.
-    /// </summary>
-    /// <param name="choices">
-    ///     A collection of choiced
-    /// </param>
-    /// <param name="commonWeight">
-    ///     The weight of each choice
-    /// </param>
-    /// <typeparam name="T">
-    ///     The type of object to return
-    /// </typeparam>
-    /// <returns>
-    ///     A random element from the specified collection if a choice is taken, otherwise
-    ///     <c>
-    ///         default
-    ///     </c>
-    /// </returns>
-    [ExcludeFromCodeCoverage(Justification = "Tested by PickRandomWeightedSingleOrDefault<T>(ICollection<KeyValuePair<T, int>>)")]
-    public static T? PickRandomWeightedSingleOrDefault<T>(this IEnumerable<T> choices, int commonWeight)
-        => choices.Select(x => new KeyValuePair<T, int>(x, commonWeight))
-                  .ToList()
-                  .PickRandomWeightedSingleOrDefault();
-
-    /// <summary>
-    ///     Picks a random choice based on the weights. The higher the weight, the more likely it is to be picked. Chances are
-    ///     NOT exhaustive. Only picks at most 1 item.
-    /// </summary>
-    /// <param name="choices">
-    ///     The choices to choose from
-    /// </param>
-    /// <param name="weights">
-    ///     The weights of those choices
-    /// </param>
-    /// <typeparam name="T">
-    ///     The type of object to return
-    /// </typeparam>
-    /// <returns>
-    ///     A random element from the specified collection if a choice is taken, otherwise
-    ///     <c>
-    ///         default
-    ///     </c>
-    /// </returns>
-    [ExcludeFromCodeCoverage(Justification = "Tested by PickRandomWeightedSingleOrDefault<T>(ICollection<KeyValuePair<T, int>>)")]
-    public static T? PickRandomWeightedSingleOrDefault<T>(this IEnumerable<T> choices, IEnumerable<int> weights)
-        => choices.Zip(weights, (choice, weight) => new KeyValuePair<T, int>(choice, weight))
-                  .ToList()
-                  .PickRandomWeightedSingleOrDefault();
 
     /// <summary>
     ///     Randomly determins if a roll is successful or not.
@@ -208,5 +160,52 @@ public static class IntegerRandomizer
             throw new InvalidOperationException("Max must be greater than 1. This method is like simulating dice rolls.");
 
         return Random.Shared.Next(1, max + 1);
+    }
+
+    /// <param name="choices">
+    ///     A collection of choiced
+    /// </param>
+    /// <typeparam name="T">
+    ///     The type of object to return
+    /// </typeparam>
+    extension<T>(IEnumerable<T> choices)
+    {
+        /// <summary>
+        ///     Picks a random choice based on the common weight. Chances are NOT exhaustive. Only picks at most 1 item. Each item
+        ///     has the same chance to be picked.
+        /// </summary>
+        /// <param name="commonWeight">
+        ///     The weight of each choice
+        /// </param>
+        /// <returns>
+        ///     A random element from the specified collection if a choice is taken, otherwise
+        ///     <c>
+        ///         default
+        ///     </c>
+        /// </returns>
+        [ExcludeFromCodeCoverage(Justification = "Tested by PickRandomWeightedSingleOrDefault<T>(ICollection<KeyValuePair<T, int>>)")]
+        public T? PickRandomWeightedSingleOrDefault(int commonWeight)
+            => choices.Select(x => new KeyValuePair<T, int>(x, commonWeight))
+                      .ToArray()
+                      .PickRandomWeightedSingleOrDefault();
+
+        /// <summary>
+        ///     Picks a random choice based on the weights. The higher the weight, the more likely it is to be picked. Chances are
+        ///     NOT exhaustive. Only picks at most 1 item.
+        /// </summary>
+        /// <param name="weights">
+        ///     The weights of those choices
+        /// </param>
+        /// <returns>
+        ///     A random element from the specified collection if a choice is taken, otherwise
+        ///     <c>
+        ///         default
+        ///     </c>
+        /// </returns>
+        [ExcludeFromCodeCoverage(Justification = "Tested by PickRandomWeightedSingleOrDefault<T>(ICollection<KeyValuePair<T, int>>)")]
+        public T? PickRandomWeightedSingleOrDefault(IEnumerable<int> weights)
+            => choices.Zip(weights, (choice, weight) => new KeyValuePair<T, int>(choice, weight))
+                      .ToArray()
+                      .PickRandomWeightedSingleOrDefault();
     }
 }

@@ -1,6 +1,8 @@
+#region
 using System.Collections.Concurrent;
 using System.Numerics;
 using Chaos.Common.Abstractions;
+#endregion
 
 namespace Chaos.Common.Utilities;
 
@@ -44,7 +46,7 @@ public abstract class KeyMapper<T> where T: INumber<T>
     public T GetId(string key) => Map.GetOrAdd(key, static (_, idGenerator) => idGenerator.NextId, IdGenerator);
 
     /// <summary>
-    ///     Gets the key associated with the specified id
+    ///     Gets the key associated with the specified id. Only really works if your IDs are also unique.
     /// </summary>
     /// <param name="id">
     ///     An already mapped id

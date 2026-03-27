@@ -1,8 +1,10 @@
+#region
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using Chaos.Collections.Specialized;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry;
+#endregion
 
 namespace Benchmarks;
 
@@ -25,7 +27,7 @@ public class QuadTreeBenchmarks
 
         foreach (var pt in point.SpiralSearch(15))
         {
-            if (!Bounds.Contains(pt))
+            if (!Bounds.ContainsPoint(pt))
                 continue;
 
             var entities = PointLookup[pt.X, pt.Y];
@@ -81,7 +83,7 @@ public class QuadTreeBenchmarks
             0,
             255,
             255);
-        Tree = new QuadTree<Point>(Bounds);
+        Tree = new QuadTree<Point>(Bounds, true);
         PointLookup = new HashSet<int>[255, 255];
 
         for (var x = 0; x < 255; x++)
