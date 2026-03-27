@@ -6,6 +6,17 @@ setlocal enabledelayedexpansion
 :: Workflow: develop -> release/v#.# -> master (tagged) -> push
 :: ============================================================
 
+:: Re-launch from %TEMP% so the repo has no file locks from cmd.exe
+if not "%~dp0"=="%TEMP%\" (
+    copy /y "%~f0" "%TEMP%\do-release.bat" >nul
+    pushd "%CD%"
+    "%TEMP%\do-release.bat"
+    set "RC=!ERRORLEVEL!"
+    popd
+    del "%TEMP%\do-release.bat" 2>nul
+    exit /b !RC!
+)
+
 for /f "delims=" %%b in ('git rev-parse --abbrev-ref HEAD') do set "CURRENT_BRANCH=%%b"
 if not "!CURRENT_BRANCH!"=="develop" (
     echo ERROR: Must be on 'develop' branch. Currently on '!CURRENT_BRANCH!'.
