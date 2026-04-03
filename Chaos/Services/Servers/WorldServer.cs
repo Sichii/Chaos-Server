@@ -1006,15 +1006,20 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
         ValueTask InnerOnGroupInvite(IChaosWorldClient localClient, GroupInviteArgs localArgs)
         {
-            localArgs.TargetName = localArgs.TargetName.ReplaceI("_", " ");
+            Aisling? target = null;
 
-            var target = Aislings.FirstOrDefault(user => user.Name.EqualsI(localArgs.TargetName));
-
-            if (target == null)
+            if (localArgs.ClientGroupSwitch != ClientGroupSwitch.CreateGroupbox)
             {
-                localClient.Aisling.SendActiveMessage($"{localArgs.TargetName} is nowhere to be found");
+                localArgs.TargetName = localArgs.TargetName.ReplaceI("_", " ");
 
-                return default;
+                target = Aislings.FirstOrDefault(user => user.Name.EqualsI(localArgs.TargetName));
+
+                if (target == null)
+                {
+                    localClient.Aisling.SendActiveMessage($"{localArgs.TargetName} is nowhere to be found");
+
+                    return default;
+                }
             }
 
             var aisling = localClient.Aisling;
@@ -1035,22 +1040,22 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
                     return default;
                 case ClientGroupSwitch.TryInvite:
                 {
-                    GroupService.Invite(aisling, target);
+                    GroupService.Invite(aisling, target!);
 
                     return default;
                 }
                 case ClientGroupSwitch.AcceptInvite:
                 {
-                    var type = GroupService.DetermineRequestType(target, aisling);
+                    var type = GroupService.DetermineRequestType(target!, aisling);
 
                     switch (type)
                     {
                         case IGroupService.RequestType.Invite:
-                            GroupService.AcceptInvite(target, aisling);
+                            GroupService.AcceptInvite(target!, aisling);
 
                             break;
                         case IGroupService.RequestType.RequestToJoin:
-                            GroupService.AcceptRequestToJoin(target, aisling);
+                            GroupService.AcceptRequestToJoin(target!, aisling);
 
                             break;
                         default:
@@ -1087,7 +1092,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
                     return default;
                 case ClientGroupSwitch.ViewGroupBox:
-                    if (target.GroupBox is null)
+                    if (target!.GroupBox is null)
                     {
                         Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Group, Topics.Qualifiers.Cheating)
                               .WithProperty(localClient.Aisling)
@@ -1139,7 +1144,7 @@ public sealed class WorldServer : ServerBase<IChaosWorldClient>, IWorldServer<IC
 
                     return default;
                 case ClientGroupSwitch.RequestToJoin:
-                    if (target.GroupBox is null)
+                    if (target!.GroupBox is null)
                     {
                         Logger.WithTopics(Topics.Entities.Aisling, Topics.Entities.Group, Topics.Qualifiers.Cheating)
                               .LogWarning(
