@@ -222,17 +222,11 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
 
         async ValueTask InnerOnLogin(IChaosLoginClient localClient, LoginArgs localArgs)
         {
-            var expectedChecksum1 = Crc.Generate16(BitConverter.GetBytes(localArgs.ClientId1));
-
-            if (localArgs.Checksum1 != expectedChecksum1)
+            if (!localArgs.IsValid)
             {
                 Logger.WithTopics(Topics.Entities.Client, Topics.Actions.Login, Topics.Actions.Validation)
                       .WithProperty(localClient)
-                      .LogWarning(
-                          "Client id checksum mismatch. ClientId1:{@ClientId1} expected:{@Expected} actual:{@Actual}",
-                          localArgs.ClientId1,
-                          expectedChecksum1,
-                          localArgs.Checksum1);
+                      .LogWarning("Login packet failed integrity validation");
 
                 localClient.SendLoginMessage(LoginMessageType.ClearPswdMessage, "Wrong password");
 

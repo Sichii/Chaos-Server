@@ -39,7 +39,6 @@ public sealed class LoginConverter : PacketConverterBase<LoginArgs>
 
         //unmask ClientId1
         var clientId1Key = (byte)(key2 + 138);
-
         var mask32 = clientId1Key | ((uint)(clientId1Key + 1) << 8) | ((uint)(clientId1Key + 2) << 16) | ((uint)(clientId1Key + 3) << 24);
 
         clientId1 = maskedClientId1 ^ mask32;
@@ -76,16 +75,18 @@ public sealed class LoginConverter : PacketConverterBase<LoginArgs>
             out var clientId1,
             out var checksum1,
             out var clientId2,
-            out var integrityChecksum);
+            out var integrityCrc);
+
+        var expectedChecksum1 = Crc.Generate16(BitConverter.GetBytes(clientId1));
+        var expectedIntegrityCrc = Crc.Generate16(data.AsSpan(0, 12));
 
         return new LoginArgs
         {
             Name = name,
             Password = pw,
             ClientId1 = clientId1,
-            Checksum1 = checksum1,
             ClientId2 = clientId2,
-            IntegrityCrc = integrityChecksum
+            IsValid = (checksum1 == expectedChecksum1) && (integrityCrc == expectedIntegrityCrc)
         };
     }
 

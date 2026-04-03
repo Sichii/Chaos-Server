@@ -11,11 +11,6 @@ namespace Chaos.Networking.Entities.Client;
 public sealed record LoginArgs : IPacketSerializable
 {
     /// <summary>
-    ///     The CRC16 checksum of <see cref="ClientId1" /> (little-endian bytes)
-    /// </summary>
-    public required ushort Checksum1 { get; set; }
-
-    /// <summary>
     ///     A unique identifier for the client that is unique to the installation
     /// </summary>
     public required uint ClientId1 { get; set; }
@@ -26,10 +21,9 @@ public sealed record LoginArgs : IPacketSerializable
     public required uint ClientId2 { get; set; }
 
     /// <summary>
-    ///     A CRC16 integrity check computed over the 12 encrypted payload bytes (key1 + encodedKey2 + encryptedClientId1 +
-    ///     encryptedChecksum1 + encryptedClientId2)
+    ///     Whether the client info checksums passed validation during deserialization
     /// </summary>
-    public required ushort IntegrityCrc { get; set; }
+    public required bool IsValid { get; set; }
 
     /// <summary>
     ///     The name of the aisling the client is trying to log in as
