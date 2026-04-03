@@ -1,4 +1,5 @@
 #region
+using System.Buffers.Binary;
 using Chaos.Cryptography;
 using Chaos.Extensions.Common;
 using Chaos.IO.Memory;
@@ -18,43 +19,47 @@ public sealed class LoginConverter : PacketConverterBase<LoginArgs>
     public override byte OpCode => (byte)ClientOpCode.Login;
 
     /// <summary>
-    ///     Decodes both client ids and their checksums from the encrypted values
+    ///     Decodes client ids, the checksum of clientId1, and the integrity CRC from the encrypted payload
     /// </summary>
     public static void DecodeClientInfo(
-        byte key1,
-        byte encodedKey2,
-        uint encryptedClientId1,
-        ushort encryptedChecksum1,
-        uint encryptedClientId2,
-        ushort encryptedChecksum2,
+        ReadOnlySpan<byte> data,
         out uint clientId1,
         out ushort checksum1,
         out uint clientId2,
-        out ushort checksum2)
+        out ushort integrityCrc)
     {
+        var key1 = data[0];
+        var encodedKey2 = data[1];
         var key2 = (byte)(encodedKey2 ^ (byte)(key1 + 59));
 
-        // Decode ClientId1
+        var maskedClientId1 = BinaryPrimitives.ReadUInt32BigEndian(data[2..]);
+        var maskedChecksum1 = BinaryPrimitives.ReadUInt16BigEndian(data[6..]);
+        var maskedClientId2 = BinaryPrimitives.ReadUInt32BigEndian(data[8..]);
+        var maskedIntegrityChecksum = BinaryPrimitives.ReadUInt16BigEndian(data[12..]);
+
+        //unmask ClientId1
         var clientId1Key = (byte)(key2 + 138);
 
         var mask32 = clientId1Key | ((uint)(clientId1Key + 1) << 8) | ((uint)(clientId1Key + 2) << 16) | ((uint)(clientId1Key + 3) << 24);
 
-        clientId1 = encryptedClientId1 ^ mask32;
+        clientId1 = maskedClientId1 ^ mask32;
 
+        //unmask Checksum1 (CRC16 of clientId1 little-endian bytes)
         var checksum1Key = (byte)(key2 + 0x5E);
         var mask16 = (ushort)(checksum1Key | ((ushort)(checksum1Key + 1) << 8));
-        checksum1 = (ushort)(encryptedChecksum1 ^ mask16);
+        checksum1 = (ushort)(maskedChecksum1 ^ mask16);
 
-        // Decode ClientId2
+        //unmask ClientId2
         var clientId2Key = (byte)(key2 + 115);
 
         mask32 = clientId2Key | ((uint)(clientId2Key + 1) << 8) | ((uint)(clientId2Key + 2) << 16) | ((uint)(clientId2Key + 3) << 24);
 
-        clientId2 = encryptedClientId2 ^ mask32;
+        clientId2 = maskedClientId2 ^ mask32;
 
-        var checksum2Key = (byte)(key2 + 165);
-        mask16 = (ushort)(checksum2Key | ((ushort)(checksum2Key + 1) << 8));
-        checksum2 = (ushort)(encryptedChecksum2 ^ mask16);
+        //unmask IntegrityCrc (CRC16 of the first 12 encrypted bytes)
+        var integrityCrcKey = (byte)(key2 + 165);
+        mask16 = (ushort)(integrityCrcKey | ((ushort)(integrityCrcKey + 1) << 8));
+        integrityCrc = (ushort)(maskedIntegrityChecksum ^ mask16);
     }
 
     /// <inheritdoc />
@@ -62,24 +67,16 @@ public sealed class LoginConverter : PacketConverterBase<LoginArgs>
     {
         var name = reader.ReadString8();
         var pw = reader.ReadString8();
-        var key1 = reader.ReadByte();
-        var encodedKey2 = reader.ReadByte();
-        var encryptedClientId1 = reader.ReadUInt32();
-        var encryptedChecksum1 = reader.ReadUInt16();
-        var encryptedClientId2 = reader.ReadUInt32();
-        var encryptedChecksum2 = reader.ReadUInt16();
+
+        //read the 14-byte payload (12 bytes for CRC input + 2 bytes for integrity checksum)
+        var data = reader.ReadBytes(14);
 
         DecodeClientInfo(
-            key1,
-            encodedKey2,
-            encryptedClientId1,
-            encryptedChecksum1,
-            encryptedClientId2,
-            encryptedChecksum2,
+            data,
             out var clientId1,
             out var checksum1,
             out var clientId2,
-            out var checksum2);
+            out var integrityChecksum);
 
         return new LoginArgs
         {
@@ -88,7 +85,7 @@ public sealed class LoginConverter : PacketConverterBase<LoginArgs>
             ClientId1 = clientId1,
             Checksum1 = checksum1,
             ClientId2 = clientId2,
-            Checksum2 = checksum2
+            IntegrityCrc = integrityChecksum
         };
     }
 
@@ -101,37 +98,50 @@ public sealed class LoginConverter : PacketConverterBase<LoginArgs>
         var key1 = Random.Shared.Next<byte>(0, byte.MaxValue);
         var key2 = Random.Shared.Next<byte>(0, byte.MaxValue);
 
-        // Encrypt ClientId1
+        //mask ClientId1
         var clientId1Key = (byte)(key2 + 138);
 
         var mask32 = clientId1Key | ((uint)(clientId1Key + 1) << 8) | ((uint)(clientId1Key + 2) << 16) | ((uint)(clientId1Key + 3) << 24);
 
-        var encryptedClientId1 = args.ClientId1 ^ mask32;
+        var maskedClientId1 = args.ClientId1 ^ mask32;
 
+        //mask Checksum1 (CRC16 of clientId1 little-endian bytes)
         var checksum1 = Crc.Generate16(BitConverter.GetBytes(args.ClientId1));
         var checksum1Key = (byte)(key2 + 0x5E);
         var mask16 = (ushort)(checksum1Key | ((ushort)(checksum1Key + 1) << 8));
-        var encryptedChecksum1 = (ushort)(checksum1 ^ mask16);
+        var maskedChecksum1 = (ushort)(checksum1 ^ mask16);
 
-        writer.WriteByte(key1);
-        writer.WriteByte((byte)(key2 ^ (key1 + 59)));
-        writer.WriteUInt32(encryptedClientId1);
-        writer.WriteUInt16(encryptedChecksum1);
-
-        // Encrypt ClientId2
+        //mask ClientId2
         var clientId2Key = (byte)(key2 + 115);
 
         mask32 = clientId2Key | ((uint)(clientId2Key + 1) << 8) | ((uint)(clientId2Key + 2) << 16) | ((uint)(clientId2Key + 3) << 24);
 
-        var encryptedClientId2 = args.ClientId2 ^ mask32;
+        var maskedClientId2 = args.ClientId2 ^ mask32;
 
-        var checksum2 = Crc.Generate16(BitConverter.GetBytes(args.ClientId2));
-        var checksum2Key = (byte)(key2 + 165);
-        mask16 = (ushort)(checksum2Key | ((ushort)(checksum2Key + 1) << 8));
-        var encryptedChecksum2 = (ushort)(checksum2 ^ mask16);
+        //build the 12-byte payload to compute integrity CRC
+        var encodedKey2 = (byte)(key2 ^ (key1 + 59));
 
-        writer.WriteUInt32(encryptedClientId2);
-        writer.WriteUInt16(encryptedChecksum2);
-        writer.WriteUInt16(256);
+        Span<byte> encryptedPayload = stackalloc byte[12];
+
+        encryptedPayload[0] = key1;
+        encryptedPayload[1] = encodedKey2;
+        BinaryPrimitives.WriteUInt32BigEndian(encryptedPayload[2..], maskedClientId1);
+        BinaryPrimitives.WriteUInt16BigEndian(encryptedPayload[6..], maskedChecksum1);
+        BinaryPrimitives.WriteUInt32BigEndian(encryptedPayload[8..], maskedClientId2);
+
+        //write payload to the actual output
+        writer.WriteBytes(encryptedPayload);
+
+        //compute integrity CRC over the 12 masked bytes
+        var integrityCrc = Crc.Generate16(encryptedPayload);
+        var integrityCrcKey = (byte)(key2 + 165);
+        mask16 = (ushort)(integrityCrcKey | ((ushort)(integrityCrcKey + 1) << 8));
+        var maskedIntegrityChecksum = (ushort)(integrityCrc ^ mask16);
+
+        writer.WriteUInt16(maskedIntegrityChecksum);
+
+        //trailing bytes
+        writer.WriteByte(0x01);
+        writer.WriteByte(0x00);
     }
 }
