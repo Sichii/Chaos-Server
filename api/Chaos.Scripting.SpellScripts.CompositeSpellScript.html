@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class CompositeSpellScript | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class CompositeSpellScript | Chaos Server Docs ">
+      
+      <meta name="description" content="DO NOT EDIT THIS SCRIPT">
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/develop/apiSpec/new?filename=Chaos_Scripting_SpellScripts_CompositeSpellScript.md&amp;value=---%0Auid%3A%20Chaos.Scripting.SpellScripts.CompositeSpellScript%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Scripting.SpellScripts.CompositeSpellScript">
+
+
+
+  <h1 id="Chaos_Scripting_SpellScripts_CompositeSpellScript" data-uid="Chaos.Scripting.SpellScripts.CompositeSpellScript" class="text-break">
+Class CompositeSpellScript  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/develop/Chaos/Scripting/SpellScripts/CompositeSpellScript.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Scripting.html">Scripting</a>.<a class="xref" href="Chaos.Scripting.SpellScripts.html">SpellScripts</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>DO NOT EDIT THIS SCRIPT</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class CompositeSpellScript : CompositeScriptBase&lt;ISpellScript&gt;, IEquatable&lt;ScriptBase&gt;, ICompositeScript&lt;ISpellScript&gt;, ICompositeScript, IEnumerable&lt;ISpellScript&gt;, IEnumerable, ISpellScript, IScript, IDeltaUpdatable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.html">ScriptBase</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Abstractions.CompositeScriptBase-1.html">CompositeScriptBase</a>&lt;<a class="xref" href="Chaos.Scripting.SpellScripts.Abstractions.ISpellScript.html">ISpellScript</a>&gt;</div>
+      <div><span class="xref">CompositeSpellScript</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.html">ScriptBase</a>&gt;</div>
+      <div><a class="xref" href="Chaos.Scripting.Abstractions.ICompositeScript-1.html">ICompositeScript</a>&lt;<a class="xref" href="Chaos.Scripting.SpellScripts.Abstractions.ISpellScript.html">ISpellScript</a>&gt;</div>
+      <div><a class="xref" href="Chaos.Scripting.Abstractions.ICompositeScript.html">ICompositeScript</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Chaos.Scripting.SpellScripts.Abstractions.ISpellScript.html">ISpellScript</a>&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+      <div><a class="xref" href="Chaos.Scripting.SpellScripts.Abstractions.ISpellScript.html">ISpellScript</a></div>
+      <div><a class="xref" href="Chaos.Scripting.Abstractions.IScript.html">IScript</a></div>
+      <div><a class="xref" href="Chaos.Time.Abstractions.IDeltaUpdatable.html">IDeltaUpdatable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.CompositeScriptBase-1.Scripts.html#Chaos_Scripting_Abstractions_CompositeScriptBase_1_Scripts">CompositeScriptBase&lt;ISpellScript&gt;.Scripts</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.CompositeScriptBase-1.Add.html#Chaos_Scripting_Abstractions_CompositeScriptBase_1_Add__0_">CompositeScriptBase&lt;ISpellScript&gt;.Add(ISpellScript)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.CompositeScriptBase-1.Add.html#Chaos_Scripting_Abstractions_CompositeScriptBase_1_Add_System_Object_">CompositeScriptBase&lt;ISpellScript&gt;.Add(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.CompositeScriptBase-1.GetEnumerator.html#Chaos_Scripting_Abstractions_CompositeScriptBase_1_GetEnumerator">CompositeScriptBase&lt;ISpellScript&gt;.GetEnumerator()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.CompositeScriptBase-1.GetScript.html#Chaos_Scripting_Abstractions_CompositeScriptBase_1_GetScript__1">CompositeScriptBase&lt;ISpellScript&gt;.GetScript&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.CompositeScriptBase-1.GetScripts.html#Chaos_Scripting_Abstractions_CompositeScriptBase_1_GetScripts__1">CompositeScriptBase&lt;ISpellScript&gt;.GetScripts&lt;T&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.CompositeScriptBase-1.Remove.html#Chaos_Scripting_Abstractions_CompositeScriptBase_1_Remove_System_Object_">CompositeScriptBase&lt;ISpellScript&gt;.Remove(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.CompositeScriptBase-1.Remove.html#Chaos_Scripting_Abstractions_CompositeScriptBase_1_Remove__0_">CompositeScriptBase&lt;ISpellScript&gt;.Remove(ISpellScript)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.ScriptKey.html#Chaos_Scripting_Abstractions_ScriptBase_ScriptKey">ScriptBase.ScriptKey</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.Equals.html#Chaos_Scripting_Abstractions_ScriptBase_Equals_Chaos_Scripting_Abstractions_ScriptBase_">ScriptBase.Equals(ScriptBase)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.Equals.html#Chaos_Scripting_Abstractions_ScriptBase_Equals_System_Object_">ScriptBase.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.GetHashCode.html#Chaos_Scripting_Abstractions_ScriptBase_GetHashCode">ScriptBase.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Scripting.Abstractions.ScriptBase.GetScriptKey.html#Chaos_Scripting_Abstractions_ScriptBase_GetScriptKey_System_Type_">ScriptBase.GetScriptKey(Type)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="Chaos.Common.Utilities.Randomizer.PickRandomWeighted.html#Chaos_Common_Utilities_Randomizer_PickRandomWeighted__1_System_Collections_Generic_IEnumerable___0__System_Collections_Generic_IEnumerable_System_Int32__">Randomizer.PickRandomWeighted&lt;T&gt;(IEnumerable&lt;T&gt;, IEnumerable&lt;int&gt;)</a>
+  </div>
+  <div>
+      <a class="xref" href="Chaos.Extensions.Common.StringExtensions.FuzzySearchBy.html#Chaos_Extensions_Common_StringExtensions_FuzzySearchBy__1_System_Collections_Generic_IEnumerable___0__System_Func___0_System_String__System_String_System_Decimal_System_Decimal_System_Nullable_System_Int32__System_Boolean_">StringExtensions.FuzzySearchBy&lt;T&gt;(IEnumerable&lt;T&gt;, Func&lt;T, string&gt;, string, decimal, decimal, int?, bool)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CompositeSpellScript.CanUse.html#Chaos_Scripting_SpellScripts_CompositeSpellScript_CanUse_Chaos_Models_Data_SpellContext_">CanUse(SpellContext)</a></dt>
+    <dd><p>DO NOT EDIT THIS SCRIPT</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CompositeSpellScript.OnUse.html#Chaos_Scripting_SpellScripts_CompositeSpellScript_OnUse_Chaos_Models_Data_SpellContext_">OnUse(SpellContext)</a></dt>
+    <dd><p>DO NOT EDIT THIS SCRIPT</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Scripting.SpellScripts.CompositeSpellScript.Update.html#Chaos_Scripting_SpellScripts_CompositeSpellScript_Update_System_TimeSpan_">Update(TimeSpan)</a></dt>
+    <dd><p>Updates the object with the given delta of elapsed time</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/develop/Chaos/Scripting/SpellScripts/CompositeSpellScript.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

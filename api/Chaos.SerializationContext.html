@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class SerializationContext | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class SerializationContext | Chaos Server Docs ">
+      
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/develop/apiSpec/new?filename=Chaos_SerializationContext.md&amp;value=---%0Auid%3A%20Chaos.SerializationContext%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.SerializationContext">
+
+
+
+  <h1 id="Chaos_SerializationContext" data-uid="Chaos.SerializationContext" class="text-break">
+Class SerializationContext  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/develop/Chaos/obj/Release/net10.0/System.Text.Json.SourceGeneration/System.Text.Json.SourceGeneration.JsonSourceGenerator/SerializationContext.IEnumerableReactorTileSchema.g.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[JsonSerializable(typeof(EnumCollection))]
+[JsonSerializable(typeof(FlagCollection))]
+[JsonSerializable(typeof(CounterCollection))]
+[JsonSerializable(typeof(TimedEventCollection))]
+[JsonSerializable(typeof(TimedEventCollection.Event))]
+[JsonSerializable(typeof(EventMetaSchema))]
+[JsonSerializable(typeof(Animation))]
+[JsonSerializable(typeof(GuildSchema))]
+[JsonSerializable(typeof(GuildRankSchema))]
+[JsonSerializable(typeof(AislingSchema))]
+[JsonSerializable(typeof(ItemRequirementSchema))]
+[JsonSerializable(typeof(LearningRequirementsSchema))]
+[JsonSerializable(typeof(LootDropSchema))]
+[JsonSerializable(typeof(ShardingOptionsSchema))]
+[JsonSerializable(typeof(LootTableSchema))]
+[JsonSerializable(typeof(MerchantSpawnSchema))]
+[JsonSerializable(typeof(MonsterSpawnSchema))]
+[JsonSerializable(typeof(ReactorTileSchema))]
+[JsonSerializable(typeof(WorldMapNodeSchema))]
+[JsonSerializable(typeof(WorldMapSchema))]
+[JsonSerializable(typeof(DialogTemplateSchema))]
+[JsonSerializable(typeof(ItemTemplateSchema))]
+[JsonSerializable(typeof(MapTemplateSchema))]
+[JsonSerializable(typeof(MerchantTemplateSchema))]
+[JsonSerializable(typeof(MonsterTemplateSchema))]
+[JsonSerializable(typeof(ReactorTileTemplateSchema))]
+[JsonSerializable(typeof(SkillTemplateSchema))]
+[JsonSerializable(typeof(SpellTemplateSchema))]
+[JsonSerializable(typeof(DialogOptionSchema))]
+[JsonSerializable(typeof(AttributesSchema))]
+[JsonSerializable(typeof(BankSchema))]
+[JsonSerializable(typeof(EffectSchema))]
+[JsonSerializable(typeof(ItemSchema))]
+[JsonSerializable(typeof(LegendMarkSchema))]
+[JsonSerializable(typeof(MapInstanceSchema))]
+[JsonSerializable(typeof(SkillSchema))]
+[JsonSerializable(typeof(SpellSchema))]
+[JsonSerializable(typeof(StatSheetSchema))]
+[JsonSerializable(typeof(StatsSchema))]
+[JsonSerializable(typeof(UserOptionsSchema))]
+[JsonSerializable(typeof(UserStatSheetSchema))]
+[JsonSerializable(typeof(AislingTrackersSchema))]
+[JsonSerializable(typeof(TrackersSchema))]
+[JsonSerializable(typeof(MundaneIllustrationMetaSchema))]
+[JsonSerializable(typeof(ChannelSettingsSchema))]
+[JsonSerializable(typeof(ItemDetailsSchema))]
+[JsonSerializable(typeof(BulletinBoardSchema))]
+[JsonSerializable(typeof(MailBoxSchema))]
+[JsonSerializable(typeof(PostSchema))]
+[JsonSerializable(typeof(List&lt;ItemSchema&gt;))]
+[JsonSerializable(typeof(List&lt;SkillSchema&gt;))]
+[JsonSerializable(typeof(List&lt;SpellSchema&gt;))]
+[JsonSerializable(typeof(List&lt;EffectSchema&gt;))]
+[JsonSerializable(typeof(List&lt;LegendMarkSchema&gt;))]
+[JsonSerializable(typeof(List&lt;MonsterSpawnSchema&gt;))]
+[JsonSerializable(typeof(List&lt;MerchantSpawnSchema&gt;))]
+[JsonSerializable(typeof(List&lt;ReactorTileSchema&gt;))]
+[JsonSerializable(typeof(List&lt;EventMetaSchema&gt;))]
+[JsonSerializable(typeof(List&lt;MundaneIllustrationMetaSchema&gt;))]
+[JsonSerializable(typeof(List&lt;ChannelSettingsSchema&gt;))]
+[JsonSerializable(typeof(List&lt;ItemDetailsSchema&gt;))]
+[JsonSerializable(typeof(List&lt;GuildRankSchema&gt;))]
+[JsonSerializable(typeof(List&lt;PostSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;ItemSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;SkillSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;SpellSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;EffectSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;LegendMarkSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;MonsterSpawnSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;MerchantSpawnSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;ReactorTileSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;EventMetaSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;MundaneIllustrationMetaSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;ChannelSettingsSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;ItemDetailsSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;GuildRankSchema&gt;))]
+[JsonSerializable(typeof(ICollection&lt;PostSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;ItemSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;SkillSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;SpellSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;EffectSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;LegendMarkSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;MonsterSpawnSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;MerchantSpawnSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;ReactorTileSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;EventMetaSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;MundaneIllustrationMetaSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;ChannelSettingsSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;ItemDetailsSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;GuildRankSchema&gt;))]
+[JsonSerializable(typeof(IEnumerable&lt;PostSchema&gt;))]
+[JsonSerializable(typeof(Dictionary&lt;string, string&gt;))]
+[JsonSerializable(typeof(Dictionary&lt;string, JsonElement&gt;))]
+[JsonSerializable(typeof(Dictionary&lt;string, int&gt;))]
+[JsonSerializable(typeof(Dictionary&lt;string, TimedEventCollection.Event&gt;))]
+[JsonSerializable(typeof(HashSet&lt;string&gt;))]
+[JsonSerializable(typeof(Stat))]
+[JsonSerializable(typeof(BodyAnimation))]
+[JsonSerializable(typeof(AoeShape))]
+[JsonSerializable(typeof(TargetFilter))]
+[JsonSerializable(typeof(EquipmentType))]
+[JsonSerializable(typeof(LevelCircle))]
+[JsonSerializable(typeof(Element))]
+[JsonSerializable(typeof(Stat?))]
+[JsonSerializable(typeof(BodyAnimation?))]
+[JsonSerializable(typeof(AoeShape?))]
+[JsonSerializable(typeof(TargetFilter?))]
+[JsonSerializable(typeof(EquipmentType?))]
+[JsonSerializable(typeof(LevelCircle?))]
+[JsonSerializable(typeof(Element?))]
+[JsonSerializable(typeof(byte))]
+[JsonSerializable(typeof(sbyte))]
+[JsonSerializable(typeof(short))]
+[JsonSerializable(typeof(ushort))]
+[JsonSerializable(typeof(int))]
+[JsonSerializable(typeof(uint))]
+[JsonSerializable(typeof(long))]
+[JsonSerializable(typeof(ulong))]
+[JsonSerializable(typeof(decimal))]
+[JsonSerializable(typeof(float))]
+[JsonSerializable(typeof(double))]
+[JsonSerializable(typeof(byte?))]
+[JsonSerializable(typeof(sbyte?))]
+[JsonSerializable(typeof(short?))]
+[JsonSerializable(typeof(ushort?))]
+[JsonSerializable(typeof(int?))]
+[JsonSerializable(typeof(uint?))]
+[JsonSerializable(typeof(long?))]
+[JsonSerializable(typeof(ulong?))]
+[JsonSerializable(typeof(decimal?))]
+[JsonSerializable(typeof(float?))]
+[JsonSerializable(typeof(double?))]
+[JsonSerializable(typeof(DateTime))]
+[JsonSerializable(typeof(TimeSpan))]
+[JsonSerializable(typeof(DateTime?))]
+[JsonSerializable(typeof(TimeSpan?))]
+[JsonSerializable(typeof(object))]
+public class SerializationContext : JsonSerializerContext, IJsonTypeInfoResolver</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonserializercontext">JsonSerializerContext</a></div>
+      <div><span class="xref">SerializationContext</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.serialization.metadata.ijsontypeinforesolver">IJsonTypeInfoResolver</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonserializercontext.options">JsonSerializerContext.Options</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.-ctor.html#Chaos_SerializationContext__ctor">SerializationContext()</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.-ctor.html#Chaos_SerializationContext__ctor_System_Text_Json_JsonSerializerOptions_">SerializationContext(JsonSerializerOptions)</a></dt>
+    <dd><p>Creates an instance of <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonserializercontext">JsonSerializerContext</a> and binds it with the indicated <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializeroptions">JsonSerializerOptions</a>.</p>
+</dd>
+  </dl>
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.AbilityRequirementSchema.html#Chaos_SerializationContext_AbilityRequirementSchema">AbilityRequirementSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.AdvClass.html#Chaos_SerializationContext_AdvClass">AdvClass</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.AislingSchema.html#Chaos_SerializationContext_AislingSchema">AislingSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.AislingTrackersSchema.html#Chaos_SerializationContext_AislingTrackersSchema">AislingTrackersSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Animation.html#Chaos_SerializationContext_Animation">Animation</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.AoeShape.html#Chaos_SerializationContext_AoeShape">AoeShape</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.AttributesSchema.html#Chaos_SerializationContext_AttributesSchema">AttributesSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.BankSchema.html#Chaos_SerializationContext_BankSchema">BankSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.BaseClass.html#Chaos_SerializationContext_BaseClass">BaseClass</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.BigFlagsCollection.html#Chaos_SerializationContext_BigFlagsCollection">BigFlagsCollection</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.BodyAnimation.html#Chaos_SerializationContext_BodyAnimation">BodyAnimation</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.BodyColor.html#Chaos_SerializationContext_BodyColor">BodyColor</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.BodySprite.html#Chaos_SerializationContext_BodySprite">BodySprite</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Boolean.html#Chaos_SerializationContext_Boolean">Boolean</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.BulletinBoardSchema.html#Chaos_SerializationContext_BulletinBoardSchema">BulletinBoardSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Byte.html#Chaos_SerializationContext_Byte">Byte</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ChannelSettingsSchema.html#Chaos_SerializationContext_ChannelSettingsSchema">ChannelSettingsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ChaosDialogType.html#Chaos_SerializationContext_ChaosDialogType">ChaosDialogType</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ConcurrentDictionaryStringString.html#Chaos_SerializationContext_ConcurrentDictionaryStringString">ConcurrentDictionaryStringString</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.CounterCollection.html#Chaos_SerializationContext_CounterCollection">CounterCollection</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.CreatureType.html#Chaos_SerializationContext_CreatureType">CreatureType</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.DateTime.html#Chaos_SerializationContext_DateTime">DateTime</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Decimal.html#Chaos_SerializationContext_Decimal">Decimal</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Default.html#Chaos_SerializationContext_Default">Default</a></dt>
+    <dd><p>The default <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonserializercontext">JsonSerializerContext</a> associated with a default <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializeroptions">JsonSerializerOptions</a> instance.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.DialogOptionSchema.html#Chaos_SerializationContext_DialogOptionSchema">DialogOptionSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.DialogTemplateSchema.html#Chaos_SerializationContext_DialogTemplateSchema">DialogTemplateSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.DictionaryStringEvent.html#Chaos_SerializationContext_DictionaryStringEvent">DictionaryStringEvent</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.DictionaryStringInt32.html#Chaos_SerializationContext_DictionaryStringInt32">DictionaryStringInt32</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.DictionaryStringJsonElement.html#Chaos_SerializationContext_DictionaryStringJsonElement">DictionaryStringJsonElement</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.DictionaryStringString.html#Chaos_SerializationContext_DictionaryStringString">DictionaryStringString</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Direction.html#Chaos_SerializationContext_Direction">Direction</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.DisplayColor.html#Chaos_SerializationContext_DisplayColor">DisplayColor</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Double.html#Chaos_SerializationContext_Double">Double</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.DynamicVars.html#Chaos_SerializationContext_DynamicVars">DynamicVars</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.EffectSchema.html#Chaos_SerializationContext_EffectSchema">EffectSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Element.html#Chaos_SerializationContext_Element">Element</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.EnumCollection.html#Chaos_SerializationContext_EnumCollection">EnumCollection</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.EquipmentType.html#Chaos_SerializationContext_EquipmentType">EquipmentType</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Event.html#Chaos_SerializationContext_Event">Event</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.EventMetaSchema.html#Chaos_SerializationContext_EventMetaSchema">EventMetaSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.FlagCollection.html#Chaos_SerializationContext_FlagCollection">FlagCollection</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Gender.html#Chaos_SerializationContext_Gender">Gender</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.GeneratedSerializerOptions.html#Chaos_SerializationContext_GeneratedSerializerOptions">GeneratedSerializerOptions</a></dt>
+    <dd><p>The source-generated options associated with this context.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.GuildRankSchema.html#Chaos_SerializationContext_GuildRankSchema">GuildRankSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.GuildSchema.html#Chaos_SerializationContext_GuildSchema">GuildSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.HashSetString.html#Chaos_SerializationContext_HashSetString">HashSetString</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionAbilityRequirementSchema.html#Chaos_SerializationContext_ICollectionAbilityRequirementSchema">ICollectionAbilityRequirementSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionBaseClass.html#Chaos_SerializationContext_ICollectionBaseClass">ICollectionBaseClass</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionChannelSettingsSchema.html#Chaos_SerializationContext_ICollectionChannelSettingsSchema">ICollectionChannelSettingsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionDialogOptionSchema.html#Chaos_SerializationContext_ICollectionDialogOptionSchema">ICollectionDialogOptionSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionEffectSchema.html#Chaos_SerializationContext_ICollectionEffectSchema">ICollectionEffectSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionEventMetaSchema.html#Chaos_SerializationContext_ICollectionEventMetaSchema">ICollectionEventMetaSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionGuildRankSchema.html#Chaos_SerializationContext_ICollectionGuildRankSchema">ICollectionGuildRankSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionIPoint.html#Chaos_SerializationContext_ICollectionIPoint">ICollectionIPoint</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionItemDetailsSchema.html#Chaos_SerializationContext_ICollectionItemDetailsSchema">ICollectionItemDetailsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionItemRequirementSchema.html#Chaos_SerializationContext_ICollectionItemRequirementSchema">ICollectionItemRequirementSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionItemSchema.html#Chaos_SerializationContext_ICollectionItemSchema">ICollectionItemSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionLegendMarkSchema.html#Chaos_SerializationContext_ICollectionLegendMarkSchema">ICollectionLegendMarkSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionLevelCircle.html#Chaos_SerializationContext_ICollectionLevelCircle">ICollectionLevelCircle</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionLootDropSchema.html#Chaos_SerializationContext_ICollectionLootDropSchema">ICollectionLootDropSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionMerchantSpawnSchema.html#Chaos_SerializationContext_ICollectionMerchantSpawnSchema">ICollectionMerchantSpawnSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionMonsterSpawnSchema.html#Chaos_SerializationContext_ICollectionMonsterSpawnSchema">ICollectionMonsterSpawnSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionMundaneIllustrationMetaSchema.html#Chaos_SerializationContext_ICollectionMundaneIllustrationMetaSchema">ICollectionMundaneIllustrationMetaSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionPoint.html#Chaos_SerializationContext_ICollectionPoint">ICollectionPoint</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionPostSchema.html#Chaos_SerializationContext_ICollectionPostSchema">ICollectionPostSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionReactorTileSchema.html#Chaos_SerializationContext_ICollectionReactorTileSchema">ICollectionReactorTileSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionSkillSchema.html#Chaos_SerializationContext_ICollectionSkillSchema">ICollectionSkillSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionSpellSchema.html#Chaos_SerializationContext_ICollectionSpellSchema">ICollectionSpellSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ICollectionString.html#Chaos_SerializationContext_ICollectionString">ICollectionString</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IDictionaryStringDynamicVars.html#Chaos_SerializationContext_IDictionaryStringDynamicVars">IDictionaryStringDynamicVars</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableChannelSettingsSchema.html#Chaos_SerializationContext_IEnumerableChannelSettingsSchema">IEnumerableChannelSettingsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableEffectSchema.html#Chaos_SerializationContext_IEnumerableEffectSchema">IEnumerableEffectSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableEventMetaSchema.html#Chaos_SerializationContext_IEnumerableEventMetaSchema">IEnumerableEventMetaSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableGuildRankSchema.html#Chaos_SerializationContext_IEnumerableGuildRankSchema">IEnumerableGuildRankSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableItemDetailsSchema.html#Chaos_SerializationContext_IEnumerableItemDetailsSchema">IEnumerableItemDetailsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableItemSchema.html#Chaos_SerializationContext_IEnumerableItemSchema">IEnumerableItemSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableLegendMarkSchema.html#Chaos_SerializationContext_IEnumerableLegendMarkSchema">IEnumerableLegendMarkSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableMerchantSpawnSchema.html#Chaos_SerializationContext_IEnumerableMerchantSpawnSchema">IEnumerableMerchantSpawnSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableMonsterSpawnSchema.html#Chaos_SerializationContext_IEnumerableMonsterSpawnSchema">IEnumerableMonsterSpawnSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableMundaneIllustrationMetaSchema.html#Chaos_SerializationContext_IEnumerableMundaneIllustrationMetaSchema">IEnumerableMundaneIllustrationMetaSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerablePostSchema.html#Chaos_SerializationContext_IEnumerablePostSchema">IEnumerablePostSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableReactorTileSchema.html#Chaos_SerializationContext_IEnumerableReactorTileSchema">IEnumerableReactorTileSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableSkillSchema.html#Chaos_SerializationContext_IEnumerableSkillSchema">IEnumerableSkillSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IEnumerableSpellSchema.html#Chaos_SerializationContext_IEnumerableSpellSchema">IEnumerableSpellSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.IPoint.html#Chaos_SerializationContext_IPoint">IPoint</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Int16.html#Chaos_SerializationContext_Int16">Int16</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Int32.html#Chaos_SerializationContext_Int32">Int32</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Int64.html#Chaos_SerializationContext_Int64">Int64</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ItemDetailsSchema.html#Chaos_SerializationContext_ItemDetailsSchema">ItemDetailsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ItemRequirementSchema.html#Chaos_SerializationContext_ItemRequirementSchema">ItemRequirementSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ItemSchema.html#Chaos_SerializationContext_ItemSchema">ItemSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ItemTemplateSchema.html#Chaos_SerializationContext_ItemTemplateSchema">ItemTemplateSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.JsonElement.html#Chaos_SerializationContext_JsonElement">JsonElement</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.LearningRequirementsSchema.html#Chaos_SerializationContext_LearningRequirementsSchema">LearningRequirementsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.LegendMarkSchema.html#Chaos_SerializationContext_LegendMarkSchema">LegendMarkSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.LevelCircle.html#Chaos_SerializationContext_LevelCircle">LevelCircle</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListChannelSettingsSchema.html#Chaos_SerializationContext_ListChannelSettingsSchema">ListChannelSettingsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListEffectSchema.html#Chaos_SerializationContext_ListEffectSchema">ListEffectSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListEventMetaSchema.html#Chaos_SerializationContext_ListEventMetaSchema">ListEventMetaSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListGuildRankSchema.html#Chaos_SerializationContext_ListGuildRankSchema">ListGuildRankSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListItemDetailsSchema.html#Chaos_SerializationContext_ListItemDetailsSchema">ListItemDetailsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListItemSchema.html#Chaos_SerializationContext_ListItemSchema">ListItemSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListLegendMarkSchema.html#Chaos_SerializationContext_ListLegendMarkSchema">ListLegendMarkSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListMerchantSpawnSchema.html#Chaos_SerializationContext_ListMerchantSpawnSchema">ListMerchantSpawnSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListMonsterSpawnSchema.html#Chaos_SerializationContext_ListMonsterSpawnSchema">ListMonsterSpawnSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListMundaneIllustrationMetaSchema.html#Chaos_SerializationContext_ListMundaneIllustrationMetaSchema">ListMundaneIllustrationMetaSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListPostSchema.html#Chaos_SerializationContext_ListPostSchema">ListPostSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListReactorTileSchema.html#Chaos_SerializationContext_ListReactorTileSchema">ListReactorTileSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListSkillSchema.html#Chaos_SerializationContext_ListSkillSchema">ListSkillSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListSpellSchema.html#Chaos_SerializationContext_ListSpellSchema">ListSpellSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ListString.html#Chaos_SerializationContext_ListString">ListString</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Location.html#Chaos_SerializationContext_Location">Location</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.LootDropSchema.html#Chaos_SerializationContext_LootDropSchema">LootDropSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.LootTableMode.html#Chaos_SerializationContext_LootTableMode">LootTableMode</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.LootTableSchema.html#Chaos_SerializationContext_LootTableSchema">LootTableSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MailBoxSchema.html#Chaos_SerializationContext_MailBoxSchema">MailBoxSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MapFlags.html#Chaos_SerializationContext_MapFlags">MapFlags</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MapInstanceSchema.html#Chaos_SerializationContext_MapInstanceSchema">MapInstanceSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MapTemplateSchema.html#Chaos_SerializationContext_MapTemplateSchema">MapTemplateSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MarkColor.html#Chaos_SerializationContext_MarkColor">MarkColor</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MarkIcon.html#Chaos_SerializationContext_MarkIcon">MarkIcon</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MerchantSpawnSchema.html#Chaos_SerializationContext_MerchantSpawnSchema">MerchantSpawnSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MerchantTemplateSchema.html#Chaos_SerializationContext_MerchantTemplateSchema">MerchantTemplateSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MessageColor.html#Chaos_SerializationContext_MessageColor">MessageColor</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MonsterSpawnSchema.html#Chaos_SerializationContext_MonsterSpawnSchema">MonsterSpawnSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MonsterTemplateSchema.html#Chaos_SerializationContext_MonsterTemplateSchema">MonsterTemplateSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.MundaneIllustrationMetaSchema.html#Chaos_SerializationContext_MundaneIllustrationMetaSchema">MundaneIllustrationMetaSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Nation.html#Chaos_SerializationContext_Nation">Nation</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableAdvClass.html#Chaos_SerializationContext_NullableAdvClass">NullableAdvClass</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableAoeShape.html#Chaos_SerializationContext_NullableAoeShape">NullableAoeShape</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableBaseClass.html#Chaos_SerializationContext_NullableBaseClass">NullableBaseClass</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableBodyAnimation.html#Chaos_SerializationContext_NullableBodyAnimation">NullableBodyAnimation</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableBoolean.html#Chaos_SerializationContext_NullableBoolean">NullableBoolean</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableByte.html#Chaos_SerializationContext_NullableByte">NullableByte</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableDateTime.html#Chaos_SerializationContext_NullableDateTime">NullableDateTime</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableDecimal.html#Chaos_SerializationContext_NullableDecimal">NullableDecimal</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableDirection.html#Chaos_SerializationContext_NullableDirection">NullableDirection</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableDisplayColor.html#Chaos_SerializationContext_NullableDisplayColor">NullableDisplayColor</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableDouble.html#Chaos_SerializationContext_NullableDouble">NullableDouble</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableElement.html#Chaos_SerializationContext_NullableElement">NullableElement</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableEquipmentType.html#Chaos_SerializationContext_NullableEquipmentType">NullableEquipmentType</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableGender.html#Chaos_SerializationContext_NullableGender">NullableGender</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableInt16.html#Chaos_SerializationContext_NullableInt16">NullableInt16</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableInt32.html#Chaos_SerializationContext_NullableInt32">NullableInt32</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableInt64.html#Chaos_SerializationContext_NullableInt64">NullableInt64</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableLevelCircle.html#Chaos_SerializationContext_NullableLevelCircle">NullableLevelCircle</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableMessageColor.html#Chaos_SerializationContext_NullableMessageColor">NullableMessageColor</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullablePoint.html#Chaos_SerializationContext_NullablePoint">NullablePoint</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableSByte.html#Chaos_SerializationContext_NullableSByte">NullableSByte</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableSingle.html#Chaos_SerializationContext_NullableSingle">NullableSingle</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableStat.html#Chaos_SerializationContext_NullableStat">NullableStat</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableTargetFilter.html#Chaos_SerializationContext_NullableTargetFilter">NullableTargetFilter</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableTimeSpan.html#Chaos_SerializationContext_NullableTimeSpan">NullableTimeSpan</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableUInt16.html#Chaos_SerializationContext_NullableUInt16">NullableUInt16</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableUInt32.html#Chaos_SerializationContext_NullableUInt32">NullableUInt32</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.NullableUInt64.html#Chaos_SerializationContext_NullableUInt64">NullableUInt64</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Object.html#Chaos_SerializationContext_Object">Object</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Point.html#Chaos_SerializationContext_Point">Point</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.PostSchema.html#Chaos_SerializationContext_PostSchema">PostSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ReactorTileSchema.html#Chaos_SerializationContext_ReactorTileSchema">ReactorTileSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ReactorTileTemplateSchema.html#Chaos_SerializationContext_ReactorTileTemplateSchema">ReactorTileTemplateSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Rectangle.html#Chaos_SerializationContext_Rectangle">Rectangle</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.SByte.html#Chaos_SerializationContext_SByte">SByte</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ShardingOptionsSchema.html#Chaos_SerializationContext_ShardingOptionsSchema">ShardingOptionsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.ShardingType.html#Chaos_SerializationContext_ShardingType">ShardingType</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Single.html#Chaos_SerializationContext_Single">Single</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.SkillSchema.html#Chaos_SerializationContext_SkillSchema">SkillSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.SkillTemplateSchema.html#Chaos_SerializationContext_SkillTemplateSchema">SkillTemplateSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.SpellSchema.html#Chaos_SerializationContext_SpellSchema">SpellSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.SpellTemplateSchema.html#Chaos_SerializationContext_SpellTemplateSchema">SpellTemplateSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.SpellType.html#Chaos_SerializationContext_SpellType">SpellType</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.Stat.html#Chaos_SerializationContext_Stat">Stat</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.StatSheetSchema.html#Chaos_SerializationContext_StatSheetSchema">StatSheetSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.StaticVars.html#Chaos_SerializationContext_StaticVars">StaticVars</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.StatsSchema.html#Chaos_SerializationContext_StatsSchema">StatsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.String.html#Chaos_SerializationContext_String">String</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.TargetFilter.html#Chaos_SerializationContext_TargetFilter">TargetFilter</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.TimeSpan.html#Chaos_SerializationContext_TimeSpan">TimeSpan</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.TimedEventCollection.html#Chaos_SerializationContext_TimedEventCollection">TimedEventCollection</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.TrackersSchema.html#Chaos_SerializationContext_TrackersSchema">TrackersSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.UInt16.html#Chaos_SerializationContext_UInt16">UInt16</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.UInt32.html#Chaos_SerializationContext_UInt32">UInt32</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.UInt64.html#Chaos_SerializationContext_UInt64">UInt64</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.UserOptionsSchema.html#Chaos_SerializationContext_UserOptionsSchema">UserOptionsSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.UserStatSheetSchema.html#Chaos_SerializationContext_UserStatSheetSchema">UserStatSheetSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.WorldMapNodeSchema.html#Chaos_SerializationContext_WorldMapNodeSchema">WorldMapNodeSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.WorldMapSchema.html#Chaos_SerializationContext_WorldMapSchema">WorldMapSchema</a></dt>
+    <dd><p>Defines the source generated JSON serialization contract metadata for a given type.</p>
+</dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.SerializationContext.GetTypeInfo.html#Chaos_SerializationContext_GetTypeInfo_System_Type_">GetTypeInfo(Type)</a></dt>
+    <dd><p>Gets metadata for the specified type.</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/develop/Chaos/obj/Release/net10.0/System.Text.Json.SourceGeneration/System.Text.Json.SourceGeneration.JsonSourceGenerator/SerializationContext.IEnumerableReactorTileSchema.g.cs/#L11" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
