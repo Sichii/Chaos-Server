@@ -34,7 +34,7 @@ public interface IChaosWorldClient : IConnectedClient
     /// <summary>
     ///     Client side id of the client (2)
     /// </summary>
-    ushort LoginId2 { get; set; }
+    uint LoginId2 { get; set; }
 
     void SendAddItemToPane(Item item);
     void SendAddSkillToPane(Skill skill);

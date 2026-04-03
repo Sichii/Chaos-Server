@@ -206,7 +206,7 @@ public class AccessManagerTests : IDisposable
     {
         // Arrange
         var defaultClientId1 = 4278255360U;
-        ushort defaultClientId2 = 7695;
+          uint defaultClientId2 = 7695;
 
         // Act
         await AccessManager.IdBanishAsync(defaultClientId1, defaultClientId2);

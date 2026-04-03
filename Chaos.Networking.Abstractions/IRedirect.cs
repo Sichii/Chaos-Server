@@ -38,7 +38,7 @@ public interface IRedirect
     /// <summary>
     ///     The client side id of the client (2)
     /// </summary>
-    ushort? LoginId2 { get; }
+    uint? LoginId2 { get; }
 
     /// <summary>
     ///     The name of the client

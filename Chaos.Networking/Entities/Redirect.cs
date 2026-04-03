@@ -25,7 +25,7 @@ public sealed record Redirect : IRedirect
     public uint? LoginId1 { get; }
 
     /// <inheritdoc />
-    public ushort? LoginId2 { get; }
+    public uint? LoginId2 { get; }
 
     /// <inheritdoc />
     public string Name { get; }
@@ -71,7 +71,7 @@ public sealed record Redirect : IRedirect
         byte seed,
         string? name = null,
         uint? loginId1 = null,
-        ushort? loginId2 = null)
+        uint? loginId2 = null)
     {
         Id = id;
         Type = type;

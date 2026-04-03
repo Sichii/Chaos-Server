@@ -115,7 +115,7 @@ public sealed class AccessManager : BackgroundService, IAccessManager
     public async Task IdBanishAsync(uint clientId1, uint clientId2)
     {
         //don't banish the default values
-        if ((clientId1 == 4278255360U) && (clientId2 == 7695))
+        if (clientId1 == 4278255360U)
             return;
 
         await using var @lock = await AccessSync.WaitAsync();

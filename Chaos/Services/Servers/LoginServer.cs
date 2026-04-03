@@ -222,6 +222,27 @@ public sealed class LoginServer : ServerBase<IChaosLoginClient>, ILoginServer<IC
 
         async ValueTask InnerOnLogin(IChaosLoginClient localClient, LoginArgs localArgs)
         {
+            var expectedChecksum1 = Crc.Generate16(BitConverter.GetBytes(localArgs.ClientId1));
+            var expectedChecksum2 = Crc.Generate16(BitConverter.GetBytes(localArgs.ClientId2));
+
+            if ((localArgs.Checksum1 != expectedChecksum1) || (localArgs.Checksum2 != expectedChecksum2))
+            {
+                Logger.WithTopics(Topics.Entities.Client, Topics.Actions.Login, Topics.Actions.Validation)
+                      .WithProperty(localClient)
+                      .LogWarning(
+                          "Client id checksum mismatch. Id1:{@ClientId1} expected:{@Expected1} actual:{@Actual1}, Id2:{@ClientId2} expected:{@Expected2} actual:{@Actual2}",
+                          localArgs.ClientId1,
+                          expectedChecksum1,
+                          localArgs.Checksum1,
+                          localArgs.ClientId2,
+                          expectedChecksum2,
+                          localArgs.Checksum2);
+
+                localClient.SendLoginMessage(LoginMessageType.ClearPswdMessage, "Wrong password");
+
+                return;
+            }
+
             var allowed = await AccessManager.ShouldAllowAsync(localArgs.ClientId1, localArgs.ClientId2);
 
             if (!allowed)
