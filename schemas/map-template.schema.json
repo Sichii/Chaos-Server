@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "MapTemplateSchema",
+  "type": "object",
+  "description": "Represents the serializable schema for a map template\n            ",
+  "additionalProperties": false,
+  "properties": {
+    "Height": {
+      "type": "integer",
+      "description": "The height of the map\n            ",
+      "format": "byte"
+    },
+    "LightType": {
+      "type": [
+        "null",
+        "string"
+      ],
+      "description": "Default null. If specified, this is the type of light used for day/night cycle on this map\n            "
+    },
+    "ScriptKeys": {
+      "type": "array",
+      "description": "A collection of names of map scripts to attach to this map by default\n            ",
+      "items": {
+        "type": "string"
+      }
+    },
+    "TemplateKey": {
+      "type": "string",
+      "description": "A unique id specific to this map template\n\nThis must match the name of the folder containing this file\n            "
+    },
+    "Width": {
+      "type": "integer",
+      "description": "The width of the map\n            ",
+      "format": "byte"
+    }
+  }
+}

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>JSON Schemas | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="JSON Schemas | Chaos Server Docs ">
+      
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/develop/docs/articles/JsonSchemas.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="json-schemas">JSON Schemas</h1>
+
+<p>Chaos Server provides comprehensive JSON Schema validation for all template types. These schemas enable IDE
+autocomplete, validation, and documentation directly in your editor when working with game content templates.</p>
+<h2 id="available-schemas">Available Schemas</h2>
+<p>The following schemas are available for Chaos Server templates:</p>
+<ul>
+<li><strong>Bulletin Board Template</strong> - <code>bulletin-board-template.schema.json</code></li>
+<li><strong>Dialog Template</strong> - <code>dialog-template.schema.json</code></li>
+<li><strong>Item Template</strong> - <code>item-template.schema.json</code></li>
+<li><strong>Map Template</strong> - <code>map-template.schema.json</code></li>
+<li><strong>Merchant Template</strong> - <code>merchant-template.schema.json</code></li>
+<li><strong>Monster Template</strong> - <code>monster-template.schema.json</code></li>
+<li><strong>Reactor Tile Template</strong> - <code>reactor-tile-template.schema.json</code></li>
+<li><strong>Skill Template</strong> - <code>skill-template.schema.json</code></li>
+<li><strong>Spell Template</strong> - <code>spell-template.schema.json</code></li>
+</ul>
+<h2 id="documentation-site-integration">Documentation Site Integration</h2>
+<p>All schemas are automatically published to the Chaos Server documentation site at:</p>
+<pre><code>https://docs.chaos-server.net/schemas/
+</code></pre>
+<p>Each schema follows this URL pattern:</p>
+<pre><code>https://docs.chaos-server.net/schemas/{template-name}.schema.json
+</code></pre>
+<p>Where <code>{template-name}</code> is one of:</p>
+<ul>
+<li><code>item-template</code></li>
+<li><code>monster-template</code></li>
+<li><code>skill-template</code></li>
+<li><code>spell-template</code></li>
+<li><code>dialog-template</code></li>
+<li><code>merchant-template</code></li>
+<li><code>map-template</code></li>
+<li><code>reactor-tile-template</code></li>
+<li><code>bulletin-board-template</code></li>
+</ul>
+<h2 id="jetbrains-rider-setup">JetBrains Rider Setup</h2>
+<h3 id="pre-configured-templates">Pre-configured Templates</h3>
+<p>For JetBrains Rider users, schemas are already pre-configured in the repository! The <code>.idea</code> folder contains file
+templates for all schema types that are automatically available when you clone the project.</p>
+<p><strong>To use the templates:</strong></p>
+<ol>
+<li>Right-click in Solution Explorer → Add</li>
+<li>Look for templates like &quot;Bulletin Board Template&quot;, &quot;Item Template&quot;, etc.</li>
+<li>Each template creates a JSON file with the correct <code>$schema</code> reference</li>
+</ol>
+<p><strong>Available templates:</strong></p>
+<ul>
+<li>Bulletin Board Template</li>
+<li>Dialog Template</li>
+<li>Item Template</li>
+<li>Map Template</li>
+<li>Merchant Template</li>
+<li>Monster Template</li>
+<li>Reactor Tile Template</li>
+<li>Skill Template</li>
+<li>Spell Template</li>
+</ul>
+<p>The templates are located in <code>.idea/.idea.Chaos/.idea/fileTemplates/</code> and each contains the appropriate schema URL
+reference.</p>
+<h3 id="manual-schema-mapping-if-needed">Manual Schema Mapping (if needed)</h3>
+<p>If the automatic schema detection isn't working:</p>
+<ol>
+<li>Go to File → Settings → Languages &amp; Frameworks → Schemas and DTDs → JSON Schema Mappings</li>
+<li>Add a new schema mapping for each template type</li>
+<li>Set the schema URL to: <code>https://docs.chaos-server.net/schemas/{template-name}.schema.json</code></li>
+<li>Map to file patterns like: <code>**Configuration/Templates/{TemplateName}/**/*.json</code></li>
+</ol>
+<h2 id="other-ides">Other IDEs</h2>
+<h3 id="visual-studio-code">Visual Studio Code</h3>
+<h4 id="file-templates-snippets">File Templates (Snippets)</h4>
+<p>VS Code uses snippets for file templates. Create custom snippets for each template type:</p>
+<ol>
+<li>Go to File → Preferences → Configure User Snippets</li>
+<li>Select &quot;New Global Snippets file&quot; or create a project-specific <code>.vscode/chaos-templates.code-snippets</code></li>
+<li>Add the following snippets:</li>
+</ol>
+<pre><code class="lang-json">{
+  &quot;Item Template&quot;: {
+    &quot;scope&quot;: &quot;json&quot;,
+    &quot;prefix&quot;: &quot;chaos-item&quot;,
+    &quot;body&quot;: [
+      &quot;{&quot;,
+      &quot;  \&quot;\\$schema\&quot;: \&quot;https://docs.chaos-server.net/schemas/item-template.schema.json\&quot;&quot;,
+      &quot;}&quot;
+    ],
+    &quot;description&quot;: &quot;Create a new Item Template&quot;
+  },
+  &quot;Monster Template&quot;: {
+    &quot;scope&quot;: &quot;json&quot;,
+    &quot;prefix&quot;: &quot;chaos-monster&quot;,
+    &quot;body&quot;: [
+      &quot;{&quot;,
+      &quot;  \&quot;\\$schema\&quot;: \&quot;https://docs.chaos-server.net/schemas/monster-template.schema.json\&quot;&quot;,
+      &quot;}&quot;
+    ],
+    &quot;description&quot;: &quot;Create a new Monster Template&quot;
+  },
+  &quot;Skill Template&quot;: {
+    &quot;scope&quot;: &quot;json&quot;,
+    &quot;prefix&quot;: &quot;chaos-skill&quot;,
+    &quot;body&quot;: [
+      &quot;{&quot;,
+      &quot;  \&quot;\\$schema\&quot;: \&quot;https://docs.chaos-server.net/schemas/skill-template.schema.json\&quot;&quot;,
+      &quot;}&quot;
+    ],
+    &quot;description&quot;: &quot;Create a new Skill Template&quot;
+  },
+  &quot;Spell Template&quot;: {
+    &quot;scope&quot;: &quot;json&quot;,
+    &quot;prefix&quot;: &quot;chaos-spell&quot;,
+    &quot;body&quot;: [
+      &quot;{&quot;,
+      &quot;  \&quot;\\$schema\&quot;: \&quot;https://docs.chaos-server.net/schemas/spell-template.schema.json\&quot;&quot;,
+      &quot;}&quot;
+    ],
+    &quot;description&quot;: &quot;Create a new Spell Template&quot;
+  },
+  &quot;Dialog Template&quot;: {
+    &quot;scope&quot;: &quot;json&quot;,
+    &quot;prefix&quot;: &quot;chaos-dialog&quot;,
+    &quot;body&quot;: [
+      &quot;{&quot;,
+      &quot;  \&quot;\\$schema\&quot;: \&quot;https://docs.chaos-server.net/schemas/dialog-template.schema.json\&quot;&quot;,
+      &quot;}&quot;
+    ],
+    &quot;description&quot;: &quot;Create a new Dialog Template&quot;
+  },
+  &quot;Merchant Template&quot;: {
+    &quot;scope&quot;: &quot;json&quot;,
+    &quot;prefix&quot;: &quot;chaos-merchant&quot;,
+    &quot;body&quot;: [
+      &quot;{&quot;,
+      &quot;  \&quot;\\$schema\&quot;: \&quot;https://docs.chaos-server.net/schemas/merchant-template.schema.json\&quot;&quot;,
+      &quot;}&quot;
+    ],
+    &quot;description&quot;: &quot;Create a new Merchant Template&quot;
+  },
+  &quot;Map Template&quot;: {
+    &quot;scope&quot;: &quot;json&quot;,
+    &quot;prefix&quot;: &quot;chaos-map&quot;,
+    &quot;body&quot;: [
+      &quot;{&quot;,
+      &quot;  \&quot;\\$schema\&quot;: \&quot;https://docs.chaos-server.net/schemas/map-template.schema.json\&quot;&quot;,
+      &quot;}&quot;
+    ],
+    &quot;description&quot;: &quot;Create a new Map Template&quot;
+  },
+  &quot;Reactor Tile Template&quot;: {
+    &quot;scope&quot;: &quot;json&quot;,
+    &quot;prefix&quot;: &quot;chaos-reactor&quot;,
+    &quot;body&quot;: [
+      &quot;{&quot;,
+      &quot;  \&quot;\\$schema\&quot;: \&quot;https://docs.chaos-server.net/schemas/reactor-tile-template.schema.json\&quot;&quot;,
+      &quot;}&quot;
+    ],
+    &quot;description&quot;: &quot;Create a new Reactor Tile Template&quot;
+  },
+  &quot;Bulletin Board Template&quot;: {
+    &quot;scope&quot;: &quot;json&quot;,
+    &quot;prefix&quot;: &quot;chaos-bulletin&quot;,
+    &quot;body&quot;: [
+      &quot;{&quot;,
+      &quot;  \&quot;\\$schema\&quot;: \&quot;https://docs.chaos-server.net/schemas/bulletin-board-template.schema.json\&quot;&quot;,
+      &quot;}&quot;
+    ],
+    &quot;description&quot;: &quot;Create a new Bulletin Board Template&quot;
+  }
+}
+</code></pre>
+<p>To use these snippets, type the prefix (e.g., <code>chaos-item</code>) in a JSON file and press Tab.</p>
+<p><strong>Note:</strong> If you prefer right-click file creation similar to Rider/Visual Studio, you'll need to install a file
+templates extension from the VS Code marketplace and follow that extension's setup instructions.</p>
+<h4 id="workspace-schema-configuration-alternative">Workspace Schema Configuration (Alternative)</h4>
+<p>If you prefer automatic schema detection without adding <code>$schema</code> to each file, configure workspace settings in
+<code>.vscode/settings.json</code>:</p>
+<pre><code class="lang-json">{
+  &quot;json.schemas&quot;: [
+    {
+      &quot;fileMatch&quot;: [&quot;**Configuration/Templates/Items/**/*.json&quot;],
+      &quot;url&quot;: &quot;https://docs.chaos-server.net/schemas/item-template.schema.json&quot;
+    },
+    {
+      &quot;fileMatch&quot;: [&quot;**Configuration/Templates/Monsters/**/*.json&quot;],
+      &quot;url&quot;: &quot;https://docs.chaos-server.net/schemas/monster-template.schema.json&quot;
+    },
+    {
+      &quot;fileMatch&quot;: [&quot;**Configuration/Templates/Skills/**/*.json&quot;],
+      &quot;url&quot;: &quot;https://docs.chaos-server.net/schemas/skill-template.schema.json&quot;
+    },
+    {
+      &quot;fileMatch&quot;: [&quot;**Configuration/Templates/Spells/**/*.json&quot;],
+      &quot;url&quot;: &quot;https://docs.chaos-server.net/schemas/spell-template.schema.json&quot;
+    },
+    {
+      &quot;fileMatch&quot;: [&quot;**Configuration/Templates/Dialogs/**/*.json&quot;],
+      &quot;url&quot;: &quot;https://docs.chaos-server.net/schemas/dialog-template.schema.json&quot;
+    },
+    {
+      &quot;fileMatch&quot;: [&quot;**Configuration/Templates/Merchants/**/*.json&quot;],
+      &quot;url&quot;: &quot;https://docs.chaos-server.net/schemas/merchant-template.schema.json&quot;
+    },
+    {
+      &quot;fileMatch&quot;: [&quot;**Configuration/Templates/Maps/**/*.json&quot;],
+      &quot;url&quot;: &quot;https://docs.chaos-server.net/schemas/map-template.schema.json&quot;
+    },
+    {
+      &quot;fileMatch&quot;: [&quot;**Configuration/Templates/ReactorTiles/**/*.json&quot;],
+      &quot;url&quot;: &quot;https://docs.chaos-server.net/schemas/reactor-tile-template.schema.json&quot;
+    },
+    {
+      &quot;fileMatch&quot;: [&quot;**Configuration/Templates/BulletinBoards/**/*.json&quot;],
+      &quot;url&quot;: &quot;https://docs.chaos-server.net/schemas/bulletin-board-template.schema.json&quot;
+    }
+  ]
+}
+</code></pre>
+<h3 id="visual-studio">Visual Studio</h3>
+<h4 id="file-templates">File Templates</h4>
+<p>Create item templates for each schema type:</p>
+<ol>
+<li>Go to Project → Export Template</li>
+<li>Choose &quot;Item Template&quot; and click Next</li>
+<li>Select a sample JSON file with the appropriate schema reference</li>
+<li>Configure the template:
+<ul>
+<li>Template name: e.g., &quot;Chaos Item Template&quot;</li>
+<li>Template description: e.g., &quot;Creates a new Chaos Server item template&quot;</li>
+<li>Icon: (optional)</li>
+</ul>
+</li>
+<li>Click Finish</li>
+</ol>
+<p>Alternatively, manually create templates:</p>
+<ol>
+<li>Create a folder: <code>%USERPROFILE%\Documents\Visual Studio 2022\Templates\ItemTemplates\Chaos Templates\</code></li>
+<li>For each template type, create a <code>.json</code> file and a <code>.vstemplate</code> file</li>
+</ol>
+<p>Example <code>ItemTemplate.json</code>:</p>
+<pre><code class="lang-json">{
+  &quot;$schema&quot;: &quot;https://docs.chaos-server.net/schemas/item-template.schema.json&quot;
+}
+</code></pre>
+<p>Example <code>ItemTemplate.vstemplate</code>:</p>
+<pre><code class="lang-xml">&lt;VSTemplate Version=&quot;3.0.0&quot; Type=&quot;Item&quot; 
+  xmlns=&quot;http://schemas.microsoft.com/developer/vstemplate/2005&quot;&gt;
+  &lt;TemplateData&gt;
+    &lt;Name&gt;Chaos Item Template&lt;/Name&gt;
+    &lt;Description&gt;Creates a new Chaos Server item template&lt;/Description&gt;
+    &lt;Icon&gt;Icon.ico&lt;/Icon&gt;
+    &lt;ProjectType&gt;General&lt;/ProjectType&gt;
+    &lt;DefaultName&gt;NewItem.json&lt;/DefaultName&gt;
+  &lt;/TemplateData&gt;
+  &lt;TemplateContent&gt;
+    &lt;ProjectItem&gt;ItemTemplate.json&lt;/ProjectItem&gt;
+  &lt;/TemplateContent&gt;
+&lt;/VSTemplate&gt;
+</code></pre>
+<p>After creating templates, they'll appear in Add → New Item dialog.</p>
+<h4 id="schema-configuration-alternative">Schema Configuration (Alternative)</h4>
+<p>Visual Studio 2019+ includes built-in JSON IntelliSense support. For automatic schema detection without templates, the
+schemas will be applied based on file paths when properly configured in the project.</p>
+<h3 id="intellij-idea">IntelliJ IDEA</h3>
+<h4 id="file-templates-1">File Templates</h4>
+<p>Create file templates for each schema type:</p>
+<ol>
+<li>Go to File → Settings → Editor → File and Code Templates</li>
+<li>Click the + button to add a new template</li>
+<li>Configure the template:
+<ul>
+<li>Name: e.g., &quot;Chaos Item Template&quot;</li>
+<li>Extension: <code>json</code></li>
+<li>Template text:</li>
+</ul>
+</li>
+</ol>
+<pre><code class="lang-json">{
+  &quot;$schema&quot;: &quot;https://docs.chaos-server.net/schemas/item-template.schema.json&quot;
+}
+</code></pre>
+<ol start="4">
+<li>Repeat for other template types (Monster, Skill, Spell, Dialog, Merchant, Map, Reactor Tile, Bulletin Board)</li>
+</ol>
+<p>To use: Right-click in Project view → New → Select your custom template</p>
+<h4 id="schema-configuration-alternative-1">Schema Configuration (Alternative)</h4>
+<p>For automatic schema detection without templates:</p>
+<ol>
+<li>Go to File → Settings → Languages &amp; Frameworks → Schemas and DTDs → JSON Schema Mappings</li>
+<li>Click the + button to add a new mapping for each template type</li>
+<li>Configure each mapping:
+<ul>
+<li>Name: e.g., &quot;Chaos Item Templates&quot;</li>
+<li>Schema file or URL: <code>https://docs.chaos-server.net/schemas/item-template.schema.json</code></li>
+<li>File path pattern: Add patterns like <code>**/Configuration/Templates/Items/**/*.json</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="relocated-data-folder-configuration">Relocated Data Folder Configuration</h2>
+<p>If you've moved your <code>Data/</code> folder outside the main Chaos project directory, you'll need to recreate the project-level
+schema mappings in your IDE to ensure templates in the new location have proper validation and autocomplete support.</p>
+<p>The schema URLs remain the same (<code>https://docs.chaos-server.net/schemas/{template-name}.schema.json</code>), but you'll need
+to configure new file pattern mappings that point to your relocated Data folder structure.</p>
+<h3 id="jetbrains-rider-with-relocated-data">JetBrains Rider with Relocated Data</h3>
+<p>If you're using JetBrains Rider and want to keep the convenient file templates:</p>
+<ol>
+<li><p>Copy the file templates from the original Chaos Server project:</p>
+<ul>
+<li>Source: <code>Chaos-Server/.idea/.idea.Chaos/.idea/fileTemplates/</code></li>
+<li>Destination: <code>YourDataProject/.idea/fileTemplates/</code></li>
+</ul>
+</li>
+<li><p>The templates will then be available in your new project via Right-click → Add</p>
+</li>
+</ol>
+<p>Note: The Chaos Server uses nested <code>.idea</code> folders because it's a .NET solution. Your standalone Data folder project
+will use the simpler <code>.idea/fileTemplates/</code> structure.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/develop/docs/articles/JsonSchemas.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
