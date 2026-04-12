@@ -1,13 +1,24 @@
+#region
 using Chaos.Common.Abstractions;
 using Chaos.DarkAges.Definitions;
 using Chaos.Models.Menu;
 using Chaos.Models.Templates.Abstractions;
+using Chaos.Schemas.Templates;
+#endregion
 
 namespace Chaos.Models.Templates;
 
 public sealed record DialogTemplate : ITemplate
 {
     public required bool Contextual { get; init; }
+
+    /// <summary>
+    ///     Per-dialog override for the client's NPC illustration variant index. See
+    ///     <see cref="DialogTemplateSchema.IllustrationIndex" /> for details. Defaults to 0, which is correct for virtually
+    ///     every NPC.
+    /// </summary>
+    public required byte IllustrationIndex { get; init; }
+
     public required string? NextDialogKey { get; init; }
     public required ICollection<DialogOption> Options { get; init; }
     public required string? PrevDialogKey { get; init; }

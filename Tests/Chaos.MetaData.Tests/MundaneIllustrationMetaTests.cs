@@ -13,8 +13,8 @@ public sealed class MundaneIllustrationMetaTests
     public void MundaneIllustrationMetaData_Compress_MultipleNodes_AllAreEncoded()
     {
         var metaData = new MundaneIllustrationMetaData();
-        metaData.AddNode(new MundaneIllustrationMetaNode("Guard", "guard.epf"));
-        metaData.AddNode(new MundaneIllustrationMetaNode("Merchant", "merchant.epf"));
+        metaData.AddNode(new MundaneIllustrationMetaNode("Guard", ["guard.epf"]));
+        metaData.AddNode(new MundaneIllustrationMetaNode("Merchant", ["merchant.epf"]));
         metaData.Compress();
 
         metaData.Data
@@ -30,7 +30,7 @@ public sealed class MundaneIllustrationMetaTests
     public void MundaneIllustrationMetaData_Compress_ProducesNonEmptyData()
     {
         var metaData = new MundaneIllustrationMetaData();
-        metaData.AddNode(new MundaneIllustrationMetaNode("Guard", "guard.epf"));
+        metaData.AddNode(new MundaneIllustrationMetaNode("Guard", ["guard.epf"]));
         metaData.Compress();
 
         metaData.CheckSum
@@ -53,9 +53,49 @@ public sealed class MundaneIllustrationMetaTests
     }
 
     [Test]
-    public void MundaneIllustrationMetaNode_Serialize_Writes_Name_And_ImageName()
+    public void MundaneIllustrationMetaNode_Serialize_Writes_Name_And_MultipleImageNames()
     {
-        var node = new MundaneIllustrationMetaNode("Guard", "guard.epf");
+        var node = new MundaneIllustrationMetaNode(
+            "BigBoss",
+            [
+                "boss1.epf",
+                "boss2.epf",
+                "boss3.epf"
+            ]);
+        var writer = new SpanWriter(Encoding.GetEncoding(949));
+        node.Serialize(ref writer);
+        writer.Flush();
+
+        var buf = writer.ToSpan()
+                        .ToArray();
+
+        var reader = new SpanReader(Encoding.GetEncoding(949), buf);
+
+        reader.ReadString8()
+              .Should()
+              .Be("BigBoss");
+
+        reader.ReadUInt16()
+              .Should()
+              .Be(3);
+
+        reader.ReadString16()
+              .Should()
+              .Be("boss1.epf");
+
+        reader.ReadString16()
+              .Should()
+              .Be("boss2.epf");
+
+        reader.ReadString16()
+              .Should()
+              .Be("boss3.epf");
+    }
+
+    [Test]
+    public void MundaneIllustrationMetaNode_Serialize_Writes_Name_And_SingleImageName()
+    {
+        var node = new MundaneIllustrationMetaNode("Guard", ["guard.epf"]);
         var writer = new SpanWriter(Encoding.GetEncoding(949));
         node.Serialize(ref writer);
         writer.Flush();

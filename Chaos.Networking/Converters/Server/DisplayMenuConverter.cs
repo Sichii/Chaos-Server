@@ -30,7 +30,7 @@ public sealed class DisplayMenuConverter : PacketConverterBase<DisplayMenuArgs>
         _ = reader.ReadByte(); //LI: what is this for?
         var sprite2 = reader.ReadUInt16();
         var color2 = reader.ReadByte();
-        var shouldIllustrate = reader.ReadBoolean();
+        var illustrationVariant = reader.ReadByte();
         var name = reader.ReadString8();
         var text = reader.ReadString16();
 
@@ -61,7 +61,7 @@ public sealed class DisplayMenuConverter : PacketConverterBase<DisplayMenuArgs>
             Color = (DisplayColor)color,
             Name = name,
             Text = text,
-            ShouldIllustrate = shouldIllustrate
+            IllustrationIndex = illustrationVariant
         };
 
         switch (menuArgs.MenuType)
@@ -260,7 +260,7 @@ public sealed class DisplayMenuConverter : PacketConverterBase<DisplayMenuArgs>
         writer.WriteByte(0); //dunno
         writer.WriteUInt16(offsetSprite);
         writer.WriteByte((byte)args.Color);
-        writer.WriteBoolean(args.ShouldIllustrate);
+        writer.WriteByte(args.IllustrationIndex);
         writer.WriteString8(args.Name);
         writer.WriteString16(args.Text);
 

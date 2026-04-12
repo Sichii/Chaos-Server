@@ -24,6 +24,14 @@ public sealed record Dialog : IScripted<IDialogScript>
     private readonly IDialogFactory DialogFactory;
     public object? Context { get; set; }
     public IDialogSourceEntity DialogSource { get; set; }
+
+    /// <summary>
+    ///     Index into the client's merged NPC illustration variant list. Scripts may mutate this at runtime if a dialog needs
+    ///     to swap variants dynamically. Initialized from the template; falls back to 0 when the dialog has no template (e.g.
+    ///     dynamic Reply dialogs).
+    /// </summary>
+    public byte IllustrationIndex { get; set; }
+
     public List<ItemDetails> Items { get; set; }
     public ArgumentCollection MenuArgs { get; set; }
     public string? NextDialogKey { get; set; }
@@ -65,6 +73,7 @@ public sealed record Dialog : IScripted<IDialogScript>
         Type = template.Type;
         MenuArgs = [];
         Contextual = template.Contextual;
+        IllustrationIndex = template.IllustrationIndex;
     }
 
     public Dialog(
@@ -255,7 +264,11 @@ public sealed record Dialog : IScripted<IDialogScript>
         }
     }
 
-    public void Reply(Aisling source, string dialogText, string? nextDialogKey = null)
+    public void Reply(
+        Aisling source,
+        string dialogText,
+        string? nextDialogKey = null,
+        byte illustrationVariant = 0)
     {
         var newDialog = new Dialog(
             DialogSource,
@@ -263,7 +276,8 @@ public sealed record Dialog : IScripted<IDialogScript>
             ChaosDialogType.Normal,
             dialogText)
         {
-            NextDialogKey = nextDialogKey
+            NextDialogKey = nextDialogKey,
+            IllustrationIndex = illustrationVariant
         };
 
         newDialog.Display(source);

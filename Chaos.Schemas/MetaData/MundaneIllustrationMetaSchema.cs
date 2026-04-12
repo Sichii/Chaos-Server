@@ -1,4 +1,6 @@
+#region
 using System.Text.Json.Serialization;
+#endregion
 
 namespace Chaos.Schemas.MetaData;
 
@@ -9,10 +11,13 @@ namespace Chaos.Schemas.MetaData;
 public sealed record MundaneIllustrationMetaSchema
 {
     /// <summary>
-    ///     The name of the image file to use for this merchant's illustration
+    ///     One or more SPF filenames to register as illustration variants for this merchant. On the client, these are
+    ///     appended to the merchant's variant list after any entries present in <c>npci.tbl</c>, and a dialog's
+    ///     <c>IllustrationIndex</c> picks one by position. Almost every merchant only needs a single entry here —
+    ///     multi-variant NPCs are rare.
     /// </summary>
     [JsonRequired]
-    public string ImageName { get; set; } = null!;
+    public ICollection<string> ImageNames { get; set; } = [];
 
     /// <summary>
     ///     The name of the merchant to show this illustration for

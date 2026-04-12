@@ -18,6 +18,35 @@ public sealed record DialogTemplateSchema
     public bool Contextual { get; set; }
 
     /// <summary>
+    ///     Index into the NPC's list of illustration filename variants. The client maintains this list by merging
+    ///     <c>
+    ///         npci.tbl
+    ///     </c>
+    ///     (inside
+    ///     <c>
+    ///         npcbase.dat
+    ///     </c>
+    ///     , client-side only — the server has no control over it) with the
+    ///     <c>
+    ///         NPCIllust
+    ///     </c>
+    ///     metafile the server pushes at login.
+    ///     <c>
+    ///         npci.tbl
+    ///     </c>
+    ///     entries occupy the low indices, metafile entries are appended after them.
+    ///     <br />
+    ///     <br />
+    ///     For virtually every NPC exactly one filename is defined, so
+    ///     <b>
+    ///         0 is the correct value here
+    ///     </b>
+    ///     almost always. Only set this to a non-zero value if the NPC actually has multiple illustration variants defined in
+    ///     one of those two sources, which is rare.
+    /// </summary>
+    public byte IllustrationIndex { get; set; }
+
+    /// <summary>
     ///     Defaults to null
     ///     <br />
     ///     If specified and the <see cref="Type" /> is Normal, the dialog will have a next button that will take them to the

@@ -40,7 +40,7 @@ public sealed class DisplayDialogConverter : PacketConverterBase<DisplayDialogAr
         var dialogId = reader.ReadUInt16();
         var hasPreviousButton = reader.ReadBoolean();
         var hasNextButton = reader.ReadBoolean();
-        var shouldIllustrate = !reader.ReadBoolean(); //why is this backwards? who knows
+        var illustrationIndex = reader.ReadByte();
         var name = reader.ReadString8();
         var text = reader.ReadString16();
 
@@ -73,7 +73,7 @@ public sealed class DisplayDialogConverter : PacketConverterBase<DisplayDialogAr
             DialogId = dialogId,
             HasPreviousButton = hasPreviousButton,
             HasNextButton = hasNextButton,
-            ShouldIllustrate = shouldIllustrate,
+            IllustrationIndex = illustrationIndex,
             Name = name,
             Text = text
         };
@@ -172,7 +172,7 @@ public sealed class DisplayDialogConverter : PacketConverterBase<DisplayDialogAr
         writer.WriteUInt16(args.DialogId);
         writer.WriteBoolean(args.HasPreviousButton);
         writer.WriteBoolean(args.HasNextButton);
-        writer.WriteBoolean(!args.ShouldIllustrate); //why is this backwards? who knows
+        writer.WriteByte(args.IllustrationIndex);
         writer.WriteString8(args.Name);
         writer.WriteString16(args.Text);
 

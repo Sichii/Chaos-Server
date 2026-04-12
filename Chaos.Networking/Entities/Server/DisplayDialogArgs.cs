@@ -1,6 +1,8 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Networking.Abstractions.Definitions;
 using Chaos.Packets.Abstractions;
+#endregion
 
 namespace Chaos.Networking.Entities.Server;
 
@@ -40,6 +42,35 @@ public sealed record DisplayDialogArgs : IPacketSerializable
     public bool HasPreviousButton { get; set; }
 
     /// <summary>
+    ///     Index into the NPC's list of illustration filename variants. The client maintains this list by merging
+    ///     <c>
+    ///         npci.tbl
+    ///     </c>
+    ///     (inside
+    ///     <c>
+    ///         npcbase.dat
+    ///     </c>
+    ///     , client-side only — the server has no control over it) with the
+    ///     <c>
+    ///         NPCIllust
+    ///     </c>
+    ///     metafile the server pushes at login.
+    ///     <c>
+    ///         npci.tbl
+    ///     </c>
+    ///     entries occupy the low indices, metafile entries are appended after them.
+    ///     <br />
+    ///     <br />
+    ///     For virtually every NPC exactly one filename is defined, so
+    ///     <b>
+    ///         0 is the correct value here
+    ///     </b>
+    ///     almost always. Only set this to a non-zero value if the NPC actually has multiple illustration variants defined in
+    ///     one of those two sources, which is rare.
+    /// </summary>
+    public byte IllustrationIndex { get; set; }
+
+    /// <summary>
     ///     The name of the source entity associated with the dialog
     /// </summary>
     public string Name { get; set; } = null!;
@@ -53,11 +84,6 @@ public sealed record DisplayDialogArgs : IPacketSerializable
     ///     If the dialog is part of a pursuit chain, this is the id of that pursuit
     /// </summary>
     public ushort? PursuitId { get; set; }
-
-    /// <summary>
-    ///     Whether or not the dialog should show an illustration of the source entity
-    /// </summary>
-    public bool ShouldIllustrate { get; set; }
 
     /// <summary>
     ///     The id of the source entity associated with the dialog. This isn't really for any practical purpose

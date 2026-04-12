@@ -1,22 +1,32 @@
 [
     {
         "name": "Shop Tester",
-        "imageName": "buls.spf"
+        "imageNames": [
+            "buls.spf"
+        ]
     },
     {
         "name": "Bank Tester",
-        "imageName": "bank.spf"
+        "imageNames": [
+            "bank.spf"
+        ]
     },
     {
         "name": "Trainer Tester",
-        "imageName": "black.spf"
+        "imageNames": [
+            "black.spf"
+        ]
     },
     {
         "name": "Guild Tester",
-        "imageName": "seba.spf"
+        "imageNames": [
+            "seba.spf"
+        ]
     },
     {
         "name": "Misc Tester 1",
-        "imageName": "metus.spf"
+        "imageNames": [
+            "metus.spf"
+        ]
     }
 ]

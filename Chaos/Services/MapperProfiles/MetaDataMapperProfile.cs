@@ -1,3 +1,4 @@
+#region
 using System.Drawing;
 using Chaos.MetaData.Abstractions;
 using Chaos.MetaData.EventMetaData;
@@ -6,6 +7,7 @@ using Chaos.MetaData.MundaneMetaData;
 using Chaos.Networking.Entities.Server;
 using Chaos.Schemas.MetaData;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -63,7 +65,7 @@ public class MetaDataMapperProfile : IMapperProfile<IMetaDataDescriptor, MetaDat
     public MundaneIllustrationMetaSchema Map(MundaneIllustrationMetaNode obj) => throw new NotImplementedException();
 
     /// <inheritdoc />
-    public MundaneIllustrationMetaNode Map(MundaneIllustrationMetaSchema obj) => new(obj.Name, obj.ImageName);
+    public MundaneIllustrationMetaNode Map(MundaneIllustrationMetaSchema obj) => new(obj.Name, obj.ImageNames.ToArray());
 
     /// <inheritdoc />
     public LightMetaSchema Map(LightPropertyMetaNode obj) => throw new NotImplementedException();

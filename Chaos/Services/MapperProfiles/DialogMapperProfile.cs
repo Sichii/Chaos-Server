@@ -1,3 +1,4 @@
+#region
 using Chaos.Common.Abstractions;
 using Chaos.DarkAges.Extensions;
 using Chaos.Models.Menu;
@@ -6,6 +7,7 @@ using Chaos.Networking.Entities.Server;
 using Chaos.Schemas.Data;
 using Chaos.Schemas.Templates;
 using Chaos.TypeMapper.Abstractions;
+#endregion
 
 namespace Chaos.Services.MapperProfiles;
 
@@ -39,7 +41,7 @@ public class DialogMapperProfile(ITypeMapper mapper) : IMapperProfile<Dialog, Di
             Text = obj.Text,
             TextBoxLength = obj.TextBoxLength,
             TextBoxPrompt = obj.TextBoxPrompt,
-            ShouldIllustrate = true
+            IllustrationIndex = obj.IllustrationIndex
         };
 
     /// <inheritdoc />
@@ -69,7 +71,8 @@ public class DialogMapperProfile(ITypeMapper mapper) : IMapperProfile<Dialog, Di
             Text = obj.Text
                       .Replace("\r\n", "\n")
                       .TrimEnd('\n'),
-            Slots = obj.Slots
+            Slots = obj.Slots,
+            IllustrationIndex = obj.IllustrationIndex
         };
 
     /// <inheritdoc />
@@ -89,7 +92,8 @@ public class DialogMapperProfile(ITypeMapper mapper) : IMapperProfile<Dialog, Di
             TextBoxLength = obj.TextBoxLength,
             TextBoxPrompt = obj.TextBoxPrompt,
             Type = obj.Type,
-            Contextual = obj.Contextual
+            Contextual = obj.Contextual,
+            IllustrationIndex = obj.IllustrationIndex
         };
 
     /// <inheritdoc />

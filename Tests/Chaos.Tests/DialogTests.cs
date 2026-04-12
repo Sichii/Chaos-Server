@@ -143,7 +143,8 @@ public sealed class DialogTests
             },
             ScriptVars = new Dictionary<string, IScriptVars>(StringComparer.OrdinalIgnoreCase),
             TextBoxLength = null,
-            TextBoxPrompt = null
+            TextBoxPrompt = null,
+            IllustrationIndex = 0
         };
 
     #region Display (onDisplaying continues normally)

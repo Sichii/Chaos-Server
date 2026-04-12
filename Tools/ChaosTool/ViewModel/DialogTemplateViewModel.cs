@@ -1,15 +1,18 @@
+#region
 using Chaos.DarkAges.Definitions;
 using Chaos.Schemas.Templates;
 using Chaos.Wpf.Collections.ObjectModel;
 using Chaos.Wpf.Observables;
 using ChaosTool.ViewModel.Abstractions;
 using ChaosTool.ViewModel.Observables;
+#endregion
 
 namespace ChaosTool.ViewModel;
 
 public sealed class DialogTemplateViewModel : SchemaViewModelBase<DialogTemplateSchema>
 {
     private bool _contextual;
+    private byte _illustrationIndex;
     private string? _nextDialogKey;
     private string? _prevDialogKey;
     private string _templateKey = null!;
@@ -22,6 +25,12 @@ public sealed class DialogTemplateViewModel : SchemaViewModelBase<DialogTemplate
     {
         get => _contextual;
         set => SetField(ref _contextual, value);
+    }
+
+    public byte IllustrationIndex
+    {
+        get => _illustrationIndex;
+        set => SetField(ref _illustrationIndex, value);
     }
 
     public string? NextDialogKey
