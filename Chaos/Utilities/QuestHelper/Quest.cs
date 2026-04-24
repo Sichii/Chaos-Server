@@ -3,7 +3,7 @@ using Chaos.Models.Menu;
 using Chaos.Models.World;
 #endregion
 
-namespace Chaos.Scripting.Quests;
+namespace Chaos.Utilities.QuestHelper;
 
 /// <summary>
 /// Non-generic base — what the registry stores and what dispatchers reference.

@@ -9,12 +9,12 @@ using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Models.World.Abstractions;
 using Chaos.Networking.Abstractions;
-using Chaos.Scripting.Quests;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Other.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Testing.Infrastructure.Definitions;
 using Chaos.Testing.Infrastructure.Mocks;
+using Chaos.Utilities.QuestHelper;
 using FluentAssertions;
 using Moq;
 #endregion

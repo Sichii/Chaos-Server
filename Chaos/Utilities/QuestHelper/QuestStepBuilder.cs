@@ -6,13 +6,12 @@ using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
-using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Services.Servers.Options;
 using Chaos.Storage.Abstractions;
 #endregion
 
-namespace Chaos.Scripting.Quests;
+namespace Chaos.Utilities.QuestHelper;
 
 /// <summary>
 /// Fluent builder for an operation chain. Recorded operations are functions over

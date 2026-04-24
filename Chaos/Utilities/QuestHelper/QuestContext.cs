@@ -10,10 +10,9 @@ using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 using Chaos.Services.Factories.Abstractions;
 using Chaos.Storage.Abstractions;
 using Chaos.Time;
-using Chaos.Utilities;
 #endregion
 
-namespace Chaos.Scripting.Quests;
+namespace Chaos.Utilities.QuestHelper;
 
 /// <summary>
 /// Non-generic base for QuestContext so framework collections (handlers, operations)

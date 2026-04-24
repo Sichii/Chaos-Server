@@ -1,7 +1,7 @@
 #region
 using System.Collections.Concurrent;
 using Chaos.Extensions.Common;
-using Chaos.Scripting.Quests;
+using Chaos.Utilities.QuestHelper;
 using Microsoft.Extensions.DependencyInjection;
 #endregion
 

@@ -1,4 +1,4 @@
-namespace Chaos.Scripting.Quests;
+namespace Chaos.Utilities.QuestHelper;
 
 /// <summary>
 /// Fluent root passed to Quest&lt;TStage&gt;.Configure. Collects DialogQuestHandlers

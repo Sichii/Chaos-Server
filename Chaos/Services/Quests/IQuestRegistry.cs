@@ -1,5 +1,5 @@
 #region
-using Chaos.Scripting.Quests;
+using Chaos.Utilities.QuestHelper;
 #endregion
 
 namespace Chaos.Services.Quests;

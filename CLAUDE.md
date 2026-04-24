@@ -13,7 +13,7 @@ Chaos-Server is a .NET 10 monorepo for a Dark Ages game server. **The game serve
 - **"No internal callers" is not a deletion signal.** Public types under `Chaos.*` are extension surface consumed by forks you can't see. Treat them as load-bearing.
 - **Public API stability matters.** Renaming, moving, or changing the signature of a public type in `Chaos.Scripting`, `Chaos.Utilities.SequenceScripter`, `Chaos.Networking`, `Chaos.Storage`, etc. is a breaking change for every fork. Prefer additive changes.
 - **`Data/` in this repo is a minimal example/test set**, not a complete content drop. Forks supply their own templates, maps, scripts, and saves via the staging directory.
-- **Recently-added "frameworks with no callers"** (e.g. the Quest framework in `Chaos/Scripting/Quests/`, `ScriptBuilder<T>` in `Chaos/Utilities/SequenceScripter/`) are intentionally fork-facing API, not in-progress unfinished work.
+- **Recently-added "frameworks with no callers"** (e.g. the Quest framework in `Chaos/Utilities/QuestHelper/`, `ScriptBuilder<T>` in `Chaos/Utilities/SequenceScripter/`) are intentionally fork-facing API, not in-progress unfinished work.
 
 ## Essential Commands
 
@@ -90,7 +90,7 @@ Templates are JSON files in `Data/Configuration/Templates/` that define game con
 - **Functional Scripts**: Cross-cutting concerns accessed via `FunctionalScriptRegistry`
 - **Formulae** (`Chaos.Formulae`): Swappable calculation logic for damage, experience, etc.
 - **SequenceScripter** (`Chaos.Utilities.SequenceScripter`): Fluent builder DSL for composing entity behavior over time. `ScriptBuilder<T>` provides timed + conditional actions; `CreatureScriptBuilder<T>` adds HP-threshold actions on top. Forks use this to write monster AI and similar entity-driven behavior without hand-rolling tick logic.
-- **Quest Framework** (`Chaos.Scripting.Quests`): Subclass `Quest<TStage>` (where `TStage` is your stage enum) and override `Configure(QuestBuilder<TStage> q)`. `QuestRegistry` auto-discovers all `Quest` subclasses via reflection at startup. Dialog handlers wired via `q.OnDialog(templateKey)` and a fluent `QuestStepBuilder<TStage>` chain.
+- **Quest Framework** (`Chaos.Utilities.QuestHelper`): Subclass `Quest<TStage>` (where `TStage` is your stage enum) and override `Configure(QuestBuilder<TStage> q)`. `QuestRegistry` auto-discovers all `Quest` subclasses via reflection at startup. Dialog handlers wired via `q.OnDialog(templateKey)` and a fluent `QuestStepBuilder<TStage>` chain.
 
 #### Entity Hierarchy
 ```

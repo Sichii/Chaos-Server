@@ -2,8 +2,8 @@
 using Chaos.Models.Menu;
 using Chaos.Models.World;
 using Chaos.Scripting.DialogScripts.Abstractions;
-using Chaos.Scripting.Quests;
 using Chaos.Services.Quests;
+using Chaos.Utilities.QuestHelper;
 #endregion
 
 namespace Chaos.Scripting.DialogScripts.Quests;

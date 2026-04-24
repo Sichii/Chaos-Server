@@ -3,7 +3,7 @@ using Chaos.Common.CustomTypes;
 using Chaos.Models.World;
 #endregion
 
-namespace Chaos.Scripting.Quests;
+namespace Chaos.Utilities.QuestHelper;
 
 /// <summary>
 ///     Internal dispatch for flag operations. The codebase distinguishes regular flag enums

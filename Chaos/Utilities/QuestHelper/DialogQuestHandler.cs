@@ -1,4 +1,4 @@
-namespace Chaos.Scripting.Quests;
+namespace Chaos.Utilities.QuestHelper;
 
 /// <summary>
 /// Records one quest's reaction to a specific dialog template key.

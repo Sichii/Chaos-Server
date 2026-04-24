@@ -1,8 +1,8 @@
 #region
 using Chaos.Scripting.DialogScripts.Quests;
-using Chaos.Scripting.Quests;
 using Chaos.Services.Quests;
 using Chaos.Testing.Infrastructure.Mocks;
+using Chaos.Utilities.QuestHelper;
 using FluentAssertions;
 #endregion
 
