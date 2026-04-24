@@ -276,4 +276,13 @@ docs/schemas/
 
 # Task files
 tasks.json
-tasks/ 
+tasks/
+
+# AI tooling state
+.ai
+.claude
+.serena
+.superpowers
+docs/superpowers/
+*.stackdump
+CLAUDE.local.md

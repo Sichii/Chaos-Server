@@ -182,6 +182,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddStorage();
     builder.Services.AddScripting();
     builder.Services.AddFunctionalScriptRegistry();
+    builder.Services.AddQuestRegistry();
     builder.Services.AddWorldFactories();
     builder.Services.AddTypeMapper();
     builder.Services.AddSingleton<IStockService, IHostedService, StockService>();

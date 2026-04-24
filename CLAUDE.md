@@ -4,7 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Chaos-Server is a .NET 10 monorepo for a Dark Ages game server. The server runs on Kestrel (port 5000) with optional Razor Pages site and supports multiple server instances (Lobby: 4200, Login: 4201, World: 4202).
+Chaos-Server is a .NET 10 monorepo for a Dark Ages game server. **The game server is socket-based** and runs three TCP listeners: **Lobby (4200)**, **Login (4201)**, and **World (4202)** — clients connect directly to these. A Kestrel-hosted Razor Pages site (port 5000) is an *optional utility info-viewer* for browsing item/skill/spell/monster content from a browser; it is **not** the game server. Disabled by default; toggle via `Options:SiteOptions:EnableSite`.
+
+## Repository Model
+
+**This repo is a base/framework that downstream forks build their private servers on top of.** Production game content (scripts, templates, quests, monster behaviors, etc.) lives in fork repos, not here. Implications when working in this codebase:
+
+- **"No internal callers" is not a deletion signal.** Public types under `Chaos.*` are extension surface consumed by forks you can't see. Treat them as load-bearing.
+- **Public API stability matters.** Renaming, moving, or changing the signature of a public type in `Chaos.Scripting`, `Chaos.Utilities.SequenceScripter`, `Chaos.Networking`, `Chaos.Storage`, etc. is a breaking change for every fork. Prefer additive changes.
+- **`Data/` in this repo is a minimal example/test set**, not a complete content drop. Forks supply their own templates, maps, scripts, and saves via the staging directory.
+- **Recently-added "frameworks with no callers"** (e.g. the Quest framework in `Chaos/Scripting/Quests/`, `ScriptBuilder<T>` in `Chaos/Utilities/SequenceScripter/`) are intentionally fork-facing API, not in-progress unfinished work.
 
 ## Essential Commands
 
@@ -22,17 +31,20 @@ dotnet run --project Chaos/Chaos.csproj --environment Production
 
 ### Testing
 ```powershell
-# Run all tests
-dotnet test Chaos.slnx --nologo
+# Test projects are TUnit + Microsoft Testing Platform — they are EXECUTABLES.
+# Use `dotnet run`, NOT `dotnet test`. Filter with `--treenode-filter`, NOT `--filter`.
 
-# Run single test project
-dotnet test Tests/Chaos.Common.Tests/Chaos.Common.Tests.csproj --nologo
+# Run a test project
+dotnet run --project Tests/Chaos.Common.Tests/Chaos.Common.Tests.csproj -- --no-ansi
 
-# Run specific test by name
-dotnet test Chaos.slnx --filter "FullyQualifiedName~TestName" --nologo
+# Run a specific test class (treenode pattern: /Assembly/Namespace/Class/Method)
+dotnet run --project Tests/Chaos.Tests/Chaos.Tests.csproj -- --treenode-filter "/*/*/ClassName/*"
 
-# Run tests from specific class
-dotnet test Chaos.slnx --filter "FullyQualifiedName~ClassName" --nologo
+# Run a specific test method
+dotnet run --project Tests/Chaos.Tests/Chaos.Tests.csproj -- --treenode-filter "/*/*/ClassName/MethodName"
+
+# Generate coverage on the fly for one project
+dotnet run --project Tests/Chaos.Tests/Chaos.Tests.csproj -- --coverage --coverage-output coverage.cobertura.xml --coverage-output-format cobertura
 ```
 
 ### Code Coverage
@@ -77,6 +89,8 @@ Templates are JSON files in `Data/Configuration/Templates/` that define game con
 - **Components** (`Chaos.Scripting.Components`): Reusable script logic implementing `IComponent` or `IConditionalComponent`
 - **Functional Scripts**: Cross-cutting concerns accessed via `FunctionalScriptRegistry`
 - **Formulae** (`Chaos.Formulae`): Swappable calculation logic for damage, experience, etc.
+- **SequenceScripter** (`Chaos.Utilities.SequenceScripter`): Fluent builder DSL for composing entity behavior over time. `ScriptBuilder<T>` provides timed + conditional actions; `CreatureScriptBuilder<T>` adds HP-threshold actions on top. Forks use this to write monster AI and similar entity-driven behavior without hand-rolling tick logic.
+- **Quest Framework** (`Chaos.Scripting.Quests`): Subclass `Quest<TStage>` (where `TStage` is your stage enum) and override `Configure(QuestBuilder<TStage> q)`. `QuestRegistry` auto-discovers all `Quest` subclasses via reflection at startup. Dialog handlers wired via `q.OnDialog(templateKey)` and a fluent `QuestStepBuilder<TStage>` chain.
 
 #### Entity Hierarchy
 ```
@@ -113,6 +127,16 @@ Key configuration sections in `appsettings.json`:
 - Command prefix configurable via `Options:AislingCommandInterceptorOptions:Prefix`
 - Admin access: Set `"IsAdmin": true` in aisling's save JSON file
 
+## Documentation
+
+`docs/articles/` contains in-depth articles covering most systems. **Consult the relevant article before making non-trivial changes to a feature area** — they explain design intent, configuration knobs, and extension points that aren't always obvious from the code alone.
+
+- **Setup & configuration:** `InitialSetup.md`, `GeneralConfiguration.md`, `LobbyOptions.md`, `LoginOptions.md`, `WorldOptions.md`, `AccessManager.md`, `Logging.md`, `JsonSchemas.md`
+- **Scripting:** `Scripting.md`, `Components.md`, `FunctionalScripts.md`, `Formulae.md`
+- **Game systems:** `Items.md`, `Skills.md`, `Spells.md`, `Maps.md`, `Monsters.md`, `Merchants.md`, `Dialogs.md`, `Commands.md`, `LootTables.md`, `BulletinBoards.md`, `ReactorTiles.md`, `BigFlags.md`, `Visibility.md`, `MetaData.md`
+- **Tooling:** `ChaosTool.md`, `ChaosAssetManager.md`
+- **Infrastructure:** `CachingAndSerialization.md`
+
 ## Testing Conventions
 
 - Framework: TUnit with FluentAssertions
@@ -128,16 +152,6 @@ Key configuration sections in `appsettings.json`:
 - **Test enums and flags** belong in `Definitions/Enums.cs` — reuse existing ones (`SampleEnum1/2`, `ColorEnum`, `SizeEnum`, `TestFeatures`, `TestPermissions`, etc.) rather than defining new ones per test
 - **Mock `.Returns()` must use factory lambdas** when creating new objects — use `.Returns(() => new Mock<T>().Object)`, never `.Returns(new Mock<T>().Object)`. The non-lambda form evaluates once and returns the same singleton instance for every call, causing shared state pollution across tests
 
-## C# Coding Standards
-
-- Target: .NET 10.0, C# 14 language version
-- Nullable reference types enabled, implicit usings enabled
-- Write high-verbosity code: descriptive names, explicit types, early returns
-- Handle edge cases first
-- Keep comments concise, explain "why" not "what"
-- Follow existing patterns in neighboring code
-- Respect package versions pinned in `Directory.Packages.props`
-
 ## Development Tips
 
 - **Local Configuration**: Use `appsettings.local.json` for local overrides (gitignored)
@@ -145,14 +159,6 @@ Key configuration sections in `appsettings.json`:
 - **Debug Logging**: Enable packet logging with `LogRawPackets`, `LogReceivePacketCode`, `LogSendPacketCode` in `Options:ChaosOptions`
 - **Coverage Reports**: HTML reports generate in `Tests/Reports/CoverageReport/`, XML in `**/TestResults/`
 - **Script Development**: Script keys are class names without "Script" suffix, use `scriptVars` for configuration
-- **Documentation**: `docs/articles/` contains detailed articles on most systems (scripting, components, formulae, items, maps, etc.) — consult these for deeper understanding of a feature area
-
-## Guardrails
-
-- Use PowerShell for commands; do not append `| cat` to commands
-- Do not introduce interactive prompts in scripts or commands
-- Do not add commentary inside code solely to explain actions
-- Prefer semantic code search over full directory scans
 
 ## Important Paths to Avoid Full Scans
 

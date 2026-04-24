@@ -42,6 +42,7 @@ using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.MapperProfiles;
 using Chaos.Services.Other;
 using Chaos.Services.Other.Abstractions;
+using Chaos.Services.Quests;
 using Chaos.Services.Servers;
 using Chaos.Services.Servers.Options;
 using Chaos.Services.Storage;
@@ -146,6 +147,15 @@ public static class ServiceCollectionExtensions
 
                 foreach (var type in scriptTypes)
                     registry.Register(ScriptBase.GetScriptKey(type), type);
+
+                return registry;
+            });
+
+        public void AddQuestRegistry()
+            => services.AddSingleton<IQuestRegistry, QuestRegistry>(p =>
+            {
+                var registry = new QuestRegistry(p);
+                registry.AutoDiscover();
 
                 return registry;
             });

@@ -6,7 +6,12 @@ using Chaos.DarkAges.Definitions;
 using Chaos.Models.Board;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.FunctionalScripts;
+using Chaos.Scripting.FunctionalScripts.Abstractions;
+using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
+using Chaos.Scripting.FunctionalScripts.LevelUp;
 using Chaos.Scripting.FunctionalScripts.NaturalRegeneration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Chaos.Services.Servers.Options;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
@@ -74,10 +79,15 @@ public static class ServerSetup
 
         var services = new ServiceCollection();
         services.AddSingleton<DefaultNaturalRegenerationScript>();
+        services.AddSingleton<DefaultExperienceDistributionScript>();
+        services.AddSingleton<DefaultLevelUpScript>();
+        services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         var sp = services.BuildServiceProvider();
 
         var registry = new FunctionalScriptRegistry(sp);
         registry.Register(DefaultNaturalRegenerationScript.Key, typeof(DefaultNaturalRegenerationScript));
+        registry.Register(DefaultExperienceDistributionScript.Key, typeof(DefaultExperienceDistributionScript));
+        registry.Register(DefaultLevelUpScript.Key, typeof(DefaultLevelUpScript));
 
         LogManager.Setup()
                   .SetupSerialization(builder =>
