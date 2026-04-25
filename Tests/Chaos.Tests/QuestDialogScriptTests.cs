@@ -80,6 +80,32 @@ public sealed class QuestDialogScriptTests
                 .Run((_, _) => Calls.Add("sibling_ran"));
     }
 
+    private sealed class OptionCapturingQuest : Quest<FakeStage>
+    {
+        public bool WasInvoked { get; private set; }
+        public byte? CapturedOptionIndex { get; private set; }
+        public override string Key => "option-capture";
+        public DialogPhase Phase { get; init; } = DialogPhase.Next;
+
+        protected override void Configure(QuestBuilder<FakeStage> q)
+        {
+            var step = Phase switch
+            {
+                DialogPhase.Displaying => q.OnDisplaying("foo"),
+                DialogPhase.Displayed => q.OnDisplayed("foo"),
+                DialogPhase.Next => q.OnNext("foo"),
+                DialogPhase.Previous => q.OnPrevious("foo"),
+                _ => throw new ArgumentOutOfRangeException(nameof(Phase))
+            };
+
+            step.Run((_, ctx) =>
+            {
+                WasInvoked = true;
+                CapturedOptionIndex = ctx.OptionIndex;
+            });
+        }
+    }
+
     private static QuestRegistry CreateRegistry(params Quest[] quests)
     {
         var registry = new QuestRegistry(MockServiceProvider.Create().Object);
@@ -199,6 +225,59 @@ public sealed class QuestDialogScriptTests
 
         halting.Calls.Should().BeEmpty("guard halted this quest's chain");
         sibling.Calls.Should().ContainSingle().And.Contain("sibling_ran");
+    }
+
+    [Test]
+    public void Dispatch_OnNext_PropagatesOptionIndexIntoContext()
+    {
+        var quest = new OptionCapturingQuest();
+        var registry = CreateRegistry(quest);
+
+        var dialog = MockDialog.Create("foo");
+        var aisling = MockAisling.Create();
+        var script = new QuestDialogScript(dialog, registry, MockServiceProvider.Create().Object);
+
+        script.OnNext(aisling, optionIndex: 3);
+
+        quest.WasInvoked.Should().BeTrue();
+        quest.CapturedOptionIndex.Should().Be(3);
+    }
+
+    [Test]
+    public void Dispatch_OnNext_WithoutOptionIndex_LeavesContextOptionIndexNull()
+    {
+        var quest = new OptionCapturingQuest();
+        var registry = CreateRegistry(quest);
+
+        var dialog = MockDialog.Create("foo");
+        var aisling = MockAisling.Create();
+        var script = new QuestDialogScript(dialog, registry, MockServiceProvider.Create().Object);
+
+        script.OnNext(aisling);
+
+        quest.WasInvoked.Should().BeTrue();
+        quest.CapturedOptionIndex.Should().BeNull();
+    }
+
+    //formatter:off
+    [Test]
+    [Arguments(DialogPhase.Displaying)]
+    [Arguments(DialogPhase.Displayed)]
+    [Arguments(DialogPhase.Previous)]
+    //formatter:on
+    public void Dispatch_NonNextPhases_AlwaysHaveNullOptionIndex(DialogPhase phase)
+    {
+        var quest = new OptionCapturingQuest { Phase = phase };
+        var registry = CreateRegistry(quest);
+
+        var dialog = MockDialog.Create("foo");
+        var aisling = MockAisling.Create();
+        var script = new QuestDialogScript(dialog, registry, MockServiceProvider.Create().Object);
+
+        InvokePhase(script, aisling, phase);
+
+        quest.WasInvoked.Should().BeTrue();
+        quest.CapturedOptionIndex.Should().BeNull();
     }
 
     private static void InvokePhase(QuestDialogScript script, Chaos.Models.World.Aisling aisling, DialogPhase phase)

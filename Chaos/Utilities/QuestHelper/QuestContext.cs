@@ -24,6 +24,15 @@ public abstract class QuestContext
     public Dialog? Subject { get; init; }
 
     /// <summary>
+    /// 1-based index of the dialog option the player selected when advancing the dialog
+    /// (e.g. menu choice or button option). Set by the dispatcher only when the lifecycle phase
+    /// is <see cref="DialogPhase.Next" />; null in all other phases. Always null when the player
+    /// advances a non-menu dialog (Normal, TextEntry, etc.) — Dialog.Next normalizes those to
+    /// null before invoking the script.
+    /// </summary>
+    public byte? OptionIndex { get; init; }
+
+    /// <summary>
     /// Service provider used to lazy-resolve framework dependencies (IItemFactory, etc.).
     /// The dispatcher (QuestDialogScript) is responsible for passing this through. Tests
     /// can use <c>MockServiceProvider</c> from Chaos.Testing.Infrastructure.

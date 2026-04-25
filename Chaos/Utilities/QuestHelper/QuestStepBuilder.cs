@@ -468,6 +468,24 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
         });
 
     /// <summary>
+    /// Inject text parameters into ctx.Subject's dialog text (forwards to
+    /// <see cref="Models.Menu.Dialog.InjectTextParameters" />). Intended for the
+    /// <c>OnDisplaying</c> phase, where it runs before the dialog is sent. Chain continues; no-op
+    /// if ctx.Subject is null.
+    /// </summary>
+    public QuestStepBuilder<TStage> InjectTextParameters(params object[] parameters)
+        => Append(ctx => ctx.Subject?.InjectTextParameters(parameters));
+
+    /// <summary>
+    /// Context-aware overload of <see cref="InjectTextParameters(object[])" />.
+    /// <paramref name="selector" /> is invoked at chain run time so dynamic values from the
+    /// player or quest context (gold, item count, kill counter, etc.) can be templated into the
+    /// dialog text. Chain continues; no-op if ctx.Subject is null.
+    /// </summary>
+    public QuestStepBuilder<TStage> InjectTextParameters(Func<QuestContext<TStage>, object[]> selector)
+        => Append(ctx => ctx.Subject?.InjectTextParameters(selector(ctx)));
+
+    /// <summary>
     /// Send an active (orange-bar) message to the source. Chain continues.
     /// </summary>
     public QuestStepBuilder<TStage> SendOrangeBar(string text) => Append(ctx => ctx.Source.SendActiveMessage(text));

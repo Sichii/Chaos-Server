@@ -35,12 +35,12 @@ public sealed class QuestDialogScript : DialogScriptBase
     public override void OnDisplayed(Aisling source) => Dispatch(source, DialogPhase.Displayed);
 
     /// <inheritdoc />
-    public override void OnNext(Aisling source, byte? optionIndex = null) => Dispatch(source, DialogPhase.Next);
+    public override void OnNext(Aisling source, byte? optionIndex = null) => Dispatch(source, DialogPhase.Next, optionIndex);
 
     /// <inheritdoc />
     public override void OnPrevious(Aisling source) => Dispatch(source, DialogPhase.Previous);
 
-    private void Dispatch(Aisling source, DialogPhase phase)
+    private void Dispatch(Aisling source, DialogPhase phase, byte? optionIndex = null)
     {
         var handlers = Registry.GetDialogHandlers(Subject.Template.TemplateKey, phase);
 
@@ -48,12 +48,12 @@ public sealed class QuestDialogScript : DialogScriptBase
             return;
 
         foreach (var handler in handlers)
-            ExecuteHandler(handler, source);
+            ExecuteHandler(handler, source, optionIndex);
     }
 
-    private void ExecuteHandler(DialogQuestHandler handler, Aisling source)
+    private void ExecuteHandler(DialogQuestHandler handler, Aisling source, byte? optionIndex)
     {
-        var context = handler.Quest.CreateContextFor(source, Subject, Services);
+        var context = handler.Quest.CreateContextFor(source, Subject, Services, optionIndex);
 
         foreach (var op in handler.Operations)
             if (!op(context))

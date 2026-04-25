@@ -7,6 +7,7 @@ namespace Chaos.Utilities;
 
 public static class DialogString
 {
+    public const string UNKNOWN_INPUT = "Huh...? I'm not sure what you mean...";
     public static string No => "No";
     public static string Ok => "Ok";
     public static string UnknownInput => "Huh...? I'm not sure what you mean...";

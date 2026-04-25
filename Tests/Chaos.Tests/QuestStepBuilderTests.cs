@@ -1473,6 +1473,80 @@ public sealed class QuestStepBuilderTests
 
         continued.Should().BeTrue();
     }
+
+    [Test]
+    public void InjectTextParameters_StaticArgs_RewritesDialogText_AndContinuesChain()
+    {
+        var sourceMock = new Mock<IDialogSourceEntity>();
+        sourceMock.SetupGet(s => s.Name).Returns("TestSource");
+        sourceMock.SetupGet(s => s.Id).Returns(1);
+
+        var dialog = new Dialog(
+            sourceMock.Object,
+            new Mock<IDialogFactory>().Object,
+            ChaosDialogType.Normal,
+            "Hello {0}, you have {1} gold.");
+
+        var ctx = NewContextWithSubject(dialog);
+        var continued = false;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.InjectTextParameters("traveler", 250)
+               .Run((_, _) => continued = true);
+
+        RunChain(builder, ctx);
+
+        dialog.Text.Should().Be("Hello traveler, you have 250 gold.");
+        continued.Should().BeTrue();
+    }
+
+    [Test]
+    public void InjectTextParameters_Selector_ReceivesContext_AndUpdatesDialogText()
+    {
+        var sourceMock = new Mock<IDialogSourceEntity>();
+        sourceMock.SetupGet(s => s.Name).Returns("TestSource");
+        sourceMock.SetupGet(s => s.Id).Returns(1);
+
+        var dialog = new Dialog(
+            sourceMock.Object,
+            new Mock<IDialogFactory>().Object,
+            ChaosDialogType.Normal,
+            "Stage: {0} ({1})");
+
+        var ctx = NewContextWithSubject(dialog);
+        ctx.CurrentStage = WolfStage.Hunting;
+
+        QuestContext<WolfStage>? capturedCtx = null;
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.InjectTextParameters(c =>
+        {
+            capturedCtx = c;
+            return [c.CurrentStage, "active"];
+        });
+
+        RunChain(builder, ctx);
+
+        capturedCtx.Should().BeSameAs(ctx, "the selector must receive the runtime context");
+        dialog.Text.Should().Be($"Stage: {WolfStage.Hunting} (active)");
+    }
+
+    [Test]
+    public void InjectTextParameters_NullSubject_NoOpsAndContinuesChain()
+    {
+        var ctx = NewContextWithSubject(null);
+        var continued = false;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.InjectTextParameters("ignored")
+               .Run((_, _) => continued = true);
+
+        var act = () => RunChain(builder, ctx);
+
+        act.Should().NotThrow();
+        continued.Should().BeTrue();
+    }
     #endregion
 
     #region Teleports

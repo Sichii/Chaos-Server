@@ -24,7 +24,11 @@ public abstract class Quest
     /// Build a strongly-typed <see cref="QuestContext" /> for this quest. Dispatchers call this to
     /// obtain a context typed to the quest's <c>TStage</c> without knowing the type at compile time.
     /// </summary>
-    internal abstract QuestContext CreateContextFor(Aisling source, Dialog? subject, IServiceProvider services);
+    internal abstract QuestContext CreateContextFor(
+        Aisling source,
+        Dialog? subject,
+        IServiceProvider services,
+        byte? optionIndex = null);
 }
 
 /// <summary>
@@ -41,7 +45,11 @@ public abstract class Quest<TStage> : Quest where TStage : struct, Enum
         DialogHandlers = builder.BuildDialogHandlers();
     }
 
-    internal sealed override QuestContext CreateContextFor(Aisling source, Dialog? subject, IServiceProvider services)
+    internal sealed override QuestContext CreateContextFor(
+        Aisling source,
+        Dialog? subject,
+        IServiceProvider services,
+        byte? optionIndex = null)
     {
         // Read current stage from Trackers; default if absent.
         source.Trackers.Enums.TryGetValue<TStage>(out var stage);
@@ -51,7 +59,8 @@ public abstract class Quest<TStage> : Quest where TStage : struct, Enum
             Source = source,
             Subject = subject,
             CurrentStage = stage,
-            Services = services
+            Services = services,
+            OptionIndex = optionIndex
         };
     }
 }
