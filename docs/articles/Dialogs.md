@@ -116,6 +116,12 @@ Here are the events overridable in dialog scripts:
 | OnNext       | Called when the player responds to the dialog, whether by clicking Next, selecting an option, or making any kind of selection<br />If an option is clicked, the optionIndex will be the index of the option that was clicked<br />If a shop selection was clicked, the text of that option will be in the MenuArgs property of the dialog<br />If a selection was made from the player's inventory, spell book, or skill book, the Slot that was selected will be in the MenuArgs property of the dialog |
 | OnPrevious   | Called when the player clicks the Previous button on a Normal dialog                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
+> [!TIP]
+> For dialog reactions that drive quest progression (stage changes, item turn-ins, reward grants, branching by class
+> or flag), consider declaring the quest with the [Quest Builder](QuestBuilder.md) instead of writing per-NPC
+> `IDialogScript` implementations. Quests register handlers per dialog template, so multiple quests can share a
+> single NPC's dialogs without coordinating script files.
+
 See [Scripting](Scripting.md) for more details on scripting in general
 
 ## Example

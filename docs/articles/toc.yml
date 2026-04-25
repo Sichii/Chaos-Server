@@ -52,5 +52,9 @@
   href: Scripting.md
 - name: Functional Scripts
   href: FunctionalScripts.md
+- name: Sequence Scripter
+  href: SequenceScripter.md
+- name: Quest Builder
+  href: QuestBuilder.md
 - name: Meta Data
   href: MetaData.md

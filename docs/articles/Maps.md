@@ -186,6 +186,12 @@ Here are the events overridable in map scripts:
 | OnMorphed  | Called after a map has been morphed                                                                                                                                                      |
 | Update     | Called every time the map updates. Ever map has it's own update loop. Time between updates is configurable via [WorldOptions](WorldOptions.md#updatespersecond)                          |
 
+> [!TIP]
+> For map-wide ambient behavior (periodic spawns, weather cycles, scheduled events, conditional reactions to map
+> state), consider composing it with the [Sequence Scripter](SequenceScripter.md) inside a `MapScriptBase`'s `Update`
+> rather than hand-rolling tick counters. The non-creature `ScriptBuilder<T>` works against any entity type, so you
+> can target the `MapInstance` itself as `T`.
+
 ## Example
 
 Here is an example of a map template json for the map used for TestTown. This map uses `lod3043.map`, has a number of

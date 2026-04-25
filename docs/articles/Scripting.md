@@ -59,3 +59,13 @@ configurations can be specified.
   }
 }
 ```
+
+## Specialized Builders
+
+For two common script-authoring patterns, the framework ships fluent builders that replace hand-rolled tick logic and
+hand-rolled dialog scripts respectively. Reach for them before writing the equivalent loops or dispatch by hand.
+
+- **[Sequence Scripter](SequenceScripter.md)** — composes entity behavior over time (timed actions, conditional
+  triggers, health-percent thresholds, multi-step sequences). Most useful for monster AI but works for any entity.
+- **[Quest Builder](QuestBuilder.md)** — declarative quest definitions backed by dialog handlers. Replaces per-NPC
+  `IDialogScript` implementations for quest content with a single `Configure` per quest.

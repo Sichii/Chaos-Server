@@ -100,6 +100,11 @@ Here are the events overridable in merchant scripts:
 | OnPublicMessage | Called after any creature sends a public message within the merchant's awareness (15 tiles)                                                                                |
 | Update          | Called every time the map updates                                                                                                                                          |
 
+> [!TIP]
+> For ambient merchant behavior (periodic flavor lines, scheduled stock cycling, idle animations, conditional
+> reactions to nearby creatures), consider composing it with the [Sequence Scripter](SequenceScripter.md) inside a
+> `MerchantScriptBase`'s `Update` rather than hand-rolling tick counters.
+
 ## Examples
 
 ### Banker

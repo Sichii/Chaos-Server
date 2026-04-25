@@ -90,7 +90,7 @@ Templates are JSON files in `Data/Configuration/Templates/` that define game con
 - **Functional Scripts**: Cross-cutting concerns accessed via `FunctionalScriptRegistry`
 - **Formulae** (`Chaos.Formulae`): Swappable calculation logic for damage, experience, etc.
 - **SequenceScripter** (`Chaos.Utilities.SequenceScripter`): Fluent builder DSL for composing entity behavior over time. `ScriptBuilder<T>` provides timed + conditional actions; `CreatureScriptBuilder<T>` adds HP-threshold actions on top. Forks use this to write monster AI and similar entity-driven behavior without hand-rolling tick logic.
-- **Quest Framework** (`Chaos.Utilities.QuestHelper`): Subclass `Quest<TStage>` (where `TStage` is your stage enum) and override `Configure(QuestBuilder<TStage> q)`. `QuestRegistry` auto-discovers all `Quest` subclasses via reflection at startup. Dialog handlers wired via `q.OnDialog(templateKey)` and a fluent `QuestStepBuilder<TStage>` chain.
+- **Quest Framework** (`Chaos.Utilities.QuestHelper`): Subclass `Quest<TStage>` (where `TStage` is your stage enum) and override `Configure(QuestBuilder<TStage> q)`. `QuestRegistry` auto-discovers all `Quest` subclasses via reflection at startup. Dialog handlers wired via `q.OnDialog(templateKey)` and a fluent `QuestStepBuilder<TStage>` chain. Conditional flow uses `Branch(predicate, sb => …)` with optional `Otherwise(sb => …)` for compositional branching.
 
 #### Entity Hierarchy
 ```
@@ -132,7 +132,7 @@ Key configuration sections in `appsettings.json`:
 `docs/articles/` contains in-depth articles covering most systems. **Consult the relevant article before making non-trivial changes to a feature area** — they explain design intent, configuration knobs, and extension points that aren't always obvious from the code alone.
 
 - **Setup & configuration:** `InitialSetup.md`, `GeneralConfiguration.md`, `LobbyOptions.md`, `LoginOptions.md`, `WorldOptions.md`, `AccessManager.md`, `Logging.md`, `JsonSchemas.md`
-- **Scripting:** `Scripting.md`, `Components.md`, `FunctionalScripts.md`, `Formulae.md`
+- **Scripting:** `Scripting.md`, `Components.md`, `FunctionalScripts.md`, `Formulae.md`, `SequenceScripter.md`, `QuestBuilder.md`
 - **Game systems:** `Items.md`, `Skills.md`, `Spells.md`, `Maps.md`, `Monsters.md`, `Merchants.md`, `Dialogs.md`, `Commands.md`, `LootTables.md`, `BulletinBoards.md`, `ReactorTiles.md`, `BigFlags.md`, `Visibility.md`, `MetaData.md`
 - **Tooling:** `ChaosTool.md`, `ChaosAssetManager.md`
 - **Infrastructure:** `CachingAndSerialization.md`
@@ -154,7 +154,7 @@ Key configuration sections in `appsettings.json`:
 
 ## Development Tips
 
-- **Local Configuration**: Use `appsettings.local.json` for local overrides (gitignored)
+- **Local Configuration**: Use `appsettings.local.json` for local overrides (gitignored). Personal Claude-Code preferences live in `CLAUDE.local.md` (also gitignored).
 - **Staging Directory**: Default `Data/` folder, override via `Options:ChaosOptions:StagingDirectory`
 - **Debug Logging**: Enable packet logging with `LogRawPackets`, `LogReceivePacketCode`, `LogSendPacketCode` in `Options:ChaosOptions`
 - **Coverage Reports**: HTML reports generate in `Tests/Reports/CoverageReport/`, XML in `**/TestResults/`

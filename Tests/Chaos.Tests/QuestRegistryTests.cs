@@ -17,8 +17,8 @@ public sealed class QuestRegistryTests
 
         protected override void Configure(QuestBuilder<FooStage> q)
         {
-            q.OnDialog("foo_initial");
-            q.OnDialog("foo_accept");
+            q.OnNext("foo_initial");
+            q.OnNext("foo_accept");
         }
     }
 
@@ -26,7 +26,20 @@ public sealed class QuestRegistryTests
     {
         public override string Key => "registry.bar";
 
-        protected override void Configure(QuestBuilder<FooStage> q) => q.OnDialog("foo_initial");
+        protected override void Configure(QuestBuilder<FooStage> q) => q.OnNext("foo_initial");
+    }
+
+    /// <summary>Registers handlers on multiple phases for the same template key, used to verify phase isolation.</summary>
+    private sealed class MixedPhaseQuest : Quest<FooStage>
+    {
+        public override string Key => "registry.mixed";
+
+        protected override void Configure(QuestBuilder<FooStage> q)
+        {
+            q.OnDisplaying("mixed_key");
+            q.OnNext("mixed_key");
+            q.OnPrevious("mixed_key");
+        }
     }
 
     private static QuestRegistry CreateRegistry() => new(MockServiceProvider.Create().Object);
@@ -60,7 +73,7 @@ public sealed class QuestRegistryTests
     }
 
     [Test]
-    public void GetDialogHandlers_ReturnsAllRegisteredForTemplateKey()
+    public void GetDialogHandlers_ReturnsAllRegisteredForTemplateKeyAndPhase()
     {
         var registry = CreateRegistry();
         var foo = new FooQuest();
@@ -71,7 +84,7 @@ public sealed class QuestRegistryTests
         registry.Register(foo);
         registry.Register(bar);
 
-        var handlers = registry.GetDialogHandlers("foo_initial");
+        var handlers = registry.GetDialogHandlers("foo_initial", DialogPhase.Next);
 
         handlers.Should().HaveCount(2);
         handlers.Select(h => h.Quest).Should().Contain([foo, bar]);
@@ -85,9 +98,49 @@ public sealed class QuestRegistryTests
         foo.RunConfigure();
         registry.Register(foo);
 
-        var handlers = registry.GetDialogHandlers("nonexistent_key");
+        var handlers = registry.GetDialogHandlers("nonexistent_key", DialogPhase.Next);
 
         handlers.Should().BeEmpty();
+    }
+
+    [Test]
+    public void GetDialogHandlers_ReturnsEmptyForKnownKeyButWrongPhase()
+    {
+        var registry = CreateRegistry();
+        var foo = new FooQuest();
+        foo.RunConfigure();
+        registry.Register(foo);
+
+        // FooQuest only registers on Next; querying any other phase should yield nothing.
+        registry.GetDialogHandlers("foo_initial", DialogPhase.Displaying).Should().BeEmpty();
+        registry.GetDialogHandlers("foo_initial", DialogPhase.Displayed).Should().BeEmpty();
+        registry.GetDialogHandlers("foo_initial", DialogPhase.Previous).Should().BeEmpty();
+    }
+
+    [Test]
+    public void GetDialogHandlers_PartitionsByPhaseForSameTemplateKey()
+    {
+        var registry = CreateRegistry();
+        var quest = new MixedPhaseQuest();
+        quest.RunConfigure();
+        registry.Register(quest);
+
+        registry.GetDialogHandlers("mixed_key", DialogPhase.Displaying).Should().ContainSingle();
+        registry.GetDialogHandlers("mixed_key", DialogPhase.Next).Should().ContainSingle();
+        registry.GetDialogHandlers("mixed_key", DialogPhase.Previous).Should().ContainSingle();
+        registry.GetDialogHandlers("mixed_key", DialogPhase.Displayed).Should().BeEmpty();
+    }
+
+    [Test]
+    public void GetDialogHandlers_TemplateKeyMatchIsCaseInsensitive()
+    {
+        var registry = CreateRegistry();
+        var foo = new FooQuest();
+        foo.RunConfigure();
+        registry.Register(foo);
+
+        registry.GetDialogHandlers("FOO_INITIAL", DialogPhase.Next).Should().ContainSingle();
+        registry.GetDialogHandlers("Foo_Initial", DialogPhase.Next).Should().ContainSingle();
     }
 
     [Test]
@@ -120,7 +173,7 @@ public sealed class QuestRegistryTests
         registry.Get("registry.bar").Should().NotBeNull().And.BeOfType<BarQuest>();
 
         // Discovery must have invoked Configure (handlers populated).
-        registry.GetDialogHandlers("foo_initial").Should().HaveCount(2);
-        registry.GetDialogHandlers("foo_accept").Should().ContainSingle();
+        registry.GetDialogHandlers("foo_initial", DialogPhase.Next).Should().HaveCount(2);
+        registry.GetDialogHandlers("foo_accept", DialogPhase.Next).Should().ContainSingle();
     }
 }

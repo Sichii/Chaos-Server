@@ -92,6 +92,12 @@ Here are the events overridable in monster scripts:
 | OnSpawn         | Called after a monster has spawned. This is called after OnEntered and OnApproach                                                                                        |
 | Update          | Called every time the map updates                                                                                                                                        |
 
+> [!TIP]
+> For monsters whose behavior is naturally expressed as "do X every N seconds", "react when condition holds", or
+> "phase change at health threshold", consider composing it with the
+> [Sequence Scripter](SequenceScripter.md) inside a `MonsterScriptBase`'s `Update` rather than hand-rolling tick
+> counters.
+
 ## Example
 
 Here is an example of a rat. It's a very standard creature, uses Assail every 1.5s, wanders every 2s, moves towards

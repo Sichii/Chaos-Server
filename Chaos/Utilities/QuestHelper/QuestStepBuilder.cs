@@ -1,7 +1,6 @@
 #region
 using Chaos.Collections;
 using Chaos.Common.CustomTypes;
-using Chaos.Common.Utilities;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
@@ -17,15 +16,23 @@ namespace Chaos.Utilities.QuestHelper;
 /// Fluent builder for an operation chain. Recorded operations are functions over
 /// QuestContext returning bool — true = continue the chain, false = halt (guard failed).
 /// </summary>
+/// <remarks>
+/// <para>
+/// Most guard methods (<c>When</c>, <c>WhenNeverStarted</c>, <c>RequireFlag</c>,
+/// <c>RequireItem</c>, etc.) take an optional <c>failureReply</c> parameter. When provided,
+/// a failed guard sends a Dialog Reply with the message and halts; when omitted, the guard
+/// halts silently.
+/// </para>
+/// </remarks>
 public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
 {
     private readonly List<Func<QuestContext, bool>> Operations = [];
 
     /// <summary>
     /// Returns the live mutable backing list (typed as IReadOnlyList for the consumer).
-    /// This aliasing is intentional: QuestBuilder.OnDialog calls Build() while the chain
-    /// is still being constructed, so DialogQuestHandler must observe operations appended
-    /// after registration. Do not change this to ToImmutableList() / ToArray() / similar —
+    /// This aliasing is intentional: QuestBuilder calls Build() while the chain is still
+    /// being constructed, so DialogQuestHandler must observe operations appended after
+    /// registration. Do not change this to ToImmutableList() / ToArray() / similar —
     /// every operation appended via Append/AppendGuard would silently disappear from the
     /// handler.
     /// </summary>
@@ -46,19 +53,44 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     }
 
     /// <summary>
-    /// Append a guard. The chain halts if the predicate returns false.
+    /// Append a guard. The chain halts if the predicate returns false. When
+    /// <paramref name="failureReply" /> is non-null, the failure path also sends a Dialog
+    /// Reply with the provided message before halting.
     /// </summary>
-    internal QuestStepBuilder<TStage> AppendGuard(Func<QuestContext<TStage>, bool> predicate)
+    internal QuestStepBuilder<TStage> AppendGuard(
+        Func<QuestContext<TStage>, bool> predicate,
+        string? failureReply = null)
     {
-        Operations.Add(ctx => predicate((QuestContext<TStage>)ctx));
+        if (failureReply is null)
+        {
+            Operations.Add(ctx => predicate((QuestContext<TStage>)ctx));
+
+            return this;
+        }
+
+        Operations.Add(ctx =>
+        {
+            var typed = (QuestContext<TStage>)ctx;
+
+            if (predicate(typed))
+                return true;
+
+            typed.Subject?.Reply(typed.Source, failureReply);
+
+            return false;
+        });
 
         return this;
     }
 
     // ===== Stage operations =====
 
-    /// <summary>Halt the chain unless Source is currently at the given stage.</summary>
-    public QuestStepBuilder<TStage> When(TStage stage) => AppendGuard(ctx => ctx.IsAt(stage));
+    /// <summary>
+    /// Halt the chain unless Source is currently at the given stage. When
+    /// <paramref name="failureReply" /> is provided, the failure path also sends a Reply.
+    /// </summary>
+    public QuestStepBuilder<TStage> When(TStage stage, string? failureReply = null)
+        => AppendGuard(ctx => ctx.IsAt(stage), failureReply);
 
     /// <summary>Set the stage. Updates ctx.CurrentStage to match.</summary>
     public QuestStepBuilder<TStage> Advance(TStage stage) => Append(ctx => ctx.Advance(stage));
@@ -67,37 +99,17 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     public QuestStepBuilder<TStage> ClearStage() => Append(ctx => ctx.ClearStage());
 
     /// <summary>
-    /// Sub-builder branch. The sub-chain runs only if Source is at the given stage.
-    /// Track whether any preceding WhenStage matched for Otherwise() to use.
+    /// Halt the chain unless Source's <c>Trackers.Enums</c> has no value stored for
+    /// <typeparamref name="TStage" /> — i.e., the player has never advanced into any stage of
+    /// this quest. When <paramref name="failureReply" /> is provided, the failure path also
+    /// sends a Reply.
     /// </summary>
-    public QuestStepBuilder<TStage> WhenStage(TStage stage, Action<QuestStepBuilder<TStage>> configure)
-    {
-        var sub = new QuestStepBuilder<TStage>();
-        configure(sub);
-        var subOps = sub.Build();
-
-        Operations.Add(ctx =>
-        {
-            var typed = (QuestContext<TStage>)ctx;
-
-            if (!typed.IsAt(stage))
-                return true; // skip this branch but continue outer chain
-
-            typed.OtherwiseTaken = true;
-
-            foreach (var op in subOps)
-                if (!op(typed))
-                    return true; // sub-chain halted; outer continues
-
-            return true;
-        });
-
-        return this;
-    }
+    public QuestStepBuilder<TStage> WhenNeverStarted(string? failureReply = null)
+        => AppendGuard(ctx => ctx.NeverStarted, failureReply);
 
     /// <summary>
-    /// Companion to a chain of WhenStage calls. Runs the sub-chain only if no
-    /// preceding WhenStage in this builder matched.
+    /// Companion to a chain of conditional sub-builder calls. Runs the sub-chain only if no
+    /// preceding <see cref="Branch" /> matched.
     /// </summary>
     public QuestStepBuilder<TStage> Otherwise(Action<QuestStepBuilder<TStage>> configure)
     {
@@ -122,7 +134,6 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
 
     /// <summary>
     /// Maps the current stage to a dialog key and Skips to it (no-op if stage not in dict).
-    /// Skip semantics are wired in Task 10 (Communication operations).
     /// </summary>
     public QuestStepBuilder<TStage> RouteByStage(IReadOnlyDictionary<TStage, string> routes)
     {
@@ -133,7 +144,6 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
             if (!routes.TryGetValue(typed.CurrentStage, out var key))
                 return true;
 
-            // Real implementation lives in Task 10 once Skip is available
             typed.Subject?.Reply(typed.Source, "Skip", key);
             return true;
         });
@@ -152,16 +162,16 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
         => Append(ctx => ctx.ClearFlag(flag));
 
     /// <summary>Halt the chain unless the source's Trackers.Flags contains the given enum flag.</summary>
-    public QuestStepBuilder<TStage> RequireFlag<TFlag>(TFlag flag) where TFlag : struct, Enum
-        => AppendGuard(ctx => ctx.HasFlag(flag));
+    public QuestStepBuilder<TStage> RequireFlag<TFlag>(TFlag flag, string? failureReply = null) where TFlag : struct, Enum
+        => AppendGuard(ctx => ctx.HasFlag(flag), failureReply);
 
     /// <summary>Halt the chain unless every bit in <paramref name="combined" /> is set in Trackers.Flags.</summary>
-    public QuestStepBuilder<TStage> RequireAllFlags<TFlag>(TFlag combined) where TFlag : struct, Enum
-        => AppendGuard(ctx => ctx.HasAllFlags(combined));
+    public QuestStepBuilder<TStage> RequireAllFlags<TFlag>(TFlag combined, string? failureReply = null) where TFlag : struct, Enum
+        => AppendGuard(ctx => ctx.HasAllFlags(combined), failureReply);
 
     /// <summary>Halt the chain unless at least one bit in <paramref name="combined" /> is set in Trackers.Flags.</summary>
-    public QuestStepBuilder<TStage> RequireAnyFlag<TFlag>(TFlag combined) where TFlag : struct, Enum
-        => AppendGuard(ctx => ctx.HasAnyFlag(combined));
+    public QuestStepBuilder<TStage> RequireAnyFlag<TFlag>(TFlag combined, string? failureReply = null) where TFlag : struct, Enum
+        => AppendGuard(ctx => ctx.HasAnyFlag(combined), failureReply);
 
     /// <summary>Set the given big flag on the source's Trackers.BigFlags.</summary>
     public QuestStepBuilder<TStage> SetFlag<TMarker>(BigFlagsValue<TMarker> flag) where TMarker : class
@@ -172,30 +182,30 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
         => Append(ctx => ctx.ClearFlag(flag));
 
     /// <summary>Halt the chain unless the source's Trackers.BigFlags contains the given big flag.</summary>
-    public QuestStepBuilder<TStage> RequireFlag<TMarker>(BigFlagsValue<TMarker> flag) where TMarker : class
-        => AppendGuard(ctx => ctx.HasFlag(flag));
+    public QuestStepBuilder<TStage> RequireFlag<TMarker>(BigFlagsValue<TMarker> flag, string? failureReply = null) where TMarker : class
+        => AppendGuard(ctx => ctx.HasFlag(flag), failureReply);
 
     /// <summary>Halt the chain unless every bit in <paramref name="combined" /> is set in Trackers.BigFlags.</summary>
-    public QuestStepBuilder<TStage> RequireAllFlags<TMarker>(BigFlagsValue<TMarker> combined) where TMarker : class
-        => AppendGuard(ctx => ctx.HasAllFlags(combined));
+    public QuestStepBuilder<TStage> RequireAllFlags<TMarker>(BigFlagsValue<TMarker> combined, string? failureReply = null) where TMarker : class
+        => AppendGuard(ctx => ctx.HasAllFlags(combined), failureReply);
 
     /// <summary>Halt the chain unless at least one bit in <paramref name="combined" /> is set in Trackers.BigFlags.</summary>
-    public QuestStepBuilder<TStage> RequireAnyFlag<TMarker>(BigFlagsValue<TMarker> combined) where TMarker : class
-        => AppendGuard(ctx => ctx.HasAnyFlag(combined));
+    public QuestStepBuilder<TStage> RequireAnyFlag<TMarker>(BigFlagsValue<TMarker> combined, string? failureReply = null) where TMarker : class
+        => AppendGuard(ctx => ctx.HasAnyFlag(combined), failureReply);
 
     // ===== Counter operations =====
 
     /// <summary>Halt the chain unless the source's kill counter for <paramref name="monsterTemplateKey" /> is at or above <paramref name="count" />.</summary>
-    public QuestStepBuilder<TStage> RequireKills(string monsterTemplateKey, int count)
-        => AppendGuard(ctx => ctx.HasCount(monsterTemplateKey, count));
+    public QuestStepBuilder<TStage> RequireKills(string monsterTemplateKey, int count, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasCount(monsterTemplateKey, count), failureReply);
 
     /// <summary>Remove the kill counter for <paramref name="monsterTemplateKey" /> from the source's Trackers.Counters.</summary>
     public QuestStepBuilder<TStage> ClearKills(string monsterTemplateKey)
         => Append(ctx => ctx.ClearCounter(monsterTemplateKey));
 
     /// <summary>Halt the chain unless the source's counter for <paramref name="key" /> is at or above <paramref name="count" />.</summary>
-    public QuestStepBuilder<TStage> RequireCount(string key, int count)
-        => AppendGuard(ctx => ctx.HasCount(key, count));
+    public QuestStepBuilder<TStage> RequireCount(string key, int count, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasCount(key, count), failureReply);
 
     /// <summary>Increment the source's counter for <paramref name="key" /> by <paramref name="by" />.</summary>
     public QuestStepBuilder<TStage> IncrementCounter(string key, int by = 1)
@@ -253,12 +263,20 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
         });
 
     /// <summary>Halt the chain unless the source has at least <paramref name="count" /> of <paramref name="templateKey" />.</summary>
-    public QuestStepBuilder<TStage> RequireItem(string templateKey, int count)
-        => AppendGuard(ctx => ctx.HasItem(templateKey, count));
+    public QuestStepBuilder<TStage> RequireItem(string templateKey, int count, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasItem(templateKey, count), failureReply);
 
     /// <summary>Halt the chain unless the source has every (templateKey, count) pair in <paramref name="items" />.</summary>
     public QuestStepBuilder<TStage> RequireItems(params (string TemplateKey, int Count)[] items)
         => AppendGuard(ctx => items.All(i => ctx.HasItem(i.TemplateKey, i.Count)));
+
+    /// <summary>
+    /// Halt the chain unless the source has every (templateKey, count) pair in
+    /// <paramref name="items" />. On failure, sends <paramref name="failureReply" /> as a Reply.
+    /// Non-params overload because <c>params</c> must be the last parameter.
+    /// </summary>
+    public QuestStepBuilder<TStage> RequireItems(string failureReply, IReadOnlyList<(string TemplateKey, int Count)> items)
+        => AppendGuard(ctx => items.All(i => ctx.HasItem(i.TemplateKey, i.Count)), failureReply);
 
     /// <summary>Halt the chain unless the source can give up <paramref name="count" /> of <paramref name="templateKey" />; otherwise consume.</summary>
     public QuestStepBuilder<TStage> ConsumeItem(string templateKey, int count)
@@ -315,162 +333,68 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     // ===== Class/level/gender guards =====
 
     /// <summary>Halt the chain unless Source's UserStatSheet.Level is within <c>[min, max]</c> (inclusive).</summary>
-    public QuestStepBuilder<TStage> RequireLevel(int min, int max = int.MaxValue)
-        => AppendGuard(ctx =>
-        {
-            var level = ctx.Source.UserStatSheet.Level;
+    public QuestStepBuilder<TStage> RequireLevel(int min, int max = int.MaxValue, string? failureReply = null)
+        => AppendGuard(
+            ctx =>
+            {
+                var level = ctx.Source.UserStatSheet.Level;
 
-            return (level >= min) && (level <= max);
-        });
+                return (level >= min) && (level <= max);
+            },
+            failureReply);
 
     /// <summary>Halt the chain unless Source has mastered (UserStatSheet.Master is true).</summary>
-    public QuestStepBuilder<TStage> RequireMaster() => AppendGuard(ctx => ctx.Source.UserStatSheet.Master);
+    public QuestStepBuilder<TStage> RequireMaster(string? failureReply = null)
+        => AppendGuard(ctx => ctx.Source.UserStatSheet.Master, failureReply);
 
     /// <summary>
     /// Halt the chain unless Source is a full grandmaster — both mastered and at the configured
     /// max level (<see cref="WorldOptions" />.MaxLevel).
     /// </summary>
-    public QuestStepBuilder<TStage> RequireFullGrandmaster()
-        => AppendGuard(ctx => ctx.Source.UserStatSheet.Master && (ctx.Source.UserStatSheet.Level >= WorldOptions.Instance.MaxLevel));
+    public QuestStepBuilder<TStage> RequireFullGrandmaster(string? failureReply = null)
+        => AppendGuard(
+            ctx => ctx.Source.UserStatSheet.Master && (ctx.Source.UserStatSheet.Level >= WorldOptions.Instance.MaxLevel),
+            failureReply);
 
     /// <summary>Halt the chain unless Source is mastered AND BaseClass equals <paramref name="baseClass" />.</summary>
-    public QuestStepBuilder<TStage> RequirePureMaster(BaseClass baseClass)
-        => AppendGuard(ctx => ctx.Source.UserStatSheet.Master && (ctx.Source.UserStatSheet.BaseClass == baseClass));
+    public QuestStepBuilder<TStage> RequirePureMaster(BaseClass baseClass, string? failureReply = null)
+        => AppendGuard(
+            ctx => ctx.Source.UserStatSheet.Master && (ctx.Source.UserStatSheet.BaseClass == baseClass),
+            failureReply);
 
     /// <summary>
-    /// Sub-builder branch keyed by BaseClass. The sub-chain runs only if Source's BaseClass matches
-    /// <paramref name="baseClass" />. The outer chain always continues — multiple ForClass calls
-    /// chain together as independent class-conditional blocks.
+    /// Halt the chain unless Source's BaseClass matches <paramref name="baseClass" />. When
+    /// <paramref name="failureReply" /> is provided, the failure path also sends a Reply. For
+    /// class-gated branching (no halt on mismatch), compose with <see cref="Branch" /> instead
+    /// (e.g. <c>Branch(c =&gt; c.Source.UserStatSheet.BaseClass == X, body)</c>).
     /// </summary>
-    public QuestStepBuilder<TStage> ForClass(BaseClass baseClass, Action<QuestStepBuilder<TStage>> configure)
-    {
-        var sub = new QuestStepBuilder<TStage>();
-        configure(sub);
-        var subOps = sub.Build();
-
-        Operations.Add(ctx =>
-        {
-            var typed = (QuestContext<TStage>)ctx;
-
-            if (typed.Source.UserStatSheet.BaseClass != baseClass)
-                return true; // skip this branch but continue outer chain
-
-            foreach (var op in subOps)
-                if (!op(typed))
-                    return true; // sub-chain halted; outer continues
-
-            return true;
-        });
-
-        return this;
-    }
+    public QuestStepBuilder<TStage> RequireClass(BaseClass baseClass, string? failureReply = null)
+        => AppendGuard(ctx => ctx.Source.UserStatSheet.BaseClass == baseClass, failureReply);
 
     /// <summary>
-    /// Sub-builder branch keyed by Gender. The sub-chain runs only if Source's Gender matches
-    /// <paramref name="gender" />. The outer chain always continues — multiple ForGender calls
-    /// chain together as independent gender-conditional blocks.
+    /// Halt the chain unless Source's Gender matches <paramref name="gender" />. When
+    /// <paramref name="failureReply" /> is provided, the failure path also sends a Reply. For
+    /// gender-gated branching (no halt on mismatch), compose with <see cref="Branch" /> instead
+    /// (e.g. <c>Branch(c =&gt; c.Source.Gender == X, body)</c>).
     /// </summary>
-    public QuestStepBuilder<TStage> ForGender(Gender gender, Action<QuestStepBuilder<TStage>> configure)
-    {
-        var sub = new QuestStepBuilder<TStage>();
-        configure(sub);
-        var subOps = sub.Build();
-
-        Operations.Add(ctx =>
-        {
-            var typed = (QuestContext<TStage>)ctx;
-
-            if (typed.Source.Gender != gender)
-                return true; // skip this branch but continue outer chain
-
-            foreach (var op in subOps)
-                if (!op(typed))
-                    return true; // sub-chain halted; outer continues
-
-            return true;
-        });
-
-        return this;
-    }
-
-    /// <summary>
-    /// Halt the OUTER chain unless Source's BaseClass matches <paramref name="baseClass" />.
-    /// When matched, the sub-chain operations are appended inline so they execute as part of the
-    /// outer chain.
-    /// </summary>
-    public QuestStepBuilder<TStage> IfClass(BaseClass baseClass, Action<QuestStepBuilder<TStage>> configure)
-        => AppendGuard(ctx => ctx.Source.UserStatSheet.BaseClass == baseClass)
-            .Then(configure);
-
-    /// <summary>
-    /// Halt the OUTER chain unless Source's Gender matches <paramref name="gender" />.
-    /// When matched, the sub-chain operations are appended inline so they execute as part of the
-    /// outer chain.
-    /// </summary>
-    public QuestStepBuilder<TStage> IfGender(Gender gender, Action<QuestStepBuilder<TStage>> configure)
-        => AppendGuard(ctx => ctx.Source.Gender == gender)
-            .Then(configure);
-
-    /// <summary>
-    /// Splice a sub-builder's operations directly into this builder's chain. Used by If* operations
-    /// to run sub-ops inline after a guard, so a sub-op halting halts the outer chain.
-    /// </summary>
-    private QuestStepBuilder<TStage> Then(Action<QuestStepBuilder<TStage>> configure)
-    {
-        var sub = new QuestStepBuilder<TStage>();
-        configure(sub);
-
-        foreach (var op in sub.Build())
-            Operations.Add(op);
-
-        return this;
-    }
+    public QuestStepBuilder<TStage> RequireGender(Gender gender, string? failureReply = null)
+        => AppendGuard(ctx => ctx.Source.Gender == gender, failureReply);
 
     // ===== Branching =====
 
     /// <summary>
-    /// Generic conditional. Runs <paramref name="then" /> if <paramref name="predicate" /> returns true,
-    /// otherwise runs <paramref name="otherwise" /> if provided. The outer chain always continues —
-    /// a halted sub-chain does not halt the outer chain.
+    /// Conditional sub-chain. Runs <paramref name="configure" />'s operations if
+    /// <paramref name="predicate" /> returns true; otherwise the outer chain continues unchanged.
+    /// On a successful match, <see cref="QuestContext.OtherwiseTaken" /> is set so a later
+    /// <see cref="Otherwise(System.Action{QuestStepBuilder{TStage}})" /> knows a branch already fired.
     /// </summary>
-    public QuestStepBuilder<TStage> If(
-        Func<Aisling, QuestContext<TStage>, bool> predicate,
-        Action<QuestStepBuilder<TStage>> then,
-        Action<QuestStepBuilder<TStage>>? otherwise = null)
-    {
-        var thenSub = new QuestStepBuilder<TStage>();
-        then(thenSub);
-        var thenOps = thenSub.Build();
-
-        IReadOnlyList<Func<QuestContext, bool>>? elseOps = null;
-        if (otherwise is not null)
-        {
-            var elseSub = new QuestStepBuilder<TStage>();
-            otherwise(elseSub);
-            elseOps = elseSub.Build();
-        }
-
-        Operations.Add(ctx =>
-        {
-            var qctx = (QuestContext<TStage>)ctx;
-            var ops = predicate(qctx.Source, qctx) ? thenOps : elseOps;
-            if (ops is null) return true;
-
-            foreach (var op in ops)
-                if (!op(ctx))
-                    return true;
-
-            return true;
-        });
-
-        return this;
-    }
-
-    /// <summary>
-    /// Runs the sub-chain only if <see cref="IntegerRandomizer.RollChance" /> succeeds for
-    /// <paramref name="percent" />. The outer chain always continues regardless of outcome.
-    /// </summary>
-    public QuestStepBuilder<TStage> Chance(int percent, Action<QuestStepBuilder<TStage>> configure)
+    /// <remarks>
+    /// The sub-builder is captured by reference via <see cref="Build" />'s live-aliasing
+    /// convention — operations appended after this call are observed when the chain runs.
+    /// </remarks>
+    public QuestStepBuilder<TStage> Branch(
+        Func<QuestContext<TStage>, bool> predicate,
+        Action<QuestStepBuilder<TStage>> configure)
     {
         var sub = new QuestStepBuilder<TStage>();
         configure(sub);
@@ -478,12 +402,16 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
 
         Operations.Add(ctx =>
         {
-            if (!IntegerRandomizer.RollChance(percent))
+            var typed = (QuestContext<TStage>)ctx;
+
+            if (!predicate(typed))
                 return true;
 
+            typed.OtherwiseTaken = true;
+
             foreach (var op in subOps)
-                if (!op(ctx))
-                    return true;
+                if (!op(typed))
+                    return true; // body halted; outer continues
 
             return true;
         });

@@ -12,14 +12,26 @@ public sealed class QuestDialogScriptTests
 {
     private enum FakeStage { None, Started, Done }
 
-    private sealed class TrackingQuest : Quest<FakeStage>
+    /// <summary>Quest that registers a single handler on the configured phase and records each invocation.</summary>
+    private sealed class PhaseTrackingQuest : Quest<FakeStage>
     {
         public List<string> Calls { get; } = [];
-        public override string Key => "tracking";
+        public override string Key => "phase-tracking";
+        public DialogPhase Phase { get; init; } = DialogPhase.Next;
 
         protected override void Configure(QuestBuilder<FakeStage> q)
-            => q.OnDialog("foo")
-                .Run((_, _) => Calls.Add("ran"));
+        {
+            var step = Phase switch
+            {
+                DialogPhase.Displaying => q.OnDisplaying("foo"),
+                DialogPhase.Displayed => q.OnDisplayed("foo"),
+                DialogPhase.Next => q.OnNext("foo"),
+                DialogPhase.Previous => q.OnPrevious("foo"),
+                _ => throw new ArgumentOutOfRangeException(nameof(Phase))
+            };
+
+            step.Run((_, _) => Calls.Add("ran"));
+        }
     }
 
     private sealed class MultiHandlerQuest : Quest<FakeStage>
@@ -29,10 +41,10 @@ public sealed class QuestDialogScriptTests
 
         protected override void Configure(QuestBuilder<FakeStage> q)
         {
-            q.OnDialog("foo")
+            q.OnNext("foo")
              .Run((_, _) => Calls.Add("foo"));
 
-            q.OnDialog("bar")
+            q.OnNext("bar")
              .Run((_, _) => Calls.Add("bar"));
         }
     }
@@ -42,7 +54,7 @@ public sealed class QuestDialogScriptTests
         public override string Key => "advance";
 
         protected override void Configure(QuestBuilder<FakeStage> q)
-            => q.OnDialog("foo")
+            => q.OnNext("foo")
                 .When(FakeStage.None)
                 .Advance(FakeStage.Started);
     }
@@ -53,7 +65,7 @@ public sealed class QuestDialogScriptTests
         public override string Key => "halting";
 
         protected override void Configure(QuestBuilder<FakeStage> q)
-            => q.OnDialog("foo")
+            => q.OnNext("foo")
                 .When(FakeStage.Done) // halts immediately, aisling is at None
                 .Run((_, _) => Calls.Add("should_not_run"));
     }
@@ -64,7 +76,7 @@ public sealed class QuestDialogScriptTests
         public override string Key => "sibling";
 
         protected override void Configure(QuestBuilder<FakeStage> q)
-            => q.OnDialog("foo")
+            => q.OnNext("foo")
                 .Run((_, _) => Calls.Add("sibling_ran"));
     }
 
@@ -81,68 +93,51 @@ public sealed class QuestDialogScriptTests
         return registry;
     }
 
+    //formatter:off
     [Test]
-    public void OnDisplaying_RoutesToMatchingHandlers()
+    [Arguments(DialogPhase.Displaying)]
+    [Arguments(DialogPhase.Displayed)]
+    [Arguments(DialogPhase.Next)]
+    [Arguments(DialogPhase.Previous)]
+    //formatter:on
+    public void Dispatch_RoutesToHandlerMatchingPhase(DialogPhase registered)
     {
-        var quest = new TrackingQuest();
+        var quest = new PhaseTrackingQuest { Phase = registered };
         var registry = CreateRegistry(quest);
 
         var dialog = MockDialog.Create("foo");
         var aisling = MockAisling.Create();
         var script = new QuestDialogScript(dialog, registry, MockServiceProvider.Create().Object);
 
-        script.OnDisplaying(aisling);
+        InvokePhase(script, aisling, registered);
 
         quest.Calls.Should().ContainSingle().And.Contain("ran");
     }
 
+    //formatter:off
     [Test]
-    public void OnDisplayed_RoutesToMatchingHandlers()
+    [Arguments(DialogPhase.Displaying, DialogPhase.Next)]
+    [Arguments(DialogPhase.Next, DialogPhase.Displaying)]
+    [Arguments(DialogPhase.Next, DialogPhase.Displayed)]
+    [Arguments(DialogPhase.Next, DialogPhase.Previous)]
+    [Arguments(DialogPhase.Previous, DialogPhase.Next)]
+    //formatter:on
+    public void Dispatch_DoesNotInvokeHandlerRegisteredForDifferentPhase(DialogPhase registered, DialogPhase invoked)
     {
-        var quest = new TrackingQuest();
+        var quest = new PhaseTrackingQuest { Phase = registered };
         var registry = CreateRegistry(quest);
 
         var dialog = MockDialog.Create("foo");
         var aisling = MockAisling.Create();
         var script = new QuestDialogScript(dialog, registry, MockServiceProvider.Create().Object);
 
-        script.OnDisplayed(aisling);
+        InvokePhase(script, aisling, invoked);
 
-        quest.Calls.Should().ContainSingle().And.Contain("ran");
+        quest.Calls.Should().BeEmpty();
     }
 
     [Test]
-    public void OnNext_RoutesToMatchingHandlers()
-    {
-        var quest = new TrackingQuest();
-        var registry = CreateRegistry(quest);
-
-        var dialog = MockDialog.Create("foo");
-        var aisling = MockAisling.Create();
-        var script = new QuestDialogScript(dialog, registry, MockServiceProvider.Create().Object);
-
-        script.OnNext(aisling);
-
-        quest.Calls.Should().ContainSingle().And.Contain("ran");
-    }
-
-    [Test]
-    public void OnPrevious_RoutesToMatchingHandlers()
-    {
-        var quest = new TrackingQuest();
-        var registry = CreateRegistry(quest);
-
-        var dialog = MockDialog.Create("foo");
-        var aisling = MockAisling.Create();
-        var script = new QuestDialogScript(dialog, registry, MockServiceProvider.Create().Object);
-
-        script.OnPrevious(aisling);
-
-        quest.Calls.Should().ContainSingle().And.Contain("ran");
-    }
-
-    [Test]
-    public void OnDisplaying_NoOpsWhenNoHandlers()
+    public void Dispatch_NoOpsWhenNoHandlers()
     {
         var registry = CreateRegistry();
         var dialog = MockDialog.Create("nobody_cares");
@@ -164,7 +159,7 @@ public sealed class QuestDialogScriptTests
         var aisling = MockAisling.Create();
         var script = new QuestDialogScript(dialog, registry, MockServiceProvider.Create().Object);
 
-        script.OnDisplaying(aisling);
+        script.OnNext(aisling);
 
         quest.Calls.Should().ContainSingle().And.Contain("foo");
     }
@@ -183,7 +178,7 @@ public sealed class QuestDialogScriptTests
 
         var script = new QuestDialogScript(dialog, registry, MockServiceProvider.Create().Object);
 
-        script.OnDisplaying(aisling);
+        script.OnNext(aisling);
 
         aisling.Trackers.Enums.TryGetValue<FakeStage>(out var current).Should().BeTrue();
         current.Should().Be(FakeStage.Started);
@@ -200,9 +195,21 @@ public sealed class QuestDialogScriptTests
         var aisling = MockAisling.Create();
         var script = new QuestDialogScript(dialog, registry, MockServiceProvider.Create().Object);
 
-        script.OnDisplaying(aisling);
+        script.OnNext(aisling);
 
         halting.Calls.Should().BeEmpty("guard halted this quest's chain");
         sibling.Calls.Should().ContainSingle().And.Contain("sibling_ran");
+    }
+
+    private static void InvokePhase(QuestDialogScript script, Chaos.Models.World.Aisling aisling, DialogPhase phase)
+    {
+        switch (phase)
+        {
+            case DialogPhase.Displaying: script.OnDisplaying(aisling); break;
+            case DialogPhase.Displayed: script.OnDisplayed(aisling); break;
+            case DialogPhase.Next: script.OnNext(aisling); break;
+            case DialogPhase.Previous: script.OnPrevious(aisling); break;
+            default: throw new ArgumentOutOfRangeException(nameof(phase));
+        }
     }
 }

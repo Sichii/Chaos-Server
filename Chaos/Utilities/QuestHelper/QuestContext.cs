@@ -43,6 +43,13 @@ public sealed class QuestContext<TStage> : QuestContext where TStage : struct, E
     /// <summary>True if Source's Trackers.Enums currently holds the given stage value.</summary>
     public bool IsAt(TStage stage) => Source.Trackers.Enums.HasValue(stage);
 
+    /// <summary>
+    /// True if Source's Trackers.Enums has no value stored for <typeparamref name="TStage" />.
+    /// Distinct from <c>CurrentStage == default</c>, which is also true when <c>default(TStage)</c>
+    /// is the explicitly stored value.
+    /// </summary>
+    public bool NeverStarted => !Source.Trackers.Enums.TryGetValue<TStage>(out _);
+
     /// <summary>Set the stage in Source's Trackers.Enums and update CurrentStage.</summary>
     public void Advance(TStage stage)
     {

@@ -90,6 +90,89 @@ public sealed class QuestStepBuilderTests
         // Absent enum HasValue check returns false even for default — confirm with current behavior
         ctx.IsAt(WolfStage.Hunting).Should().BeFalse();
     }
+
+    [Test]
+    public void When_WithFailureReply_HaltsAndDispatchesReplyOnMismatch()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        var clientMock = Mock.Get(ctx.Source.Client);
+        var advanced = false;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.When(WolfStage.Hunting, "you must be hunting first")
+               .Run((_, _) => advanced = true);
+
+        RunChain(builder, ctx);
+
+        advanced.Should().BeFalse("guard halted because the aisling has no stage stored");
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "you must be hunting first")), Times.Once);
+    }
+
+    [Test]
+    public void When_WithFailureReply_DoesNotDispatch_WhenGuardPasses()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        ctx.Source.Trackers.Enums.Set(WolfStage.Hunting);
+        var clientMock = Mock.Get(ctx.Source.Client);
+        var advanced = false;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.When(WolfStage.Hunting, "should not see this")
+               .Run((_, _) => advanced = true);
+
+        RunChain(builder, ctx);
+
+        advanced.Should().BeTrue();
+        clientMock.Verify(c => c.SendDisplayDialog(It.IsAny<Dialog>()), Times.Never);
+    }
+    #endregion
+
+    #region WhenNeverStarted (guard form)
+    [Test]
+    public void WhenNeverStarted_AllowsChainToContinue_WhenStageNotStored()
+    {
+        var ctx = NewContext(); // no stage set
+        var advanced = false;
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenNeverStarted()
+               .Run((_, _) => advanced = true);
+
+        RunChain(builder, ctx);
+
+        advanced.Should().BeTrue();
+    }
+
+    [Test]
+    public void WhenNeverStarted_HaltsChain_WhenAnyStageStored()
+    {
+        var ctx = NewContext(WolfStage.None);
+        var advanced = false;
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenNeverStarted()
+               .Run((_, _) => advanced = true);
+
+        RunChain(builder, ctx);
+
+        advanced.Should().BeFalse("any stored value — even default — counts as started");
+    }
+
+    [Test]
+    public void WhenNeverStarted_WithFailureReply_DispatchesReplyOnFail()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        ctx.Source.Trackers.Enums.Set(WolfStage.Hunting);
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenNeverStarted("you've already started this quest");
+
+        RunChain(builder, ctx);
+
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "you've already started this quest")), Times.Once);
+    }
     #endregion
 
     #region Advance
@@ -134,31 +217,120 @@ public sealed class QuestStepBuilderTests
     }
     #endregion
 
-    #region WhenStage / Otherwise
+    #region Branch
+    [Test]
+    public void Branch_RunsConfigure_WhenPredicateMatches()
+    {
+        var ctx = NewContext(WolfStage.Hunting);
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.Branch(c => c.IsAt(WolfStage.Hunting), s => s.Advance(WolfStage.Done));
+
+        RunChain(builder, ctx);
+
+        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void Branch_SkipsConfigure_WhenPredicateDoesNotMatch()
+    {
+        var ctx = NewContext(WolfStage.None);
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.Branch(c => c.IsAt(WolfStage.Hunting), s => s.Advance(WolfStage.Done));
+
+        RunChain(builder, ctx);
+
+        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void Branch_DoesNotHaltOuter_WhenBodyHalts()
+    {
+        var ctx = NewContext(WolfStage.Hunting);
+        var outerRan = false;
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.Branch(c => c.IsAt(WolfStage.Hunting), s => s.When(WolfStage.Done))
+               .Run((_, _) => outerRan = true);
+
+        RunChain(builder, ctx);
+
+        outerRan.Should().BeTrue("Branch must not propagate body halts to the outer chain");
+    }
+
+    [Test]
+    public void Branch_SetsOtherwiseTaken_WhenPredicateMatches()
+    {
+        var ctx = NewContext(WolfStage.Hunting);
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.Branch(c => c.IsAt(WolfStage.Hunting), _ => { });
+
+        RunChain(builder, ctx);
+
+        ctx.OtherwiseTaken.Should().BeTrue();
+    }
+
+    [Test]
+    public void Branch_DoesNotSetOtherwiseTaken_WhenPredicateMisses()
+    {
+        var ctx = NewContext(WolfStage.None);
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.Branch(c => c.IsAt(WolfStage.Hunting), _ => { });
+
+        RunChain(builder, ctx);
+
+        ctx.OtherwiseTaken.Should().BeFalse();
+    }
+
+    [Test]
+    public void Branch_PredicateReceivesContext()
+    {
+        var ctx = NewContext(WolfStage.Hunting);
+        var builder = new QuestStepBuilder<WolfStage>();
+        QuestContext<WolfStage>? observed = null;
+
+        builder.Branch(
+            c =>
+            {
+                observed = c;
+                return true;
+            },
+            _ => { });
+
+        RunChain(builder, ctx);
+
+        observed.Should().BeSameAs(ctx);
+    }
+    #endregion
+
+    #region Branch chaining / Otherwise
     [Test]
     public void WhenStage_FiresMatchingBranchOnly()
     {
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.WhenStage(WolfStage.Hunting, b => b.Advance(WolfStage.Done))
-               .WhenStage(WolfStage.Done, b => b.ClearStage());
+        builder.Branch(c => c.IsAt(WolfStage.Hunting), b => b.Advance(WolfStage.Done))
+               .Branch(c => c.IsAt(WolfStage.Done), b => b.ClearStage());
 
         RunChain(builder, ctx);
 
         // Hunting branch fires, advances to Done. Then Done branch ALSO fires (sequential).
-        // This is intentional — WhenStage doesn't short-circuit.
+        // This is intentional — branch When doesn't short-circuit.
         ctx.IsAt(WolfStage.Done).Should().BeFalse(); // ClearStage ran after Advance(Done)
     }
 
     [Test]
-    public void Otherwise_FiresWhenNoWhenStageMatched()
+    public void Otherwise_FiresWhenNoBranchMatched()
     {
         var ctx = NewContext(WolfStage.None);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.WhenStage(WolfStage.Hunting, b => b.Advance(WolfStage.Done))
-               .WhenStage(WolfStage.Done, b => b.ClearStage())
+        builder.Branch(c => c.IsAt(WolfStage.Hunting), b => b.Advance(WolfStage.Done))
+               .Branch(c => c.IsAt(WolfStage.Done), b => b.ClearStage())
                .Otherwise(b => b.Advance(WolfStage.Hunting));
 
         RunChain(builder, ctx);
@@ -167,12 +339,12 @@ public sealed class QuestStepBuilderTests
     }
 
     [Test]
-    public void Otherwise_DoesNotFireWhenAWhenStageMatched()
+    public void Otherwise_DoesNotFireWhenABranchMatched()
     {
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.WhenStage(WolfStage.Hunting, b => b.ClearStage())
+        builder.Branch(c => c.IsAt(WolfStage.Hunting), b => b.ClearStage())
                .Otherwise(b => b.Advance(WolfStage.Done));
 
         RunChain(builder, ctx);
@@ -474,6 +646,45 @@ public sealed class QuestStepBuilderTests
     }
 
     [Test]
+    public void RequireItem_WithFailureReply_DispatchesReplyAndHalts_WhenItemMissing()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        var clientMock = Mock.Get(ctx.Source.Client);
+        var advanced = false;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItem("wolfsfur", 5, "bring me 5 wolfsfur first")
+               .Run((_, _) => advanced = true);
+
+        RunChain(builder, ctx);
+
+        advanced.Should().BeFalse();
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "bring me 5 wolfsfur first")), Times.Once);
+    }
+
+    [Test]
+    public void RequireItem_WithFailureReply_DoesNotDispatch_WhenItemPresent()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        var clientMock = Mock.Get(ctx.Source.Client);
+        var advanced = false;
+
+        // Place the required item in the aisling's inventory.
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("wolfsfur", count: 5, stackable: true));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItem("wolfsfur", 5, "should not see this")
+               .Run((_, _) => advanced = true);
+
+        RunChain(builder, ctx);
+
+        advanced.Should().BeTrue();
+        clientMock.Verify(c => c.SendDisplayDialog(It.IsAny<Dialog>()), Times.Never);
+    }
+
+    [Test]
     public void GiveItem_CallsItemFactoryAndDelegatesToGiveItemOrSendToBank()
     {
         var factoryMock = new Mock<IItemFactory>();
@@ -721,7 +932,7 @@ public sealed class QuestStepBuilderTests
     {
         var ctx = NewContext(setup: a => a.UserStatSheet.SetBaseClass(BaseClass.Wizard));
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.ForClass(BaseClass.Wizard, sub => sub.Advance(WolfStage.Done));
+        builder.Branch(c => c.Source.UserStatSheet.BaseClass == BaseClass.Wizard, sub => sub.Advance(WolfStage.Done));
 
         RunChain(builder, ctx);
 
@@ -734,7 +945,7 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(setup: a => a.UserStatSheet.SetBaseClass(BaseClass.Wizard));
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.ForClass(BaseClass.Priest, sub => sub.Advance(WolfStage.Hunting))
+        builder.Branch(c => c.Source.UserStatSheet.BaseClass == BaseClass.Priest, sub => sub.Advance(WolfStage.Hunting))
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -750,9 +961,9 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(setup: a => a.UserStatSheet.SetBaseClass(BaseClass.Priest));
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.ForClass(BaseClass.Wizard, sub => sub.GiveGold(100))
-               .ForClass(BaseClass.Priest, sub => sub.GiveGold(200))
-               .ForClass(BaseClass.Rogue, sub => sub.GiveGold(400));
+        builder.Branch(c => c.Source.UserStatSheet.BaseClass == BaseClass.Wizard, sub => sub.GiveGold(100))
+               .Branch(c => c.Source.UserStatSheet.BaseClass == BaseClass.Priest, sub => sub.GiveGold(200))
+               .Branch(c => c.Source.UserStatSheet.BaseClass == BaseClass.Rogue, sub => sub.GiveGold(400));
 
         RunChain(builder, ctx);
 
@@ -764,7 +975,7 @@ public sealed class QuestStepBuilderTests
     {
         var ctx = NewContext(setup: a => a.Gender = Gender.Female);
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.ForGender(Gender.Female, sub => sub.Advance(WolfStage.Done));
+        builder.Branch(c => c.Source.Gender == Gender.Female, sub => sub.Advance(WolfStage.Done));
 
         RunChain(builder, ctx);
 
@@ -777,7 +988,7 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(setup: a => a.Gender = Gender.Male);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.ForGender(Gender.Female, sub => sub.Advance(WolfStage.Hunting))
+        builder.Branch(c => c.Source.Gender == Gender.Female, sub => sub.Advance(WolfStage.Hunting))
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -792,7 +1003,8 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(setup: a => a.UserStatSheet.SetBaseClass(BaseClass.Wizard));
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.IfClass(BaseClass.Wizard, sub => sub.GiveGold(50))
+        builder.RequireClass(BaseClass.Wizard)
+               .GiveGold(50)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -807,7 +1019,8 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(setup: a => a.UserStatSheet.SetBaseClass(BaseClass.Wizard));
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.IfClass(BaseClass.Priest, sub => sub.GiveGold(50))
+        builder.RequireClass(BaseClass.Priest)
+               .GiveGold(50)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -822,7 +1035,8 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(setup: a => a.Gender = Gender.Female);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.IfGender(Gender.Female, sub => sub.GiveGold(50))
+        builder.RequireGender(Gender.Female)
+               .GiveGold(50)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -837,7 +1051,8 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(setup: a => a.Gender = Gender.Male);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.IfGender(Gender.Female, sub => sub.GiveGold(50))
+        builder.RequireGender(Gender.Female)
+               .GiveGold(50)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -848,16 +1063,52 @@ public sealed class QuestStepBuilderTests
 
     #endregion
 
+    #region RequireClass / RequireGender
+    [Test]
+    public void RequireClass_FailureReply_DispatchesReplyOnMismatch()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog, setup: a => a.UserStatSheet.SetBaseClass(BaseClass.Warrior));
+        var clientMock = Mock.Get(ctx.Source.Client);
+        var advanced = false;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireClass(BaseClass.Wizard, "you must be a wizard")
+               .Run((_, _) => advanced = true);
+
+        RunChain(builder, ctx);
+
+        advanced.Should().BeFalse();
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "you must be a wizard")), Times.Once);
+    }
+
+    [Test]
+    public void RequireGender_FailureReply_DispatchesReplyOnMismatch()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog, setup: a => a.Gender = Gender.Male);
+        var clientMock = Mock.Get(ctx.Source.Client);
+        var advanced = false;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireGender(Gender.Female, "you must be female")
+               .Run((_, _) => advanced = true);
+
+        RunChain(builder, ctx);
+
+        advanced.Should().BeFalse();
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "you must be female")), Times.Once);
+    }
+    #endregion
+
     #region Branching
     [Test]
     public void If_PredicateTrue_RunsThenBranch()
     {
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.If(
-            (s, c) => true,
-            then: sub => sub.Advance(WolfStage.Done),
-            otherwise: sub => sub.Advance(WolfStage.None));
+        builder.Branch(_ => true, sub => sub.Advance(WolfStage.Done))
+               .Otherwise(sub => sub.Advance(WolfStage.None));
 
         RunChain(builder, ctx);
 
@@ -869,10 +1120,8 @@ public sealed class QuestStepBuilderTests
     {
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.If(
-            (s, c) => false,
-            then: sub => sub.Advance(WolfStage.Done),
-            otherwise: sub => sub.Advance(WolfStage.None));
+        builder.Branch(_ => false, sub => sub.Advance(WolfStage.Done))
+               .Otherwise(sub => sub.Advance(WolfStage.None));
 
         RunChain(builder, ctx);
 
@@ -886,9 +1135,7 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.If(
-                   (s, c) => false,
-                   then: sub => sub.Advance(WolfStage.None))
+        builder.Branch(_ => false, sub => sub.Advance(WolfStage.None))
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -903,9 +1150,7 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.If(
-                   (s, c) => true,
-                   then: sub => sub.GiveGold(100))
+        builder.Branch(_ => true, sub => sub.GiveGold(100))
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -915,26 +1160,11 @@ public sealed class QuestStepBuilderTests
     }
 
     [Test]
-    public void If_PredicateReceivesSourceAndContext()
-    {
-        var ctx = NewContext(WolfStage.Hunting, setup: a => a.Gold = 42);
-        var builder = new QuestStepBuilder<WolfStage>();
-
-        builder.If(
-            (s, c) => (s.Gold == 42) && c.IsAt(WolfStage.Hunting),
-            then: sub => sub.Advance(WolfStage.Done));
-
-        RunChain(builder, ctx);
-
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
-    }
-
-    [Test]
     public void Chance_100Percent_AlwaysFires()
     {
         var ctx = NewContext();
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.Chance(100, sub => sub.GiveGold(50));
+        builder.Branch(_ => true, sub => sub.GiveGold(50));
 
         RunChain(builder, ctx);
 
@@ -946,7 +1176,7 @@ public sealed class QuestStepBuilderTests
     {
         var ctx = NewContext();
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.Chance(0, sub => sub.GiveGold(50));
+        builder.Branch(_ => false, sub => sub.GiveGold(50));
 
         RunChain(builder, ctx);
 
@@ -959,7 +1189,7 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext();
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.Chance(0, sub => sub.GiveGold(50))
+        builder.Branch(_ => false, sub => sub.GiveGold(50))
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -1036,9 +1266,9 @@ public sealed class QuestStepBuilderTests
             "initial");
     }
 
-    private static QuestContext<WolfStage> NewContextWithSubject(Dialog? subject)
+    private static QuestContext<WolfStage> NewContextWithSubject(Dialog? subject, Action<Aisling>? setup = null)
     {
-        var aisling = MockAisling.Create();
+        var aisling = MockAisling.Create(setup: setup);
 
         return new QuestContext<WolfStage>
         {

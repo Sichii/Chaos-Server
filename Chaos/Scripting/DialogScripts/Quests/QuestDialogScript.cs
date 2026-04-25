@@ -12,7 +12,9 @@ namespace Chaos.Scripting.DialogScripts.Quests;
 /// Generic dispatcher that routes dialog lifecycle events to quest handlers registered
 /// in the <see cref="IQuestRegistry" />. Attach to a dialog template's <c>scriptKeys</c>
 /// as <c>"QuestDialog"</c> (Chaos strips the <c>"Script"</c> suffix) to let declarative
-/// <see cref="Quest" /> subclasses react to that dialog.
+/// <see cref="Quest" /> subclasses react to that dialog. Each lifecycle override dispatches
+/// only the handlers registered for its own <see cref="DialogPhase" />, so a chain bound to
+/// <c>OnNext</c> never fires on <c>OnDisplaying</c> (and vice versa).
 /// </summary>
 public sealed class QuestDialogScript : DialogScriptBase
 {
@@ -27,20 +29,20 @@ public sealed class QuestDialogScript : DialogScriptBase
     }
 
     /// <inheritdoc />
-    public override void OnDisplaying(Aisling source) => Dispatch(source);
+    public override void OnDisplaying(Aisling source) => Dispatch(source, DialogPhase.Displaying);
 
     /// <inheritdoc />
-    public override void OnDisplayed(Aisling source) => Dispatch(source);
+    public override void OnDisplayed(Aisling source) => Dispatch(source, DialogPhase.Displayed);
 
     /// <inheritdoc />
-    public override void OnNext(Aisling source, byte? optionIndex = null) => Dispatch(source);
+    public override void OnNext(Aisling source, byte? optionIndex = null) => Dispatch(source, DialogPhase.Next);
 
     /// <inheritdoc />
-    public override void OnPrevious(Aisling source) => Dispatch(source);
+    public override void OnPrevious(Aisling source) => Dispatch(source, DialogPhase.Previous);
 
-    private void Dispatch(Aisling source)
+    private void Dispatch(Aisling source, DialogPhase phase)
     {
-        var handlers = Registry.GetDialogHandlers(Subject.Template.TemplateKey);
+        var handlers = Registry.GetDialogHandlers(Subject.Template.TemplateKey, phase);
 
         if (handlers.Count == 0)
             return;

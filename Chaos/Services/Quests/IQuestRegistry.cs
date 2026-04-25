@@ -17,10 +17,10 @@ public interface IQuestRegistry
     Quest? Get(string key);
 
     /// <summary>
-    /// All dialog handlers (across all quests) registered for a given dialog template key.
-    /// Returns an empty list if no quest handles this template.
+    /// All dialog handlers (across all quests) registered for a given dialog template key
+    /// and lifecycle phase. Returns an empty list if no quest handles this template on this phase.
     /// </summary>
-    IReadOnlyList<DialogQuestHandler> GetDialogHandlers(string templateKey);
+    IReadOnlyList<DialogQuestHandler> GetDialogHandlers(string templateKey, DialogPhase phase);
 
     /// <summary>
     /// Register a quest. Runs Configure and indexes its handlers. Throws if a quest with

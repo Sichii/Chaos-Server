@@ -9,8 +9,7 @@ namespace Chaos.Services.Quests;
 
 public sealed class QuestRegistry : IQuestRegistry
 {
-    private readonly ConcurrentDictionary<string, IReadOnlyList<DialogQuestHandler>> DialogIndex
-        = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<DialogIndexKey, IReadOnlyList<DialogQuestHandler>> DialogIndex = new();
     private readonly IServiceProvider Provider;
     private readonly ConcurrentDictionary<string, Quest> QuestsByKey = new(StringComparer.OrdinalIgnoreCase);
     private readonly ConcurrentDictionary<Type, Quest> QuestsByType = new();
@@ -47,8 +46,8 @@ public sealed class QuestRegistry : IQuestRegistry
     public Quest? Get(string key) => QuestsByKey.GetValueOrDefault(key);
 
     /// <inheritdoc />
-    public IReadOnlyList<DialogQuestHandler> GetDialogHandlers(string templateKey)
-        => DialogIndex.GetValueOrDefault(templateKey) ?? [];
+    public IReadOnlyList<DialogQuestHandler> GetDialogHandlers(string templateKey, DialogPhase phase)
+        => DialogIndex.GetValueOrDefault(new DialogIndexKey(templateKey, phase)) ?? [];
 
     /// <inheritdoc />
     public void Register(Quest quest)
@@ -60,7 +59,7 @@ public sealed class QuestRegistry : IQuestRegistry
 
         foreach (var handler in quest.DialogHandlers)
             DialogIndex.AddOrUpdate(
-                handler.TemplateKey,
+                new DialogIndexKey(handler.TemplateKey, handler.Phase),
                 _ => new[] { handler },
                 (_, existing) =>
                 {
@@ -73,5 +72,19 @@ public sealed class QuestRegistry : IQuestRegistry
 
                     return next;
                 });
+    }
+
+    /// <summary>
+    /// Composite index key. Custom record struct keeps the comparer case-insensitive on
+    /// <see cref="TemplateKey" /> while leaving <see cref="Phase" /> untouched, mirroring the
+    /// case-insensitive behavior the previous string-keyed dictionary provided.
+    /// </summary>
+    private readonly record struct DialogIndexKey(string TemplateKey, DialogPhase Phase)
+    {
+        public bool Equals(DialogIndexKey other)
+            => (Phase == other.Phase) && string.Equals(TemplateKey, other.TemplateKey, StringComparison.OrdinalIgnoreCase);
+
+        public override int GetHashCode()
+            => HashCode.Combine(StringComparer.OrdinalIgnoreCase.GetHashCode(TemplateKey), Phase);
     }
 }
