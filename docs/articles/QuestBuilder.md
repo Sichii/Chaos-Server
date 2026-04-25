@@ -34,7 +34,7 @@ public sealed class LostRingQuest : Quest<LostRingStage>
             .Reply("Please find my ring near the river.");
 
         q.OnNext("rosa_initial")
-            .When(LostRingStage.Accepted, "Have you found my ring yet?")
+            .WhenAt(LostRingStage.Accepted, "Have you found my ring yet?")
             .RequireItem("ring", count: 1, "I don't see it on you.")
             .ConsumeItem("ring", count: 1)
             .Advance(LostRingStage.Returned)
@@ -74,7 +74,7 @@ Each phase method returns a [QuestStepBuilder<TStage>](<xref:Chaos.Utilities.Que
 records an *operation chain*. Operations are evaluated in order; each returns `true` to continue the chain or `false`
 to halt (e.g., a guard failed). Operations fall into the categories below.
 
-- **Stage** — `When(stage)`, `WhenNeverStarted()`, `Advance(stage)`, `ClearStage()`, `RouteByStage(map)`.
+- **Stage** — `WhenAt(stage)`, `WhenNeverStarted()`, `Advance(stage)`, `ClearStage()`, `RouteByStage(map)`.
 - **Flags** — `SetFlag`, `ClearFlag`, `RequireFlag`, `RequireAllFlags`, `RequireAnyFlag`. Each method has overloads
   for both regular `[Flags]` enums (stored in `Trackers.Flags`) and `BigFlagsValue<TMarker>` values (stored in
   `Trackers.BigFlags`); the compiler picks the right overload by argument type.
@@ -103,7 +103,7 @@ shape:
 
 ```csharp
 q.OnDisplaying("riddle_master_initial")
-    .When(RiddleStage.Asked)
+    .WhenAt(RiddleStage.Asked)
     .Branch(
         predicate: c => c.Source.UserStatSheet.BaseClass == BaseClass.Wizard,
         configure: sb => sb.ShowOption("Answer with magic", "riddle_master_wizard"))

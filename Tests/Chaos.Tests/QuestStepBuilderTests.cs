@@ -49,50 +49,50 @@ public sealed class QuestStepBuilderTests
                 return;
     }
 
-    #region When
+    #region WhenAt
     [Test]
-    public void When_AllowsChainToContinue_WhenAtStage()
+    public void WhenAt_AllowsChainToContinue_WhenAtStage()
     {
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.When(WolfStage.Hunting)
+        builder.WhenAt(WolfStage.Hunting)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
-    public void When_HaltsChain_WhenNotAtStage()
+    public void WhenAt_HaltsChain_WhenNotAtStage()
     {
         var ctx = NewContext(WolfStage.None);
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.When(WolfStage.Hunting)
+        builder.WhenAt(WolfStage.Hunting)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
-        ctx.IsAt(WolfStage.None).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.None).Should().BeTrue();
     }
 
     [Test]
-    public void When_TreatsAbsentStageAsDefault()
+    public void WhenAt_TreatsAbsentStageAsDefault()
     {
         var ctx = NewContext(); // no stage set
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.When(WolfStage.None) // default(WolfStage) == WolfStage.None
+        builder.WhenAt(WolfStage.None) // default(WolfStage) == WolfStage.None
                .Advance(WolfStage.Hunting);
 
         RunChain(builder, ctx);
 
         // Absent enum HasValue check returns false even for default — confirm with current behavior
-        ctx.IsAt(WolfStage.Hunting).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Hunting).Should().BeFalse();
     }
 
     [Test]
-    public void When_WithFailureReply_HaltsAndDispatchesReplyOnMismatch()
+    public void WhenAt_WithFailureReply_HaltsAndDispatchesReplyOnMismatch()
     {
         var dialog = CreateTestDialog();
         var ctx = NewContextWithSubject(dialog);
@@ -100,7 +100,7 @@ public sealed class QuestStepBuilderTests
         var advanced = false;
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.When(WolfStage.Hunting, "you must be hunting first")
+        builder.WhenAt(WolfStage.Hunting, "you must be hunting first")
                .Run((_, _) => advanced = true);
 
         RunChain(builder, ctx);
@@ -110,7 +110,7 @@ public sealed class QuestStepBuilderTests
     }
 
     [Test]
-    public void When_WithFailureReply_DoesNotDispatch_WhenGuardPasses()
+    public void WhenAt_WithFailureReply_DoesNotDispatch_WhenGuardPasses()
     {
         var dialog = CreateTestDialog();
         var ctx = NewContextWithSubject(dialog);
@@ -119,7 +119,7 @@ public sealed class QuestStepBuilderTests
         var advanced = false;
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.When(WolfStage.Hunting, "should not see this")
+        builder.WhenAt(WolfStage.Hunting, "should not see this")
                .Run((_, _) => advanced = true);
 
         RunChain(builder, ctx);
@@ -185,7 +185,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Hunting).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Hunting).Should().BeTrue();
         ctx.CurrentStage.Should().Be(WolfStage.Hunting);
     }
 
@@ -198,8 +198,8 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
-        ctx.IsAt(WolfStage.Hunting).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Hunting).Should().BeFalse();
     }
     #endregion
 
@@ -213,7 +213,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
     #endregion
 
@@ -224,11 +224,11 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.Branch(c => c.IsAt(WolfStage.Hunting), s => s.Advance(WolfStage.Done));
+        builder.Branch(c => c.WhenAt(WolfStage.Hunting), s => s.Advance(WolfStage.Done));
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -237,11 +237,11 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(WolfStage.None);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.Branch(c => c.IsAt(WolfStage.Hunting), s => s.Advance(WolfStage.Done));
+        builder.Branch(c => c.WhenAt(WolfStage.Hunting), s => s.Advance(WolfStage.Done));
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -251,7 +251,7 @@ public sealed class QuestStepBuilderTests
         var outerRan = false;
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.Branch(c => c.IsAt(WolfStage.Hunting), s => s.When(WolfStage.Done))
+        builder.Branch(c => c.WhenAt(WolfStage.Hunting), s => s.WhenAt(WolfStage.Done))
                .Run((_, _) => outerRan = true);
 
         RunChain(builder, ctx);
@@ -265,7 +265,7 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.Branch(c => c.IsAt(WolfStage.Hunting), _ => { });
+        builder.Branch(c => c.WhenAt(WolfStage.Hunting), _ => { });
 
         RunChain(builder, ctx);
 
@@ -278,7 +278,7 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(WolfStage.None);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.Branch(c => c.IsAt(WolfStage.Hunting), _ => { });
+        builder.Branch(c => c.WhenAt(WolfStage.Hunting), _ => { });
 
         RunChain(builder, ctx);
 
@@ -313,14 +313,14 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.Branch(c => c.IsAt(WolfStage.Hunting), b => b.Advance(WolfStage.Done))
-               .Branch(c => c.IsAt(WolfStage.Done), b => b.ClearStage());
+        builder.Branch(c => c.WhenAt(WolfStage.Hunting), b => b.Advance(WolfStage.Done))
+               .Branch(c => c.WhenAt(WolfStage.Done), b => b.ClearStage());
 
         RunChain(builder, ctx);
 
         // Hunting branch fires, advances to Done. Then Done branch ALSO fires (sequential).
         // This is intentional — branch When doesn't short-circuit.
-        ctx.IsAt(WolfStage.Done).Should().BeFalse(); // ClearStage ran after Advance(Done)
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse(); // ClearStage ran after Advance(Done)
     }
 
     [Test]
@@ -329,13 +329,13 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(WolfStage.None);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.Branch(c => c.IsAt(WolfStage.Hunting), b => b.Advance(WolfStage.Done))
-               .Branch(c => c.IsAt(WolfStage.Done), b => b.ClearStage())
+        builder.Branch(c => c.WhenAt(WolfStage.Hunting), b => b.Advance(WolfStage.Done))
+               .Branch(c => c.WhenAt(WolfStage.Done), b => b.ClearStage())
                .Otherwise(b => b.Advance(WolfStage.Hunting));
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Hunting).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Hunting).Should().BeTrue();
     }
 
     [Test]
@@ -344,13 +344,13 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(WolfStage.Hunting);
         var builder = new QuestStepBuilder<WolfStage>();
 
-        builder.Branch(c => c.IsAt(WolfStage.Hunting), b => b.ClearStage())
+        builder.Branch(c => c.WhenAt(WolfStage.Hunting), b => b.ClearStage())
                .Otherwise(b => b.Advance(WolfStage.Done));
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
-        ctx.IsAt(WolfStage.Hunting).Should().BeFalse(); // ClearStage ran
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Hunting).Should().BeFalse(); // ClearStage ran
     }
     #endregion
 
@@ -389,7 +389,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -402,7 +402,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -418,7 +418,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -433,7 +433,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -478,7 +478,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -494,7 +494,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -509,7 +509,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -540,7 +540,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -555,7 +555,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -612,7 +612,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -627,7 +627,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
     #endregion
 
@@ -642,7 +642,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -732,7 +732,7 @@ public sealed class QuestStepBuilderTests
         RunChain(builder, ctx);
 
         // Subsequent step still ran -> reward operations are not guards
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -761,7 +761,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -774,7 +774,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -787,7 +787,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -800,7 +800,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -813,7 +813,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -826,7 +826,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -844,7 +844,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -862,7 +862,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -875,7 +875,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -893,7 +893,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -911,7 +911,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -924,7 +924,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -936,7 +936,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -951,8 +951,8 @@ public sealed class QuestStepBuilderTests
         RunChain(builder, ctx);
 
         // sub didn't run (Priest != Wizard) but outer continued
-        ctx.IsAt(WolfStage.Hunting).Should().BeFalse();
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Hunting).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -979,7 +979,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -993,8 +993,8 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Hunting).Should().BeFalse();
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Hunting).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -1010,7 +1010,7 @@ public sealed class QuestStepBuilderTests
         RunChain(builder, ctx);
 
         ctx.Source.Gold.Should().Be(50);
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -1026,7 +1026,7 @@ public sealed class QuestStepBuilderTests
         RunChain(builder, ctx);
 
         ctx.Source.Gold.Should().Be(0);
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -1042,7 +1042,7 @@ public sealed class QuestStepBuilderTests
         RunChain(builder, ctx);
 
         ctx.Source.Gold.Should().Be(50);
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -1058,7 +1058,7 @@ public sealed class QuestStepBuilderTests
         RunChain(builder, ctx);
 
         ctx.Source.Gold.Should().Be(0);
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     #endregion
@@ -1112,7 +1112,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -1125,8 +1125,8 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.None).Should().BeTrue();
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.None).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -1141,7 +1141,7 @@ public sealed class QuestStepBuilderTests
         RunChain(builder, ctx);
 
         // then-branch did not run; outer chain continued and reached Advance
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -1156,7 +1156,7 @@ public sealed class QuestStepBuilderTests
         RunChain(builder, ctx);
 
         ctx.Source.Gold.Should().Be(100);
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -1195,7 +1195,7 @@ public sealed class QuestStepBuilderTests
         RunChain(builder, ctx);
 
         ctx.Source.Gold.Should().Be(0);
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -1221,7 +1221,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -1928,7 +1928,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -1943,7 +1943,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
 
     [Test]
@@ -1972,7 +1972,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -2059,7 +2059,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
     [Test]
@@ -2075,7 +2075,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
     }
     #endregion
 
@@ -2092,7 +2092,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
         ctx.Source.Inventory.HasCountByTemplateKey("wolfsfur", 2).Should().BeTrue();
         ctx.Source.Inventory.HasCountByTemplateKey("wolfsfur", 3).Should().BeFalse();
     }
@@ -2109,7 +2109,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
         ctx.Source.Inventory.HasCountByTemplateKey("wolfsfur", 1).Should().BeTrue();
     }
 
@@ -2126,7 +2126,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
         ctx.Source.Inventory.HasCountByTemplateKey("wolfsfur", 3).Should().BeTrue();
         ctx.Source.Inventory.HasCountByTemplateKey("wolfsclaw", 2).Should().BeTrue();
     }
@@ -2144,7 +2144,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
 
         // Atomic: even though wolfsfur was sufficient, it must NOT have been consumed.
         ctx.Source.Inventory.HasCountByTemplateKey("wolfsfur", 5).Should().BeTrue();
@@ -2176,7 +2176,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.IsAt(WolfStage.Done).Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
     #endregion
 
@@ -2276,6 +2276,656 @@ public sealed class QuestStepBuilderTests
         RunChain(builder, ctx);
 
         ctx.Source.SpellBook.TryGetObjectByTemplateKey("ice_blast", out _).Should().BeFalse();
+    }
+    #endregion
+
+    #region GiveAbility
+    [Test]
+    public void GiveAbility_AddsAbilityToAisling()
+    {
+        var ctx = NewContext(setup: a => a.UserStatSheet.SetLevel(50));
+        var initial = ctx.Source.UserStatSheet.TotalAbility;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.GiveAbility(500);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.UserStatSheet.TotalAbility.Should().Be(initial + 500);
+    }
+
+    [Test]
+    public void GiveAbility_ContinuesChain()
+    {
+        var ctx = NewContext(setup: a => a.UserStatSheet.SetLevel(50));
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.GiveAbility(100)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+    #endregion
+
+    #region GiveGamePoints
+    [Test]
+    public void GiveGamePoints_AddsToAislingsGamePoints()
+    {
+        var ctx = NewContext();
+        var initial = ctx.Source.GamePoints;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.GiveGamePoints(10);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.GamePoints.Should().Be(initial + 10);
+    }
+
+    [Test]
+    public void GiveGamePoints_ContinuesChain()
+    {
+        var ctx = NewContext();
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.GiveGamePoints(5)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+    #endregion
+
+    #region RequireItemOrEquipped / ConsumeItemOrEquipped
+    [Test]
+    public void RequireItemOrEquipped_AllowsChain_WhenItemInInventory()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("specialbouquet"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItemOrEquipped("specialbouquet", 1)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void RequireItemOrEquipped_AllowsChain_WhenItemEquippedAndCountIsOne()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("specialbouquet"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItemOrEquipped("specialbouquet", 1)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void RequireItemOrEquipped_HaltsChain_WhenNeitherInventoryNorEquipment()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItemOrEquipped("specialbouquet", 1)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void RequireItemOrEquipped_HaltsChain_WhenCountAboveOneAndOnlyEquipped()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("specialbouquet"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItemOrEquipped("specialbouquet", 2)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void RequireItemOrEquipped_WithFailureReply_DispatchesReplyOnHalt()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItemOrEquipped("specialbouquet", 1, "Where's the bouquet?")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "Where's the bouquet?")), Times.Once);
+    }
+
+    [Test]
+    public void ConsumeItemOrEquipped_RemovesFromInventory_WhenInventoryHasIt()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("specialbouquet"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeItemOrEquipped("specialbouquet", 1)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Inventory.ContainsByTemplateKey("specialbouquet").Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void ConsumeItemOrEquipped_RemovesFromEquipment_WhenInventoryEmptyAndEquipped()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("specialbouquet"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeItemOrEquipped("specialbouquet", 1)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Equipment.ContainsByTemplateKey("specialbouquet").Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void ConsumeItemOrEquipped_HaltsChain_WhenNeither()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeItemOrEquipped("specialbouquet", 1)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void ConsumeItemOrEquipped_DoesNotTouchEquipment_WhenInventorySatisfies()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("specialbouquet"));
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("specialbouquet"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeItemOrEquipped("specialbouquet", 1);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Inventory.ContainsByTemplateKey("specialbouquet").Should().BeFalse();
+        ctx.Source.Equipment.ContainsByTemplateKey("specialbouquet").Should().BeTrue();
+    }
+    #endregion
+
+    #region InsertOption
+    [Test]
+    public void InsertOption_AddsOptionAtIndexZero_ByDefault()
+    {
+        var dialog = CreateTestDialog();
+        dialog.AddOption("Existing", "existing_dialog");
+
+        var ctx = NewContextWithSubject(dialog);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.InsertOption("Quest hook", "quest_dialog");
+
+        RunChain(builder, ctx);
+
+        dialog.Options[0].OptionText.Should().Be("Quest hook");
+        dialog.Options[0].DialogKey.Should().Be("quest_dialog");
+        dialog.Options[1].OptionText.Should().Be("Existing");
+    }
+
+    [Test]
+    public void InsertOption_AddsOptionAtSpecifiedIndex()
+    {
+        var dialog = CreateTestDialog();
+        dialog.AddOption("First", "first_dialog");
+        dialog.AddOption("Third", "third_dialog");
+
+        var ctx = NewContextWithSubject(dialog);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.InsertOption("Second", "second_dialog", index: 1);
+
+        RunChain(builder, ctx);
+
+        dialog.Options.Should().HaveCount(3);
+        dialog.Options[0].OptionText.Should().Be("First");
+        dialog.Options[1].OptionText.Should().Be("Second");
+        dialog.Options[2].OptionText.Should().Be("Third");
+    }
+
+    [Test]
+    public void InsertOption_NoOps_WhenOptionAlreadyPresent()
+    {
+        var dialog = CreateTestDialog();
+        dialog.AddOption("Quest hook", "quest_dialog");
+
+        var ctx = NewContextWithSubject(dialog);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.InsertOption("Quest hook", "quest_dialog");
+
+        RunChain(builder, ctx);
+
+        dialog.Options.Should().ContainSingle(o => o.OptionText == "Quest hook");
+    }
+
+    [Test]
+    public void InsertOption_NullSubject_NoOpsAndContinues()
+    {
+        var ctx = NewContextWithSubject(null);
+        var continued = false;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.InsertOption("Quest hook", "quest_dialog")
+               .Run((_, _) => continued = true);
+
+        RunChain(builder, ctx);
+
+        continued.Should().BeTrue();
+    }
+
+    [Test]
+    public void InsertOption_ContinuesChain()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        var continued = false;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.InsertOption("Quest hook", "quest_dialog")
+               .Run((_, _) => continued = true);
+
+        RunChain(builder, ctx);
+
+        continued.Should().BeTrue();
+    }
+    #endregion
+
+    #region Sub-stage helpers
+    private enum BouquetSub { None, Crafting, Remade }
+
+    private enum DeliverySub { None, EnRoute, Arrived }
+
+    [Test]
+    public void WhenAtSub_True_WhenSubAdvanced()
+    {
+        var ctx = NewContext();
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
+
+        ctx.WhenAtSub(BouquetSub.Crafting).Should().BeTrue();
+    }
+
+    [Test]
+    public void WhenAtSub_False_WhenDifferentSubValueStored()
+    {
+        var ctx = NewContext();
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
+
+        ctx.WhenAtSub(BouquetSub.Remade).Should().BeFalse();
+    }
+
+    [Test]
+    public void WhenAtSub_False_WhenSubNotAdvanced()
+    {
+        var ctx = NewContext();
+
+        ctx.WhenAtSub(BouquetSub.Crafting).Should().BeFalse();
+    }
+
+    [Test]
+    public void WhenAtSub_DistinguishesBetweenDifferentEnumTypes()
+    {
+        var ctx = NewContext();
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
+
+        // Bouquet sub is set, but a different sub-stage type is unaffected.
+        ctx.WhenAtSub(BouquetSub.Crafting).Should().BeTrue();
+        ctx.WhenAtSub(DeliverySub.EnRoute).Should().BeFalse();
+    }
+
+    [Test]
+    public void HasNoSub_True_WhenSubNeverSet()
+    {
+        var ctx = NewContext();
+
+        ctx.HasNoSub<BouquetSub>().Should().BeTrue();
+    }
+
+    [Test]
+    public void HasNoSub_False_AfterAdvanceSub()
+    {
+        var ctx = NewContext();
+        ctx.AdvanceSub(BouquetSub.Crafting);
+
+        ctx.HasNoSub<BouquetSub>().Should().BeFalse();
+    }
+
+    [Test]
+    public void AdvanceSub_StoresValueInTrackers()
+    {
+        var ctx = NewContext();
+        ctx.AdvanceSub(BouquetSub.Crafting);
+
+        ctx.Source.Trackers.Enums.TryGetValue<BouquetSub>(out var stored).Should().BeTrue();
+        stored.Should().Be(BouquetSub.Crafting);
+    }
+
+    [Test]
+    public void AdvanceSub_OverwritesPreviousSubValue()
+    {
+        var ctx = NewContext();
+        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.AdvanceSub(BouquetSub.Remade);
+
+        ctx.WhenAtSub(BouquetSub.Remade).Should().BeTrue();
+        ctx.WhenAtSub(BouquetSub.Crafting).Should().BeFalse();
+    }
+
+    [Test]
+    public void ClearSub_RemovesSubFromTrackers()
+    {
+        var ctx = NewContext();
+        ctx.AdvanceSub(BouquetSub.Crafting);
+
+        ctx.ClearSub<BouquetSub>();
+
+        ctx.HasNoSub<BouquetSub>().Should().BeTrue();
+    }
+
+    [Test]
+    public void AdvanceSub_DoesNotAffectPrimaryStage()
+    {
+        var ctx = NewContext(initialStage: WolfStage.Hunting);
+        ctx.AdvanceSub(BouquetSub.Crafting);
+
+        ctx.WhenAt(WolfStage.Hunting).Should().BeTrue();
+        ctx.WhenAtSub(BouquetSub.Crafting).Should().BeTrue();
+    }
+
+    [Test]
+    public void ClearSub_DoesNotAffectPrimaryStage()
+    {
+        var ctx = NewContext(initialStage: WolfStage.Hunting);
+        ctx.AdvanceSub(BouquetSub.Crafting);
+
+        ctx.ClearSub<BouquetSub>();
+
+        ctx.WhenAt(WolfStage.Hunting).Should().BeTrue();
+        ctx.HasNoSub<BouquetSub>().Should().BeTrue();
+    }
+
+    [Test]
+    public void TryGetSub_ReturnsCurrentValue_WhenStored()
+    {
+        var ctx = NewContext();
+        ctx.AdvanceSub(BouquetSub.Remade);
+
+        var found = ctx.TryGetSub<BouquetSub>(out var value);
+
+        found.Should().BeTrue();
+        value.Should().Be(BouquetSub.Remade);
+    }
+
+    [Test]
+    public void TryGetSub_ReturnsFalseAndDefault_WhenNotStored()
+    {
+        var ctx = NewContext();
+
+        var found = ctx.TryGetSub<BouquetSub>(out var value);
+
+        found.Should().BeFalse();
+        value.Should().Be(default(BouquetSub));
+    }
+
+    [Test]
+    public void WhenAtSub_AllowsChain_WhenAtSubValue()
+    {
+        var ctx = NewContext();
+        ctx.AdvanceSub(BouquetSub.Crafting);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenAtSub(BouquetSub.Crafting)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void WhenAtSub_HaltsChain_WhenNotAtSubValue()
+    {
+        var ctx = NewContext();
+        ctx.AdvanceSub(BouquetSub.Crafting);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenAtSub(BouquetSub.Remade)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void WhenAtSub_HaltsChain_WhenSubNeverSet()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenAtSub(BouquetSub.Crafting)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void WhenAtSub_WithFailureReply_DispatchesReplyOnHalt()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenAtSub(BouquetSub.Remade, "Bouquet not ready yet.")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "Bouquet not ready yet.")), Times.Once);
+    }
+
+    [Test]
+    public void WhenSubNeverStarted_AllowsChain_WhenSubNeverSet()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenSubNeverStarted<BouquetSub>()
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void WhenSubNeverStarted_HaltsChain_WhenSubStored()
+    {
+        var ctx = NewContext();
+        ctx.AdvanceSub(BouquetSub.Crafting);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenSubNeverStarted<BouquetSub>()
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void AdvanceSub_BuilderForm_StoresValueInTrackers()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.AdvanceSub(BouquetSub.Crafting);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAtSub(BouquetSub.Crafting).Should().BeTrue();
+    }
+
+    [Test]
+    public void ClearSub_BuilderForm_RemovesSubFromTrackers()
+    {
+        var ctx = NewContext();
+        ctx.AdvanceSub(BouquetSub.Crafting);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ClearSub<BouquetSub>();
+
+        RunChain(builder, ctx);
+
+        ctx.HasNoSub<BouquetSub>().Should().BeTrue();
+    }
+
+    [Test]
+    public void RouteBySub_RoutesToMappedDialogKey_ForCurrentSub()
+    {
+        var factoryMock = new Mock<IDialogFactory>();
+        factoryMock.Setup(f => f.Create("crafting_dialog", It.IsAny<IDialogSourceEntity>()))
+                   .Returns(() => new Dialog(
+                       new Mock<IDialogSourceEntity>().Object,
+                       factoryMock.Object,
+                       ChaosDialogType.Normal,
+                       "Crafting in progress"));
+
+        var dialog = CreateTestDialog(factoryMock);
+        var ctx = NewContextWithSubject(dialog);
+        ctx.AdvanceSub(BouquetSub.Crafting);
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var routes = new Dictionary<BouquetSub, string>
+        {
+            { BouquetSub.Crafting, "crafting_dialog" },
+            { BouquetSub.Remade, "remade_dialog" }
+        };
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RouteBySub(routes);
+
+        RunChain(builder, ctx);
+
+        factoryMock.Verify(f => f.Create("crafting_dialog", It.IsAny<IDialogSourceEntity>()), Times.Once);
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "Crafting in progress")), Times.Once);
+    }
+
+    [Test]
+    public void RouteBySub_NoOps_WhenSubNotInRoutes()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        ctx.AdvanceSub(BouquetSub.Crafting);
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var routes = new Dictionary<BouquetSub, string>
+        {
+            { BouquetSub.Remade, "remade_dialog" }
+        };
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RouteBySub(routes)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        clientMock.Verify(c => c.SendDisplayDialog(It.IsAny<Dialog>()), Times.Never);
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue("RouteBySub does not halt the chain on miss");
+    }
+
+    [Test]
+    public void RouteBySub_NoOps_WhenSubNotStored()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var routes = new Dictionary<BouquetSub, string>
+        {
+            { BouquetSub.Crafting, "crafting_dialog" }
+        };
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RouteBySub(routes)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        clientMock.Verify(c => c.SendDisplayDialog(It.IsAny<Dialog>()), Times.Never);
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void RouteBySub_DistinguishesBetweenDifferentSubEnumTypes()
+    {
+        var factoryMock = new Mock<IDialogFactory>();
+        factoryMock.Setup(f => f.Create("delivery_dialog", It.IsAny<IDialogSourceEntity>()))
+                   .Returns(() => new Dialog(
+                       new Mock<IDialogSourceEntity>().Object,
+                       factoryMock.Object,
+                       ChaosDialogType.Normal,
+                       "On the way"));
+
+        var dialog = CreateTestDialog(factoryMock);
+        var ctx = NewContextWithSubject(dialog);
+
+        // Two different sub-stage types stored simultaneously.
+        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.AdvanceSub(DeliverySub.EnRoute);
+
+        var deliveryRoutes = new Dictionary<DeliverySub, string>
+        {
+            { DeliverySub.EnRoute, "delivery_dialog" }
+        };
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RouteBySub(deliveryRoutes);
+
+        RunChain(builder, ctx);
+
+        factoryMock.Verify(f => f.Create("delivery_dialog", It.IsAny<IDialogSourceEntity>()), Times.Once);
     }
     #endregion
 }

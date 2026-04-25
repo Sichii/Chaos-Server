@@ -6,6 +6,8 @@ using Chaos.DarkAges.Definitions;
 using Chaos.Models.Board;
 using Chaos.NLog.Logging.Extensions;
 using Chaos.Scripting.FunctionalScripts;
+using Chaos.Scripting.FunctionalScripts.AbilityDistribution;
+using Chaos.Scripting.FunctionalScripts.AbilityUp;
 using Chaos.Scripting.FunctionalScripts.Abstractions;
 using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
 using Chaos.Scripting.FunctionalScripts.LevelUp;
@@ -61,6 +63,7 @@ public static class ServerSetup
             MaxGroupSize = 6,
             MaximumAislingAc = 100,
             MaximumMonsterAc = 100,
+            MaxAbilityLevel = 99,
             MaxItemsPerSecond = 5,
             MaxLevel = 99,
             MaxSkillsPerSecond = 5,
@@ -81,6 +84,8 @@ public static class ServerSetup
         services.AddSingleton<DefaultNaturalRegenerationScript>();
         services.AddSingleton<DefaultExperienceDistributionScript>();
         services.AddSingleton<DefaultLevelUpScript>();
+        services.AddSingleton<DefaultAbilityDistributionScript>();
+        services.AddSingleton<DefaultAbilityUpScript>();
         services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
         var sp = services.BuildServiceProvider();
 
@@ -88,6 +93,8 @@ public static class ServerSetup
         registry.Register(DefaultNaturalRegenerationScript.Key, typeof(DefaultNaturalRegenerationScript));
         registry.Register(DefaultExperienceDistributionScript.Key, typeof(DefaultExperienceDistributionScript));
         registry.Register(DefaultLevelUpScript.Key, typeof(DefaultLevelUpScript));
+        registry.Register(DefaultAbilityDistributionScript.Key, typeof(DefaultAbilityDistributionScript));
+        registry.Register(DefaultAbilityUpScript.Key, typeof(DefaultAbilityUpScript));
 
         LogManager.Setup()
                   .SetupSerialization(builder =>

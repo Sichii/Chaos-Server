@@ -89,8 +89,8 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     /// Halt the chain unless Source is currently at the given stage. When
     /// <paramref name="failureReply" /> is provided, the failure path also sends a Reply.
     /// </summary>
-    public QuestStepBuilder<TStage> When(TStage stage, string? failureReply = null)
-        => AppendGuard(ctx => ctx.IsAt(stage), failureReply);
+    public QuestStepBuilder<TStage> WhenAt(TStage stage, string? failureReply = null)
+        => AppendGuard(ctx => ctx.WhenAt(stage), failureReply);
 
     /// <summary>Set the stage. Updates ctx.CurrentStage to match.</summary>
     public QuestStepBuilder<TStage> Advance(TStage stage) => Append(ctx => ctx.Advance(stage));
@@ -145,6 +145,60 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
                 return true;
 
             typed.Subject?.Reply(typed.Source, "Skip", key);
+            return true;
+        });
+
+        return this;
+    }
+
+    // ===== Sub-stage operations =====
+    //
+    // Sub-stages are additional typed enum trackers that live alongside the primary TStage
+    // in Source.Trackers.Enums. A quest can layer any number of sub-stages, each keyed by a
+    // distinct enum type. The framework does not enforce a relationship between primary and
+    // sub-stages — quest authors compose them as needed.
+
+    /// <summary>
+    /// Halt the chain unless Source's sub-stage of type <typeparamref name="TSub" /> equals
+    /// <paramref name="value" />. When <paramref name="failureReply" /> is provided, the failure
+    /// path also sends a Reply.
+    /// </summary>
+    public QuestStepBuilder<TStage> WhenAtSub<TSub>(TSub value, string? failureReply = null) where TSub : struct, Enum
+        => AppendGuard(ctx => ctx.WhenAtSub(value), failureReply);
+
+    /// <summary>
+    /// Halt the chain unless Source has no value stored for sub-stage type
+    /// <typeparamref name="TSub" /> (the sub-track has never been advanced). When
+    /// <paramref name="failureReply" /> is provided, the failure path also sends a Reply.
+    /// </summary>
+    public QuestStepBuilder<TStage> WhenSubNeverStarted<TSub>(string? failureReply = null) where TSub : struct, Enum
+        => AppendGuard(ctx => ctx.HasNoSub<TSub>(), failureReply);
+
+    /// <summary>Set the sub-stage of type <typeparamref name="TSub" /> on Source's Trackers.Enums.</summary>
+    public QuestStepBuilder<TStage> AdvanceSub<TSub>(TSub value) where TSub : struct, Enum
+        => Append(ctx => ctx.AdvanceSub(value));
+
+    /// <summary>Remove any stored value of type <typeparamref name="TSub" /> from Source's Trackers.Enums.</summary>
+    public QuestStepBuilder<TStage> ClearSub<TSub>() where TSub : struct, Enum
+        => Append(ctx => ctx.ClearSub<TSub>());
+
+    /// <summary>
+    /// Maps the current sub-stage of type <typeparamref name="TSub" /> to a dialog key and Skips
+    /// to it. No-op if the sub-track has never been advanced or the current value is not in
+    /// <paramref name="routes" />.
+    /// </summary>
+    public QuestStepBuilder<TStage> RouteBySub<TSub>(IReadOnlyDictionary<TSub, string> routes) where TSub : struct, Enum
+    {
+        Operations.Add(ctx =>
+        {
+            if (!ctx.TryGetSub<TSub>(out var current))
+                return true;
+
+            if (!routes.TryGetValue(current, out var key))
+                return true;
+
+            ctx.Subject?.Reply(ctx.Source, "Skip", key);
+
             return true;
         });
 
@@ -266,6 +320,16 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     public QuestStepBuilder<TStage> RequireItem(string templateKey, int count, string? failureReply = null)
         => AppendGuard(ctx => ctx.HasItem(templateKey, count), failureReply);
 
+    /// <summary>
+    /// Halt the chain unless the source has at least <paramref name="count" /> of
+    /// <paramref name="templateKey" /> in inventory, or — when <paramref name="count" /> is 1 —
+    /// the item is currently equipped. Use for deliverables that the player may have equipped
+    /// before reaching the turn-in NPC. See <see cref="QuestContext{TStage}.HasItemOrEquipped" />
+    /// for the count-vs-equipment semantics.
+    /// </summary>
+    public QuestStepBuilder<TStage> RequireItemOrEquipped(string templateKey, int count, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasItemOrEquipped(templateKey, count), failureReply);
+
     /// <summary>Halt the chain unless the source has every (templateKey, count) pair in <paramref name="items" />.</summary>
     public QuestStepBuilder<TStage> RequireItems(params (string TemplateKey, int Count)[] items)
         => AppendGuard(ctx => items.All(i => ctx.HasItem(i.TemplateKey, i.Count)));
@@ -281,6 +345,16 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     /// <summary>Halt the chain unless the source can give up <paramref name="count" /> of <paramref name="templateKey" />; otherwise consume.</summary>
     public QuestStepBuilder<TStage> ConsumeItem(string templateKey, int count)
         => AppendGuard(ctx => ctx.TryConsumeItem(templateKey, count));
+
+    /// <summary>
+    /// Halt the chain unless the source can give up <paramref name="count" /> of
+    /// <paramref name="templateKey" /> from inventory, or — when <paramref name="count" /> is 1 —
+    /// has the item equipped. On success, removes from whichever side fulfilled the requirement.
+    /// See <see cref="QuestContext{TStage}.TryConsumeItemOrEquipped" /> for the
+    /// count-vs-equipment semantics.
+    /// </summary>
+    public QuestStepBuilder<TStage> ConsumeItemOrEquipped(string templateKey, int count)
+        => AppendGuard(ctx => ctx.TryConsumeItemOrEquipped(templateKey, count));
 
     /// <summary>
     /// Atomic batch consume. Pre-checks every (templateKey, count) pair against the source's
@@ -310,8 +384,14 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     /// <summary>Award the source <paramref name="amount" /> experience via the active IExperienceDistributionScript.</summary>
     public QuestStepBuilder<TStage> GiveExperience(long amount) => Append(ctx => ctx.GiveExperience(amount));
 
+    /// <summary>Award the source <paramref name="amount" /> ability experience via the active IAbilityDistributionScript.</summary>
+    public QuestStepBuilder<TStage> GiveAbility(long amount) => Append(ctx => ctx.GiveAbility(amount));
+
     /// <summary>Add <paramref name="amount" /> gold to the source. Chain continues even if TryGiveGold returns false.</summary>
     public QuestStepBuilder<TStage> GiveGold(int amount) => Append(ctx => ctx.GiveGold(amount));
+
+    /// <summary>Add <paramref name="amount" /> game points to the source. Chain continues unconditionally.</summary>
+    public QuestStepBuilder<TStage> GiveGamePoints(int amount) => Append(ctx => ctx.GiveGamePoints(amount));
 
     /// <summary>Add (or accumulate) a LegendMark on the source's Legend. Time stamp is GameTime.Now.</summary>
     public QuestStepBuilder<TStage> GiveLegendMark(string text, string key, MarkIcon icon, MarkColor color)
@@ -465,6 +545,22 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
 
             if (!ctx.Subject.HasOption(text))
                 ctx.Subject.AddOption(text, dialogKey);
+        });
+
+    /// <summary>
+    /// Insert a dialog option pointing to <paramref name="dialogKey" /> at <paramref name="index" />
+    /// if not already present (default index 0 places the option at the top of the menu — useful
+    /// when injecting a quest hook into an NPC's pre-existing main menu). Chain continues. No-ops
+    /// if ctx.Subject is null.
+    /// </summary>
+    public QuestStepBuilder<TStage> InsertOption(string text, string dialogKey, int index = 0)
+        => Append(ctx =>
+        {
+            if (ctx.Subject is null)
+                return;
+
+            if (!ctx.Subject.HasOption(text))
+                ctx.Subject.InsertOption(index, text, dialogKey);
         });
 
     /// <summary>

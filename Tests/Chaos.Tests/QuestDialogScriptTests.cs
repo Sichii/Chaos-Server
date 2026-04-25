@@ -55,7 +55,7 @@ public sealed class QuestDialogScriptTests
 
         protected override void Configure(QuestBuilder<FakeStage> q)
             => q.OnNext("foo")
-                .When(FakeStage.None)
+                .WhenAt(FakeStage.None)
                 .Advance(FakeStage.Started);
     }
 
@@ -66,7 +66,7 @@ public sealed class QuestDialogScriptTests
 
         protected override void Configure(QuestBuilder<FakeStage> q)
             => q.OnNext("foo")
-                .When(FakeStage.Done) // halts immediately, aisling is at None
+                .WhenAt(FakeStage.Done) // halts immediately, aisling is at None
                 .Run((_, _) => Calls.Add("should_not_run"));
     }
 
