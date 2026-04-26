@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>QuestBuilder | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="QuestBuilder | Chaos Server Docs ">
+      
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/develop/docs/articles/QuestBuilder.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="questbuilder">QuestBuilder</h1>
+
+<p>The <code>QuestBuilder</code> is a fluent framework for declaring quests as a tree of dialog reactions and operation chains.
+It replaces hand-rolled <code>IDialogScript</code> implementations for quest content with a declarative configuration that runs
+inside the dialog lifecycle. The framework can be found under <code>Chaos.Utilities.QuestHelper</code>.</p>
+<p>A quest is a subclass of <a class="xref" href="../api/Chaos.Utilities.QuestHelper.Quest-1.html">Quest<tstage></tstage></a>, where <code>TStage</code> is a fork-defined
+enum describing the named stages the player can be in. Stage values are persisted on the player's
+<code>Trackers.Enums</code>, so progression survives across sessions automatically.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Quest subclasses are auto-discovered by
+<a class="xref" href="../api/Chaos.Services.Quests.QuestRegistry.html">QuestRegistry</a> at startup — there is no manual
+registration step. Any non-abstract subclass of <code>Quest</code> in any loaded assembly is instantiated, configured, and
+indexed by its dialog handlers.</p>
+</div>
+<h3 id="defining-a-quest">Defining a Quest</h3>
+<p>Subclass <code>Quest&lt;TStage&gt;</code>, expose a <code>Key</code>, and override <code>Configure</code> to register dialog handlers via the supplied
+<a class="xref" href="../api/Chaos.Utilities.QuestHelper.QuestBuilder-1.html">QuestBuilder<tstage></tstage></a>:</p>
+<pre><code class="lang-csharp">public enum LostRingStage { Start, Accepted, Returned, Complete }
+
+public sealed class LostRingQuest : Quest&lt;LostRingStage&gt;
+{
+    public override string Key =&gt; &quot;lost_ring&quot;;
+
+    protected override void Configure(QuestBuilder&lt;LostRingStage&gt; q)
+    {
+        q.OnNext(&quot;rosa_initial&quot;)
+            .WhenNeverStarted(&quot;Hello, traveler.&quot;)
+            .Advance(LostRingStage.Accepted)
+            .Reply(&quot;Please find my ring near the river.&quot;);
+
+        q.OnNext(&quot;rosa_initial&quot;)
+            .WhenAt(LostRingStage.Accepted, &quot;Have you found my ring yet?&quot;)
+            .RequireItem(&quot;ring&quot;, count: 1, &quot;I don't see it on you.&quot;)
+            .ConsumeItem(&quot;ring&quot;, count: 1)
+            .Advance(LostRingStage.Returned)
+            .GiveExperience(5_000)
+            .GiveGold(500)
+            .Reply(&quot;Thank you so much!&quot;);
+    }
+}
+</code></pre>
+<div class="TIP">
+<h5>Tip</h5>
+<p><code>Configure</code> runs once per quest at registry startup, building an immutable handler table. Per-player evaluation
+happens at dialog time on a fresh <a class="xref" href="../api/Chaos.Utilities.QuestHelper.QuestContext-1.html">QuestContext</a> constructed by
+the framework — your handler chains hold no per-player state.</p>
+</div>
+<h3 id="dialog-phases">Dialog Phases</h3>
+<p><code>QuestBuilder&lt;TStage&gt;</code> exposes one method per dialog lifecycle phase. The phase determines <em>when</em> during the dialog
+flow your chain runs:</p>
+<ul>
+<li><strong><code>OnDisplaying(templateKey)</code></strong> — runs as the dialog is about to be sent. Use this for option injection
+(<code>ShowOption</code>) and text templating. State mutations placed here fire <em>before</em> the player sees the dialog and are
+almost always wrong.</li>
+<li><strong><code>OnDisplayed(templateKey)</code></strong> — runs after the dialog has been sent. Rarely the right phase; kept for parity with
+<a class="xref" href="../api/Chaos.Scripting.DialogScripts.Abstractions.IDialogScript.html">IDialogScript.OnDisplayed</a>.</li>
+<li><strong><code>OnNext(templateKey)</code></strong> — runs when the player advances the dialog (Next button, option click, menu selection).
+This is the commit phase — <code>Advance</code>, <code>GiveItem</code>, <code>ConsumeItem</code>, <code>GiveExperience</code>, and other state mutations belong
+here.</li>
+<li><strong><code>OnPrevious(templateKey)</code></strong> — runs when the player backs up via the Previous button on a Normal dialog.</li>
+</ul>
+<p>Multiple quests can register handlers against the same <code>(templateKey, phase)</code> pair; all are evaluated in registration
+order.</p>
+<h3 id="step-operations">Step Operations</h3>
+<p>Each phase method returns a <a class="xref" href="../api/Chaos.Utilities.QuestHelper.QuestStepBuilder-1.html">QuestStepBuilder<tstage></tstage></a> that
+records an <em>operation chain</em>. Operations are evaluated in order; each returns <code>true</code> to continue the chain or <code>false</code>
+to halt (e.g., a guard failed). Operations fall into the categories below.</p>
+<ul>
+<li><strong>Stage</strong> — <code>WhenAt(stage)</code>, <code>WhenNeverStarted()</code>, <code>Advance(stage)</code>, <code>ClearStage()</code>, <code>RouteByStage(map)</code>.</li>
+<li><strong>Flags</strong> — <code>SetFlag</code>, <code>ClearFlag</code>, <code>RequireFlag</code>, <code>RequireAllFlags</code>, <code>RequireAnyFlag</code>. Each method has overloads
+for both regular <code>[Flags]</code> enums (stored in <code>Trackers.Flags</code>) and <code>BigFlagsValue&lt;TMarker&gt;</code> values (stored in
+<code>Trackers.BigFlags</code>); the compiler picks the right overload by argument type.</li>
+<li><strong>Counters</strong> — <code>IncrementCounter</code>, <code>RequireCount</code>, <code>ClearCounter</code>, plus <code>RequireKills</code> / <code>ClearKills</code> for
+monster-template kill counters.</li>
+<li><strong>Cooldowns</strong> — <code>StartCooldown(key, duration)</code>, <code>RequireCooldownExpired(key)</code>. The string-template overload of the
+latter accepts <code>&quot;{remaining}&quot;</code> and substitutes a readable remaining-time string into the failure reply.</li>
+<li><strong>Items</strong> — <code>GiveItem</code>, <code>GiveItems</code>, <code>RequireItem</code>, <code>RequireItems</code>, <code>ConsumeItem</code>, <code>ConsumeItems</code>. The batch
+<code>ConsumeItems</code> is atomic: every required <code>(templateKey, count)</code> pair is verified before any are removed.</li>
+<li><strong>Rewards</strong> — <code>GiveExperience</code>, <code>GiveGold</code>, <code>GiveLegendMark</code>, <code>GiveSkill</code>, <code>GiveSpell</code>, <code>RemoveSkill</code>,
+<code>RemoveSpell</code>.</li>
+<li><strong>Class / Level / Gender guards</strong> — <code>RequireLevel(min, max)</code>, <code>RequireMaster</code>, <code>RequireFullGrandmaster</code>,
+<code>RequirePureMaster(baseClass)</code>, <code>RequireClass(baseClass)</code>, <code>RequireGender(gender)</code>.</li>
+<li><strong>Communication</strong> — <code>Reply(text)</code> and <code>Skip(dialogKey)</code> halt the chain after sending; <code>ShowOption(text, dialogKey)</code>
+injects an option without halting; <code>SendOrangeBar(text)</code> sends an active message.</li>
+<li><strong>Teleports</strong> — <code>Teleport(mapKey, x, y)</code>, <code>Teleport(mapKey, rect)</code> (random walkable point), and <code>GroupTeleport</code>
+variants that move the player's full party.</li>
+<li><strong>Escape hatch</strong> — <code>Run(action)</code> invokes an arbitrary <code>Action&lt;Aisling, QuestContext&lt;TStage&gt;&gt;</code> and continues the
+chain.</li>
+</ul>
+<h3 id="branching">Branching</h3>
+<p><code>Branch(predicate, configure)</code> runs a sub-chain only when its predicate matches; the outer chain continues regardless.
+A trailing <code>Otherwise(configure)</code> runs only if no preceding <code>Branch</code> on the same chain matched, giving an if/else-if
+shape:</p>
+<pre><code class="lang-csharp">q.OnDisplaying(&quot;riddle_master_initial&quot;)
+    .WhenAt(RiddleStage.Asked)
+    .Branch(
+        predicate: c =&gt; c.Source.UserStatSheet.BaseClass == BaseClass.Wizard,
+        configure: sb =&gt; sb.ShowOption(&quot;Answer with magic&quot;, &quot;riddle_master_wizard&quot;))
+    .Branch(
+        predicate: c =&gt; c.Source.UserStatSheet.BaseClass == BaseClass.Warrior,
+        configure: sb =&gt; sb.ShowOption(&quot;Answer with might&quot;, &quot;riddle_master_warrior&quot;))
+    .Otherwise(
+        configure: sb =&gt; sb.ShowOption(&quot;Answer plainly&quot;, &quot;riddle_master_default&quot;));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>A <code>Branch</code> predicate matching does <em>not</em> halt the outer chain — only a guard or <code>Reply</code>/<code>Skip</code> inside the sub-chain
+can. This makes branches composable: an <code>OnDisplaying</code> chain can inject several class-specific options without any
+single match preempting the rest of the page setup.</p>
+</div>
+<h3 id="failure-replies">Failure Replies</h3>
+<p>Every guard method (<code>When</code>, <code>RequireItem</code>, <code>RequireFlag</code>, <code>RequireLevel</code>, etc.) accepts an optional <code>failureReply</code>
+argument. When provided, a failed guard sends a Dialog <code>Reply</code> with that message before halting. When omitted, the
+guard halts silently — useful when a different handler on the same dialog template is expected to fire instead.</p>
+<pre><code class="lang-csharp">q.OnNext(&quot;guard_gate_initial&quot;)
+    .RequireLevel(min: 50, max: int.MaxValue, failureReply: &quot;You are too inexperienced.&quot;)
+    .RequireItem(&quot;permit&quot;, count: 1, failureReply: &quot;Where is your permit?&quot;)
+    .Skip(&quot;guard_gate_admit&quot;);
+</code></pre>
+<h3 id="quest-context">Quest Context</h3>
+<p>Predicates passed to <code>Branch</code> and callbacks passed to <code>Run</code> receive a
+<a class="xref" href="../api/Chaos.Utilities.QuestHelper.QuestContext-1.html">QuestContext<tstage></tstage></a> with these primary members:</p>
+<ul>
+<li><strong><code>Source</code></strong> — the <code>Aisling</code> interacting with the dialog.</li>
+<li><strong><code>Subject</code></strong> — the active <code>Dialog?</code> (null if the chain runs outside a dialog flow).</li>
+<li><strong><code>CurrentStage</code></strong> — the player's current <code>TStage</code> value, kept in sync with <code>Trackers.Enums</code>.</li>
+<li><strong><code>NeverStarted</code></strong> — true when no value of <code>TStage</code> has ever been written for this player.</li>
+<li><strong><code>IsAt(stage)</code></strong>, <code>HasFlag</code>, <code>HasItem</code>, <code>HasCount</code>, <code>HasActiveCooldown(key, out remaining)</code> — the same predicates
+used internally by the corresponding <code>Require*</code> guards, available for custom <code>Branch</code> conditions.</li>
+<li><strong><code>Services</code></strong> — the <code>IServiceProvider</code> used to lazy-resolve framework dependencies (<code>IItemFactory</code>,
+<code>ISkillFactory</code>, <code>ISpellFactory</code>, <code>ISimpleCache&lt;MapInstance&gt;</code>).</li>
+</ul>
+<div class="TIP">
+<h5>Tip</h5>
+<p>For most quests, every gating concern is expressible with the named guards. Reach for <code>Run</code> and bare <code>Branch</code>
+predicates only for behavior that genuinely doesn't fit — keeping operations on the named API makes a quest's
+requirements legible to anyone reading its <code>Configure</code>.</p>
+</div>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/develop/docs/articles/QuestBuilder.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

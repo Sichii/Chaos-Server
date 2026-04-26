@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class QuestContext&lt;TStage&gt; | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class QuestContext&lt;TStage&gt; | Chaos Server Docs ">
+      
+      <meta name="description" content="Per-execution context passed to predicates and Run callbacks.">
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/develop/apiSpec/new?filename=Chaos_Utilities_QuestHelper_QuestContext_1.md&amp;value=---%0Auid%3A%20Chaos.Utilities.QuestHelper.QuestContext%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Utilities.QuestHelper.QuestContext`1">
+
+
+
+  <h1 id="Chaos_Utilities_QuestHelper_QuestContext_1" data-uid="Chaos.Utilities.QuestHelper.QuestContext`1" class="text-break">
+Class QuestContext&lt;TStage&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/develop/Chaos/Utilities/QuestHelper/QuestContext.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Utilities.html">Utilities</a>.<a class="xref" href="Chaos.Utilities.QuestHelper.html">QuestHelper</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Per-execution context passed to predicates and Run callbacks.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class QuestContext&lt;TStage&gt; : QuestContext where TStage : struct, Enum</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TStage</code></dt>
+    <dd></dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.html">QuestContext</a></div>
+      <div><span class="xref">QuestContext&lt;TStage&gt;</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.Source.html#Chaos_Utilities_QuestHelper_QuestContext_Source">QuestContext.Source</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.Subject.html#Chaos_Utilities_QuestHelper_QuestContext_Subject">QuestContext.Subject</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.OptionIndex.html#Chaos_Utilities_QuestHelper_QuestContext_OptionIndex">QuestContext.OptionIndex</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.Services.html#Chaos_Utilities_QuestHelper_QuestContext_Services">QuestContext.Services</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.WhenAtSub.html#Chaos_Utilities_QuestHelper_QuestContext_WhenAtSub__1___0_">QuestContext.WhenAtSub&lt;TSub&gt;(TSub)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.HasNoSub.html#Chaos_Utilities_QuestHelper_QuestContext_HasNoSub__1">QuestContext.HasNoSub&lt;TSub&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.AdvanceSub.html#Chaos_Utilities_QuestHelper_QuestContext_AdvanceSub__1___0_">QuestContext.AdvanceSub&lt;TSub&gt;(TSub)</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.ClearSub.html#Chaos_Utilities_QuestHelper_QuestContext_ClearSub__1">QuestContext.ClearSub&lt;TSub&gt;()</a>
+    </div>
+    <div>
+      <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.TryGetSub.html#Chaos_Utilities_QuestHelper_QuestContext_TryGetSub__1___0__">QuestContext.TryGetSub&lt;TSub&gt;(out TSub)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.CurrentStage.html#Chaos_Utilities_QuestHelper_QuestContext_1_CurrentStage">CurrentStage</a></dt>
+    <dd></dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.NeverStarted.html#Chaos_Utilities_QuestHelper_QuestContext_1_NeverStarted">NeverStarted</a></dt>
+    <dd><p>True if Source's Trackers.Enums has no value stored for <code class="typeparamref">TStage</code>.
+Distinct from <code>CurrentStage == default</code>, which is also true when <code>default(TStage)</code>
+is the explicitly stored value.</p>
+</dd>
+  </dl>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.Advance.html#Chaos_Utilities_QuestHelper_QuestContext_1_Advance__0_">Advance(TStage)</a></dt>
+    <dd><p>Set the stage in Source's Trackers.Enums and update CurrentStage.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.ClearCounter.html#Chaos_Utilities_QuestHelper_QuestContext_1_ClearCounter_System_String_">ClearCounter(string)</a></dt>
+    <dd><p>Remove the counter at <code class="paramref">key</code> from Source's Trackers.Counters.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.ClearFlag.html#Chaos_Utilities_QuestHelper_QuestContext_1_ClearFlag__1_Chaos_Common_CustomTypes_BigFlagsValue___0__">ClearFlag&lt;TMarker&gt;(BigFlagsValue&lt;TMarker&gt;)</a></dt>
+    <dd><p>Clear the given big flag from Source's Trackers.BigFlags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.ClearFlag.html#Chaos_Utilities_QuestHelper_QuestContext_1_ClearFlag__1___0_">ClearFlag&lt;TFlag&gt;(TFlag)</a></dt>
+    <dd><p>Clear the given enum flag from Source's Trackers.Flags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.ClearStage.html#Chaos_Utilities_QuestHelper_QuestContext_1_ClearStage">ClearStage()</a></dt>
+    <dd><p>Remove the TStage value from Source's Trackers.Enums.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.GiveAbility.html#Chaos_Utilities_QuestHelper_QuestContext_1_GiveAbility_System_Int64_">GiveAbility(long)</a></dt>
+    <dd><p>Award <code class="paramref">amount</code> ability experience to Source via the active
+ability distribution script (resolved through <code>FunctionalScriptRegistry</code>).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.GiveExperience.html#Chaos_Utilities_QuestHelper_QuestContext_1_GiveExperience_System_Int64_">GiveExperience(long)</a></dt>
+    <dd><p>Award <code class="paramref">amount</code> experience to Source via the active
+experience distribution script (resolved through <code>FunctionalScriptRegistry</code>).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.GiveGamePoints.html#Chaos_Utilities_QuestHelper_QuestContext_1_GiveGamePoints_System_Int32_">GiveGamePoints(int)</a></dt>
+    <dd><p>Add <code class="paramref">amount</code> game points to Source. There is no cap or distribution script —
+game points are a settable integer counter on <a class="xref" href="Chaos.Models.World.Aisling.html">Aisling</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.GiveGold.html#Chaos_Utilities_QuestHelper_QuestContext_1_GiveGold_System_Int32_">GiveGold(int)</a></dt>
+    <dd><p>Add <code class="paramref">amount</code> gold to Source via <code>TryGiveGold</code>. The chain continues
+even if it fails (e.g. would exceed MaxGoldHeld); use a guard if you need to halt on failure.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.GiveItem.html#Chaos_Utilities_QuestHelper_QuestContext_1_GiveItem_System_String_System_Int32_">GiveItem(string, int)</a></dt>
+    <dd><p>Create a fresh item of <code class="paramref">templateKey</code> via IItemFactory, set its
+Count if greater than 1, and hand it to Source via GiveItemOrSendToBank.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.GiveLegendMark.html#Chaos_Utilities_QuestHelper_QuestContext_1_GiveLegendMark_System_String_System_String_Chaos_DarkAges_Definitions_MarkIcon_Chaos_DarkAges_Definitions_MarkColor_">GiveLegendMark(string, string, MarkIcon, MarkColor)</a></dt>
+    <dd><p>Add a new <a class="xref" href="Chaos.Models.Legend.LegendMark.html">LegendMark</a> with <a class="xref" href="Chaos.Time.GameTime.Now.html#Chaos_Time_GameTime_Now">Now</a> to Source's Legend, or
+accumulate the count if a mark with the same key already exists.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.GiveSkill.html#Chaos_Utilities_QuestHelper_QuestContext_1_GiveSkill_System_String_">GiveSkill(string)</a></dt>
+    <dd><p>Resolve <a class="xref" href="Chaos.Services.Factories.Abstractions.ISkillFactory.html">ISkillFactory</a> from <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.Services.html#Chaos_Utilities_QuestHelper_QuestContext_Services">Services</a>, create a skill
+of <code class="paramref">templateKey</code>, and learn it via <code>ComplexActionHelper.LearnSkill</code>
+(which checks SkillBook capacity).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.GiveSpell.html#Chaos_Utilities_QuestHelper_QuestContext_1_GiveSpell_System_String_System_Nullable_System_Byte__">GiveSpell(string, byte?)</a></dt>
+    <dd><p>Resolve <a class="xref" href="Chaos.Services.Factories.Abstractions.ISpellFactory.html">ISpellFactory</a> from <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext.Services.html#Chaos_Utilities_QuestHelper_QuestContext_Services">Services</a>, create a spell
+of <code class="paramref">templateKey</code>, and learn it via <code>ComplexActionHelper.LearnSpell</code>
+(which checks SpellBook capacity). If <code class="paramref">page</code> is provided and the spell was
+learned, swap it into that slot. If the spell wasn't learned (e.g., capacity full), the
+page placement is silently skipped — quest rewards never gate on placement success.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.GroupTeleport.html#Chaos_Utilities_QuestHelper_QuestContext_1_GroupTeleport_System_String_Chaos_Geometry_Abstractions_IPoint_">GroupTeleport(string, IPoint)</a></dt>
+    <dd><p>Teleport every member of Source's group to <code class="paramref">point</code> on the resolved map.
+If Source has no group, only Source is teleported.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasActiveCooldown.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasActiveCooldown_System_String_System_TimeSpan__">HasActiveCooldown(string, out TimeSpan)</a></dt>
+    <dd><p>True if Source's Trackers.TimedEvents has an active (non-completed) event keyed by
+<code class="paramref">key</code>. When true, <code class="paramref">remaining</code> is set to the event's
+remaining time; otherwise it is <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.timespan.zero">Zero</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasAllFlags.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasAllFlags__1_Chaos_Common_CustomTypes_BigFlagsValue___0__">HasAllFlags&lt;TMarker&gt;(BigFlagsValue&lt;TMarker&gt;)</a></dt>
+    <dd><p>True if every bit in <code class="paramref">combined</code> is set on Source's Trackers.BigFlags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasAllFlags.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasAllFlags__1___0_">HasAllFlags&lt;TFlag&gt;(TFlag)</a></dt>
+    <dd><p>True if every bit in <code class="paramref">combined</code> is set on Source's Trackers.Flags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasAnyFlag.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasAnyFlag__1_Chaos_Common_CustomTypes_BigFlagsValue___0__">HasAnyFlag&lt;TMarker&gt;(BigFlagsValue&lt;TMarker&gt;)</a></dt>
+    <dd><p>True if any bit in <code class="paramref">combined</code> is set on Source's Trackers.BigFlags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasAnyFlag.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasAnyFlag__1___0_">HasAnyFlag&lt;TFlag&gt;(TFlag)</a></dt>
+    <dd><p>True if any bit in <code class="paramref">combined</code> is set on Source's Trackers.Flags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasCount.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasCount_System_String_System_Int32_">HasCount(string, int)</a></dt>
+    <dd><p>True if Source's Trackers.Counters has a counter for <code class="paramref">key</code> at or above <code class="paramref">required</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasFlag.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasFlag__1_Chaos_Common_CustomTypes_BigFlagsValue___0__">HasFlag&lt;TMarker&gt;(BigFlagsValue&lt;TMarker&gt;)</a></dt>
+    <dd><p>Check whether Source's Trackers.BigFlags contains the given big flag value.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasFlag.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasFlag__1___0_">HasFlag&lt;TFlag&gt;(TFlag)</a></dt>
+    <dd><p>Check whether Source's Trackers.Flags contains the given enum flag.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasGold.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasGold_System_Int32_">HasGold(int)</a></dt>
+    <dd><p>True if Source's <code>Gold</code> is at least <code class="paramref">amount</code>. Pure read — does not
+emit any client message.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasItem.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasItem_System_String_System_Int32_">HasItem(string, int)</a></dt>
+    <dd><p>True if Source's Inventory contains at least <code class="paramref">count</code> of the item
+identified by <code class="paramref">templateKey</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasItemOrEquipped.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasItemOrEquipped_System_String_System_Int32_">HasItemOrEquipped(string, int)</a></dt>
+    <dd><p>True if Source's Inventory has at least <code class="paramref">count</code> of <code class="paramref">templateKey</code>,
+or Source's Equipment contains at least one item with that template key. Use for deliverables
+that can be turned in either still in the bag or already worn (e.g. a quest bouquet that the
+player equipped before reaching the turn-in NPC).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.IncrementCounter.html#Chaos_Utilities_QuestHelper_QuestContext_1_IncrementCounter_System_String_System_Int32_">IncrementCounter(string, int)</a></dt>
+    <dd><p>Increment Source's Trackers.Counters for <code class="paramref">key</code> by <code class="paramref">by</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.RemoveSkill.html#Chaos_Utilities_QuestHelper_QuestContext_1_RemoveSkill_System_String_">RemoveSkill(string)</a></dt>
+    <dd><p>Remove the skill matching <code class="paramref">templateKey</code> from Source's SkillBook.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.RemoveSpell.html#Chaos_Utilities_QuestHelper_QuestContext_1_RemoveSpell_System_String_">RemoveSpell(string)</a></dt>
+    <dd><p>Remove the spell matching <code class="paramref">templateKey</code> from Source's SpellBook.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.SetFlag.html#Chaos_Utilities_QuestHelper_QuestContext_1_SetFlag__1_Chaos_Common_CustomTypes_BigFlagsValue___0__">SetFlag&lt;TMarker&gt;(BigFlagsValue&lt;TMarker&gt;)</a></dt>
+    <dd><p>Set the given big flag on Source's Trackers.BigFlags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.SetFlag.html#Chaos_Utilities_QuestHelper_QuestContext_1_SetFlag__1___0_">SetFlag&lt;TFlag&gt;(TFlag)</a></dt>
+    <dd><p>Set the given enum flag on Source's Trackers.Flags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.StartCooldown.html#Chaos_Utilities_QuestHelper_QuestContext_1_StartCooldown_System_String_System_TimeSpan_">StartCooldown(string, TimeSpan)</a></dt>
+    <dd><p>Start an auto-consuming timed event keyed by <code class="paramref">key</code> on Source's
+Trackers.TimedEvents. Re-addable: completed AutoConsume events with the same key are
+pre-cleaned by <code>TimedEventCollection.AddEvent</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.Teleport.html#Chaos_Utilities_QuestHelper_QuestContext_1_Teleport_System_String_Chaos_Geometry_Abstractions_IPoint_">Teleport(string, IPoint)</a></dt>
+    <dd><p>Resolve the destination map via <a class="xref" href="Chaos.Storage.Abstractions.ISimpleCache-1.html">ISimpleCache&lt;TResult&gt;</a> and traverse
+Source to <code class="paramref">point</code> on it.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.TryConsumeGold.html#Chaos_Utilities_QuestHelper_QuestContext_1_TryConsumeGold_System_Int32_">TryConsumeGold(int)</a></dt>
+    <dd><p>Attempt to remove <code class="paramref">amount</code> gold from Source via <code>TryTakeGold</code>.
+Returns false if Source does not have enough; otherwise removes it and returns true.
+On the failure path, <code>TryTakeGold</code> sends a system &quot;not enough gold&quot; orange-bar
+message; gate with <a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.HasGold.html#Chaos_Utilities_QuestHelper_QuestContext_1_HasGold_System_Int32_">HasGold(int)</a> first if a quest-specific reply is preferred.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.TryConsumeItem.html#Chaos_Utilities_QuestHelper_QuestContext_1_TryConsumeItem_System_String_System_Int32_">TryConsumeItem(string, int)</a></dt>
+    <dd><p>Attempt to remove <code class="paramref">count</code> of the item identified by
+<code class="paramref">templateKey</code> from Source's Inventory. Returns false if the source
+does not have enough; otherwise removes them and returns true.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.TryConsumeItemOrEquipped.html#Chaos_Utilities_QuestHelper_QuestContext_1_TryConsumeItemOrEquipped_System_String_System_Int32_">TryConsumeItemOrEquipped(string, int)</a></dt>
+    <dd><p>Consume that prefers the inventory and falls back to Equipment when <code class="paramref">count</code>
+is 1. Returns false (consuming nothing) if neither side can satisfy the requirement.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestContext-1.WhenAt.html#Chaos_Utilities_QuestHelper_QuestContext_1_WhenAt__0_">WhenAt(TStage)</a></dt>
+    <dd><p>True if Source's Trackers.Enums currently holds the given stage value.</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/develop/Chaos/Utilities/QuestHelper/QuestContext.cs/#L93" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,299 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SkillTemplateSchema",
+  "definitions": {
+    "LearningRequirementsSchema": {
+      "type": "object",
+      "description": "Represents the serializable schema of the requirements of an ability\n            ",
+      "additionalProperties": false,
+      "properties": {
+        "ItemRequirements": {
+          "type": "array",
+          "description": "The items and their amounts required to learn this ability\n            ",
+          "items": {
+            "$ref": "#/definitions/ItemRequirementSchema"
+          }
+        },
+        "PrerequisiteSkills": {
+          "type": "array",
+          "description": "The skills that must be learned before this ability can be learned\n            ",
+          "items": {
+            "$ref": "#/definitions/AbilityRequirementSchema"
+          }
+        },
+        "PrerequisiteSpells": {
+          "type": "array",
+          "description": "The spells that must be learned before this ability can be learned\n            ",
+          "items": {
+            "$ref": "#/definitions/AbilityRequirementSchema"
+          }
+        },
+        "RequiredGold": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "The amount of gold required to learn this ability\n            ",
+          "format": "int32"
+        },
+        "RequiredStats": {
+          "description": "The attributes required to learn this skill\n            ",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/StatsSchema"
+            }
+          ]
+        }
+      }
+    },
+    "ItemRequirementSchema": {
+      "type": "object",
+      "description": "Represents the serializable schema of the requirements of an item needed to learn an ability\n            ",
+      "additionalProperties": false,
+      "properties": {
+        "AmountRequired": {
+          "type": "integer",
+          "description": "The amount of this item required to learn the ability\n            ",
+          "format": "int32"
+        },
+        "ItemTemplateKey": {
+          "type": "string",
+          "description": "The key of the item template required to learn the ability\n            "
+        }
+      }
+    },
+    "AbilityRequirementSchema": {
+      "type": "object",
+      "description": "Represents the serializable schema of a prerequisite ability requirement\n            ",
+      "additionalProperties": false,
+      "properties": {
+        "Level": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "If specified, the level of the prerequisite ability. If not specified, uses the max level of the prerequisite\nability\n            ",
+          "format": "byte"
+        },
+        "TemplateKey": {
+          "type": "string",
+          "description": "The key of the prerequisite ability\n            "
+        }
+      }
+    },
+    "StatsSchema": {
+      "type": "object",
+      "description": "Represents the serializable schema of stats\n            ",
+      "additionalProperties": false,
+      "properties": {
+        "Con": {
+          "type": "integer",
+          "description": "Constitution\n            ",
+          "format": "int32"
+        },
+        "Dex": {
+          "type": "integer",
+          "description": "Dexterity\n            ",
+          "format": "int32"
+        },
+        "Int": {
+          "type": "integer",
+          "description": "Intelligence\n            ",
+          "format": "int32"
+        },
+        "Str": {
+          "type": "integer",
+          "description": "Strength\n            ",
+          "format": "int32"
+        },
+        "Wis": {
+          "type": "integer",
+          "description": "Wisdom\n            ",
+          "format": "int32"
+        }
+      }
+    },
+    "PanelEntityTemplateSchema": {
+      "type": "object",
+      "description": "Represents the serializable schema for a panel object template\n            ",
+      "x-abstract": true,
+      "additionalProperties": false,
+      "properties": {
+        "AbilityLevel": {
+          "type": "integer",
+          "description": "The ability level required to use this entity\n            ",
+          "format": "int32"
+        },
+        "AdvClass": {
+          "description": "Defaults to null\n\nIf specified, this is the advanced class required to use this entity\n            ",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/AdvClass"
+            }
+          ]
+        },
+        "Class": {
+          "description": "Defaults to null\n\nIf specified, this is the base class required to use this entity\n            ",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/BaseClass"
+            }
+          ]
+        },
+        "CooldownMs": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Defaults to null\n\nIf specified, any on-use effect of this object will use this cooldown\n            ",
+          "format": "int32"
+        },
+        "Description": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Defaults to null\n\nA brief description of this entity\n            "
+        },
+        "Level": {
+          "type": "integer",
+          "description": "The level required to use this entity\n            ",
+          "format": "int32"
+        },
+        "Name": {
+          "type": "string",
+          "description": "The base name of the entity\n            "
+        },
+        "PanelSprite": {
+          "type": "integer",
+          "description": "The sprite id used to display the entity in it's respective panel (no offset)\n            "
+        },
+        "RequiresMaster": {
+          "type": "boolean",
+          "description": "Whether or not this entity requires you to be a master\n            "
+        },
+        "ScriptKeys": {
+          "type": "array",
+          "description": "A collection of names of scripts to attach to this object by default. The name of a script is just the name of the\nclass without \"Script\" at the end.\n            ",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ScriptVars": {
+          "type": "object",
+          "description": "A collection of key-value pairs of key-value pairs\n\nEach script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of\npropertyName-Value pairs\n            ",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/KeyValuePairOfStringAndJsonElement"
+            }
+          }
+        },
+        "TemplateKey": {
+          "type": "string",
+          "description": "A unique id specific to this template. This must match the file name\n            "
+        }
+      }
+    },
+    "AdvClass": {
+      "type": "string",
+      "description": "A byte representing the 'medenia class' of an aisling. Used in many places.\n            ",
+      "x-enumNames": [
+        "None",
+        "Gladiator",
+        "Druid",
+        "Archer",
+        "Bard",
+        "Summoner"
+      ],
+      "enum": [
+        "None",
+        "Gladiator",
+        "Druid",
+        "Archer",
+        "Bard",
+        "Summoner"
+      ]
+    },
+    "BaseClass": {
+      "type": "string",
+      "description": "A byte representing the 'temuair class' of an aisling. Used in many places.\n            ",
+      "x-enumNames": [
+        "Peasant",
+        "Warrior",
+        "Rogue",
+        "Wizard",
+        "Priest",
+        "Monk",
+        "Diacht"
+      ],
+      "enum": [
+        "Peasant",
+        "Warrior",
+        "Rogue",
+        "Wizard",
+        "Priest",
+        "Monk",
+        "Diacht"
+      ]
+    },
+    "KeyValuePairOfStringAndJsonElement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Key": {
+          "type": "string"
+        },
+        "Value": {}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "#/definitions/PanelEntityTemplateSchema"
+    },
+    {
+      "type": "object",
+      "description": "Represents the serializable schema for a skill template\n            ",
+      "additionalProperties": false,
+      "properties": {
+        "IsAssail": {
+          "type": "boolean",
+          "description": "Whether or not the skill is an assail and should be used when spacebar is pressed\n\nAssail cooldowns are handled by AssailIntervalMs and AtkSpeedPct\n            "
+        },
+        "LearningRequirements": {
+          "description": "Defaults to null\n\nIf set, these are the requirements for the skill to be learned\n\nIf null, the skill can't be learned\n            ",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/LearningRequirementsSchema"
+            }
+          ]
+        },
+        "LevelsUp": {
+          "type": "boolean",
+          "description": "Whether or not the spell is capable of leveling up. If false, the spell will start at level 100\n            "
+        },
+        "MaxLevel": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Defaults to null\n\nIf set, this is the maximum level the spell can be leveled up to\n            ",
+          "format": "byte"
+        }
+      }
+    }
+  ]
+}
