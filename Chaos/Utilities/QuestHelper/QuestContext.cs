@@ -313,6 +313,20 @@ public sealed class QuestContext<TStage> : QuestContext where TStage : struct, E
     public void GiveGold(int amount) => Source.TryGiveGold(amount);
 
     /// <summary>
+    /// True if Source's <c>Gold</c> is at least <paramref name="amount" />. Pure read — does not
+    /// emit any client message.
+    /// </summary>
+    public bool HasGold(int amount) => Source.Gold >= amount;
+
+    /// <summary>
+    /// Attempt to remove <paramref name="amount" /> gold from Source via <c>TryTakeGold</c>.
+    /// Returns false if Source does not have enough; otherwise removes it and returns true.
+    /// On the failure path, <c>TryTakeGold</c> sends a system "not enough gold" orange-bar
+    /// message; gate with <see cref="HasGold" /> first if a quest-specific reply is preferred.
+    /// </summary>
+    public bool TryConsumeGold(int amount) => Source.TryTakeGold(amount);
+
+    /// <summary>
     /// Add <paramref name="amount" /> game points to Source. There is no cap or distribution script —
     /// game points are a settable integer counter on <see cref="Aisling" />.
     /// </summary>

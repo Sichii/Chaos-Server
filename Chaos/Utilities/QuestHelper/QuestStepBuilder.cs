@@ -390,6 +390,23 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     /// <summary>Add <paramref name="amount" /> gold to the source. Chain continues even if TryGiveGold returns false.</summary>
     public QuestStepBuilder<TStage> GiveGold(int amount) => Append(ctx => ctx.GiveGold(amount));
 
+    /// <summary>
+    /// Halt the chain unless Source has at least <paramref name="amount" /> gold. Pure check —
+    /// does not consume. When <paramref name="failureReply" /> is provided, the failure path
+    /// also sends a Reply.
+    /// </summary>
+    public QuestStepBuilder<TStage> RequireGold(int amount, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasGold(amount), failureReply);
+
+    /// <summary>
+    /// Halt the chain unless Source can give up <paramref name="amount" /> gold; otherwise consume.
+    /// Note: on failure the underlying <c>TryTakeGold</c> sends a system "not enough gold"
+    /// orange-bar message. To present a quest-specific reply instead, gate with
+    /// <see cref="RequireGold" /> first.
+    /// </summary>
+    public QuestStepBuilder<TStage> ConsumeGold(int amount)
+        => AppendGuard(ctx => ctx.TryConsumeGold(amount));
+
     /// <summary>Add <paramref name="amount" /> game points to the source. Chain continues unconditionally.</summary>
     public QuestStepBuilder<TStage> GiveGamePoints(int amount) => Append(ctx => ctx.GiveGamePoints(amount));
 

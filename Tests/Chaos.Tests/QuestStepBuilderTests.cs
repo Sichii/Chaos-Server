@@ -735,6 +735,87 @@ public sealed class QuestStepBuilderTests
         ctx.WhenAt(WolfStage.Done).Should().BeTrue();
     }
 
+
+    [Test]
+    public void RequireGold_AllowsChain_WhenSufficient()
+    {
+        var ctx = NewContext();
+        ctx.Source.Gold = 250;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireGold(100)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+        ctx.Source.Gold.Should().Be(250);
+    }
+
+    [Test]
+    public void RequireGold_AllowsChain_WhenExactlyEqual()
+    {
+        var ctx = NewContext();
+        ctx.Source.Gold = 100;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireGold(100)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+        ctx.Source.Gold.Should().Be(100);
+    }
+
+    [Test]
+    public void RequireGold_HaltsChain_WhenInsufficient()
+    {
+        var ctx = NewContext();
+        ctx.Source.Gold = 50;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireGold(100)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+        ctx.Source.Gold.Should().Be(50);
+    }
+
+    [Test]
+    public void ConsumeGold_AllowsChain_AndRemovesGold_WhenSufficient()
+    {
+        var ctx = NewContext();
+        ctx.Source.Gold = 250;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeGold(100)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+        ctx.Source.Gold.Should().Be(150);
+    }
+
+    [Test]
+    public void ConsumeGold_HaltsChain_WhenInsufficient()
+    {
+        var ctx = NewContext();
+        ctx.Source.Gold = 50;
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeGold(100)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+        ctx.Source.Gold.Should().Be(50);
+    }
+
     [Test]
     public void GiveLegendMark_AddsToAislingsLegend()
     {
