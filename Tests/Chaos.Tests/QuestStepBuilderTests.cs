@@ -529,49 +529,11 @@ public sealed class QuestStepBuilderTests
     #endregion
 
     #region Counter operations
-    [Test]
-    public void RequireKills_AllowsChain_WhenCountSufficient()
-    {
-        var ctx = NewContext();
-        ctx.Source.Trackers.Counters.AddOrIncrement("wolf", 10);
+    
 
-        var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireKills("wolf", 10)
-               .Advance(WolfStage.Done);
+    
 
-        RunChain(builder, ctx);
-
-        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
-    }
-
-    [Test]
-    public void RequireKills_HaltsChain_WhenCountInsufficient()
-    {
-        var ctx = NewContext();
-        ctx.Source.Trackers.Counters.AddOrIncrement("wolf", 5);
-
-        var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireKills("wolf", 10)
-               .Advance(WolfStage.Done);
-
-        RunChain(builder, ctx);
-
-        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
-    }
-
-    [Test]
-    public void ClearKills_RemovesCounter()
-    {
-        var ctx = NewContext();
-        ctx.Source.Trackers.Counters.AddOrIncrement("wolf", 10);
-
-        var builder = new QuestStepBuilder<WolfStage>();
-        builder.ClearKills("wolf");
-
-        RunChain(builder, ctx);
-
-        ctx.CounterHasValue("wolf", 1).Should().BeFalse();
-    }
+    
 
     [Test]
     public void IncrementCounter_AddsRequestedAmount()
@@ -583,8 +545,8 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.CounterHasValue("wolf", 3).Should().BeTrue();
-        ctx.CounterHasValue("wolf", 4).Should().BeFalse();
+        ctx.CounterGreaterThanOrEqualTo("wolf", 3).Should().BeTrue();
+        ctx.CounterGreaterThanOrEqualTo("wolf", 4).Should().BeFalse();
     }
     #endregion
 
@@ -2060,15 +2022,15 @@ public sealed class QuestStepBuilderTests
     }
     #endregion
 
-    #region RequireCount / ClearCounter
+    #region RequireCountGreaterThanOrEqualTo / ClearCounter
     [Test]
-    public void RequireCount_AllowsChain_WhenCountSufficient()
+    public void RequireCountGreaterThanOrEqualTo_AllowsChain_WhenCountSufficient()
     {
         var ctx = NewContext();
         ctx.Source.Trackers.Counters.AddOrIncrement("herbs", 5);
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireCount("herbs", 3)
+        builder.RequireCountGreaterThanOrEqualTo("herbs", 3)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2077,13 +2039,13 @@ public sealed class QuestStepBuilderTests
     }
 
     [Test]
-    public void RequireCount_HaltsChain_WhenCountInsufficient()
+    public void RequireCountGreaterThanOrEqualTo_HaltsChain_WhenCountInsufficient()
     {
         var ctx = NewContext();
         ctx.Source.Trackers.Counters.AddOrIncrement("herbs", 1);
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireCount("herbs", 10)
+        builder.RequireCountGreaterThanOrEqualTo("herbs", 10)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2102,7 +2064,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.CounterHasValue("herbs", 1).Should().BeFalse();
+        ctx.CounterGreaterThanOrEqualTo("herbs", 1).Should().BeFalse();
     }
     #endregion
 

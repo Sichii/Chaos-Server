@@ -139,10 +139,42 @@ public sealed class QuestContext<TStage> : QuestContext where TStage : struct, E
     public bool HasAnyFlag<TMarker>(BigFlagsValue<TMarker> combined) where TMarker : class
         => FlagDispatch.HasAny(Source, combined);
 
-    // ===== Counter predicate =====
+    // ===== Counter predicates =====
 
-    /// <summary>True if Source's Trackers.Counters has a counter for <paramref name="key" /> at or above <paramref name="required" />.</summary>
-    public bool CounterHasValue(string key, int required) => Source.Trackers.Counters.CounterGreaterThanOrEqualTo(key, required);
+    /// <summary>True if Source's counter for <paramref name="key" /> is at or above <paramref name="value" />. A missing counter is treated as 0.</summary>
+    public bool CounterGreaterThanOrEqualTo(string key, int value) => Source.Trackers.Counters.CounterGreaterThanOrEqualTo(key, value);
+
+    /// <summary>True if Source's counter for <paramref name="key" /> is at or below <paramref name="value" />. A missing counter is treated as 0.</summary>
+    public bool CounterLessThanOrEqualTo(string key, int value)
+    {
+        Source.Trackers.Counters.TryGetValue(key, out var current);
+
+        return current <= value;
+    }
+
+    /// <summary>True if Source's counter for <paramref name="key" /> equals <paramref name="value" />. A missing counter is treated as 0.</summary>
+    public bool CounterEqualTo(string key, int value)
+    {
+        Source.Trackers.Counters.TryGetValue(key, out var current);
+
+        return current == value;
+    }
+
+    /// <summary>True if Source's counter for <paramref name="key" /> is strictly less than <paramref name="value" />. A missing counter is treated as 0.</summary>
+    public bool CounterLessThan(string key, int value)
+    {
+        Source.Trackers.Counters.TryGetValue(key, out var current);
+
+        return current < value;
+    }
+
+    /// <summary>True if Source's counter for <paramref name="key" /> is strictly greater than <paramref name="value" />. A missing counter is treated as 0.</summary>
+    public bool CounterGreaterThan(string key, int value)
+    {
+        Source.Trackers.Counters.TryGetValue(key, out var current);
+
+        return current > value;
+    }
 
     // ===== Cooldown predicate =====
 

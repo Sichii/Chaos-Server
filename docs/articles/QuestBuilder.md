@@ -82,8 +82,7 @@ to halt (e.g., a guard failed). Operations fall into the categories below.
 - **Flags** — `SetFlag`, `ClearFlag`, `RequireFlag`, `RequireAllFlags`, `RequireAnyFlag`. Each method has overloads
   for both regular `[Flags]` enums (stored in `Trackers.Flags`) and `BigFlagsValue<TMarker>` values (stored in
   `Trackers.BigFlags`); the compiler picks the right overload by argument type.
-- **Counters** — `IncrementCounter`, `RequireCount`, `ClearCounter`, plus `RequireKills` / `ClearKills` for
-  monster-template kill counters.
+- **Counters** — `IncrementCounter`, `DecrementCounter`, `SetCounter`, `ClearCounter`, plus `RequireCountGreaterThanOrEqualTo` / `RequireCountLessThanOrEqualTo` / `RequireCountEqualTo` / `RequireCountLessThan` / `RequireCountGreaterThan` guards. Counters are arbitrary integer trackers keyed by string — kill counts, items collected, repeat-completion tallies, etc.
 - **Cooldowns** — `StartCooldown(key, duration)`, `RequireCooldownExpired(key)`. The string-template overload of the
   latter accepts `"{remaining}"` and substitutes a readable remaining-time string into the failure reply.
 - **Items** — `GiveItem`, `GiveItems`, `RequireItemByTemplateKey`, `RequireItem`, `RequireItemsByTemplateKey`,
@@ -198,7 +197,7 @@ All mutations live on the fluent builder.
 - **Sub-stage** — `WhenAtSub<TSub>(value)`, `WhenAtAnySub<TSub>(values)`, `HasNoSub<TSub>()`,
   `TryGetSub<TSub>(out value)`.
 - **Flags** — `HasFlag`, `HasAllFlags`, `HasAnyFlag` (regular and `BigFlagsValue<TMarker>` overloads).
-- **Counters & cooldowns** — `CounterHasValue(key, required)`, `HasActiveCooldown(key, out remaining)`.
+- **Counters & cooldowns** — `CounterGreaterThanOrEqualTo(key, value)`, `CounterLessThanOrEqualTo(key, value)`, `CounterEqualTo(key, value)`, `CounterLessThan(key, value)`, `CounterGreaterThan(key, value)`, `HasActiveCooldown(key, out remaining)`.
 - **Items** — `HasItemByTemplateKey`, `HasItem`, `HasItemOrEquippedByTemplateKey`, `HasItemOrEquipped`,
   `HasEquippedByTemplateKey`, `HasEquipped`.
 - **Gold** — `HasGold(amount)`.

@@ -280,17 +280,9 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
 
     // ===== Counter operations =====
 
-    /// <summary>Halt the chain unless the source's kill counter for <paramref name="monsterTemplateKey" /> is at or above <paramref name="count" />.</summary>
-    public QuestStepBuilder<TStage> RequireKills(string monsterTemplateKey, int count, string? failureReply = null)
-        => AppendGuard(ctx => ctx.CounterHasValue(monsterTemplateKey, count), failureReply);
-
-    /// <summary>Remove the kill counter for <paramref name="monsterTemplateKey" /> from the source's Trackers.Counters.</summary>
-    public QuestStepBuilder<TStage> ClearKills(string monsterTemplateKey)
-        => Append(ctx => ctx.Source.Trackers.Counters.Remove(monsterTemplateKey, out _));
-
-    /// <summary>Halt the chain unless the source's counter for <paramref name="key" /> is at or above <paramref name="count" />.</summary>
-    public QuestStepBuilder<TStage> RequireCount(string key, int count, string? failureReply = null)
-        => AppendGuard(ctx => ctx.CounterHasValue(key, count), failureReply);
+    /// <summary>Halt the chain unless the source's counter for <paramref name="key" /> is at or above <paramref name="value" />.</summary>
+    public QuestStepBuilder<TStage> RequireCountGreaterThanOrEqualTo(string key, int value, string? failureReply = null)
+        => AppendGuard(ctx => ctx.CounterGreaterThanOrEqualTo(key, value), failureReply);
 
     /// <summary>Increment the source's counter for <paramref name="key" /> by <paramref name="by" />.</summary>
     public QuestStepBuilder<TStage> IncrementCounter(string key, int by = 1)
@@ -299,6 +291,33 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     /// <summary>Remove the counter for <paramref name="key" /> from the source's Trackers.Counters.</summary>
     public QuestStepBuilder<TStage> ClearCounter(string key)
         => Append(ctx => ctx.Source.Trackers.Counters.Remove(key, out _));
+
+    /// <summary>Set the source's counter for <paramref name="key" /> to <paramref name="value" />, replacing any existing value.</summary>
+    public QuestStepBuilder<TStage> SetCounter(string key, int value)
+        => Append(ctx => ctx.Source.Trackers.Counters.Set(key, value));
+
+    /// <summary>
+    ///     Decrement the source's counter for <paramref name="key" /> by <paramref name="by" />. No-op if the counter does not exist
+    ///     or would underflow below zero.
+    /// </summary>
+    public QuestStepBuilder<TStage> DecrementCounter(string key, int by = 1)
+        => Append(ctx => ctx.Source.Trackers.Counters.TryDecrement(key, by, out _));
+
+    /// <summary>Halt the chain unless the source's counter for <paramref name="key" /> is at or below <paramref name="value" />. A missing counter is treated as 0.</summary>
+    public QuestStepBuilder<TStage> RequireCountLessThanOrEqualTo(string key, int value, string? failureReply = null)
+        => AppendGuard(ctx => ctx.CounterLessThanOrEqualTo(key, value), failureReply);
+
+    /// <summary>Halt the chain unless the source's counter for <paramref name="key" /> equals <paramref name="value" />. A missing counter is treated as 0.</summary>
+    public QuestStepBuilder<TStage> RequireCountEqualTo(string key, int value, string? failureReply = null)
+        => AppendGuard(ctx => ctx.CounterEqualTo(key, value), failureReply);
+
+    /// <summary>Halt the chain unless the source's counter for <paramref name="key" /> is strictly less than <paramref name="value" />. A missing counter is treated as 0.</summary>
+    public QuestStepBuilder<TStage> RequireCountLessThan(string key, int value, string? failureReply = null)
+        => AppendGuard(ctx => ctx.CounterLessThan(key, value), failureReply);
+
+    /// <summary>Halt the chain unless the source's counter for <paramref name="key" /> is strictly greater than <paramref name="value" />. A missing counter is treated as 0.</summary>
+    public QuestStepBuilder<TStage> RequireCountGreaterThan(string key, int value, string? failureReply = null)
+        => AppendGuard(ctx => ctx.CounterGreaterThan(key, value), failureReply);
 
     // ===== Cooldown operations =====
 
