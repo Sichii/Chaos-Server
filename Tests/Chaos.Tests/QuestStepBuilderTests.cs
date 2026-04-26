@@ -1,4 +1,5 @@
 #region
+using System.Reflection;
 using Chaos.Collections;
 using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Geometry;
@@ -381,7 +382,7 @@ public sealed class QuestStepBuilderTests
     public void RequireFlag_AllowsContinuation_WhenFlagSet()
     {
         var ctx = NewContext();
-        ctx.SetFlag(WolfFlags.FoundDen);
+        ctx.Source.Trackers.Flags.AddFlag(WolfFlags.FoundDen);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.RequireFlag(WolfFlags.FoundDen)
@@ -409,7 +410,7 @@ public sealed class QuestStepBuilderTests
     public void RequireAllFlags_HaltsChain_WhenAnyBitMissing()
     {
         var ctx = NewContext();
-        ctx.SetFlag(WolfFlags.FoundDen);
+        ctx.Source.Trackers.Flags.AddFlag(WolfFlags.FoundDen);
         // FoundCub NOT set
 
         var builder = new QuestStepBuilder<WolfStage>();
@@ -425,7 +426,7 @@ public sealed class QuestStepBuilderTests
     public void RequireAnyFlag_AllowsChain_WhenOneBitPresent()
     {
         var ctx = NewContext();
-        ctx.SetFlag(WolfFlags.FoundCub);
+        ctx.Source.Trackers.Flags.AddFlag(WolfFlags.FoundCub);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.RequireAnyFlag(WolfFlags.FoundDen | WolfFlags.FoundCub)
@@ -440,7 +441,7 @@ public sealed class QuestStepBuilderTests
     public void ClearFlag_RemovesBit()
     {
         var ctx = NewContext();
-        ctx.SetFlag(WolfFlags.FoundDen);
+        ctx.Source.Trackers.Flags.AddFlag(WolfFlags.FoundDen);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.ClearFlag(WolfFlags.FoundDen);
@@ -485,7 +486,7 @@ public sealed class QuestStepBuilderTests
     public void RequireAllFlags_HaltsChain_WhenAnyBigFlagBitMissing()
     {
         var ctx = NewContext();
-        ctx.SetFlag(TestFeatures.Feature1);
+        ctx.Source.Trackers.BigFlags.AddFlag(TestFeatures.Feature1);
         // Feature2 NOT set
 
         var builder = new QuestStepBuilder<WolfStage>();
@@ -501,7 +502,7 @@ public sealed class QuestStepBuilderTests
     public void RequireAnyFlag_AllowsChain_WhenOneBigFlagBitPresent()
     {
         var ctx = NewContext();
-        ctx.SetFlag(TestFeatures.Feature2);
+        ctx.Source.Trackers.BigFlags.AddFlag(TestFeatures.Feature2);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.RequireAnyFlag(TestFeatures.Feature1 | TestFeatures.Feature2)
@@ -516,7 +517,7 @@ public sealed class QuestStepBuilderTests
     public void ClearFlag_RemovesBigFlagBit()
     {
         var ctx = NewContext();
-        ctx.SetFlag(TestFeatures.Feature1);
+        ctx.Source.Trackers.BigFlags.AddFlag(TestFeatures.Feature1);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.ClearFlag(TestFeatures.Feature1);
@@ -532,7 +533,7 @@ public sealed class QuestStepBuilderTests
     public void RequireKills_AllowsChain_WhenCountSufficient()
     {
         var ctx = NewContext();
-        ctx.IncrementCounter("wolf", 10);
+        ctx.Source.Trackers.Counters.AddOrIncrement("wolf", 10);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.RequireKills("wolf", 10)
@@ -547,7 +548,7 @@ public sealed class QuestStepBuilderTests
     public void RequireKills_HaltsChain_WhenCountInsufficient()
     {
         var ctx = NewContext();
-        ctx.IncrementCounter("wolf", 5);
+        ctx.Source.Trackers.Counters.AddOrIncrement("wolf", 5);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.RequireKills("wolf", 10)
@@ -562,14 +563,14 @@ public sealed class QuestStepBuilderTests
     public void ClearKills_RemovesCounter()
     {
         var ctx = NewContext();
-        ctx.IncrementCounter("wolf", 10);
+        ctx.Source.Trackers.Counters.AddOrIncrement("wolf", 10);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.ClearKills("wolf");
 
         RunChain(builder, ctx);
 
-        ctx.HasCount("wolf", 1).Should().BeFalse();
+        ctx.CounterHasValue("wolf", 1).Should().BeFalse();
     }
 
     [Test]
@@ -582,8 +583,8 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.HasCount("wolf", 3).Should().BeTrue();
-        ctx.HasCount("wolf", 4).Should().BeFalse();
+        ctx.CounterHasValue("wolf", 3).Should().BeTrue();
+        ctx.CounterHasValue("wolf", 4).Should().BeFalse();
     }
     #endregion
 
@@ -619,7 +620,7 @@ public sealed class QuestStepBuilderTests
     public void RequireCooldownExpired_HaltsChain_WhenCooldownActive()
     {
         var ctx = NewContext();
-        ctx.StartCooldown("wolf_cd", TimeSpan.FromHours(22));
+        ctx.Source.Trackers.TimedEvents.AddEvent("wolf_cd", TimeSpan.FromHours(22), true);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.RequireCooldownExpired("wolf_cd")
@@ -637,7 +638,7 @@ public sealed class QuestStepBuilderTests
     {
         var ctx = NewContext();
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireItem("wolfsfur", 5)
+        builder.RequireItemByTemplateKey("wolfsfur", 5)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -654,7 +655,7 @@ public sealed class QuestStepBuilderTests
         var advanced = false;
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireItem("wolfsfur", 5, "bring me 5 wolfsfur first")
+        builder.RequireItemByTemplateKey("wolfsfur", 5, "bring me 5 wolfsfur first")
                .Run((_, _) => advanced = true);
 
         RunChain(builder, ctx);
@@ -675,7 +676,7 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("wolfsfur", count: 5, stackable: true));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireItem("wolfsfur", 5, "should not see this")
+        builder.RequireItemByTemplateKey("wolfsfur", 5, "should not see this")
                .Run((_, _) => advanced = true);
 
         RunChain(builder, ctx);
@@ -704,6 +705,50 @@ public sealed class QuestStepBuilderTests
 
         factoryMock.Verify(f => f.Create("wolfsfur", It.IsAny<ICollection<string>?>()), Times.Once);
     }
+
+    #region HasItem(name) — name-based overloads
+    [Test]
+    public void HasItem_ByName_ReturnsTrue_WhenInventoryHasMatchingDisplayName()
+    {
+        var ctx = NewContext();
+        var item = MockItem.Create("Wolfs Fur", count: 5, stackable: true);
+        ctx.Source.Inventory.TryAddDirect(1, item).Should().BeTrue();
+
+        ctx.HasItem("Wolfs Fur", 3).Should().BeTrue();
+        ctx.HasItem("Wolfs Fur", 5).Should().BeTrue();
+        ctx.HasItem("Wolfs Fur", 6).Should().BeFalse();
+        ctx.HasItem("Other Name", 1).Should().BeFalse();
+    }
+
+    [Test]
+    public void HasItemOrEquipped_ByName_ReturnsTrue_WhenItemEquipped()
+    {
+        var ctx = NewContext();
+        var item = MockItem.Create("Lucky Amulet");
+        ctx.Source.Equipment.TryAddToNextSlot(item).Should().BeTrue();
+
+        ctx.HasItemOrEquipped("Lucky Amulet", 1).Should().BeTrue();
+        ctx.HasItemOrEquipped("Lucky Amulet", 2).Should().BeFalse();
+    }
+
+    [Test]
+    public void HasItemOrEquipped_ByName_ReturnsTrue_WhenInventoryHasFullCount()
+    {
+        var ctx = NewContext();
+        var item = MockItem.Create("Healing Potion", count: 3, stackable: true);
+        ctx.Source.Inventory.TryAddDirect(1, item).Should().BeTrue();
+
+        ctx.HasItemOrEquipped("Healing Potion", 3).Should().BeTrue();
+    }
+
+    [Test]
+    public void HasItemOrEquipped_ByName_ReturnsFalse_WhenNeitherInventoryNorEquippedSatisfies()
+    {
+        var ctx = NewContext();
+
+        ctx.HasItemOrEquipped("Nothing", 1).Should().BeFalse();
+    }
+    #endregion
     #endregion
 
     #region Reward operations
@@ -817,15 +862,34 @@ public sealed class QuestStepBuilderTests
     }
 
     [Test]
-    public void GiveLegendMark_AddsToAislingsLegend()
+    public void GiveOrAccumulateLegendMark_AddsToAislingsLegend()
     {
         var ctx = NewContext();
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.GiveLegendMark("Helped wolves", "wolfHelp", MarkIcon.Heart, MarkColor.Blue);
+        builder.GiveOrAccumulateLegendMark("Helped wolves", "wolfHelp", MarkIcon.Heart, MarkColor.Blue);
 
         RunChain(builder, ctx);
 
         ctx.Source.Legend.ContainsKey("wolfHelp").Should().BeTrue();
+    }
+
+    #endregion
+
+    #region GiveUniqueLegendMark — repeat semantics
+
+    [Test]
+    public void GiveUniqueLegendMark_DoesNotAccumulate_OnRepeat()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.GiveUniqueLegendMark("Slayed Wolf", "wolf_slayed", MarkIcon.Yay, MarkColor.White)
+               .GiveUniqueLegendMark("Slayed Wolf", "wolf_slayed", MarkIcon.Yay, MarkColor.White);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Legend.TryGetValue("wolf_slayed", out var mark).Should().BeTrue();
+        mark!.Count.Should().Be(1); // unchanged — AddUnique replaces, doesn't accumulate
     }
 
     #endregion
@@ -2038,7 +2102,7 @@ public sealed class QuestStepBuilderTests
 
         RunChain(builder, ctx);
 
-        ctx.HasCount("herbs", 1).Should().BeFalse();
+        ctx.CounterHasValue("herbs", 1).Should().BeFalse();
     }
     #endregion
 
@@ -2135,7 +2199,7 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("wolfsclaw", count: 3, stackable: true));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireItems(("wolfsfur", 5), ("wolfsclaw", 2))
+        builder.RequireItemsByTemplateKey(("wolfsfur", 5), ("wolfsclaw", 2))
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2151,7 +2215,7 @@ public sealed class QuestStepBuilderTests
         // No wolfsclaw
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireItems(("wolfsfur", 5), ("wolfsclaw", 1))
+        builder.RequireItemsByTemplateKey(("wolfsfur", 5), ("wolfsclaw", 1))
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2168,7 +2232,7 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("wolfsfur", count: 5, stackable: true));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.ConsumeItem("wolfsfur", 3)
+        builder.ConsumeItemByTemplateKey("wolfsfur", 3)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2185,7 +2249,7 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("wolfsfur", count: 1, stackable: true));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.ConsumeItem("wolfsfur", 5)
+        builder.ConsumeItemByTemplateKey("wolfsfur", 5)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2202,7 +2266,7 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("wolfsclaw", count: 3, stackable: true));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.ConsumeItems(("wolfsfur", 2), ("wolfsclaw", 1))
+        builder.ConsumeItemsByTemplateKey(("wolfsfur", 2), ("wolfsclaw", 1))
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2220,7 +2284,7 @@ public sealed class QuestStepBuilderTests
         // No wolfsclaw at all
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.ConsumeItems(("wolfsfur", 2), ("wolfsclaw", 1))
+        builder.ConsumeItemsByTemplateKey(("wolfsfur", 2), ("wolfsclaw", 1))
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2229,6 +2293,91 @@ public sealed class QuestStepBuilderTests
 
         // Atomic: even though wolfsfur was sufficient, it must NOT have been consumed.
         ctx.Source.Inventory.HasCountByTemplateKey("wolfsfur", 5).Should().BeTrue();
+    }
+    #endregion
+
+    #region RequireItems(name) / ConsumeItems(name) — bulk name-based
+    [Test]
+    public void RequireItems_ByName_PassesWhenAllPresent()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("Wolfs Fur", count: 3, stackable: true));
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("Wolf Fang", count: 2, stackable: true));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItems(("Wolfs Fur", 3), ("Wolf Fang", 2))
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void RequireItems_ByName_HaltsWhenAnyMissing()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("Wolfs Fur", count: 3, stackable: true));
+        // No Wolf Fang
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItems(("Wolfs Fur", 3), ("Wolf Fang", 2))
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void ConsumeItems_ByName_AtomicConsume_WhenAllPresent()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("Wolfs Fur", count: 3, stackable: true));
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("Wolf Fang", count: 2, stackable: true));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeItems(("Wolfs Fur", 3), ("Wolf Fang", 2))
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.HasItem("Wolfs Fur", 1).Should().BeFalse();
+        ctx.HasItem("Wolf Fang", 1).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void ConsumeItems_ByName_HaltsAndConsumesNothing_WhenAnyMissing()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("Wolfs Fur", count: 3, stackable: true));
+        // No Wolf Fang
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeItems(("Wolfs Fur", 3), ("Wolf Fang", 2))
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.HasItem("Wolfs Fur", 3).Should().BeTrue(); // atomic — nothing consumed
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void RequireItems_FailureReplyVariant_ByName_DispatchesReply()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItems("bring me both", ("Wolfs Fur", 3), ("Wolf Fang", 2))
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "bring me both")), Times.Once);
     }
     #endregion
 
@@ -2428,7 +2577,7 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("specialbouquet"));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireItemOrEquipped("specialbouquet", 1)
+        builder.RequireItemOrEquippedByTemplateKey("specialbouquet", 1)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2443,7 +2592,7 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("specialbouquet"));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireItemOrEquipped("specialbouquet", 1)
+        builder.RequireItemOrEquippedByTemplateKey("specialbouquet", 1)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2457,7 +2606,7 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext();
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireItemOrEquipped("specialbouquet", 1)
+        builder.RequireItemOrEquippedByTemplateKey("specialbouquet", 1)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2472,7 +2621,7 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("specialbouquet"));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireItemOrEquipped("specialbouquet", 2)
+        builder.RequireItemOrEquippedByTemplateKey("specialbouquet", 2)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2488,7 +2637,7 @@ public sealed class QuestStepBuilderTests
         var clientMock = Mock.Get(ctx.Source.Client);
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.RequireItemOrEquipped("specialbouquet", 1, "Where's the bouquet?")
+        builder.RequireItemOrEquippedByTemplateKey("specialbouquet", 1, "Where's the bouquet?")
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2504,7 +2653,7 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("specialbouquet"));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.ConsumeItemOrEquipped("specialbouquet", 1)
+        builder.ConsumeItemOrEquippedByTemplateKey("specialbouquet", 1)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2520,7 +2669,7 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("specialbouquet"));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.ConsumeItemOrEquipped("specialbouquet", 1)
+        builder.ConsumeItemOrEquippedByTemplateKey("specialbouquet", 1)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2535,7 +2684,7 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext();
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.ConsumeItemOrEquipped("specialbouquet", 1)
+        builder.ConsumeItemOrEquippedByTemplateKey("specialbouquet", 1)
                .Advance(WolfStage.Done);
 
         RunChain(builder, ctx);
@@ -2551,13 +2700,285 @@ public sealed class QuestStepBuilderTests
         ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("specialbouquet"));
 
         var builder = new QuestStepBuilder<WolfStage>();
-        builder.ConsumeItemOrEquipped("specialbouquet", 1);
+        builder.ConsumeItemOrEquippedByTemplateKey("specialbouquet", 1);
 
         RunChain(builder, ctx);
 
         ctx.Source.Inventory.ContainsByTemplateKey("specialbouquet").Should().BeFalse();
         ctx.Source.Equipment.ContainsByTemplateKey("specialbouquet").Should().BeTrue();
     }
+    #endregion
+
+    #region RequireEquipped / ConsumeEquipped (equipment-only)
+
+    [Test]
+    public void HasEquippedByTemplateKey_ReturnsTrue_WhenEquipped()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("crown"));
+
+        ctx.HasEquippedByTemplateKey("crown").Should().BeTrue();
+    }
+
+    [Test]
+    public void HasEquippedByTemplateKey_ReturnsFalse_WhenOnlyInInventory()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("crown"));
+
+        ctx.HasEquippedByTemplateKey("crown").Should().BeFalse();
+    }
+
+    [Test]
+    public void HasEquipped_ByName_ReturnsTrue_WhenEquipped()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("crown"));
+
+        ctx.HasEquipped("crown").Should().BeTrue();
+    }
+
+    [Test]
+    public void HasEquipped_ByName_ReturnsFalse_WhenOnlyInInventory()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("crown"));
+
+        ctx.HasEquipped("crown").Should().BeFalse();
+    }
+
+    [Test]
+    public void RequireEquipped_AllowsChain_WhenItemEquipped()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("crown"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireEquippedByTemplateKey("crown")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void RequireEquipped_HaltsChain_WhenItemOnlyInInventory()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("crown"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireEquippedByTemplateKey("crown")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void RequireEquipped_ByName_AllowsChain_WhenItemEquipped()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("crown"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireEquipped("crown")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void RequireEquipped_ByName_HaltsChain_WhenNotEquipped()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireEquipped("crown")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void RequireEquipped_WithFailureReply_DispatchesReplyOnHalt()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireEquippedByTemplateKey("crown", "You must wear the crown first.")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "You must wear the crown first.")), Times.Once);
+    }
+
+    [Test]
+    public void ConsumeEquipped_RemovesFromEquipment_WhenEquipped()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("crown"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeEquippedByTemplateKey("crown")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Equipment.ContainsByTemplateKey("crown").Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void ConsumeEquipped_HaltsChain_WhenItemOnlyInInventory()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("crown"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeEquippedByTemplateKey("crown")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Inventory.ContainsByTemplateKey("crown").Should().BeTrue();
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void ConsumeEquipped_ByName_RemovesFromEquipment_WhenEquipped()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("crown"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeEquipped("crown")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Equipment.Contains("crown").Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void ConsumeEquipped_ByName_HaltsChain_WhenNotEquipped()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeEquipped("crown")
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    #endregion
+
+    #region RequireItem(name) / ConsumeItem(name) — name-based fluent overloads
+
+    [Test]
+    public void RequireItem_ByName_AllowsChainToContinue_WhenInventoryHasItem()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("Wolfs Fur", count: 5, stackable: true));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItem("Wolfs Fur", 5)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void RequireItem_ByName_HaltsChain_WhenItemMissing()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItem("Wolfs Fur", 5)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void ConsumeItem_ByName_RemovesItemAndContinues()
+    {
+        var ctx = NewContext();
+        ctx.Source.Inventory.TryAddToNextSlot(MockItem.Create("Wolfs Fur", count: 5, stackable: true));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeItem("Wolfs Fur", 5)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.HasItem("Wolfs Fur", 1).Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void ConsumeItem_ByName_HaltsChain_WhenInsufficient()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeItem("Wolfs Fur", 5)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void RequireItemOrEquipped_ByName_AllowsChain_WhenEquippedAndCountIs1()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("Lucky Amulet"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.RequireItemOrEquipped("Lucky Amulet", 1)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void ConsumeItemOrEquipped_ByName_RemovesEquipped_WhenCountIs1AndInventoryEmpty()
+    {
+        var ctx = NewContext();
+        ctx.Source.Equipment.TryAddToNextSlot(MockItem.Create("Lucky Amulet"));
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.ConsumeItemOrEquipped("Lucky Amulet", 1)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Equipment.Contains("Lucky Amulet").Should().BeFalse();
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
     #endregion
 
     #region InsertOption
@@ -2703,7 +3124,7 @@ public sealed class QuestStepBuilderTests
     public void HasNoSub_False_AfterAdvanceSub()
     {
         var ctx = NewContext();
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
 
         ctx.HasNoSub<BouquetSub>().Should().BeFalse();
     }
@@ -2712,7 +3133,7 @@ public sealed class QuestStepBuilderTests
     public void AdvanceSub_StoresValueInTrackers()
     {
         var ctx = NewContext();
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
 
         ctx.Source.Trackers.Enums.TryGetValue<BouquetSub>(out var stored).Should().BeTrue();
         stored.Should().Be(BouquetSub.Crafting);
@@ -2722,8 +3143,8 @@ public sealed class QuestStepBuilderTests
     public void AdvanceSub_OverwritesPreviousSubValue()
     {
         var ctx = NewContext();
-        ctx.AdvanceSub(BouquetSub.Crafting);
-        ctx.AdvanceSub(BouquetSub.Remade);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Remade);
 
         ctx.WhenAtSub(BouquetSub.Remade).Should().BeTrue();
         ctx.WhenAtSub(BouquetSub.Crafting).Should().BeFalse();
@@ -2733,9 +3154,9 @@ public sealed class QuestStepBuilderTests
     public void ClearSub_RemovesSubFromTrackers()
     {
         var ctx = NewContext();
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
 
-        ctx.ClearSub<BouquetSub>();
+        ctx.Source.Trackers.Enums.Remove<BouquetSub>();
 
         ctx.HasNoSub<BouquetSub>().Should().BeTrue();
     }
@@ -2744,7 +3165,7 @@ public sealed class QuestStepBuilderTests
     public void AdvanceSub_DoesNotAffectPrimaryStage()
     {
         var ctx = NewContext(initialStage: WolfStage.Hunting);
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
 
         ctx.WhenAt(WolfStage.Hunting).Should().BeTrue();
         ctx.WhenAtSub(BouquetSub.Crafting).Should().BeTrue();
@@ -2754,9 +3175,9 @@ public sealed class QuestStepBuilderTests
     public void ClearSub_DoesNotAffectPrimaryStage()
     {
         var ctx = NewContext(initialStage: WolfStage.Hunting);
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
 
-        ctx.ClearSub<BouquetSub>();
+        ctx.Source.Trackers.Enums.Remove<BouquetSub>();
 
         ctx.WhenAt(WolfStage.Hunting).Should().BeTrue();
         ctx.HasNoSub<BouquetSub>().Should().BeTrue();
@@ -2766,7 +3187,7 @@ public sealed class QuestStepBuilderTests
     public void TryGetSub_ReturnsCurrentValue_WhenStored()
     {
         var ctx = NewContext();
-        ctx.AdvanceSub(BouquetSub.Remade);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Remade);
 
         var found = ctx.TryGetSub<BouquetSub>(out var value);
 
@@ -2789,7 +3210,7 @@ public sealed class QuestStepBuilderTests
     public void WhenAtSub_AllowsChain_WhenAtSubValue()
     {
         var ctx = NewContext();
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.WhenAtSub(BouquetSub.Crafting)
@@ -2804,7 +3225,7 @@ public sealed class QuestStepBuilderTests
     public void WhenAtSub_HaltsChain_WhenNotAtSubValue()
     {
         var ctx = NewContext();
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.WhenAtSub(BouquetSub.Remade)
@@ -2864,7 +3285,7 @@ public sealed class QuestStepBuilderTests
     public void WhenSubNeverStarted_HaltsChain_WhenSubStored()
     {
         var ctx = NewContext();
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.WhenSubNeverStarted<BouquetSub>()
@@ -2892,7 +3313,7 @@ public sealed class QuestStepBuilderTests
     public void ClearSub_BuilderForm_RemovesSubFromTrackers()
     {
         var ctx = NewContext();
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
 
         var builder = new QuestStepBuilder<WolfStage>();
         builder.ClearSub<BouquetSub>();
@@ -2915,7 +3336,7 @@ public sealed class QuestStepBuilderTests
 
         var dialog = CreateTestDialog(factoryMock);
         var ctx = NewContextWithSubject(dialog);
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
         var clientMock = Mock.Get(ctx.Source.Client);
 
         var routes = new Dictionary<BouquetSub, string>
@@ -2938,7 +3359,7 @@ public sealed class QuestStepBuilderTests
     {
         var dialog = CreateTestDialog();
         var ctx = NewContextWithSubject(dialog);
-        ctx.AdvanceSub(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
         var clientMock = Mock.Get(ctx.Source.Client);
 
         var routes = new Dictionary<BouquetSub, string>
@@ -2993,8 +3414,8 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContextWithSubject(dialog);
 
         // Two different sub-stage types stored simultaneously.
-        ctx.AdvanceSub(BouquetSub.Crafting);
-        ctx.AdvanceSub(DeliverySub.EnRoute);
+        ctx.Source.Trackers.Enums.Set(BouquetSub.Crafting);
+        ctx.Source.Trackers.Enums.Set(DeliverySub.EnRoute);
 
         var deliveryRoutes = new Dictionary<DeliverySub, string>
         {
@@ -3008,5 +3429,157 @@ public sealed class QuestStepBuilderTests
 
         factoryMock.Verify(f => f.Create("delivery_dialog", It.IsAny<IDialogSourceEntity>()), Times.Once);
     }
+    #endregion
+
+    #region WhenAtAny / WhenAtAnySub (QuestContext)
+
+    private enum WolfSub { None, Tracking, Done }
+
+    [Test]
+    public void WhenAtAny_ReturnsTrue_WhenStageMatchesAny()
+    {
+        var ctx = NewContext(WolfStage.Hunting);
+
+        ctx.WhenAtAny(WolfStage.None, WolfStage.Hunting).Should().BeTrue();
+        ctx.WhenAtAny(WolfStage.Hunting, WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void WhenAtAny_ReturnsFalse_WhenNoStageMatches()
+    {
+        var ctx = NewContext(WolfStage.Hunting);
+
+        ctx.WhenAtAny(WolfStage.None, WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void WhenAtAny_ReturnsFalse_WhenNoStagesProvided()
+    {
+        var ctx = NewContext(WolfStage.Hunting);
+
+        ctx.WhenAtAny().Should().BeFalse();
+    }
+
+    [Test]
+    public void WhenAtAnySub_ReturnsTrue_WhenSubStageMatchesAny()
+    {
+        var ctx = NewContext();
+        ctx.Source.Trackers.Enums.Set(WolfSub.Tracking);
+
+        ctx.WhenAtAnySub(WolfSub.None, WolfSub.Tracking).Should().BeTrue();
+        ctx.WhenAtAnySub(WolfSub.Done).Should().BeFalse();
+        ctx.WhenAtAnySub<WolfSub>().Should().BeFalse();
+    }
+
+    #endregion
+
+    #region WhenAtAny / WhenAtAnySub / GiveUniqueLegendMark — fluent
+
+    [Test]
+    public void WhenAtAny_Fluent_AllowsChain_WhenStageMatchesAny()
+    {
+        var ctx = NewContext(WolfStage.Hunting);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenAtAny(WolfStage.Hunting, WolfStage.Done)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void WhenAtAny_Fluent_HaltsChain_WhenNoStageMatches()
+    {
+        var ctx = NewContext(WolfStage.Hunting);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenAtAny(WolfStage.None, WolfStage.Done)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeFalse();
+    }
+
+    [Test]
+    public void WhenAtAny_Fluent_FailureReply_DispatchesOnMismatch()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        ctx.Source.Trackers.Enums.Set(WolfStage.Hunting);
+        ctx.CurrentStage = WolfStage.Hunting;
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenAtAny("not yet", WolfStage.None, WolfStage.Done)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "not yet")), Times.Once);
+    }
+
+    [Test]
+    public void WhenAtAnySub_Fluent_FailureReply_DispatchesOnMismatch()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        ctx.Source.Trackers.Enums.Set(WolfSub.Tracking);
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenAtAnySub("not yet", WolfSub.None, WolfSub.Done)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        clientMock.Verify(c => c.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "not yet")), Times.Once);
+    }
+
+    [Test]
+    public void WhenAtAny_Fluent_AcceptsCollectionExpressionSyntax()
+    {
+        var ctx = NewContext(WolfStage.Hunting);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenAtAny([WolfStage.Hunting, WolfStage.Done])
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void WhenAtAnySub_Fluent_AllowsChain_WhenSubStageMatchesAny()
+    {
+        var ctx = NewContext();
+        ctx.Source.Trackers.Enums.Set(WolfSub.Tracking);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.WhenAtAnySub(WolfSub.Tracking, WolfSub.Done)
+               .Advance(WolfStage.Done);
+
+        RunChain(builder, ctx);
+
+        ctx.WhenAt(WolfStage.Done).Should().BeTrue();
+    }
+
+    [Test]
+    public void GiveUniqueLegendMark_Fluent_AddsMark()
+    {
+        var ctx = NewContext();
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.GiveUniqueLegendMark("Slayed Wolf", "wolf_slayed", MarkIcon.Yay, MarkColor.White);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Legend.TryGetValue("wolf_slayed", out var mark).Should().BeTrue();
+        mark!.Count.Should().Be(1);
+    }
+
     #endregion
 }

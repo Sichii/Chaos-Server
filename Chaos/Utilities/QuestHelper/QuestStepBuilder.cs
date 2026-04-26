@@ -5,9 +5,14 @@ using Chaos.DarkAges.Definitions;
 using Chaos.Extensions.Common;
 using Chaos.Extensions.Geometry;
 using Chaos.Geometry.Abstractions;
+using Chaos.Models.Legend;
 using Chaos.Models.World;
+using Chaos.Scripting.FunctionalScripts.AbilityDistribution;
+using Chaos.Scripting.FunctionalScripts.ExperienceDistribution;
+using Chaos.Services.Factories.Abstractions;
 using Chaos.Services.Servers.Options;
 using Chaos.Storage.Abstractions;
+using Chaos.Time;
 #endregion
 
 namespace Chaos.Utilities.QuestHelper;
@@ -92,11 +97,29 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     public QuestStepBuilder<TStage> WhenAt(TStage stage, string? failureReply = null)
         => AppendGuard(ctx => ctx.WhenAt(stage), failureReply);
 
+    /// <summary>Halt the chain unless the source's tracked stage is any of <paramref name="stages" />.</summary>
+    public QuestStepBuilder<TStage> WhenAtAny(params IReadOnlyCollection<TStage> stages)
+        => AppendGuard(ctx => ctx.WhenAtAny(stages));
+
+    /// <summary>Halt the chain (with <paramref name="failureReply" />) unless the source's tracked stage is any of <paramref name="stages" />.</summary>
+    public QuestStepBuilder<TStage> WhenAtAny(string failureReply, params IReadOnlyCollection<TStage> stages)
+        => AppendGuard(ctx => ctx.WhenAtAny(stages), failureReply);
+
     /// <summary>Set the stage. Updates ctx.CurrentStage to match.</summary>
-    public QuestStepBuilder<TStage> Advance(TStage stage) => Append(ctx => ctx.Advance(stage));
+    public QuestStepBuilder<TStage> Advance(TStage stage)
+        => Append(ctx =>
+        {
+            ctx.Source.Trackers.Enums.Set(stage);
+            ctx.CurrentStage = stage;
+        });
 
     /// <summary>Remove the stage entirely.</summary>
-    public QuestStepBuilder<TStage> ClearStage() => Append(ctx => ctx.ClearStage());
+    public QuestStepBuilder<TStage> ClearStage()
+        => Append(ctx =>
+        {
+            ctx.Source.Trackers.Enums.Remove<TStage>();
+            ctx.CurrentStage = default;
+        });
 
     /// <summary>
     /// Halt the chain unless Source's <c>Trackers.Enums</c> has no value stored for
@@ -166,6 +189,14 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     public QuestStepBuilder<TStage> WhenAtSub<TSub>(TSub value, string? failureReply = null) where TSub : struct, Enum
         => AppendGuard(ctx => ctx.WhenAtSub(value), failureReply);
 
+    /// <summary>Halt the chain unless the source's tracked sub-stage is any of <paramref name="values" />.</summary>
+    public QuestStepBuilder<TStage> WhenAtAnySub<TSub>(params IReadOnlyCollection<TSub> values) where TSub : struct, Enum
+        => AppendGuard(ctx => ctx.WhenAtAnySub(values));
+
+    /// <summary>Halt the chain (with <paramref name="failureReply" />) unless the source's tracked sub-stage is any of <paramref name="values" />.</summary>
+    public QuestStepBuilder<TStage> WhenAtAnySub<TSub>(string failureReply, params IReadOnlyCollection<TSub> values) where TSub : struct, Enum
+        => AppendGuard(ctx => ctx.WhenAtAnySub(values), failureReply);
+
     /// <summary>
     /// Halt the chain unless Source has no value stored for sub-stage type
     /// <typeparamref name="TSub" /> (the sub-track has never been advanced). When
@@ -176,11 +207,11 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
 
     /// <summary>Set the sub-stage of type <typeparamref name="TSub" /> on Source's Trackers.Enums.</summary>
     public QuestStepBuilder<TStage> AdvanceSub<TSub>(TSub value) where TSub : struct, Enum
-        => Append(ctx => ctx.AdvanceSub(value));
+        => Append(ctx => ctx.Source.Trackers.Enums.Set(value));
 
     /// <summary>Remove any stored value of type <typeparamref name="TSub" /> from Source's Trackers.Enums.</summary>
     public QuestStepBuilder<TStage> ClearSub<TSub>() where TSub : struct, Enum
-        => Append(ctx => ctx.ClearSub<TSub>());
+        => Append(ctx => ctx.Source.Trackers.Enums.Remove<TSub>());
 
     /// <summary>
     /// Maps the current sub-stage of type <typeparamref name="TSub" /> to a dialog key and Skips
@@ -209,11 +240,11 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
 
     /// <summary>Set the given enum flag on the source's Trackers.Flags.</summary>
     public QuestStepBuilder<TStage> SetFlag<TFlag>(TFlag flag) where TFlag : struct, Enum
-        => Append(ctx => ctx.SetFlag(flag));
+        => Append(ctx => FlagDispatch.Set(ctx.Source, flag));
 
     /// <summary>Clear the given enum flag from the source's Trackers.Flags.</summary>
     public QuestStepBuilder<TStage> ClearFlag<TFlag>(TFlag flag) where TFlag : struct, Enum
-        => Append(ctx => ctx.ClearFlag(flag));
+        => Append(ctx => FlagDispatch.Clear(ctx.Source, flag));
 
     /// <summary>Halt the chain unless the source's Trackers.Flags contains the given enum flag.</summary>
     public QuestStepBuilder<TStage> RequireFlag<TFlag>(TFlag flag, string? failureReply = null) where TFlag : struct, Enum
@@ -229,11 +260,11 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
 
     /// <summary>Set the given big flag on the source's Trackers.BigFlags.</summary>
     public QuestStepBuilder<TStage> SetFlag<TMarker>(BigFlagsValue<TMarker> flag) where TMarker : class
-        => Append(ctx => ctx.SetFlag(flag));
+        => Append(ctx => FlagDispatch.Set(ctx.Source, flag));
 
     /// <summary>Clear the given big flag from the source's Trackers.BigFlags.</summary>
     public QuestStepBuilder<TStage> ClearFlag<TMarker>(BigFlagsValue<TMarker> flag) where TMarker : class
-        => Append(ctx => ctx.ClearFlag(flag));
+        => Append(ctx => FlagDispatch.Clear(ctx.Source, flag));
 
     /// <summary>Halt the chain unless the source's Trackers.BigFlags contains the given big flag.</summary>
     public QuestStepBuilder<TStage> RequireFlag<TMarker>(BigFlagsValue<TMarker> flag, string? failureReply = null) where TMarker : class
@@ -251,29 +282,29 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
 
     /// <summary>Halt the chain unless the source's kill counter for <paramref name="monsterTemplateKey" /> is at or above <paramref name="count" />.</summary>
     public QuestStepBuilder<TStage> RequireKills(string monsterTemplateKey, int count, string? failureReply = null)
-        => AppendGuard(ctx => ctx.HasCount(monsterTemplateKey, count), failureReply);
+        => AppendGuard(ctx => ctx.CounterHasValue(monsterTemplateKey, count), failureReply);
 
     /// <summary>Remove the kill counter for <paramref name="monsterTemplateKey" /> from the source's Trackers.Counters.</summary>
     public QuestStepBuilder<TStage> ClearKills(string monsterTemplateKey)
-        => Append(ctx => ctx.ClearCounter(monsterTemplateKey));
+        => Append(ctx => ctx.Source.Trackers.Counters.Remove(monsterTemplateKey, out _));
 
     /// <summary>Halt the chain unless the source's counter for <paramref name="key" /> is at or above <paramref name="count" />.</summary>
     public QuestStepBuilder<TStage> RequireCount(string key, int count, string? failureReply = null)
-        => AppendGuard(ctx => ctx.HasCount(key, count), failureReply);
+        => AppendGuard(ctx => ctx.CounterHasValue(key, count), failureReply);
 
     /// <summary>Increment the source's counter for <paramref name="key" /> by <paramref name="by" />.</summary>
     public QuestStepBuilder<TStage> IncrementCounter(string key, int by = 1)
-        => Append(ctx => ctx.IncrementCounter(key, by));
+        => Append(ctx => ctx.Source.Trackers.Counters.AddOrIncrement(key, by));
 
     /// <summary>Remove the counter for <paramref name="key" /> from the source's Trackers.Counters.</summary>
     public QuestStepBuilder<TStage> ClearCounter(string key)
-        => Append(ctx => ctx.ClearCounter(key));
+        => Append(ctx => ctx.Source.Trackers.Counters.Remove(key, out _));
 
     // ===== Cooldown operations =====
 
     /// <summary>Start an auto-consuming cooldown event keyed by <paramref name="key" /> on the source's Trackers.TimedEvents.</summary>
     public QuestStepBuilder<TStage> StartCooldown(string key, TimeSpan duration)
-        => Append(ctx => ctx.StartCooldown(key, duration));
+        => Append(ctx => ctx.Source.Trackers.TimedEvents.AddEvent(key, duration, true));
 
     /// <summary>Halt the chain if the source's Trackers.TimedEvents has an active event for <paramref name="key" />.</summary>
     public QuestStepBuilder<TStage> RequireCooldownExpired(string key)
@@ -306,89 +337,215 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
 
     /// <summary>Create an item by template key and grant it to the source (overflow goes to bank).</summary>
     public QuestStepBuilder<TStage> GiveItem(string templateKey, int count = 1)
-        => Append(ctx => ctx.GiveItem(templateKey, count));
-
-    /// <summary>Grant a batch of items by template key. Each is created and granted independently.</summary>
-    public QuestStepBuilder<TStage> GiveItems(params (string TemplateKey, int Count)[] items)
         => Append(ctx =>
         {
+            var factory = ctx.Services.GetRequiredService<IItemFactory>();
+            var item = factory.Create(templateKey);
+
+            if (count > 1)
+                item.Count = count;
+
+            ctx.Source.GiveItemOrSendToBank(item);
+        });
+
+    /// <summary>Grant a batch of items by template key. Each is created and granted independently.</summary>
+    public QuestStepBuilder<TStage> GiveItems(params IReadOnlyCollection<(string TemplateKey, int Count)> items)
+        => Append(ctx =>
+        {
+            var factory = ctx.Services.GetRequiredService<IItemFactory>();
+
             foreach (var (key, count) in items)
-                ctx.GiveItem(key, count);
+            {
+                var item = factory.Create(key);
+
+                if (count > 1)
+                    item.Count = count;
+
+                ctx.Source.GiveItemOrSendToBank(item);
+            }
         });
 
     /// <summary>Halt the chain unless the source has at least <paramref name="count" /> of <paramref name="templateKey" />.</summary>
-    public QuestStepBuilder<TStage> RequireItem(string templateKey, int count, string? failureReply = null)
-        => AppendGuard(ctx => ctx.HasItem(templateKey, count), failureReply);
+    public QuestStepBuilder<TStage> RequireItemByTemplateKey(string templateKey, int count, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasItemByTemplateKey(templateKey, count), failureReply);
+
+    /// <summary>Halt the chain unless the source has at least <paramref name="count" /> of items whose display name equals <paramref name="name" /> (case-insensitive). Use <see cref="RequireItemByTemplateKey" /> when the templateKey is the stable identifier.</summary>
+    public QuestStepBuilder<TStage> RequireItem(string name, int count, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasItem(name, count), failureReply);
 
     /// <summary>
     /// Halt the chain unless the source has at least <paramref name="count" /> of
     /// <paramref name="templateKey" /> in inventory, or — when <paramref name="count" /> is 1 —
-    /// the item is currently equipped. Use for deliverables that the player may have equipped
-    /// before reaching the turn-in NPC. See <see cref="QuestContext{TStage}.HasItemOrEquipped" />
-    /// for the count-vs-equipment semantics.
+    /// the item is currently equipped.
     /// </summary>
-    public QuestStepBuilder<TStage> RequireItemOrEquipped(string templateKey, int count, string? failureReply = null)
-        => AppendGuard(ctx => ctx.HasItemOrEquipped(templateKey, count), failureReply);
+    public QuestStepBuilder<TStage> RequireItemOrEquippedByTemplateKey(string templateKey, int count, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasItemOrEquippedByTemplateKey(templateKey, count), failureReply);
+
+    /// <summary>
+    /// Halt the chain unless the source has at least <paramref name="count" /> of items named
+    /// <paramref name="name" /> in inventory, or — when <paramref name="count" /> is 1 —
+    /// an item with that name is currently equipped. Use <see cref="RequireItemOrEquippedByTemplateKey" /> when the templateKey is the stable identifier.
+    /// </summary>
+    public QuestStepBuilder<TStage> RequireItemOrEquipped(string name, int count, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasItemOrEquipped(name, count), failureReply);
+
+    /// <summary>
+    /// Halt the chain unless an item identified by <paramref name="templateKey" /> is currently equipped.
+    /// Equipment slots are non-stacking, so this is a binary "is it worn?" check.
+    /// </summary>
+    public QuestStepBuilder<TStage> RequireEquippedByTemplateKey(string templateKey, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasEquippedByTemplateKey(templateKey), failureReply);
+
+    /// <summary>
+    /// Halt the chain unless an item whose display name equals <paramref name="name" /> (case-insensitive)
+    /// is currently equipped. Use <see cref="RequireEquippedByTemplateKey" /> when the templateKey is the stable identifier.
+    /// </summary>
+    public QuestStepBuilder<TStage> RequireEquipped(string name, string? failureReply = null)
+        => AppendGuard(ctx => ctx.HasEquipped(name), failureReply);
 
     /// <summary>Halt the chain unless the source has every (templateKey, count) pair in <paramref name="items" />.</summary>
-    public QuestStepBuilder<TStage> RequireItems(params (string TemplateKey, int Count)[] items)
-        => AppendGuard(ctx => items.All(i => ctx.HasItem(i.TemplateKey, i.Count)));
-
-    /// <summary>
-    /// Halt the chain unless the source has every (templateKey, count) pair in
-    /// <paramref name="items" />. On failure, sends <paramref name="failureReply" /> as a Reply.
-    /// Non-params overload because <c>params</c> must be the last parameter.
-    /// </summary>
-    public QuestStepBuilder<TStage> RequireItems(string failureReply, IReadOnlyList<(string TemplateKey, int Count)> items)
-        => AppendGuard(ctx => items.All(i => ctx.HasItem(i.TemplateKey, i.Count)), failureReply);
-
-    /// <summary>Halt the chain unless the source can give up <paramref name="count" /> of <paramref name="templateKey" />; otherwise consume.</summary>
-    public QuestStepBuilder<TStage> ConsumeItem(string templateKey, int count)
-        => AppendGuard(ctx => ctx.TryConsumeItem(templateKey, count));
-
-    /// <summary>
-    /// Halt the chain unless the source can give up <paramref name="count" /> of
-    /// <paramref name="templateKey" /> from inventory, or — when <paramref name="count" /> is 1 —
-    /// has the item equipped. On success, removes from whichever side fulfilled the requirement.
-    /// See <see cref="QuestContext{TStage}.TryConsumeItemOrEquipped" /> for the
-    /// count-vs-equipment semantics.
-    /// </summary>
-    public QuestStepBuilder<TStage> ConsumeItemOrEquipped(string templateKey, int count)
-        => AppendGuard(ctx => ctx.TryConsumeItemOrEquipped(templateKey, count));
-
-    /// <summary>
-    /// Atomic batch consume. Pre-checks every (templateKey, count) pair against the source's
-    /// inventory; halts and consumes nothing if any are missing. Otherwise consumes all.
-    /// </summary>
-    public QuestStepBuilder<TStage> ConsumeItems(params (string TemplateKey, int Count)[] items)
-    {
-        Operations.Add(ctx =>
+    public QuestStepBuilder<TStage> RequireItemsByTemplateKey(params IReadOnlyCollection<(string TemplateKey, int Count)> items)
+        => AppendGuard(ctx =>
         {
-            var typed = (QuestContext<TStage>)ctx;
-
-            // Pre-check all so the operation is atomic
-            if (!items.All(i => typed.HasItem(i.TemplateKey, i.Count)))
-                return false;
-
             foreach (var (key, count) in items)
-                typed.TryConsumeItem(key, count);
+                if (!ctx.HasItemByTemplateKey(key, count))
+                    return false;
 
             return true;
         });
 
-        return this;
-    }
+    /// <summary>Halt the chain unless the source has every (templateKey, count) pair in <paramref name="items" />. On failure, sends <paramref name="failureReply" /> as a Reply.</summary>
+    public QuestStepBuilder<TStage> RequireItemsByTemplateKey(string failureReply, params IReadOnlyCollection<(string TemplateKey, int Count)> items)
+        => AppendGuard(ctx =>
+        {
+            foreach (var (key, count) in items)
+                if (!ctx.HasItemByTemplateKey(key, count))
+                    return false;
+
+            return true;
+        }, failureReply);
+
+    /// <summary>Halt the chain unless the source has every (name, count) pair in <paramref name="items" />. Use <see cref="RequireItemsByTemplateKey(IReadOnlyCollection{ValueTuple{string, int}})" /> when templateKeys are the stable identifiers.</summary>
+    public QuestStepBuilder<TStage> RequireItems(params IReadOnlyCollection<(string Name, int Count)> items)
+        => AppendGuard(ctx =>
+        {
+            foreach (var (name, count) in items)
+                if (!ctx.HasItem(name, count))
+                    return false;
+
+            return true;
+        });
+
+    /// <summary>Halt the chain (with <paramref name="failureReply" />) unless the source has every (name, count) pair in <paramref name="items" />.</summary>
+    public QuestStepBuilder<TStage> RequireItems(string failureReply, params IReadOnlyCollection<(string Name, int Count)> items)
+        => AppendGuard(ctx =>
+        {
+            foreach (var (name, count) in items)
+                if (!ctx.HasItem(name, count))
+                    return false;
+
+            return true;
+        }, failureReply);
+
+    /// <summary>Halt the chain unless the source can give up <paramref name="count" /> of <paramref name="templateKey" />; otherwise consume.</summary>
+    public QuestStepBuilder<TStage> ConsumeItemByTemplateKey(string templateKey, int count)
+        => AppendGuard(ctx =>
+        {
+            if (!ctx.HasItemByTemplateKey(templateKey, count))
+                return false;
+
+            return ctx.Source.Inventory.RemoveQuantityByTemplateKey(templateKey, count);
+        });
+
+    /// <summary>Halt the chain unless the source can give up <paramref name="count" /> of items whose display name equals <paramref name="name" /> (case-insensitive); otherwise consume. Use <see cref="ConsumeItemByTemplateKey" /> when the templateKey is the stable identifier.</summary>
+    public QuestStepBuilder<TStage> ConsumeItem(string name, int count)
+        => AppendGuard(ctx =>
+        {
+            if (!ctx.HasItem(name, count))
+                return false;
+
+            return ctx.Source.Inventory.RemoveQuantity(name, count);
+        });
+
+    /// <summary>Halt the chain unless the source can give up <paramref name="count" /> of <paramref name="templateKey" /> from inventory or (count==1) equipment; otherwise consume.</summary>
+    public QuestStepBuilder<TStage> ConsumeItemOrEquippedByTemplateKey(string templateKey, int count)
+        => AppendGuard(ctx =>
+        {
+            if (ctx.HasItemByTemplateKey(templateKey, count))
+                return ctx.Source.Inventory.RemoveQuantityByTemplateKey(templateKey, count);
+
+            if ((count == 1) && ctx.Source.Equipment.TryGetRemoveByTemplateKey(templateKey, out _))
+                return true;
+
+            return false;
+        });
+
+    /// <summary>Halt the chain unless the source can give up <paramref name="count" /> of items named <paramref name="name" /> from inventory or (count==1) equipment; otherwise consume. Use <see cref="ConsumeItemOrEquippedByTemplateKey" /> when the templateKey is the stable identifier.</summary>
+    public QuestStepBuilder<TStage> ConsumeItemOrEquipped(string name, int count)
+        => AppendGuard(ctx =>
+        {
+            if (ctx.HasItem(name, count))
+                return ctx.Source.Inventory.RemoveQuantity(name, count);
+
+            if ((count == 1) && ctx.Source.Equipment.TryGetRemove(name, out _))
+                return true;
+
+            return false;
+        });
+
+    /// <summary>Halt the chain unless an item identified by <paramref name="templateKey" /> is currently equipped; otherwise unequip and destroy it.</summary>
+    public QuestStepBuilder<TStage> ConsumeEquippedByTemplateKey(string templateKey)
+        => AppendGuard(ctx => ctx.Source.Equipment.TryGetRemoveByTemplateKey(templateKey, out _));
+
+    /// <summary>Halt the chain unless an item named <paramref name="name" /> (case-insensitive) is currently equipped; otherwise unequip and destroy it. Use <see cref="ConsumeEquippedByTemplateKey" /> when the templateKey is the stable identifier.</summary>
+    public QuestStepBuilder<TStage> ConsumeEquipped(string name)
+        => AppendGuard(ctx => ctx.Source.Equipment.TryGetRemove(name, out _));
+
+    /// <summary>
+    /// Pre-check every (templateKey, count) pair; halt if any insufficient. Otherwise consume all atomically.
+    /// </summary>
+    public QuestStepBuilder<TStage> ConsumeItemsByTemplateKey(params IReadOnlyCollection<(string TemplateKey, int Count)> items)
+        => AppendGuard(ctx =>
+        {
+            foreach (var (key, count) in items)
+                if (!ctx.HasItemByTemplateKey(key, count))
+                    return false;
+
+            foreach (var (key, count) in items)
+                ctx.Source.Inventory.RemoveQuantityByTemplateKey(key, count);
+
+            return true;
+        });
+
+    /// <summary>
+    /// Pre-check every (name, count) pair; halt if any insufficient. Otherwise consume all atomically.
+    /// Use <see cref="ConsumeItemsByTemplateKey" /> when templateKeys are the stable identifiers.
+    /// </summary>
+    public QuestStepBuilder<TStage> ConsumeItems(params IReadOnlyCollection<(string Name, int Count)> items)
+        => AppendGuard(ctx =>
+        {
+            foreach (var (name, count) in items)
+                if (!ctx.HasItem(name, count))
+                    return false;
+
+            foreach (var (name, count) in items)
+                ctx.Source.Inventory.RemoveQuantity(name, count);
+
+            return true;
+        });
 
     // ===== Reward operations =====
 
     /// <summary>Award the source <paramref name="amount" /> experience via the active IExperienceDistributionScript.</summary>
-    public QuestStepBuilder<TStage> GiveExperience(long amount) => Append(ctx => ctx.GiveExperience(amount));
+    public QuestStepBuilder<TStage> GiveExperience(long amount)
+        => Append(ctx => DefaultExperienceDistributionScript.Create().GiveExp(ctx.Source, amount));
 
     /// <summary>Award the source <paramref name="amount" /> ability experience via the active IAbilityDistributionScript.</summary>
-    public QuestStepBuilder<TStage> GiveAbility(long amount) => Append(ctx => ctx.GiveAbility(amount));
+    public QuestStepBuilder<TStage> GiveAbility(long amount)
+        => Append(ctx => DefaultAbilityDistributionScript.Create().GiveAbility(ctx.Source, amount));
 
     /// <summary>Add <paramref name="amount" /> gold to the source. Chain continues even if TryGiveGold returns false.</summary>
-    public QuestStepBuilder<TStage> GiveGold(int amount) => Append(ctx => ctx.GiveGold(amount));
+    public QuestStepBuilder<TStage> GiveGold(int amount) => Append(ctx => ctx.Source.TryGiveGold(amount));
 
     /// <summary>
     /// Halt the chain unless Source has at least <paramref name="amount" /> gold. Pure check —
@@ -405,27 +562,47 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     /// <see cref="RequireGold" /> first.
     /// </summary>
     public QuestStepBuilder<TStage> ConsumeGold(int amount)
-        => AppendGuard(ctx => ctx.TryConsumeGold(amount));
+        => AppendGuard(ctx => ctx.Source.TryTakeGold(amount));
 
     /// <summary>Add <paramref name="amount" /> game points to the source. Chain continues unconditionally.</summary>
-    public QuestStepBuilder<TStage> GiveGamePoints(int amount) => Append(ctx => ctx.GiveGamePoints(amount));
+    public QuestStepBuilder<TStage> GiveGamePoints(int amount) => Append(ctx => ctx.Source.GamePoints += amount);
 
     /// <summary>Add (or accumulate) a LegendMark on the source's Legend. Time stamp is GameTime.Now.</summary>
-    public QuestStepBuilder<TStage> GiveLegendMark(string text, string key, MarkIcon icon, MarkColor color)
-        => Append(ctx => ctx.GiveLegendMark(text, key, icon, color));
+    public QuestStepBuilder<TStage> GiveOrAccumulateLegendMark(string text, string key, MarkIcon icon, MarkColor color)
+        => Append(ctx => ctx.Source.Legend.AddOrAccumulate(new LegendMark(text, key, icon, color, 1, GameTime.Now)));
+
+    /// <summary>Add a unique LegendMark on the source's Legend. Replaces an existing mark with the same key; does NOT increment count on repeat.</summary>
+    public QuestStepBuilder<TStage> GiveUniqueLegendMark(string text, string key, MarkIcon icon, MarkColor color)
+        => Append(ctx => ctx.Source.Legend.AddUnique(new LegendMark(text, key, icon, color, 1, GameTime.Now)));
 
     /// <summary>Create and grant a skill via ISkillFactory + ComplexActionHelper.LearnSkill.</summary>
-    public QuestStepBuilder<TStage> GiveSkill(string templateKey) => Append(ctx => ctx.GiveSkill(templateKey));
+    public QuestStepBuilder<TStage> GiveSkill(string templateKey)
+        => Append(ctx =>
+        {
+            var factory = ctx.Services.GetRequiredService<ISkillFactory>();
+            var skill = factory.Create(templateKey);
+            ComplexActionHelper.LearnSkill(ctx.Source, skill);
+        });
 
     /// <summary>Create and grant a spell via ISpellFactory + ComplexActionHelper.LearnSpell.</summary>
     public QuestStepBuilder<TStage> GiveSpell(string templateKey, byte? page = null)
-        => Append(ctx => ctx.GiveSpell(templateKey, page));
+        => Append(ctx =>
+        {
+            var factory = ctx.Services.GetRequiredService<ISpellFactory>();
+            var spell = factory.Create(templateKey);
+            ComplexActionHelper.LearnSpell(ctx.Source, spell);
+
+            if (page.HasValue && ctx.Source.SpellBook.TryGetObjectByTemplateKey(templateKey, out var learned))
+                ctx.Source.SpellBook.TrySwap(learned.Slot, page.Value);
+        });
 
     /// <summary>Remove the skill matching <paramref name="templateKey" /> from the source's SkillBook.</summary>
-    public QuestStepBuilder<TStage> RemoveSkill(string templateKey) => Append(ctx => ctx.RemoveSkill(templateKey));
+    public QuestStepBuilder<TStage> RemoveSkill(string templateKey)
+        => Append(ctx => ctx.Source.SkillBook.RemoveByTemplateKey(templateKey));
 
     /// <summary>Remove the spell matching <paramref name="templateKey" /> from the source's SpellBook.</summary>
-    public QuestStepBuilder<TStage> RemoveSpell(string templateKey) => Append(ctx => ctx.RemoveSpell(templateKey));
+    public QuestStepBuilder<TStage> RemoveSpell(string templateKey)
+        => Append(ctx => ctx.Source.SpellBook.RemoveByTemplateKey(templateKey));
 
     // ===== Class/level/gender guards =====
 
@@ -616,7 +793,7 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     /// Resolves the destination map via <see cref="ISimpleCache{MapInstance}" />.
     /// </summary>
     public QuestStepBuilder<TStage> Teleport(string mapKey, int x, int y)
-        => Append(ctx => ctx.Teleport(mapKey, new Point(x, y)));
+        => Append(ctx => TeleportCore(ctx, mapKey, new Point(x, y)));
 
     /// <summary>
     /// Teleport Source to a randomly-chosen walkable point inside <paramref name="rect" /> on the
@@ -624,13 +801,13 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     /// 100 attempts.
     /// </summary>
     public QuestStepBuilder<TStage> Teleport(string mapKey, Rectangle rect)
-        => Append(ctx => ctx.Teleport(mapKey, PickWalkable(ctx, mapKey, rect)));
+        => Append(ctx => TeleportCore(ctx, mapKey, PickWalkable(ctx, mapKey, rect)));
 
     /// <summary>
     /// Teleport Source's group (or Source alone if ungrouped) to <c>(x, y)</c> on the resolved map.
     /// </summary>
     public QuestStepBuilder<TStage> GroupTeleport(string mapKey, int x, int y)
-        => Append(ctx => ctx.GroupTeleport(mapKey, new Point(x, y)));
+        => Append(ctx => GroupTeleportCore(ctx, mapKey, new Point(x, y)));
 
     /// <summary>
     /// Teleport Source's group (or Source alone if ungrouped) to a single shared walkable point
@@ -638,11 +815,29 @@ public sealed class QuestStepBuilder<TStage> where TStage : struct, Enum
     /// deferred to v2 — the v1 contract is a single point for the whole group.
     /// </summary>
     public QuestStepBuilder<TStage> GroupTeleport(string mapKey, Rectangle rect)
-        => Append(ctx =>
+        => Append(ctx => GroupTeleportCore(ctx, mapKey, PickWalkable(ctx, mapKey, rect)));
+
+    private static void TeleportCore(QuestContext ctx, string mapKey, IPoint point)
+    {
+        var cache = ctx.Services.GetRequiredService<ISimpleCache<MapInstance>>();
+        var map = cache.Get(mapKey);
+        ctx.Source.TraverseMap(map, point);
+    }
+
+    private static void GroupTeleportCore(QuestContext ctx, string mapKey, IPoint point)
+    {
+        var cache = ctx.Services.GetRequiredService<ISimpleCache<MapInstance>>();
+        var map = cache.Get(mapKey);
+
+        if (ctx.Source.Group is null)
         {
-            var pt = PickWalkable(ctx, mapKey, rect);
-            ctx.GroupTeleport(mapKey, pt);
-        });
+            ctx.Source.TraverseMap(map, point);
+            return;
+        }
+
+        foreach (var member in ctx.Source.Group)
+            member.TraverseMap(map, point);
+    }
 
     /// <summary>
     /// Pick a random walkable point inside <paramref name="rect" /> on the map identified by
