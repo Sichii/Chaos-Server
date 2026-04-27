@@ -128,6 +128,30 @@ public sealed class QuestStepBuilderTests
         advanced.Should().BeTrue();
         clientMock.Verify(c => c.SendDisplayDialog(It.IsAny<Dialog>()), Times.Never);
     }
+
+    [Test]
+    public void WhenAt_WithResolverFailureReply_DispatchesResolvedText_OnMismatch()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        ctx.Source.Trackers.Counters.AddOrIncrement("attempts", 3);
+        var clientMock = Mock.Get(ctx.Source.Client);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.WhenAt(
+            WolfStage.Hunting,
+            QuestArg.From(c =>
+            {
+                c.Source.Trackers.Counters.TryGetValue("attempts", out var attempts);
+
+                return $"You must be hunting first (attempt {attempts}).";
+            }));
+
+        RunChain(builder, ctx);
+
+        clientMock.Verify(client => client.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "You must be hunting first (attempt 3).")), Times.Once);
+    }
     #endregion
 
     #region WhenNeverStarted (guard form)
@@ -547,6 +571,67 @@ public sealed class QuestStepBuilderTests
 
         ctx.CounterGreaterThanOrEqualTo("wolf", 3).Should().BeTrue();
         ctx.CounterGreaterThanOrEqualTo("wolf", 4).Should().BeFalse();
+    }
+
+    [Test]
+    public void IncrementCounter_WithResolver_AddsResolvedAmount()
+    {
+        var ctx = NewContext();
+        ctx.Source.Trackers.Counters.AddOrIncrement("kills", 4);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.IncrementCounter(
+            "wolf",
+            QuestArg.From(c =>
+            {
+                c.Source.Trackers.Counters.TryGetValue("kills", out var kills);
+
+                return kills + 1;
+            }));
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Trackers.Counters.TryGetValue("wolf", out var wolf).Should().BeTrue();
+        wolf.Should().Be(5);
+    }
+
+    [Test]
+    public void SetCounter_WithConstant_SetsCounterToValue()
+    {
+        var ctx = NewContext();
+        ctx.Source.Trackers.Counters.AddOrIncrement("herbs", 5);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+        builder.SetCounter("herbs", 12);
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Trackers.Counters.TryGetValue("herbs", out var herbs).Should().BeTrue();
+        herbs.Should().Be(12);
+    }
+
+    [Test]
+    public void SetCounter_WithResolver_EvaluatesAgainstContextAtExecuteTime()
+    {
+        var ctx = NewContext();
+        ctx.Source.Trackers.Counters.AddOrIncrement("kills", 11);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.SetCounter(
+            "herbs",
+            QuestArg.From(c =>
+            {
+                c.Source.Trackers.Counters.TryGetValue("kills", out var kills);
+
+                return kills * 2;
+            }));
+
+        RunChain(builder, ctx);
+
+        ctx.Source.Trackers.Counters.TryGetValue("herbs", out var herbs).Should().BeTrue();
+        herbs.Should().Be(22);
     }
     #endregion
 
@@ -1423,6 +1508,28 @@ public sealed class QuestStepBuilderTests
     }
 
     [Test]
+    public void Reply_WithResolver_DispatchesResolvedTextAtExecuteTime()
+    {
+        var dialog = CreateTestDialog();
+        var ctx = NewContextWithSubject(dialog);
+        var clientMock = Mock.Get(ctx.Source.Client);
+        ctx.Source.Trackers.Counters.AddOrIncrement("kills", 7);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.Reply(QuestArg.From(c =>
+        {
+            c.Source.Trackers.Counters.TryGetValue("kills", out var kills);
+
+            return $"You have slain {kills} wolves.";
+        }));
+
+        RunChain(builder, ctx);
+
+        clientMock.Verify(client => client.SendDisplayDialog(It.Is<Dialog>(d => d.Text == "You have slain 7 wolves.")), Times.Once);
+    }
+
+    [Test]
     public void Skip_HaltsChain_AndDispatchesSkipReplyToTargetKey()
     {
         // Set up the factory to satisfy Dialog.Next("next_dialog_key") triggered by the "Skip" sentinel.
@@ -2146,6 +2253,44 @@ public sealed class QuestStepBuilderTests
         var ctx = NewContext(services: services);
         var builder = new QuestStepBuilder<WolfStage>();
         builder.GiveItems(("wolfsfur", 1), ("wolfsclaw", 2));
+
+        RunChain(builder, ctx);
+
+        factoryMock.Verify(f => f.Create("wolfsfur", It.IsAny<ICollection<string>?>()), Times.Once);
+        factoryMock.Verify(f => f.Create("wolfsclaw", It.IsAny<ICollection<string>?>()), Times.Once);
+    }
+
+    [Test]
+    public void GiveItems_WithResolver_GrantsResolvedItemsAtExecuteTime()
+    {
+        var factoryMock = new Mock<IItemFactory>();
+
+        factoryMock.Setup(f => f.Create("wolfsfur", It.IsAny<ICollection<string>?>()))
+                   .Returns(() => MockItem.Create("wolfsfur"));
+
+        factoryMock.Setup(f => f.Create("wolfsclaw", It.IsAny<ICollection<string>?>()))
+                   .Returns(() => MockItem.Create("wolfsclaw"));
+
+        var services = MockServiceProvider.CreateBuilder()
+                                          .SetupService(factoryMock.Object)
+                                          .Build()
+                                          .Object;
+
+        var ctx = NewContext(services: services);
+        ctx.Source.Trackers.Counters.AddOrIncrement("kills", 5);
+
+        var builder = new QuestStepBuilder<WolfStage>();
+
+        builder.GiveItems(QuestArg.From(c =>
+        {
+            c.Source.Trackers.Counters.TryGetValue("kills", out var kills);
+
+            return (IReadOnlyCollection<(string TemplateKey, int Count)>)
+            [
+                ("wolfsfur", kills),
+                ("wolfsclaw", kills * 2)
+            ];
+        }));
 
         RunChain(builder, ctx);
 

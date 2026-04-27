@@ -104,6 +104,50 @@ to halt (e.g., a guard failed). Operations fall into the categories below.
 - **Escape hatch** — `Run(action)` invokes an arbitrary `Action<Aisling, QuestContext<TStage>>` and continues the
   chain.
 
+### Value-or-resolver parameters
+
+Most builder methods that take a numeric, text, or duration *value* accept a `QuestArg<T>`. Pass a
+literal (lifted via implicit conversion) for the common case, or `QuestArg.From(ctx => ...)` to
+defer evaluation until the chain runs:
+
+```csharp
+q.OnDisplaying("morris_accept")
+    .WhenNeverStarted()
+    .SetCounter("spotIndex", QuestArg.From(_ => Random.Shared.Next(1, 22)))
+    .GiveGold(QuestArg.From(c => 50 + (c.Source.UserStatSheet.Level * 5)))
+    .Reply(QuestArg.From(c => $"Take this, {c.Source.Name}."))
+    .Advance(StowawayHunt.Started);
+```
+
+Resolvers receive the non-generic `QuestContext` base, which exposes `Source`, `Subject`,
+`OptionIndex`, and `Services`. To read `CurrentStage` or stage-typed predicates, cast inside the
+lambda: `((QuestContext<MyStage>)ctx).CurrentStage`.
+
+Methods with non-zero default values (`IncrementCounter(by = 1)`, `DecrementCounter(by = 1)`,
+`GiveItem(count = 1)`, `RequireLevel(max = int.MaxValue)`) keep their original literal-only
+signature *plus* a `QuestArg<int>` overload — call with a literal to use the default-aware form,
+or pass `QuestArg.From(...)` to use the resolver form.
+
+Optional `failureReply` parameters on guards are typed `QuestArg<string>?` — pass `null` (default)
+for no message, a literal for a static message, or `QuestArg.From(c => ...)` for a dynamic message.
+Identifier-style strings (`key`, `templateKey`, `name`, `dialogKey`, `mapKey`) remain plain `string`;
+they're lookup identifiers, not values — runtime resolution there isn't a real-world need.
+
+Collection-shaped methods (`WhenAtAny`, `WhenAtAnySub`, `RouteByStage`, `RouteBySub`, `GiveItems`,
+`RequireItems`, `RequireItemsByTemplateKey`, `ConsumeItems`, `ConsumeItemsByTemplateKey`) keep their
+existing `params`/dictionary signatures *plus* a parallel `QuestArg<IReadOnlyCollection<…>>` /
+`QuestArg<IReadOnlyDictionary<…>>` overload for runtime-built lists:
+
+```csharp
+.GiveItems(QuestArg.From(c =>
+{
+    c.Source.Trackers.Counters.TryGetValue("kills", out var kills);
+    return (IReadOnlyCollection<(string, int)>)[("wolfsfur", kills), ("wolfsclaw", kills * 2)];
+}))
+```
+
+The literal `params` form is preferred by overload resolution when both could match.
+
 ### Matching multiple stages
 
 When a handler should fire on more than one stage, use `WhenAtAny` (or
