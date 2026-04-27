@@ -1,0 +1,279 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "MonsterTemplateSchema",
+  "type": "object",
+  "description": "Represents the serializable schema for a monster template\n            ",
+  "additionalProperties": false,
+  "properties": {
+    "AbilityReward": {
+      "type": "integer",
+      "description": "The amount of ability this monster will reward when killed\n            ",
+      "format": "int32"
+    },
+    "AggroRange": {
+      "type": "integer",
+      "description": "Defaults to 0\n\nIf specified, this will be aggressive and attack enemies if they come within the specified distance\n            ",
+      "format": "int32"
+    },
+    "AssailIntervalMs": {
+      "type": "integer",
+      "description": "The number of milliseconds between usages of assails\n            ",
+      "format": "int32"
+    },
+    "ExpReward": {
+      "type": "integer",
+      "description": "The amount of exp this monster will reward when killed\n            ",
+      "format": "int32"
+    },
+    "LootTableKeys": {
+      "type": "array",
+      "description": "A collection of loot table keys that this monster can drop from\n            ",
+      "items": {
+        "type": "string"
+      }
+    },
+    "MaxGoldDrop": {
+      "type": "integer",
+      "description": "Maximum amount of gold for this monster to drop\n            ",
+      "format": "int32"
+    },
+    "MinGoldDrop": {
+      "type": "integer",
+      "description": "Minimum amount of gold for this monster to drop\n            ",
+      "format": "int32"
+    },
+    "MoveIntervalMs": {
+      "type": "integer",
+      "description": "The number of milliseconds between movements while this monster is targeting an enemy\n            ",
+      "format": "int32"
+    },
+    "Name": {
+      "type": "string",
+      "description": "The name of the monster when double clicked\n            "
+    },
+    "ScriptKeys": {
+      "type": "array",
+      "description": "A collection of names of monsters scripts to attach to this monster\n\nTODO: scripts section\n            ",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ScriptVars": {
+      "type": "object",
+      "description": "A collection of key-value pairs of key-value pairs\n\nEach script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of\npropertyName-Value pairs\n            ",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/KeyValuePairOfStringAndJsonElement"
+        }
+      }
+    },
+    "SkillIntervalMs": {
+      "type": "integer",
+      "description": "The number of milliseconds between usages of non-assail skills\n            ",
+      "format": "int32"
+    },
+    "SkillTemplateKeys": {
+      "type": "array",
+      "description": "A collection of template keys of skills this monster will use\n            ",
+      "items": {
+        "type": "string"
+      }
+    },
+    "SpellIntervalMs": {
+      "type": "integer",
+      "description": "The number of milliseconds between usages of spells\n            ",
+      "format": "int32"
+    },
+    "SpellTemplateKeys": {
+      "type": "array",
+      "description": "A collection of template keys of spells this monster will cast\n            ",
+      "items": {
+        "type": "string"
+      }
+    },
+    "Sprite": {
+      "type": "integer",
+      "description": "The sprite id of the monster minus the offset\n            "
+    },
+    "StatSheet": {
+      "description": "The base stats of this monster\n            ",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/StatSheetSchema"
+        }
+      ]
+    },
+    "TemplateKey": {
+      "type": "string",
+      "description": "A unique id specific to this monster template\n\nBest practice is to match the name of the file\n            "
+    },
+    "Type": {
+      "description": "The monster's type\n\nWhiteSquare has no additional functionality, it just appears as a white square on the tab map\n            ",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/CreatureType"
+        }
+      ]
+    },
+    "WanderIntervalMs": {
+      "type": "integer",
+      "description": "The number of milliseconds between movements while this monster is wandering when it has no target\n            ",
+      "format": "int32"
+    }
+  },
+  "definitions": {
+    "KeyValuePairOfStringAndJsonElement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Key": {
+          "type": "string"
+        },
+        "Value": {}
+      }
+    },
+    "StatSheetSchema": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/AttributesSchema"
+        },
+        {
+          "type": "object",
+          "description": "Represents the serializable schema of a creature's stat sheet\n            ",
+          "additionalProperties": false,
+          "properties": {
+            "AbilityLevel": {
+              "type": "integer",
+              "description": "The creature's current ability\n            ",
+              "format": "int32"
+            },
+            "CurrentHp": {
+              "type": "integer",
+              "description": "The creature's current hp\n            ",
+              "format": "int32"
+            },
+            "CurrentMp": {
+              "type": "integer",
+              "description": "The creature's current mp\n            ",
+              "format": "int32"
+            },
+            "Level": {
+              "type": "integer",
+              "description": "The creature's level\n            ",
+              "format": "int32"
+            }
+          }
+        }
+      ]
+    },
+    "AttributesSchema": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/StatsSchema"
+        },
+        {
+          "type": "object",
+          "description": "Represents the serializable schema of an object's attributes\n            ",
+          "additionalProperties": false,
+          "properties": {
+            "Ac": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "AtkSpeedPct": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "Dmg": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "FlatSkillDamage": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "FlatSpellDamage": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "Hit": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "MagicResistance": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "MaximumHp": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "MaximumMp": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "SkillDamagePct": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "SpellDamagePct": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      ]
+    },
+    "StatsSchema": {
+      "type": "object",
+      "description": "Represents the serializable schema of stats\n            ",
+      "additionalProperties": false,
+      "properties": {
+        "Con": {
+          "type": "integer",
+          "description": "Constitution\n            ",
+          "format": "int32"
+        },
+        "Dex": {
+          "type": "integer",
+          "description": "Dexterity\n            ",
+          "format": "int32"
+        },
+        "Int": {
+          "type": "integer",
+          "description": "Intelligence\n            ",
+          "format": "int32"
+        },
+        "Str": {
+          "type": "integer",
+          "description": "Strength\n            ",
+          "format": "int32"
+        },
+        "Wis": {
+          "type": "integer",
+          "description": "Wisdom\n            ",
+          "format": "int32"
+        }
+      }
+    },
+    "CreatureType": {
+      "type": "string",
+      "description": "",
+      "x-enumNames": [
+        "Normal",
+        "WalkThrough",
+        "Merchant",
+        "WhiteSquare",
+        "Aisling"
+      ],
+      "enum": [
+        "Normal",
+        "WalkThrough",
+        "Merchant",
+        "WhiteSquare",
+        "Aisling"
+      ]
+    }
+  }
+}

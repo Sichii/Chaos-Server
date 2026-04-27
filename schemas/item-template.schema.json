@@ -1,0 +1,579 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ItemTemplateSchema",
+  "definitions": {
+    "DisplayColor": {
+      "type": "string",
+      "description": "A byte representing the color of hair and items. Used by many things.\n            ",
+      "x-enumNames": [
+        "Default",
+        "Black",
+        "Apple",
+        "Carrot",
+        "Yellow",
+        "Teal",
+        "Blue",
+        "Violet",
+        "Olive",
+        "Green",
+        "Pumpkin",
+        "Brown",
+        "Gray",
+        "Navy",
+        "Tan",
+        "White",
+        "Pink",
+        "Chartreuse",
+        "Orange",
+        "LightBlonde",
+        "Midnight",
+        "Sky",
+        "Mauve",
+        "Orchid",
+        "BubbleGum",
+        "LightBlue",
+        "HotPink",
+        "Cyan",
+        "Lilac",
+        "Salmon",
+        "NeonBlue",
+        "NeonGreen",
+        "PastelGreen",
+        "Blonde",
+        "RoyalBlue",
+        "Leather",
+        "Scarlet",
+        "Forest",
+        "Scarlet2",
+        "YaleBlue",
+        "Tangerine",
+        "DirtyBlonde",
+        "Sage",
+        "Grass",
+        "Cobalt",
+        "Blush",
+        "Glitch",
+        "Aqua",
+        "Lime",
+        "Purple",
+        "NeonRed",
+        "NeonYellow",
+        "PalePink",
+        "Peach",
+        "Crimson",
+        "Mustard",
+        "Silver",
+        "Fire",
+        "Ice",
+        "Magenta",
+        "PaleGreen",
+        "BabyBlue",
+        "Void",
+        "GhostBlue",
+        "Mint",
+        "Fern",
+        "GhostPink",
+        "Flamingo",
+        "Turqoise",
+        "MatteBlack",
+        "Taffy",
+        "NeonPurple"
+      ],
+      "enum": [
+        "Default",
+        "Black",
+        "Apple",
+        "Carrot",
+        "Yellow",
+        "Teal",
+        "Blue",
+        "Violet",
+        "Olive",
+        "Green",
+        "Pumpkin",
+        "Brown",
+        "Gray",
+        "Navy",
+        "Tan",
+        "White",
+        "Pink",
+        "Chartreuse",
+        "Orange",
+        "LightBlonde",
+        "Midnight",
+        "Sky",
+        "Mauve",
+        "Orchid",
+        "BubbleGum",
+        "LightBlue",
+        "HotPink",
+        "Cyan",
+        "Lilac",
+        "Salmon",
+        "NeonBlue",
+        "NeonGreen",
+        "PastelGreen",
+        "Blonde",
+        "RoyalBlue",
+        "Leather",
+        "Scarlet",
+        "Forest",
+        "Scarlet2",
+        "YaleBlue",
+        "Tangerine",
+        "DirtyBlonde",
+        "Sage",
+        "Grass",
+        "Cobalt",
+        "Blush",
+        "Glitch",
+        "Aqua",
+        "Lime",
+        "Purple",
+        "NeonRed",
+        "NeonYellow",
+        "PalePink",
+        "Peach",
+        "Crimson",
+        "Mustard",
+        "Silver",
+        "Fire",
+        "Ice",
+        "Magenta",
+        "PaleGreen",
+        "BabyBlue",
+        "Void",
+        "GhostBlue",
+        "Mint",
+        "Fern",
+        "GhostPink",
+        "Flamingo",
+        "Turqoise",
+        "MatteBlack",
+        "Taffy",
+        "NeonPurple"
+      ]
+    },
+    "EquipmentType": {
+      "type": "string",
+      "description": "A byte representing the type of a piece of equipment.\n            ",
+      "x-enumNames": [
+        "NotEquipment",
+        "Weapon",
+        "Armor",
+        "OverArmor",
+        "Shield",
+        "Helmet",
+        "OverHelmet",
+        "Earrings",
+        "Necklace",
+        "Ring",
+        "Gauntlet",
+        "Belt",
+        "Greaves",
+        "Boots",
+        "Accessory"
+      ],
+      "enum": [
+        "NotEquipment",
+        "Weapon",
+        "Armor",
+        "OverArmor",
+        "Shield",
+        "Helmet",
+        "OverHelmet",
+        "Earrings",
+        "Necklace",
+        "Ring",
+        "Gauntlet",
+        "Belt",
+        "Greaves",
+        "Boots",
+        "Accessory"
+      ]
+    },
+    "Gender": {
+      "type": "string",
+      "description": "A byte representing the gender of the player. Used by many things.\n            ",
+      "x-enumFlags": true,
+      "x-enumNames": [
+        "None",
+        "Male",
+        "Female",
+        "Unisex"
+      ],
+      "enum": [
+        "None",
+        "Male",
+        "Female",
+        "Unisex"
+      ]
+    },
+    "AttributesSchema": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/StatsSchema"
+        },
+        {
+          "type": "object",
+          "description": "Represents the serializable schema of an object's attributes\n            ",
+          "additionalProperties": false,
+          "properties": {
+            "Ac": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "AtkSpeedPct": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "Dmg": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "FlatSkillDamage": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "FlatSpellDamage": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "Hit": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "MagicResistance": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "MaximumHp": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "MaximumMp": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "SkillDamagePct": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "SpellDamagePct": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      ]
+    },
+    "StatsSchema": {
+      "type": "object",
+      "description": "Represents the serializable schema of stats\n            ",
+      "additionalProperties": false,
+      "properties": {
+        "Con": {
+          "type": "integer",
+          "description": "Constitution\n            ",
+          "format": "int32"
+        },
+        "Dex": {
+          "type": "integer",
+          "description": "Dexterity\n            ",
+          "format": "int32"
+        },
+        "Int": {
+          "type": "integer",
+          "description": "Intelligence\n            ",
+          "format": "int32"
+        },
+        "Str": {
+          "type": "integer",
+          "description": "Strength\n            ",
+          "format": "int32"
+        },
+        "Wis": {
+          "type": "integer",
+          "description": "Wisdom\n            ",
+          "format": "int32"
+        }
+      }
+    },
+    "PanelEntityTemplateSchema": {
+      "type": "object",
+      "description": "Represents the serializable schema for a panel object template\n            ",
+      "x-abstract": true,
+      "additionalProperties": false,
+      "properties": {
+        "AbilityLevel": {
+          "type": "integer",
+          "description": "The ability level required to use this entity\n            ",
+          "format": "int32"
+        },
+        "AdvClass": {
+          "description": "Defaults to null\n\nIf specified, this is the advanced class required to use this entity\n            ",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/AdvClass"
+            }
+          ]
+        },
+        "Class": {
+          "description": "Defaults to null\n\nIf specified, this is the base class required to use this entity\n            ",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/BaseClass"
+            }
+          ]
+        },
+        "CooldownMs": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Defaults to null\n\nIf specified, any on-use effect of this object will use this cooldown\n            ",
+          "format": "int32"
+        },
+        "Description": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "description": "Defaults to null\n\nA brief description of this entity\n            "
+        },
+        "Level": {
+          "type": "integer",
+          "description": "The level required to use this entity\n            ",
+          "format": "int32"
+        },
+        "Name": {
+          "type": "string",
+          "description": "The base name of the entity\n            "
+        },
+        "PanelSprite": {
+          "type": "integer",
+          "description": "The sprite id used to display the entity in it's respective panel (no offset)\n            "
+        },
+        "RequiresMaster": {
+          "type": "boolean",
+          "description": "Whether or not this entity requires you to be a master\n            "
+        },
+        "ScriptKeys": {
+          "type": "array",
+          "description": "A collection of names of scripts to attach to this object by default. The name of a script is just the name of the\nclass without \"Script\" at the end.\n            ",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ScriptVars": {
+          "type": "object",
+          "description": "A collection of key-value pairs of key-value pairs\n\nEach script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of\npropertyName-Value pairs\n            ",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/KeyValuePairOfStringAndJsonElement"
+            }
+          }
+        },
+        "TemplateKey": {
+          "type": "string",
+          "description": "A unique id specific to this template. This must match the file name\n            "
+        }
+      }
+    },
+    "AdvClass": {
+      "type": "string",
+      "description": "A byte representing the 'medenia class' of an aisling. Used in many places.\n            ",
+      "x-enumNames": [
+        "None",
+        "Gladiator",
+        "Druid",
+        "Archer",
+        "Bard",
+        "Summoner"
+      ],
+      "enum": [
+        "None",
+        "Gladiator",
+        "Druid",
+        "Archer",
+        "Bard",
+        "Summoner"
+      ]
+    },
+    "BaseClass": {
+      "type": "string",
+      "description": "A byte representing the 'temuair class' of an aisling. Used in many places.\n            ",
+      "x-enumNames": [
+        "Peasant",
+        "Warrior",
+        "Rogue",
+        "Wizard",
+        "Priest",
+        "Monk",
+        "Diacht"
+      ],
+      "enum": [
+        "Peasant",
+        "Warrior",
+        "Rogue",
+        "Wizard",
+        "Priest",
+        "Monk",
+        "Diacht"
+      ]
+    },
+    "KeyValuePairOfStringAndJsonElement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Key": {
+          "type": "string"
+        },
+        "Value": {}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "#/definitions/PanelEntityTemplateSchema"
+    },
+    {
+      "type": "object",
+      "description": "Represents the serializable schema for an item template\n            ",
+      "additionalProperties": false,
+      "properties": {
+        "AccountBound": {
+          "type": "boolean",
+          "description": "Whether or not the item is account bound. If the item is account bound, it cannot be traded or dropped\n            "
+        },
+        "ArmorUsesOvercoatSprites": {
+          "type": "boolean",
+          "description": "When this item is equipped, it will be considered an overcoat for display purposes. This allows items in the normal\narmor slot to use overcoat sprites and be dyeable. If an overcoat is equipped, that item will show instead.\n            "
+        },
+        "BuyCost": {
+          "type": "integer",
+          "description": "The amount of gold it costs to buy this item from a merchant\n            ",
+          "format": "int32"
+        },
+        "Category": {
+          "type": "string",
+          "description": "The category of the item, used for bank or shop sorting\n            "
+        },
+        "Color": {
+          "description": "Defaults to None(lavender)\n\nThe color of the item\n            ",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DisplayColor"
+            }
+          ]
+        },
+        "DisplaySprite": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Default null\n\nIf specified, this is the sprite value used to display the item on the character when equipped\n            "
+        },
+        "EquipmentType": {
+          "description": "Default null\n\nIf specified, this is the type of equipment this item is\n            ",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/EquipmentType"
+            }
+          ]
+        },
+        "Gender": {
+          "description": "Default null\n\nIf specified, this is the gender required to use this item\n            ",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/Gender"
+            }
+          ]
+        },
+        "IsDyeable": {
+          "type": "boolean",
+          "description": "Whether or not the item can be dyed. This determines whether a color change applied to an item persists through\nserialization and deserialization. Town dyes on pre-99 armor is not dye, theyre completely different sprites.\n            "
+        },
+        "IsModifiable": {
+          "type": "boolean",
+          "description": "Whether or not an instance of the item can be modified. This controls if an item can be affected by meta node\nmutators.\n            "
+        },
+        "MaxDurability": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Defaults to null\n\nIf specified, the max durability of the item\n            ",
+          "format": "int32"
+        },
+        "MaxStacks": {
+          "type": "integer",
+          "description": "The maximum number of this item that can be in a stack. If set to 1, the item will not be stackable\n            ",
+          "format": "int32"
+        },
+        "Modifiers": {
+          "description": "Defaults to null\n\nIf specified, these are the stats this item grants when equipped\n            ",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/definitions/AttributesSchema"
+            }
+          ]
+        },
+        "NoTrade": {
+          "type": "boolean",
+          "description": "Whether or not the item can be traded. If the item is not tradeable, it cannot be traded to other players via\nexchange or dropping. These items are still droppable, but are locked to the player that dropped it.\n            "
+        },
+        "OvercoatUsesArmorSprites": {
+          "type": "boolean",
+          "description": "When this item is equipped, it will be considered an armor for display purposes. This allows items in the overcoat\nslot to use normal armor sprites. If both an armor and an overcoat are equipped, the overcoat will display.\n            "
+        },
+        "OverridesBootsSprite": {
+          "type": "boolean",
+          "description": "When this item is equipped, the boots sprite will be set to 0\n            "
+        },
+        "OverridesHeadSprite": {
+          "type": "boolean",
+          "description": "When this item is equipped, the head sprite will be set to 0\n            "
+        },
+        "PantsColor": {
+          "description": "Default null\n\nIf specified, this armor will have pants, and they will be this color\n            ",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DisplayColor"
+            }
+          ]
+        },
+        "PreventBanking": {
+          "type": "boolean",
+          "description": "Whether or not the item can be banked\n            "
+        },
+        "SellValue": {
+          "type": "integer",
+          "description": "The amount of gold given for selling this item to a merchant\n            ",
+          "format": "int32"
+        },
+        "Weight": {
+          "type": "integer",
+          "description": "The weight of the item in the inventory, or equipped\n            ",
+          "format": "byte"
+        }
+      }
+    }
+  ]
+}

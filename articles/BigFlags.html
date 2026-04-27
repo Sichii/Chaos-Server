@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>BigFlags | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="BigFlags | Chaos Server Docs ">
+      
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/develop/docs/articles/BigFlags.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="bigflags">BigFlags</h1>
+
+<p>BigFlags is an unlimited-capacity flags system built on <code>BigInteger</code>. Standard C# <code>[Flags]</code> enums are limited to 64
+flags
+(using <code>long</code> or <code>ulong</code>). Use BigFlags when you need more than 64 flags or want extensibility. Fields are automatically
+assigned sequential bit indices.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>BigFlags are implemented via <a class="xref" href="../api/Chaos.Common.CustomTypes.BigFlags-1.html">BigFlags&lt;TMarker&gt;</a>
+and <a class="xref" href="../api/Chaos.Common.Abstractions.IBigFlagsValue.html">BigFlagsValue&lt;TMarker&gt;</a></p>
+</div>
+<h2 id="how-do-i-create-them">How do I create them?</h2>
+<p>Inherit from <a class="xref" href="../api/Chaos.Common.CustomTypes.BigFlags-1.html">BigFlags&lt;TMarker&gt;</a> and declare static fields of
+type <a class="xref" href="../api/Chaos.Common.Abstractions.IBigFlagsValue.html">BigFlagsValue&lt;TMarker&gt;</a>. Call <code>Initialize()</code> in a static
+constructor
+for automatic bit index assignment:</p>
+<pre><code class="lang-csharp">public sealed class PlayerPermissions : BigFlags&lt;PlayerPermissions&gt;
+{
+    public static readonly BigFlagsValue&lt;PlayerPermissions&gt; CanTrade;
+    public static readonly BigFlagsValue&lt;PlayerPermissions&gt; CanPvP;
+    public static readonly BigFlagsValue&lt;PlayerPermissions&gt; CanUseMail;
+    public static readonly BigFlagsValue&lt;PlayerPermissions&gt; IsAdmin;
+    public static readonly BigFlagsValue&lt;PlayerPermissions&gt; IsModerator;
+
+    static PlayerPermissions() =&gt; Initialize();
+}
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p><code>Initialize()</code> automatically assigns sequential bit indices (0, 1, 2, ...) and
+respects <a class="xref" href="../api/Chaos.Common.Attributes.BitIndexAttribute.html">BitIndexAttribute</a>.
+Without calling <code>Initialize()</code>, you must manually assign each field.</p>
+</div>
+<h2 id="how-do-i-use-them">How do I use them?</h2>
+<pre><code class="lang-csharp">// Combine flags with | operator
+var permissions = PlayerPermissions.CanTrade | PlayerPermissions.CanPvP;
+
+// Check if flag is set
+if (permissions.HasFlag(PlayerPermissions.CanTrade))
+    Console.WriteLine(&quot;Can trade!&quot;);
+
+// Check multiple flags
+if (permissions.HasAllFlags(PlayerPermissions.CanTrade, PlayerPermissions.CanPvP))
+    Console.WriteLine(&quot;Can trade AND PvP!&quot;);
+
+if (permissions.HasAnyFlag(PlayerPermissions.IsAdmin, PlayerPermissions.IsModerator))
+    Console.WriteLine(&quot;Is staff member!&quot;);
+
+// Add flags
+permissions = permissions.SetFlag(PlayerPermissions.IsAdmin);
+
+// Remove flags
+permissions = permissions.ClearFlag(PlayerPermissions.CanPvP);
+
+// Toggle flags
+permissions = permissions.ToggleFlag(PlayerPermissions.CanUseMail);
+
+// Check if empty
+if (permissions.IsEmpty)
+    Console.WriteLine(&quot;No permissions!&quot;);
+
+// Bitwise operators
+var combined = permissions | PlayerPermissions.CanUseMail;  // OR - combine
+var shared = permissions &amp; PlayerPermissions.CanTrade;      // AND - intersect
+var different = permissions ^ PlayerPermissions.CanPvP;     // XOR - symmetric difference
+var inverted = ~permissions;                                 // NOT - invert all bits
+
+// Bit enumeration
+foreach (int bitIndex in permissions.GetSetBitIndices())
+    Console.WriteLine($&quot;Bit {bitIndex} is set&quot;);
+
+// Binary string representation (for debugging)
+string binary = permissions.ToBinaryString();
+</code></pre>
+<h2 id="explicit-bit-indices">Explicit Bit Indices</h2>
+<p>Use <a class="xref" href="../api/Chaos.Common.Attributes.BitIndexAttribute.html">BitIndexAttribute</a> to assign explicit bit positions:</p>
+<pre><code class="lang-csharp">public sealed class ItemFlags : BigFlags&lt;ItemFlags&gt;
+{
+    [BitIndex(0)]
+    public static readonly BigFlagsValue&lt;ItemFlags&gt; Tradeable;
+
+    [BitIndex(5)]
+    public static readonly BigFlagsValue&lt;ItemFlags&gt; Stackable;
+
+    [BitIndex(100)]
+    public static readonly BigFlagsValue&lt;ItemFlags&gt; Legendary;
+
+    // This automatically gets bit 101 (next after highest explicit index)
+    public static readonly BigFlagsValue&lt;ItemFlags&gt; Unique;
+
+    static ItemFlags() =&gt; Initialize();
+}
+</code></pre>
+<p>Or assign values manually without calling <code>Initialize()</code>:</p>
+<pre><code class="lang-csharp">public sealed class CustomFlags : BigFlags&lt;CustomFlags&gt;
+{
+    public static readonly BigFlagsValue&lt;CustomFlags&gt; Flag1 = new(0);
+    public static readonly BigFlagsValue&lt;CustomFlags&gt; Flag2 = new(5);
+    public static readonly BigFlagsValue&lt;CustomFlags&gt; Flag3 = new(100);
+}
+</code></pre>
+<p>BigFlags serialize to JSON as comma-separated flag names.</p>
+<h2 id="enum-utility-equivalency">Enum Utility Equivalency</h2>
+<p>BigFlags provides utility methods equivalent to standard enum utilities. Methods are available on both the
+<a class="xref" href="../api/Chaos.Common.CustomTypes.BigFlags-1.html">BigFlags&lt;TMarker&gt;</a> base class and the static
+<a class="xref" href="../api/Chaos.Common.CustomTypes.BigFlags.html">BigFlags</a> utility class:</p>
+<pre><code class="lang-csharp">// Get all defined flag names
+IEnumerable&lt;string&gt; names = PlayerPermissions.GetNames();
+
+// Get all defined flag values
+IEnumerable&lt;BigFlagsValue&lt;PlayerPermissions&gt;&gt; values = PlayerPermissions.GetValues();
+
+// Parse flag name to value
+var admin = PlayerPermissions.Parse(&quot;IsAdmin&quot;);
+
+// Try parse (returns false if not found)
+if (PlayerPermissions.TryParse(&quot;UnknownFlag&quot;, out var flag))
+    Console.WriteLine(&quot;Found it!&quot;);
+
+// Check if flag name exists
+bool exists = PlayerPermissions.IsDefined(&quot;CanTrade&quot;);
+
+// Get name from value
+string? name = PlayerPermissions.GetName(PlayerPermissions.CanTrade);
+// Returns: &quot;CanTrade&quot;
+</code></pre>
+<h2 id="best-practices">Best Practices</h2>
+<div class="TIP">
+<h5>Tip</h5>
+<p>Make BigFlags types sealed</p>
+</div>
+<ul>
+<li>Use descriptive names (they appear in JSON)</li>
+<li>Group related flags together</li>
+<li>Use <code>[BitIndex]</code> for flags that shouldn't change position</li>
+<li>Use <code>None</code> for empty checks</li>
+</ul>
+<h2 id="example">Example</h2>
+<pre><code class="lang-csharp">public sealed class QuestFlags : BigFlags&lt;QuestFlags&gt;
+{
+    public static readonly BigFlagsValue&lt;QuestFlags&gt; Started;
+    public static readonly BigFlagsValue&lt;QuestFlags&gt; Completed;
+    public static readonly BigFlagsValue&lt;QuestFlags&gt; Repeatable;
+    public static readonly BigFlagsValue&lt;QuestFlags&gt; Daily;
+    public static readonly BigFlagsValue&lt;QuestFlags&gt; Weekly;
+
+    static QuestFlags() =&gt; Initialize();
+}
+
+// Add quest flags to an Aisling
+aisling.Trackers.BigFlags.AddFlag(QuestFlags.Started);
+aisling.Trackers.BigFlags.AddFlag(QuestFlags.Repeatable);
+aisling.Trackers.BigFlags.AddFlag(QuestFlags.Daily);
+
+// Check quest status - retrieve flags then check
+var questFlags = aisling.Trackers.BigFlags.GetFlag&lt;QuestFlags&gt;();
+
+if (questFlags.HasFlag(QuestFlags.Started) &amp;&amp; !questFlags.HasFlag(QuestFlags.Completed))
+    Console.WriteLine(&quot;Quest is active!&quot;);
+
+// Or check directly on the collection
+if (aisling.Trackers.BigFlags.HasFlag(QuestFlags.Repeatable))
+    Console.WriteLine(&quot;Quest can be repeated!&quot;);
+</code></pre>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/develop/docs/articles/BigFlags.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
