@@ -103,6 +103,9 @@ public sealed class DisplayAislingConverter : PacketConverterBase<DisplayAisling
         args.NameTagStyle = (NameTagStyle)reader.ReadByte();
         args.Name = reader.ReadString8();
         args.GroupBoxText = reader.ReadString8();
+        
+        if(args.BodySprite is BodySprite.MaleGhost or BodySprite.FemaleGhost)
+            args.IsDead = true;
 
         if (args is { BodySprite: BodySprite.None, IsTransparent: true })
         {
