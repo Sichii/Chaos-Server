@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "BulletinBoardTemplateSchema",
+  "type": "object",
+  "description": "Represents the serializable schema for a bulletin board template\n            ",
+  "additionalProperties": false,
+  "properties": {
+    "Name": {
+      "type": "string",
+      "description": "The name of the board, as displayed if shown in a list of boards\n            "
+    },
+    "ScriptKeys": {
+      "type": "array",
+      "description": "A collection of names of dialog scripts to attach to this dialog by default\n            ",
+      "items": {
+        "type": "string"
+      }
+    },
+    "ScriptVars": {
+      "type": "object",
+      "description": "A collection of key-value pairs of key-value pairs\n\nEach script that has variables needs a scriptName-Value pair, and the value of that entry is a dictionary of\npropertyName-Value pairs\n            ",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/KeyValuePairOfStringAndJsonElement"
+        }
+      }
+    },
+    "TemplateKey": {
+      "type": "string",
+      "description": "A unique id specific to this template. This must match the file name\n            "
+    }
+  },
+  "definitions": {
+    "KeyValuePairOfStringAndJsonElement": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Key": {
+          "type": "string"
+        },
+        "Value": {}
+      }
+    }
+  }
+}

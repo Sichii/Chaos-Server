@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class QuestStepBuilder&lt;TStage&gt; | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class QuestStepBuilder&lt;TStage&gt; | Chaos Server Docs ">
+      
+      <meta name="description" content="Fluent builder for an operation chain. Recorded operations are functions over QuestContext returning bool — true = continue the chain, false = halt (guard failed).">
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/new/develop/apiSpec/new?filename=Chaos_Utilities_QuestHelper_QuestStepBuilder_1.md&amp;value=---%0Auid%3A%20Chaos.Utilities.QuestHelper.QuestStepBuilder%601%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Chaos.Utilities.QuestHelper.QuestStepBuilder`1">
+
+
+
+  <h1 id="Chaos_Utilities_QuestHelper_QuestStepBuilder_1" data-uid="Chaos.Utilities.QuestHelper.QuestStepBuilder`1" class="text-break">
+Class QuestStepBuilder&lt;TStage&gt;  <a class="header-action link-secondary" title="View source" href="https://github.com/Sichii/Chaos-Server/blob/develop/Chaos/Utilities/QuestHelper/QuestStepBuilder.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Chaos.html">Chaos</a>.<a class="xref" href="Chaos.Utilities.html">Utilities</a>.<a class="xref" href="Chaos.Utilities.QuestHelper.html">QuestHelper</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Chaos.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Fluent builder for an operation chain. Recorded operations are functions over
+QuestContext returning bool — true = continue the chain, false = halt (guard failed).</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public sealed class QuestStepBuilder&lt;TStage&gt; where TStage : struct, Enum</code></pre>
+  </div>
+
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>TStage</code></dt>
+    <dd></dd>
+  </dl>
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">QuestStepBuilder&lt;TStage&gt;</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+  <h2 id="Chaos_Utilities_QuestHelper_QuestStepBuilder_1_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>
+Most guard methods (<code>When</code>, <code>WhenNeverStarted</code>, <code>RequireFlag</code>,
+<code>RequireItem</code>, etc.) take an optional <code>failureReply</code> parameter. When provided,
+a failed guard sends a Dialog Reply with the message and halts; when omitted, the guard
+halts silently.
+</p>
+</div>
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Advance.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Advance__0_">Advance(TStage)</a></dt>
+    <dd><p>Set the stage. Updates ctx.CurrentStage to match.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.AdvanceSub.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_AdvanceSub__1___0_">AdvanceSub&lt;TSub&gt;(TSub)</a></dt>
+    <dd><p>Set the sub-stage of type <code class="typeparamref">TSub</code> on Source's Trackers.Enums.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Branch.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Branch_System_Func_Chaos_Utilities_QuestHelper_QuestContext__0__System_Boolean__System_Action_Chaos_Utilities_QuestHelper_QuestStepBuilder__0___">Branch(Func&lt;QuestContext&lt;TStage&gt;, bool&gt;, Action&lt;QuestStepBuilder&lt;TStage&gt;&gt;)</a></dt>
+    <dd><p>Conditional sub-chain. Runs <code class="paramref">configure</code>'s operations if
+<code class="paramref">predicate</code> returns true; otherwise the outer chain continues unchanged.
+On a successful match, <span class="xref">Chaos.Utilities.QuestHelper.QuestContext.OtherwiseTaken</span> is set so a later
+<a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Otherwise.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Otherwise_System_Action_Chaos_Utilities_QuestHelper_QuestStepBuilder__0___">Otherwise(Action&lt;QuestStepBuilder&lt;TStage&gt;&gt;)</a> knows a branch already fired.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ClearCounter.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ClearCounter_System_String_">ClearCounter(string)</a></dt>
+    <dd><p>Remove the counter for <code class="paramref">key</code> from the source's Trackers.Counters.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ClearFlag.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ClearFlag__1_Chaos_Common_CustomTypes_BigFlagsValue___0__">ClearFlag&lt;TMarker&gt;(BigFlagsValue&lt;TMarker&gt;)</a></dt>
+    <dd><p>Clear the given big flag from the source's Trackers.BigFlags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ClearFlag.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ClearFlag__1___0_">ClearFlag&lt;TFlag&gt;(TFlag)</a></dt>
+    <dd><p>Clear the given enum flag from the source's Trackers.Flags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ClearStage.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ClearStage">ClearStage()</a></dt>
+    <dd><p>Remove the stage entirely.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ClearSub.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ClearSub__1">ClearSub&lt;TSub&gt;()</a></dt>
+    <dd><p>Remove any stored value of type <code class="typeparamref">TSub</code> from Source's Trackers.Enums.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeEquipped.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeEquipped_System_String_">ConsumeEquipped(string)</a></dt>
+    <dd><p>Halt the chain unless an item named <code class="paramref">name</code> (case-insensitive) is currently equipped; otherwise unequip and destroy it. Use <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeEquippedByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeEquippedByTemplateKey_System_String_">ConsumeEquippedByTemplateKey(string)</a> when the templateKey is the stable identifier.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeEquippedByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeEquippedByTemplateKey_System_String_">ConsumeEquippedByTemplateKey(string)</a></dt>
+    <dd><p>Halt the chain unless an item identified by <code class="paramref">templateKey</code> is currently equipped; otherwise unequip and destroy it.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeGold.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeGold_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">ConsumeGold(QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Halt the chain unless Source can give up <code class="paramref">amount</code> gold; otherwise consume.
+Note: on failure the underlying <code>TryTakeGold</code> sends a system &quot;not enough gold&quot;
+orange-bar message. To present a quest-specific reply instead, gate with
+<a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireGold.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireGold_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireGold(QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a> first.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItem.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItem_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">ConsumeItem(string, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Halt the chain unless the source can give up <code class="paramref">count</code> of items whose display name equals <code class="paramref">name</code> (case-insensitive); otherwise consume. Use <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItemByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItemByTemplateKey_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">ConsumeItemByTemplateKey(string, QuestArg&lt;int&gt;)</a> when the templateKey is the stable identifier.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItemByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItemByTemplateKey_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">ConsumeItemByTemplateKey(string, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Halt the chain unless the source can give up <code class="paramref">count</code> of <code class="paramref">templateKey</code>; otherwise consume.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItemOrEquipped.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItemOrEquipped_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">ConsumeItemOrEquipped(string, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Halt the chain unless the source can give up <code class="paramref">count</code> of items named <code class="paramref">name</code> from inventory or (count==1) equipment; otherwise consume. Use <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItemOrEquippedByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItemOrEquippedByTemplateKey_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">ConsumeItemOrEquippedByTemplateKey(string, QuestArg&lt;int&gt;)</a> when the templateKey is the stable identifier.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItemOrEquippedByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItemOrEquippedByTemplateKey_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">ConsumeItemOrEquippedByTemplateKey(string, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Halt the chain unless the source can give up <code class="paramref">count</code> of <code class="paramref">templateKey</code> from inventory or (count==1) equipment; otherwise consume.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItems.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItems_Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32____">ConsumeItems(QuestArg&lt;IReadOnlyCollection&lt;(string Name, int Count)&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">items</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItems.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItems_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32___">ConsumeItems(params IReadOnlyCollection&lt;(string Name, int Count)&gt;)</a></dt>
+    <dd><p>Pre-check every (name, count) pair; halt if any insufficient. Otherwise consume all atomically.
+Use <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItemsByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItemsByTemplateKey_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32___">ConsumeItemsByTemplateKey(params IReadOnlyCollection&lt;(string TemplateKey, int Count)&gt;)</a> when templateKeys are the stable identifiers.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItemsByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItemsByTemplateKey_Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32____">ConsumeItemsByTemplateKey(QuestArg&lt;IReadOnlyCollection&lt;(string TemplateKey, int Count)&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">items</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ConsumeItemsByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ConsumeItemsByTemplateKey_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32___">ConsumeItemsByTemplateKey(params IReadOnlyCollection&lt;(string TemplateKey, int Count)&gt;)</a></dt>
+    <dd><p>Pre-check every (templateKey, count) pair; halt if any insufficient. Otherwise consume all atomically.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.DecrementCounter.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_DecrementCounter_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">DecrementCounter(string, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Decrement the source's counter for <code class="paramref">key</code> by a per-execution resolved <code class="paramref">by</code> value.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.DecrementCounter.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_DecrementCounter_System_String_System_Int32_">DecrementCounter(string, int)</a></dt>
+    <dd><p>Decrement the source's counter for <code class="paramref">key</code> by <code class="paramref">by</code>. No-op if the counter does not exist
+or would underflow below zero.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveAbility.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveAbility_Chaos_Utilities_QuestHelper_QuestArg_System_Int64__">GiveAbility(QuestArg&lt;long&gt;)</a></dt>
+    <dd><p>Award the source <code class="paramref">amount</code> ability experience via the active IAbilityDistributionScript.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveExperience.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveExperience_Chaos_Utilities_QuestHelper_QuestArg_System_Int64__">GiveExperience(QuestArg&lt;long&gt;)</a></dt>
+    <dd><p>Award the source <code class="paramref">amount</code> experience via the active IExperienceDistributionScript.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveGamePoints.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveGamePoints_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">GiveGamePoints(QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Add <code class="paramref">amount</code> game points to the source. Chain continues unconditionally.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveGold.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveGold_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">GiveGold(QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Add <code class="paramref">amount</code> gold to the source. Chain continues even if TryGiveGold returns false.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveItem.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveItem_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">GiveItem(string, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Create an item by template key and grant it to the source with a per-execution resolved <code class="paramref">count</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveItem.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveItem_System_String_System_Int32_">GiveItem(string, int)</a></dt>
+    <dd><p>Create an item by template key and grant it to the source (overflow goes to bank).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveItems.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveItems_Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32____">GiveItems(QuestArg&lt;IReadOnlyCollection&lt;(string TemplateKey, int Count)&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">items</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveItems.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveItems_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32___">GiveItems(params IReadOnlyCollection&lt;(string TemplateKey, int Count)&gt;)</a></dt>
+    <dd><p>Grant a batch of items by template key. Each is created and granted independently.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveOrAccumulateLegendMark.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveOrAccumulateLegendMark_System_String_System_String_Chaos_DarkAges_Definitions_MarkIcon_Chaos_DarkAges_Definitions_MarkColor_">GiveOrAccumulateLegendMark(string, string, MarkIcon, MarkColor)</a></dt>
+    <dd><p>Add (or accumulate) a LegendMark on the source's Legend. Time stamp is GameTime.Now.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveSkill.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveSkill_System_String_">GiveSkill(string)</a></dt>
+    <dd><p>Create and grant a skill via ISkillFactory + ComplexActionHelper.LearnSkill.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveSpell.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveSpell_System_String_System_Nullable_System_Byte__">GiveSpell(string, byte?)</a></dt>
+    <dd><p>Create and grant a spell via ISpellFactory + ComplexActionHelper.LearnSpell.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GiveUniqueLegendMark.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GiveUniqueLegendMark_System_String_System_String_Chaos_DarkAges_Definitions_MarkIcon_Chaos_DarkAges_Definitions_MarkColor_">GiveUniqueLegendMark(string, string, MarkIcon, MarkColor)</a></dt>
+    <dd><p>Add a unique LegendMark on the source's Legend. Replaces an existing mark with the same key; does NOT increment count on repeat.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GroupTeleport.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GroupTeleport_System_String_Chaos_Geometry_Rectangle_">GroupTeleport(string, Rectangle)</a></dt>
+    <dd><p>Teleport Source's group (or Source alone if ungrouped) to a single shared walkable point
+inside <code class="paramref">rect</code> on the resolved map. Per-member random points are
+deferred to v2 — the v1 contract is a single point for the whole group.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.GroupTeleport.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_GroupTeleport_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">GroupTeleport(string, QuestArg&lt;int&gt;, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Teleport Source's group (or Source alone if ungrouped) to <code>(x, y)</code> on the resolved map.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.IncrementCounter.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_IncrementCounter_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">IncrementCounter(string, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Increment the source's counter for <code class="paramref">key</code> by a per-execution resolved <code class="paramref">by</code> value.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.IncrementCounter.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_IncrementCounter_System_String_System_Int32_">IncrementCounter(string, int)</a></dt>
+    <dd><p>Increment the source's counter for <code class="paramref">key</code> by <code class="paramref">by</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.InjectTextParameters.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_InjectTextParameters_System_Func_Chaos_Utilities_QuestHelper_QuestContext__0__System_Object____">InjectTextParameters(Func&lt;QuestContext&lt;TStage&gt;, object[]&gt;)</a></dt>
+    <dd><p>Context-aware overload of <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.InjectTextParameters.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_InjectTextParameters_System_Object___">InjectTextParameters(params object[])</a>.
+<code class="paramref">selector</code> is invoked at chain run time so dynamic values from the
+player or quest context (gold, item count, kill counter, etc.) can be templated into the
+dialog text. Chain continues; no-op if ctx.Subject is null.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.InjectTextParameters.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_InjectTextParameters_System_Object___">InjectTextParameters(params object[])</a></dt>
+    <dd><p>Inject text parameters into ctx.Subject's dialog text (forwards to
+<a class="xref" href="Chaos.Models.Menu.Dialog.InjectTextParameters.html#Chaos_Models_Menu_Dialog_InjectTextParameters_System_ReadOnlySpan_System_Object__">InjectTextParameters(params ReadOnlySpan&lt;object&gt;)</a>). Intended for the
+<code>OnDisplaying</code> phase, where it runs before the dialog is sent. Chain continues; no-op
+if ctx.Subject is null.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.InsertOption.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_InsertOption_Chaos_Utilities_QuestHelper_QuestArg_System_String__System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">InsertOption(QuestArg&lt;string&gt;, string, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Insert a dialog option pointing to <code class="paramref">dialogKey</code> at <code class="paramref">index</code>
+if not already present (default index 0 places the option at the top of the menu — useful
+when injecting a quest hook into an NPC's pre-existing main menu). Chain continues. No-ops
+if ctx.Subject is null.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Otherwise.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Otherwise_System_Action_Chaos_Utilities_QuestHelper_QuestStepBuilder__0___">Otherwise(Action&lt;QuestStepBuilder&lt;TStage&gt;&gt;)</a></dt>
+    <dd><p>Companion to a chain of conditional sub-builder calls. Runs the sub-chain only if no
+preceding <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Branch.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Branch_System_Func_Chaos_Utilities_QuestHelper_QuestContext__0__System_Boolean__System_Action_Chaos_Utilities_QuestHelper_QuestStepBuilder__0___">Branch(Func&lt;QuestContext&lt;TStage&gt;, bool&gt;, Action&lt;QuestStepBuilder&lt;TStage&gt;&gt;)</a> matched.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RemoveSkill.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RemoveSkill_System_String_">RemoveSkill(string)</a></dt>
+    <dd><p>Remove the skill matching <code class="paramref">templateKey</code> from the source's SkillBook.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RemoveSpell.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RemoveSpell_System_String_">RemoveSpell(string)</a></dt>
+    <dd><p>Remove the spell matching <code class="paramref">templateKey</code> from the source's SpellBook.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Reply.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Reply_Chaos_Utilities_QuestHelper_QuestArg_System_String__">Reply(QuestArg&lt;string&gt;)</a></dt>
+    <dd><p>Send a dialog reply to the source. Halts the chain — replies signal the end of the
+current step's dialog flow. No-ops (but still halts) if ctx.Subject is null.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireAllFlags.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireAllFlags__1_Chaos_Common_CustomTypes_BigFlagsValue___0__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireAllFlags&lt;TMarker&gt;(BigFlagsValue&lt;TMarker&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless every bit in <code class="paramref">combined</code> is set in Trackers.BigFlags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireAllFlags.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireAllFlags__1___0_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireAllFlags&lt;TFlag&gt;(TFlag, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless every bit in <code class="paramref">combined</code> is set in Trackers.Flags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireAnyFlag.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireAnyFlag__1_Chaos_Common_CustomTypes_BigFlagsValue___0__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireAnyFlag&lt;TMarker&gt;(BigFlagsValue&lt;TMarker&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless at least one bit in <code class="paramref">combined</code> is set in Trackers.BigFlags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireAnyFlag.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireAnyFlag__1___0_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireAnyFlag&lt;TFlag&gt;(TFlag, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless at least one bit in <code class="paramref">combined</code> is set in Trackers.Flags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireClass.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireClass_Chaos_DarkAges_Definitions_BaseClass_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireClass(BaseClass, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source's BaseClass matches <code class="paramref">baseClass</code>. When
+<code class="paramref">failureReply</code> is provided, the failure path also sends a Reply. For
+class-gated branching (no halt on mismatch), compose with <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Branch.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Branch_System_Func_Chaos_Utilities_QuestHelper_QuestContext__0__System_Boolean__System_Action_Chaos_Utilities_QuestHelper_QuestStepBuilder__0___">Branch(Func&lt;QuestContext&lt;TStage&gt;, bool&gt;, Action&lt;QuestStepBuilder&lt;TStage&gt;&gt;)</a> instead
+(e.g. <code>Branch(c =&gt; c.Source.UserStatSheet.BaseClass == X, body)</code>).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireCooldownExpired.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireCooldownExpired_System_String_">RequireCooldownExpired(string)</a></dt>
+    <dd><p>Halt the chain if the source's Trackers.TimedEvents has an active event for <code class="paramref">key</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireCooldownExpired.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireCooldownExpired_System_String_System_String_">RequireCooldownExpired(string, string)</a></dt>
+    <dd><p>Halt the chain if the source's Trackers.TimedEvents has an active event for <code class="paramref">key</code>,
+and emit a templated dialog reply. Use <code>{remaining}</code> in <code class="paramref">activeMessageTemplate</code>;
+it is replaced with the readable remaining time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireCountEqualTo.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireCountEqualTo_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireCountEqualTo(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source's counter for <code class="paramref">key</code> equals <code class="paramref">value</code>. A missing counter is treated as 0.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireCountGreaterThan.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireCountGreaterThan_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireCountGreaterThan(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source's counter for <code class="paramref">key</code> is strictly greater than <code class="paramref">value</code>. A missing counter is treated as 0.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireCountGreaterThanOrEqualTo.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireCountGreaterThanOrEqualTo_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireCountGreaterThanOrEqualTo(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source's counter for <code class="paramref">key</code> is at or above <code class="paramref">value</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireCountLessThan.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireCountLessThan_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireCountLessThan(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source's counter for <code class="paramref">key</code> is strictly less than <code class="paramref">value</code>. A missing counter is treated as 0.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireCountLessThanOrEqualTo.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireCountLessThanOrEqualTo_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireCountLessThanOrEqualTo(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source's counter for <code class="paramref">key</code> is at or below <code class="paramref">value</code>. A missing counter is treated as 0.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireEquipped.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireEquipped_System_String_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireEquipped(string, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless an item whose display name equals <code class="paramref">name</code> (case-insensitive)
+is currently equipped. Use <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireEquippedByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireEquippedByTemplateKey_System_String_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireEquippedByTemplateKey(string, QuestArg&lt;string&gt;?)</a> when the templateKey is the stable identifier.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireEquippedByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireEquippedByTemplateKey_System_String_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireEquippedByTemplateKey(string, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless an item identified by <code class="paramref">templateKey</code> is currently equipped.
+Equipment slots are non-stacking, so this is a binary &quot;is it worn?&quot; check.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireFlag.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireFlag__1_Chaos_Common_CustomTypes_BigFlagsValue___0__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireFlag&lt;TMarker&gt;(BigFlagsValue&lt;TMarker&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source's Trackers.BigFlags contains the given big flag.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireFlag.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireFlag__1___0_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireFlag&lt;TFlag&gt;(TFlag, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source's Trackers.Flags contains the given enum flag.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireFullGrandmaster.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireFullGrandmaster_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireFullGrandmaster(QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source is a full grandmaster — both mastered and at the configured
+max level (<a class="xref" href="Chaos.Services.Servers.Options.WorldOptions.html">WorldOptions</a>.MaxLevel).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireGender.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireGender_Chaos_DarkAges_Definitions_Gender_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireGender(Gender, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source's Gender matches <code class="paramref">gender</code>. When
+<code class="paramref">failureReply</code> is provided, the failure path also sends a Reply. For
+gender-gated branching (no halt on mismatch), compose with <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Branch.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Branch_System_Func_Chaos_Utilities_QuestHelper_QuestContext__0__System_Boolean__System_Action_Chaos_Utilities_QuestHelper_QuestStepBuilder__0___">Branch(Func&lt;QuestContext&lt;TStage&gt;, bool&gt;, Action&lt;QuestStepBuilder&lt;TStage&gt;&gt;)</a> instead
+(e.g. <code>Branch(c =&gt; c.Source.Gender == X, body)</code>).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireGold.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireGold_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireGold(QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source has at least <code class="paramref">amount</code> gold. Pure check —
+does not consume. When <code class="paramref">failureReply</code> is provided, the failure path
+also sends a Reply.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItem.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItem_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireItem(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source has at least <code class="paramref">count</code> of items whose display name equals <code class="paramref">name</code> (case-insensitive). Use <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItemByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItemByTemplateKey_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireItemByTemplateKey(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a> when the templateKey is the stable identifier.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItemByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItemByTemplateKey_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireItemByTemplateKey(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source has at least <code class="paramref">count</code> of <code class="paramref">templateKey</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItemOrEquipped.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItemOrEquipped_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireItemOrEquipped(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source has at least <code class="paramref">count</code> of items named
+<code class="paramref">name</code> in inventory, or — when <code class="paramref">count</code> is 1 —
+an item with that name is currently equipped. Use <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItemOrEquippedByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItemOrEquippedByTemplateKey_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireItemOrEquippedByTemplateKey(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a> when the templateKey is the stable identifier.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItemOrEquippedByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItemOrEquippedByTemplateKey_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireItemOrEquippedByTemplateKey(string, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless the source has at least <code class="paramref">count</code> of
+<code class="paramref">templateKey</code> in inventory, or — when <code class="paramref">count</code> is 1 —
+the item is currently equipped.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItems.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItems_Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32____">RequireItems(QuestArg&lt;IReadOnlyCollection&lt;(string Name, int Count)&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">items</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItems.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItems_Chaos_Utilities_QuestHelper_QuestArg_System_String__Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32____">RequireItems(QuestArg&lt;string&gt;, QuestArg&lt;IReadOnlyCollection&lt;(string Name, int Count)&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">items</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItems.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItems_Chaos_Utilities_QuestHelper_QuestArg_System_String__System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32___">RequireItems(QuestArg&lt;string&gt;, params IReadOnlyCollection&lt;(string Name, int Count)&gt;)</a></dt>
+    <dd><p>Halt the chain (with <code class="paramref">failureReply</code>) unless the source has every (name, count) pair in <code class="paramref">items</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItems.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItems_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32___">RequireItems(params IReadOnlyCollection&lt;(string Name, int Count)&gt;)</a></dt>
+    <dd><p>Halt the chain unless the source has every (name, count) pair in <code class="paramref">items</code>. Use <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItemsByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItemsByTemplateKey_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32___">RequireItemsByTemplateKey(params IReadOnlyCollection&lt;(string TemplateKey, int Count)&gt;)</a> when templateKeys are the stable identifiers.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItemsByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItemsByTemplateKey_Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32____">RequireItemsByTemplateKey(QuestArg&lt;IReadOnlyCollection&lt;(string TemplateKey, int Count)&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">items</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItemsByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItemsByTemplateKey_Chaos_Utilities_QuestHelper_QuestArg_System_String__Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32____">RequireItemsByTemplateKey(QuestArg&lt;string&gt;, QuestArg&lt;IReadOnlyCollection&lt;(string TemplateKey, int Count)&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">items</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItemsByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItemsByTemplateKey_Chaos_Utilities_QuestHelper_QuestArg_System_String__System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32___">RequireItemsByTemplateKey(QuestArg&lt;string&gt;, params IReadOnlyCollection&lt;(string TemplateKey, int Count)&gt;)</a></dt>
+    <dd><p>Halt the chain unless the source has every (templateKey, count) pair in <code class="paramref">items</code>. On failure, sends <code class="paramref">failureReply</code> as a Reply.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireItemsByTemplateKey.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireItemsByTemplateKey_System_Collections_Generic_IReadOnlyCollection_System_ValueTuple_System_String_System_Int32___">RequireItemsByTemplateKey(params IReadOnlyCollection&lt;(string TemplateKey, int Count)&gt;)</a></dt>
+    <dd><p>Halt the chain unless the source has every (templateKey, count) pair in <code class="paramref">items</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireLevel.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireLevel_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__Chaos_Utilities_QuestHelper_QuestArg_System_Int32__System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireLevel(QuestArg&lt;int&gt;, QuestArg&lt;int&gt;, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Per-execution overload of <a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireLevel.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireLevel_System_Int32_System_Int32_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireLevel(int, int, QuestArg&lt;string&gt;?)</a>. Both bounds resolve at chain execution time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireLevel.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireLevel_System_Int32_System_Int32_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireLevel(int, int, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source's UserStatSheet.Level is within <code>[min, max]</code> (inclusive).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequireMaster.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequireMaster_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequireMaster(QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source has mastered (UserStatSheet.Master is true).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RequirePureMaster.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RequirePureMaster_Chaos_DarkAges_Definitions_BaseClass_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">RequirePureMaster(BaseClass, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source is mastered AND BaseClass equals <code class="paramref">baseClass</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RouteByStage.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RouteByStage_Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyDictionary__0_System_String___">RouteByStage(QuestArg&lt;IReadOnlyDictionary&lt;TStage, string&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">routes</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RouteByStage.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RouteByStage_System_Collections_Generic_IReadOnlyDictionary__0_System_String__">RouteByStage(IReadOnlyDictionary&lt;TStage, string&gt;)</a></dt>
+    <dd><p>Maps the current stage to a dialog key and Skips to it (no-op if stage not in dict).</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RouteBySub.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RouteBySub__1_Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyDictionary___0_System_String___">RouteBySub&lt;TSub&gt;(QuestArg&lt;IReadOnlyDictionary&lt;TSub, string&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">routes</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.RouteBySub.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_RouteBySub__1_System_Collections_Generic_IReadOnlyDictionary___0_System_String__">RouteBySub&lt;TSub&gt;(IReadOnlyDictionary&lt;TSub, string&gt;)</a></dt>
+    <dd><p>Maps the current sub-stage of type <code class="typeparamref">TSub</code> to a dialog key and Skips
+to it. No-op if the sub-track has never been advanced or the current value is not in
+<code class="paramref">routes</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Run.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Run_System_Action_Chaos_Models_World_Aisling_Chaos_Utilities_QuestHelper_QuestContext__0___">Run(Action&lt;Aisling, QuestContext&lt;TStage&gt;&gt;)</a></dt>
+    <dd><p>Escape hatch — run an arbitrary action against the source and context, then continue the chain.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.SendOrangeBar.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_SendOrangeBar_Chaos_Utilities_QuestHelper_QuestArg_System_String__">SendOrangeBar(QuestArg&lt;string&gt;)</a></dt>
+    <dd><p>Send an active (orange-bar) message to the source. Chain continues.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.SetCounter.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_SetCounter_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">SetCounter(string, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Set the source's counter for <code class="paramref">key</code> to <code class="paramref">value</code>,
+replacing any existing value. <code class="paramref">value</code> accepts either a literal
+(lifted via <a class="xref" href="Chaos.Utilities.QuestHelper.QuestArg-1.html">QuestArg&lt;T&gt;</a>'s implicit conversion) or a per-execution
+resolver via <a class="xref" href="Chaos.Utilities.QuestHelper.QuestArg.From.html#Chaos_Utilities_QuestHelper_QuestArg_From__1_System_Func_Chaos_Utilities_QuestHelper_QuestContext___0__">From&lt;T&gt;(Func&lt;QuestContext, T&gt;)</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.SetFlag.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_SetFlag__1_Chaos_Common_CustomTypes_BigFlagsValue___0__">SetFlag&lt;TMarker&gt;(BigFlagsValue&lt;TMarker&gt;)</a></dt>
+    <dd><p>Set the given big flag on the source's Trackers.BigFlags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.SetFlag.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_SetFlag__1___0_">SetFlag&lt;TFlag&gt;(TFlag)</a></dt>
+    <dd><p>Set the given enum flag on the source's Trackers.Flags.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.ShowOption.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_ShowOption_Chaos_Utilities_QuestHelper_QuestArg_System_String__System_String_">ShowOption(QuestArg&lt;string&gt;, string)</a></dt>
+    <dd><p>Add a dialog option pointing to <code class="paramref">dialogKey</code> if not already present. Chain
+continues. No-ops if ctx.Subject is null.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Skip.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Skip_System_String_">Skip(string)</a></dt>
+    <dd><p>Skip to another dialog by key (Reply with text &quot;Skip&quot;). Halts the chain. No-ops (but still
+halts) if ctx.Subject is null.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.StartCooldown.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_StartCooldown_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_TimeSpan__">StartCooldown(string, QuestArg&lt;TimeSpan&gt;)</a></dt>
+    <dd><p>Start an auto-consuming cooldown event keyed by <code class="paramref">key</code> on the source's Trackers.TimedEvents.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Teleport.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Teleport_System_String_Chaos_Geometry_Rectangle_">Teleport(string, Rectangle)</a></dt>
+    <dd><p>Teleport Source to a randomly-chosen walkable point inside <code class="paramref">rect</code> on the
+map identified by <code class="paramref">mapKey</code>. Throws if no walkable point can be found in
+100 attempts.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.Teleport.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_Teleport_System_String_Chaos_Utilities_QuestHelper_QuestArg_System_Int32__Chaos_Utilities_QuestHelper_QuestArg_System_Int32__">Teleport(string, QuestArg&lt;int&gt;, QuestArg&lt;int&gt;)</a></dt>
+    <dd><p>Teleport Source to <code>(x, y)</code> on the map identified by <code class="paramref">mapKey</code>.
+Resolves the destination map via <a class="xref" href="Chaos.Storage.Abstractions.ISimpleCache-1.html">ISimpleCache&lt;TResult&gt;</a>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenAt.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenAt__0_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">WhenAt(TStage, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source is currently at the given stage. When
+<code class="paramref">failureReply</code> is provided, the failure path also sends a Reply.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenAtAny.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenAtAny_Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection__0___">WhenAtAny(QuestArg&lt;IReadOnlyCollection&lt;TStage&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">stages</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenAtAny.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenAtAny_Chaos_Utilities_QuestHelper_QuestArg_System_String__Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection__0___">WhenAtAny(QuestArg&lt;string&gt;, QuestArg&lt;IReadOnlyCollection&lt;TStage&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">stages</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenAtAny.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenAtAny_Chaos_Utilities_QuestHelper_QuestArg_System_String__System_Collections_Generic_IReadOnlyCollection__0__">WhenAtAny(QuestArg&lt;string&gt;, params IReadOnlyCollection&lt;TStage&gt;)</a></dt>
+    <dd><p>Halt the chain (with <code class="paramref">failureReply</code>) unless the source's tracked stage is any of <code class="paramref">stages</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenAtAny.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenAtAny_System_Collections_Generic_IReadOnlyCollection__0__">WhenAtAny(params IReadOnlyCollection&lt;TStage&gt;)</a></dt>
+    <dd><p>Halt the chain unless the source's tracked stage is any of <code class="paramref">stages</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenAtAnySub.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenAtAnySub__1_Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection___0___">WhenAtAnySub&lt;TSub&gt;(QuestArg&lt;IReadOnlyCollection&lt;TSub&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">values</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenAtAnySub.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenAtAnySub__1_Chaos_Utilities_QuestHelper_QuestArg_System_String__Chaos_Utilities_QuestHelper_QuestArg_System_Collections_Generic_IReadOnlyCollection___0___">WhenAtAnySub&lt;TSub&gt;(QuestArg&lt;string&gt;, QuestArg&lt;IReadOnlyCollection&lt;TSub&gt;&gt;)</a></dt>
+    <dd><p>Per-execution overload — <code class="paramref">values</code> resolves at chain run time.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenAtAnySub.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenAtAnySub__1_Chaos_Utilities_QuestHelper_QuestArg_System_String__System_Collections_Generic_IReadOnlyCollection___0__">WhenAtAnySub&lt;TSub&gt;(QuestArg&lt;string&gt;, params IReadOnlyCollection&lt;TSub&gt;)</a></dt>
+    <dd><p>Halt the chain (with <code class="paramref">failureReply</code>) unless the source's tracked sub-stage is any of <code class="paramref">values</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenAtAnySub.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenAtAnySub__1_System_Collections_Generic_IReadOnlyCollection___0__">WhenAtAnySub&lt;TSub&gt;(params IReadOnlyCollection&lt;TSub&gt;)</a></dt>
+    <dd><p>Halt the chain unless the source's tracked sub-stage is any of <code class="paramref">values</code>.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenAtSub.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenAtSub__1___0_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">WhenAtSub&lt;TSub&gt;(TSub, QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source's sub-stage of type <code class="typeparamref">TSub</code> equals
+<code class="paramref">value</code>. When <code class="paramref">failureReply</code> is provided, the failure
+path also sends a Reply.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenNeverStarted.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenNeverStarted_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">WhenNeverStarted(QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source's <code>Trackers.Enums</code> has no value stored for
+<code class="typeparamref">TStage</code> — i.e., the player has never advanced into any stage of
+this quest. When <code class="paramref">failureReply</code> is provided, the failure path also
+sends a Reply.</p>
+</dd>
+  </dl>
+  <dl class="jumplist">
+    <dt><a class="xref" href="Chaos.Utilities.QuestHelper.QuestStepBuilder-1.WhenSubNeverStarted.html#Chaos_Utilities_QuestHelper_QuestStepBuilder_1_WhenSubNeverStarted__1_System_Nullable_Chaos_Utilities_QuestHelper_QuestArg_System_String___">WhenSubNeverStarted&lt;TSub&gt;(QuestArg&lt;string&gt;?)</a></dt>
+    <dd><p>Halt the chain unless Source has no value stored for sub-stage type
+<code class="typeparamref">TSub</code> (the sub-track has never been advanced). When
+<code class="paramref">failureReply</code> is provided, the failure path also sends a Reply.</p>
+</dd>
+  </dl>
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/develop/Chaos/Utilities/QuestHelper/QuestStepBuilder.cs/#L33" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

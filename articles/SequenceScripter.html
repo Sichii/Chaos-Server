@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>SequenceScripter | Chaos Server Docs </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="SequenceScripter | Chaos Server Docs ">
+      
+      
+      <link rel="icon" href="../images/chaos.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/Sichii/Chaos-Server/blob/develop/docs/articles/SequenceScripter.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../images/chaosico.png" alt="Chaos Server Docs">
+            Chaos Server Docs
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+<h1 id="sequencescripter">SequenceScripter</h1>
+
+<p>The <code>SequenceScripter</code> is a fluent builder framework for composing entity behavior over time without hand-rolling tick
+logic. It is intended for scripts that need to perform actions at intervals, react to entity state, or progress through
+multi-step sequences — most commonly monster AI, but it works for any entity type. The framework can be found under
+<code>Chaos.Utilities.SequenceScripter</code>.</p>
+<p>There are 2 builders to choose from. The
+<a class="xref" href="../api/Chaos.Utilities.SequenceScripter.Builder.ScriptBuilder-1.html">ScriptBuilder<t></t></a> works against any entity type. The
+<a class="xref" href="../api/Chaos.Utilities.SequenceScripter.Builder.CreatureScriptBuilder-1.html">CreatureScriptBuilder<t></t></a> extends that builder
+with health-percent threshold actions and is constrained to <code>Creature</code>-derived entities.</p>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Both builders produce a <a class="xref" href="../api/Chaos.Utilities.SequenceScripter.ScriptedSequence-1.html">ScriptedSequence<t></t></a> which
+implements <code>IDeltaUpdatable</code>. Drive it from your script's <code>Update(TimeSpan)</code> to keep its actions advancing.</p>
+</div>
+<h3 id="action-categories">Action Categories</h3>
+<p><code>ScriptBuilder&lt;T&gt;</code> exposes 2 families of actions, each with a &quot;do once&quot; form (the action is removed after firing) and a
+&quot;repeat&quot; form (the action stays registered and fires whenever its trigger is met):</p>
+<ul>
+<li><strong>Conditional</strong> — driven by a <code>Func&lt;T, bool&gt;</code> predicate. Use <code>WhenThenDoActionOnce</code> / <code>WhileThenRepeatAction</code> for a
+single action, and <code>WhenThenDoSequenceOnce</code> / <code>WhileThenRepeatSequence</code> for a multi-step sequence.</li>
+<li><strong>Timed</strong> — driven by an interval. Use <code>AfterTimeDoActionOnce</code> / <code>AfterTimeRepeatAction</code> for a single action, and
+<code>AfterTimeDoSequenceOnce</code> / <code>AfterTimeRepeatSequence</code> for a multi-step sequence.</li>
+</ul>
+<p><code>CreatureScriptBuilder&lt;T&gt;</code> adds 2 more families that watch <code>Creature.StatSheet.HealthPercent</code>:</p>
+<ul>
+<li><strong>Threshold</strong> — fires when health drops through a percentage. Use <code>AtThresholdDoActionOnce</code> /
+<code>AtThresholdRepeatAction</code> for a single action, and <code>AtThresholdDoSequenceOnce</code> / <code>AtThresholdRepeatSequence</code> for a
+sequence.</li>
+<li><strong>Threshold + Delay</strong> — fires after the health threshold is crossed <em>and</em> a delay elapses, useful for telegraphed
+phase-change abilities. Use <code>AtThresholdThenAfterTimeDoActionOnce</code> / <code>AtThresholdThenAfterTimeRepeatAction</code> and the
+matching <code>*Sequence*</code> variants.</li>
+</ul>
+<div class="TIP">
+<h5>Tip</h5>
+<p>Every builder method returns the builder itself, so calls can be chained. The naming convention is intentionally
+verbose so a chained script reads close to English: <code>WhenThen…</code>, <code>WhileThen…</code>, <code>AfterTime…</code>, <code>AtThreshold…</code>.</p>
+</div>
+<h3 id="sequences">Sequences</h3>
+<p>Any of the <code>*Sequence*</code> overloads take a
+<a class="xref" href="../api/Chaos.Utilities.SequenceScripter.Builder.TimedActionSequenceBuilder-1.html">TimedActionSequenceBuilder<t></t></a>. It chains
+actions back-to-back with intervals between them via <code>AfterTime</code> and <code>ThenAfter</code> (the two methods are aliases —
+<code>AfterTime</code> reads naturally for the first step, <code>ThenAfter</code> for subsequent ones).</p>
+<pre><code class="lang-csharp">var sequence = new TimedActionSequenceBuilder&lt;Monster&gt;()
+    .AfterTime(TimeSpan.FromSeconds(1), m =&gt; m.Say(&quot;Beware!&quot;))
+    .ThenAfter(TimeSpan.FromSeconds(2), m =&gt; m.AnimateBody(BodyAnimation.Assail))
+    .ThenAfter(TimeSpan.FromSeconds(1), m =&gt; m.UseSkill(...));
+</code></pre>
+<div class="NOTE">
+<h5>Note</h5>
+<p>Each step's interval is the time <em>since the previous step fired</em>, not the absolute time since the sequence started. A
+sequence completes when its last step fires; a &quot;repeat&quot; sequence then resets and runs again from the top.</p>
+</div>
+<h3 id="building-a-script">Building a Script</h3>
+<p>Below is an example monster behavior assembled from all four action families.</p>
+<pre><code class="lang-csharp">var sequence = new CreatureScriptBuilder&lt;Monster&gt;(scriptUpdateInterval: TimeSpan.FromMilliseconds(100))
+    // Wander while not engaged
+    .WhileThenRepeatAction(
+        condition: m =&gt; !m.Engaged,
+        action:    m =&gt; m.Wander())
+
+    // Cast a recurring buff every 30 seconds
+    .AfterTimeRepeatAction(
+        time:   TimeSpan.FromSeconds(30),
+        action: m =&gt; m.TryUseSpell(buffSpell))
+
+    // Enrage the moment it drops to 25% health (one-shot)
+    .AtThresholdDoActionOnce(
+        threshold: 25,
+        action:    m =&gt; m.Enrage())
+
+    // Telegraph a desperation cast 1 second after dropping below 10%
+    .AtThresholdThenAfterTimeDoActionOnce(
+        time:      TimeSpan.FromSeconds(1),
+        threshold: 10,
+        action:    m =&gt; m.TryUseSpell(desperationSpell))
+
+    .Build(monster);
+</code></pre>
+<p>The resulting <a class="xref" href="../api/Chaos.Utilities.SequenceScripter.ScriptedSequence-1.html">ScriptedSequence<t></t></a> is an <code>IDeltaUpdatable</code>,
+so a script that owns it just forwards its update tick:</p>
+<pre><code class="lang-csharp">public override void Update(TimeSpan delta) =&gt; sequence.Update(delta);
+</code></pre>
+<h3 id="update-cadence">Update Cadence</h3>
+<p>The builder constructor takes a <code>scriptUpdateInterval</code>. Internally the sequence keeps an <code>IIntervalTimer</code> and only
+evaluates registered actions on update ticks at that cadence — <em>not</em> every game-loop frame. Smaller intervals give finer
+reaction time at the cost of more frequent predicate evaluations.</p>
+<div class="TIP">
+<h5>Tip</h5>
+<p>One-shot timed actions accept a <code>startAsElapsed</code> flag. The default is <code>false</code>, meaning the action waits the full
+interval before firing. Pass <code>true</code> to make it fire on the first update tick instead of after a delay.</p>
+</div>
+<h3 id="threshold-semantics">Threshold Semantics</h3>
+<p>Threshold actions arm themselves the first time <code>HealthPercent</code> crosses <em>down</em> through the configured threshold
+(previous &gt; threshold ≥ current). Once armed they do not disarm — healing back above the threshold will not re-arm them
+on the next drop, and a &quot;repeat&quot; threshold action will continue firing every tick once armed. This matches the typical
+&quot;phase change&quot; use case where the threshold marks a permanent transition rather than a recurring trigger.</p>
+<p>Threshold-with-delay actions additionally start an internal timer when armed and only fire after the configured delay
+elapses, allowing a wind-up between the trigger condition and the visible behavior change.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/Sichii/Chaos-Server/blob/develop/docs/articles/SequenceScripter.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
