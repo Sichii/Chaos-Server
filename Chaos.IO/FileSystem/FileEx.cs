@@ -145,37 +145,27 @@ public static class FileEx
     /// </param>
     public static void SafeWriteAllText(string path, string text)
     {
-        var tries = 0;
+        var tempPath = path + ".temp";
+        var bakPath = path + ".bak";
 
-        while (tries < 3)
+        // flush to disk so the rename below can't reach the disk before the data does
+        using (var stream = File.Create(tempPath))
         {
-            var tempPath = path + ".temp";
-            var bakPath = path + ".bak";
-
-            File.WriteAllText(tempPath, text);
-
-            if (File.Exists(path))
-                File.Replace(
-                    tempPath,
-                    path,
-                    bakPath,
-                    true);
-            else
-                File.Move(tempPath, path, true);
-
-            if (File.Exists(path))
-                return;
-
-            tries++;
-
-            Thread.Sleep(50 + tries * 50);
+            stream.Write(Encoding.UTF8.GetBytes(text));
+            stream.Flush(flushToDisk: true);
         }
 
-        var builder = new StringBuilder();
-        builder.AppendLine($"Failed to write text to file \"{path}\"");
-        builder.AppendLine(text);
+        if (File.Exists(path))
+            File.Replace(
+                tempPath,
+                path,
+                bakPath,
+                true);
+        else
+            File.Move(tempPath, path, true);
 
-        throw new IOException(builder.ToString());
+        if (!File.Exists(path))
+            throw new IOException($"Failed to write text to file \"{path}\"{Environment.NewLine}{text}");
     }
 
     /// <summary>
@@ -189,36 +179,26 @@ public static class FileEx
     /// </param>
     public static async Task SafeWriteAllTextAsync(string path, string text)
     {
-        var tries = 0;
+        var tempPath = path + ".temp";
+        var bakPath = path + ".bak";
 
-        while (tries < 3)
+        // flush to disk so the rename below can't reach the disk before the data does
+        await using (var stream = File.Create(tempPath))
         {
-            var tempPath = path + ".temp";
-            var bakPath = path + ".bak";
-
-            await File.WriteAllTextAsync(tempPath, text);
-
-            if (File.Exists(path))
-                File.Replace(
-                    tempPath,
-                    path,
-                    bakPath,
-                    true);
-            else
-                File.Move(tempPath, path, true);
-
-            if (File.Exists(path))
-                return;
-
-            tries++;
-
-            await Task.Delay(50 + tries * 50);
+            await stream.WriteAsync(Encoding.UTF8.GetBytes(text));
+            stream.Flush(true);
         }
 
-        var builder = new StringBuilder();
-        builder.AppendLine($"Failed to write text to file \"{path}\"");
-        builder.AppendLine(text);
+        if (File.Exists(path))
+            File.Replace(
+                tempPath,
+                path,
+                bakPath,
+                true);
+        else
+            File.Move(tempPath, path, true);
 
-        throw new IOException(builder.ToString());
+        if (!File.Exists(path))
+            throw new IOException($"Failed to write text to file \"{path}\"{Environment.NewLine}{text}");
     }
 }
